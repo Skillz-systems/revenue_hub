@@ -10,7 +10,7 @@ jobs:
     steps:
       - add_ssh_keys:
          fingerprints: 
-          - "94:f3:79:6d:db:f2:27:8e:98:e2:7f:30:bb:da:5c:03"
+          - "SHA256:XM+2xRjrCCSH/Frn3FMhEbTaB4RS9hNa9Wm54+iINww"
       - checkout
       # install dependencies
       - setup_remote_docker:
@@ -86,7 +86,7 @@ jobs:
      
 workflows:
   version: 2
-  hubeei_hub_deploy:
+  revenue_hub_deploy:
     jobs:
       - deploy-frontend-staging: # Use the pre-configured job, deploy-via-git
           filters:
