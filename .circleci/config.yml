@@ -2,7 +2,7 @@ version: 2.1
 
 
 jobs:
-  deploy-react:
+  deploy-frontend-staging:
     
     docker:
         - image: circleci/node:16
@@ -19,7 +19,7 @@ jobs:
       - run:
           name: Run npm 
           command: |
-            npm install 
+            cd Frontend && npm install 
 
       - run: CI=false sudo apt update
       - run: CI=false sudo apt-get install rsync
@@ -30,12 +30,12 @@ jobs:
       - run:
           name: build file
           command: |
-            CI=false npm run build
+             cd Frontend && CI=false npm run build
      
       - run:
           name: ssh login  
           command: |
-            rsync -va -e 'ssh -p 7822 -o StrictHostKeyChecking=no'  --delete   build/  skillz@185.160.67.60:hubeei/website
+            rsync -va -e 'ssh -p 7822 -o StrictHostKeyChecking=no'  --delete   Frontend/dist/ Frontend/.htaccess  skillz@185.160.67.60:revenuehub/frontend
       # - run:
       #     name: ssh and run migration on live server  
       #     command: |
@@ -88,7 +88,7 @@ workflows:
   version: 2
   hubeei_hub_deploy:
     jobs:
-      - deploy-react: # Use the pre-configured job, deploy-via-git
+      - deploy-frontend-staging: # Use the pre-configured job, deploy-via-git
           filters:
             branches:
               only: staging
