@@ -1,0 +1,103 @@
+version: 2.1
+
+
+jobs:
+  deploy-react:
+    
+    docker:
+        - image: circleci/node:16
+    working_directory: ~/repo
+    steps:
+      - add_ssh_keys:
+         fingerprints: 
+          - "94:f3:79:6d:db:f2:27:8e:98:e2:7f:30:bb:da:5c:03"
+      - checkout
+      # install dependencies
+      - setup_remote_docker:
+          version: 20.10.12 
+          docker_layer_caching: true
+      - run:
+          name: Run npm 
+          command: |
+            npm install 
+
+      - run: CI=false sudo apt update
+      - run: CI=false sudo apt-get install rsync
+
+      - run:
+          name: Update known hosts
+          command: ssh-keyscan -H 185.160.67.60 >> ~/.ssh/known_hosts && cat ~/.ssh/known_hosts
+      - run:
+          name: build file
+          command: |
+            CI=false npm run build
+     
+      - run:
+          name: ssh login  
+          command: |
+            rsync -va -e 'ssh -p 7822 -o StrictHostKeyChecking=no'  --delete   build/  skillz@185.160.67.60:hubeei/website
+      # - run:
+      #     name: ssh and run migration on live server  
+      #     command: |
+      #       ssh bartumen@192.254.235.94 && cd devapi.bartumenergy.com &&  php artisan migrate && ls && exit
+  deploy-hub-production:
+    
+    docker:
+        - image: circleci/node:16
+    working_directory: ~/repo
+    steps:
+      - add_ssh_keys:
+         fingerprints: 
+          - "SHA256:XM+2xRjrCCSH/Frn3FMhEbTaB4RS9hNa9Wm54+iINww"
+      - checkout
+      # install dependencies
+      - setup_remote_docker:
+          version: 20.10.12 
+          docker_layer_caching: true
+      - run:
+          name: Run npm 
+          command: |
+            npm install 
+
+      - run: CI=false sudo apt update
+      - run: CI=false sudo apt-get install rsync
+
+      - run:
+          name: Update known hosts
+          command: ssh-keyscan -H 94.72.98.194 >> ~/.ssh/known_hosts && cat ~/.ssh/known_hosts
+      - run:
+          name: rename .env.sample file to .env 
+          command: |
+            mv .env.sample .env
+
+      - run:
+          name: find and replace in document
+          command: |
+            sed -i -e 's:REACT_APP_BACKEND_API="sample":REACT_APP_BACKEND_API="${REACT_APP_BACKEND_API}":g' .env && sed -i -e 's:REACT_APP_SHARE_LINK="sample":REACT_APP_DOCUMENTS="${REACT_APP_SHARE_LINK}":g' .env
+      - run:
+          name: build file
+          command: |
+            CI=false npm run build
+     
+      - run:
+          name: ssh login  
+          command: |
+            rsync -va -e 'ssh  -o StrictHostKeyChecking=no'  --delete   build/  hubeei@94.72.98.194:public_html/hub
+     
+workflows:
+  version: 2
+  hubeei_hub_deploy:
+    jobs:
+      - deploy-react: # Use the pre-configured job, deploy-via-git
+          filters:
+            branches:
+              only: staging
+      - deploy-hub-production: # Use the pre-configured job, deploy-via-git
+          filters:
+            branches:
+              only: production
+     
+      # - deploy-nest: # Use the pre-configured job, deploy-via-git
+      #     filters:
+      #       branches:
+      #         only: nest
