@@ -6,13 +6,13 @@ services:
             context: .
             dockerfile: Dockerfile
         ports:
-            - 3040:8000
+            - 3050:8000
         volumes:
             # Re-use local composer cache via host-volume
-            - ~/.composer-docker/cache:/root/.composer/cache:delegated
+            #- ~/.composer-docker/cache:/root/.composer/cache:delegated
             - .:/app
         networks:
-            - hubeeinetwork
+            - revenuehubnetwork
 
     mysql:
         image: mariadb:10.5.8
@@ -22,24 +22,24 @@ services:
             - MYSQL_USER=forge
             - MYSQL_PASSWORD=Ubuxa##99
         networks:
-            - hubeeinetwork
+            - revenuehubnetwork
 
     phpmyadmin:
         image: phpmyadmin:latest
         ports:
-            - 3041:80
+            - 3051:80
         environment:
             - PMA_HOST=mysql
             - PMA_PASSWORD=Ubuxa##99
         restart: unless-stopped
         volumes:
             # Re-use local composer cache via host-volume
-            - ~/.composer-docker/cache:/root/.composer/cache:delegated
+            #- ~/.composer-docker/cache:/root/.composer/cache:delegated
             # Mount source-code for development
             - ./:/app
         networks:
-            - hubeeinetwork
+            - revenuehubnetwork
 
 networks:
-    hubeeinetwork:
+    revenuehubnetwork:
         driver: bridge
