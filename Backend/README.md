@@ -2,14 +2,6 @@
 
 This is a quick setup for containerising your project. It helps your install Mysql 5.7.22, phpmyadmin.
 
-# Docker Compose Config
-
-1. If you would use Mysql, update the Mysql Configuration;
-   MYSQL_DATABASE: your_db
-   MYSQL_USER: your_username
-   MYSQL_PASSWORD: your_password
-   MYSQL_ROOT_PASSWORD: your_root_password
-
 # Make Commands
 
       1. To Start App
