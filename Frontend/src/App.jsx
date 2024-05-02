@@ -1,11 +1,15 @@
+import Card from "./Component/CardComponents/Card";
+
+
+
 
 function App() {
 
   return (
     <>
-      <div className='bg-red-500 h-screen'>
-        uuuuuu
-       </div>
+      <div className='bg-green-500 h-screen'>
+        <Card />
+      </div>
     </>
   )
 }
