@@ -2,13 +2,13 @@
 
 namespace App\Service;
 
-use App\Http\Requests\StaffStorePasswordRequest;
 use App\Models\User;
 use App\Mail\RegisterMail;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Mail;
 use App\Http\Resources\StoreUserResource;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Validator;
 
 class StaffService
 {
@@ -27,15 +27,7 @@ class StaffService
             'remember_token' => Str::random(25),
         ]);
 
-        //send mail to the staff
-        Mail::to($request->email)->send(new RegisterMail($user));
-
-        return response()->json([
-            "status" => "success",
-            "message" => "Register Successfully",
-            "user" => StoreUserResource::make($user),
-            "token" => $user->createToken("API TOKEN")->plainTextToken
-        ], 200);
+        return $user;
     }
 
 

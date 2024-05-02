@@ -2,11 +2,14 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\StoreUserRequest;
 use App\Models\User;
+use App\Mail\RegisterMail;
 use App\Service\AuthService;
-use App\Service\StaffService;
 use Illuminate\Http\Request;
+use App\Service\StaffService;
+use Illuminate\Support\Facades\Mail;
+use App\Http\Requests\StoreUserRequest;
+use App\Http\Resources\StoreUserResource;
 
 class UserController extends Controller
 {
@@ -65,7 +68,22 @@ class UserController extends Controller
 
         $register = (new StaffService)->RegisterStaff($request);
 
-        return $register;
+        if ($register) {
+            //send mail to the staff
+            Mail::to($request->email)->send(new RegisterMail($register));
+
+            return response()->json([
+                "status" => "success",
+                "message" => "Register Successfully",
+                "user" => StoreUserResource::make($register),
+                "token" => $register->createToken("API TOKEN")->plainTextToken
+            ], 200);
+        }
+        return response()->json([
+            "status" => "success",
+            "message" => "Register Successfully",
+            "user" => StoreUserResource::make($register),
+        ], 200);
     }
 
     /**
