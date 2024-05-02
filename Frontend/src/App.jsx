@@ -1,17 +1,15 @@
-import Card from "./Component/CardComponents/Card";
-
-
-
+import { Route, Routes } from "react-router-dom";
+import ProjectLayout from "./Components/project-layout/ProjectLayout";
 
 function App() {
-
   return (
     <>
-      <div className='bg-green-500 h-screen'>
-        <Card />
-      </div>
+      <Routes>
+        <Route path="/" element={<ProjectLayout />} />
+        <Route path="/home" element={<ProjectLayout />} />
+      </Routes>
     </>
-  )
+  );
 }
 
-export default App
+export default App;
