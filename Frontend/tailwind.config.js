@@ -8,16 +8,39 @@ export default {
   theme: {
     extend: {
       colors: {
-        "custom-blue-100": '#F6F8FA',
+        "custom-blue-100": "#F6F8FA",
+        "custom-blue-200": "#DADFF8",
+        "custom-blue-300": "#8396E7",
+        "custom-grey-100": "#EAEEF2",
+        "primary-color": "#4561DB",
+        "color-text-one": "#050505",
+        "color-text-two": "#828DA9",
+        "color-text-three": "#2E4192",
+        "divider-grey": "#CCD0DC",
       },
       borderWidth: {
-        '0.6': '0.6px',
+        "1.5": "1.5px",
+        "0.6": "0.6px",
+        "0.5": "0.5px",
       },
       borderColor: theme => ({
-        ...theme('colors'),
-        'custom-border': '#E2E4EB',
+        ...theme("colors"),
+        "test-border": "red",
+        "custom-color-one": "#E2E4EB",
+        "custom-color-two": "#8396E7",
       }),
+      boxShadow: {
+        'custom-100': '2px 2px 6px 0px rgba(0, 0, 0, 0.15)',
+      },
     },
   },
-  plugins: [],
+  plugins: [
+    require('tailwind-scrollbar'),
+  ],
+  corePlugins: {
+    fontFamily: false, // Disable the default fontFamily core plugin
+  },
+  variants: {
+    fontFamily: ["responsive", "hover", "focus"], // Enable fontFamily utility with responsive and hover variants
+  },
 }
