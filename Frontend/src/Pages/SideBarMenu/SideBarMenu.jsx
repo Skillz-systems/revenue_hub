@@ -1,13 +1,11 @@
 import { useState, useEffect } from "react";
-import ProfileBox from "../Components/ProfileBox/ProfileBox";
-import SearchInput from "../Components/SearchInput/SearchInput";
-import DemandProperty from "../Components/DemandProperty.jsx/DemandProperty";
-import MenuItem from "../Components/MenuItem/MenuItem";
 import { FaChevronLeft } from "react-icons/fa";
 import { FiSearch } from "react-icons/fi";
 import { PiListBulletsFill, PiBuildingsFill } from "react-icons/pi";
-import MenuItemData from "../Components/MenuItem/MenuItemData";
-import { dummyData } from "../Components/SearchInput/searchDummyData";
+import { dummyData } from "../../Components/SearchInput/searchDummyData";
+import { DemandProperty, ProfileBox, SearchInput, MenuItem, MenuItemData } from "../../Components/Index";
+
+
 
 export default function SideBarMenu({ hideSideBar, searchClicked }) {
   const [activeMenuItem, setActiveMenuItem] = useState("Overview Component");
