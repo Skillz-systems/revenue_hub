@@ -1,10 +1,10 @@
 import { useState } from "react";
-import SideBarMenu from "../../SideBarMenu/SideBarMenu";
 import MenuItemAlt from "../MenuItem/MenuItemAlt";
 import { GiHamburgerMenu } from "react-icons/gi";
 import { FiSearch } from "react-icons/fi";
 import MenuItemData from "../MenuItem/MenuItemData";
 import Card from "../CardComponents/Card";
+import SideBarMenu from "../../Pages/SideBarMenu/SideBarMenu";
 
 export default function ProjectLayout() {
   const [displaySideBarMenu, setdisplaySideBarMenu] = useState(true);
@@ -109,7 +109,7 @@ export default function ProjectLayout() {
         <Card
         icon={<img src="path/to/icon.png" alt="Icon" />}
         height="25%"
-        width="25%"
+        width="100%"
         title="Custom Title"
         subtitle="Custom Subtitle"
         value="Custom Value"
