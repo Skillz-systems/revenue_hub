@@ -1,5 +1,5 @@
 import { Route, Routes } from "react-router-dom";
-import ProjectLayout from "./Components/project-layout/ProjectLayout";
+import ProjectLayout from "./Components/ProjectLayout/ProjectLayout";
 
 function App() {
   return (
