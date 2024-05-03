@@ -62,9 +62,9 @@ class AuthController extends Controller
     public function login(LoginUserRequest $request)
     {
 
-        //$login = (new AuthService)->LoginStaff($request);
+        $login = (new AuthService)->LoginStaff($request);
 
-        //return $login;
+        return $login;
     }
 
 
