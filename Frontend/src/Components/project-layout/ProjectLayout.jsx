@@ -12,7 +12,7 @@ export default function ProjectLayout() {
         width="25%"
         title="Custom Title"
         subtitle="Custom Subtitle"
-        value="Custom Value"
+        value="4,000,444.000"
       />
 
         RIGHT
