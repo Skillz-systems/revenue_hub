@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\LoginUserRequest;
 use App\Http\Requests\StaffStorePasswordRequest;
+use App\Http\Resources\LoginResource;
+use App\Http\Resources\StoreUserResource;
 use App\Models\User;
 use App\Service\AuthService;
 use App\Service\StaffService;
@@ -61,10 +63,8 @@ class AuthController extends Controller
      */
     public function login(LoginUserRequest $request)
     {
-
         $login = (new AuthService)->LoginStaff($request);
-
-        return $login;
+        return new LoginResource($login);
     }
 
 

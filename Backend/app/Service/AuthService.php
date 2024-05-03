@@ -11,21 +11,15 @@ class AuthService
 
     public function LoginStaff($request)
     {
-        $request->validated($request->all());
-
-        if (!Auth::attempt($request->only('email', 'password'))) {
-            return response()->json([
-                "status" => "error",
-                "message" => "Credential not match",
-            ], 401);
+        // $request->validated($request->all())
+        $user = User::where('email', $request->email)->first();
+        if (Auth::attempt($request->only('email', 'password'))) {
+            return $user;
         }
 
-        $user = User::where('email', $request->email)->first();
         return response()->json([
-            "status" => "success",
-            "message" => "Login Successfully",
-            "user" => StoreUserResource::make($user),
-            "token" => $user->createToken("API TOKEN")->plainTextToken
-        ], 200);
+            "status" => "error",
+            "message" => "Credential not match",
+        ], 401);
     }
 }
