@@ -1,29 +1,26 @@
 import React from 'react';
 
-const Card = () => {
+const Card = ({ icon,type, height, width, title, subtitle, value }) => {
     return (
-        <div className=" h-[20%] w-[20%] bg-slate-300 flex flex-col justify-between shadow-md ml-2 mt-2 rounded-md">
+        <div className="shadow-md ml-2 mt-2 rounded-md" style={{ height, width }}>
             <div className="flex">
-                <div className="h-20 w-20 border-2 border-rose-500 ml-2">
-                    <h1>Logo</h1>
+                <div className="ml-2">
+                    {icon}
                 </div>
 
-                <div className="h-25 w-25 border-2 border-rose-500 flex flex-col justify-center ml-2 ">
-                    <div className='font-light leading-normal '>
-                        <h3>Value of Generated</h3>
-                    </div>
-
-                    <div className='text-xl font-semibold'>
-                        <h1>Demand Notices</h1>
-                    </div>
+                <div className="flex flex-col justify-center ml-4 ">
+                    <h3 className='text-slate-600'>{title}</h3>
+                    <h1 className='text-stone-950 font-bold '>{subtitle}</h1>
                 </div>
             </div>
 
-            <div className="h-20 w-full flex items-center justify-start ml-2">
-                <h1><strong>4,44,000,000.</strong></h1>
+            <div className="ml-2 mt-[25%] ">
+                <strong>{value}</strong>
             </div>
         </div>
     );
 };
 
 export default Card;
+
+
