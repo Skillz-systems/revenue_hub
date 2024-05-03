@@ -4,6 +4,7 @@ import MenuItemAlt from "../MenuItem/MenuItemAlt";
 import { GiHamburgerMenu } from "react-icons/gi";
 import { FiSearch } from "react-icons/fi";
 import MenuItemData from "../MenuItem/MenuItemData";
+import Card from "../CardComponents/Card";
 
 export default function ProjectLayout() {
   const [displaySideBarMenu, setdisplaySideBarMenu] = useState(true);
@@ -105,6 +106,15 @@ export default function ProjectLayout() {
             : "w-5/6"
         }`}
       >
+        <Card
+        icon={<img src="path/to/icon.png" alt="Icon" />}
+        height="25%"
+        width="25%"
+        title="Custom Title"
+        subtitle="Custom Subtitle"
+        value="Custom Value"
+      />
+
         RIGHT
       </div>
     </div>
