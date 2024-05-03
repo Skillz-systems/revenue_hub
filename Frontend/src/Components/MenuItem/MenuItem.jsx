@@ -1,4 +1,5 @@
-export default function MenuItemComponent({
+export default function MenuItem({
+  parentDivStyle,
   menuIcon,
   menuIconTwo,
   menuName,
@@ -8,7 +9,8 @@ export default function MenuItemComponent({
 }) {
   return (
     <div
-      className={`flex w-11/12 items-center justify-between space-x-2 px-1.5 py-2.5 hover:cursor-pointer 
+      className={`flex items-center justify-between space-x-2 px-1.5 py-2.5 transition ease-in-out  hover:cursor-pointer hover:translate-x-1
+      ${parentDivStyle}
       ${
         isActive
           ? "bg-white border-1.5 border-custom-color-two rounded shadow-custom-100"
@@ -34,7 +36,7 @@ export default function MenuItemComponent({
         </span>
       </div>
       {menuItemCount ? (
-        <span className="text-xs text-color-text-three font-lexend px-1 bg-custom-blue-200 border border-custom-color-two rounded">
+        <span className="px-1 text-xs border rounded text-color-text-three font-lexend bg-custom-blue-200 border-custom-color-two">
           {menuItemCount}
         </span>
       ) : null}
