@@ -3,8 +3,9 @@ import MenuItemAlt from "../MenuItem/MenuItemAlt";
 import { GiHamburgerMenu } from "react-icons/gi";
 import { FiSearch } from "react-icons/fi";
 import MenuItemData from "../MenuItem/MenuItemData";
-import Card from "../CardComponents/Card";
 import SideBarMenu from "../../Pages/SideBarMenu/SideBarMenu";
+import TopNavigation from "../TopNavigation/TopNavigation";
+import Card from "../CardComponents/Card";
 
 export default function ProjectLayout() {
   const [displaySideBarMenu, setdisplaySideBarMenu] = useState(true);
@@ -100,22 +101,26 @@ export default function ProjectLayout() {
         )}
       </div>
       <div
-        className={`flex-col p-4 bg-white border-0.6 border-custom-border rounded ${
+        className={`flex-col bg-white border-0.6 border-custom-border rounded ${
           transitionSection
             ? "w-full transition-all ease-in-out duration-500"
             : "w-5/6"
         }`}
       >
-        <Card
+        <TopNavigation
+          userName={"John"}
+          handleMenuClick={() => {
+            alert("Opened Menu Modal");
+          }}
+        />
+        {/* <Card
         icon={<img src="path/to/icon.png" alt="Icon" />}
         height="25%"
         width="100%"
         title="Custom Title"
         subtitle="Custom Subtitle"
         value="Custom Value"
-      />
-
-        RIGHT
+      /> */}
       </div>
     </div>
   );
