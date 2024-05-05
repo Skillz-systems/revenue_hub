@@ -6,7 +6,14 @@ export default {
   ],
 
   theme: {
+    fontFamily: {
+      'sans': ['Lora', 'sans-serif'],
+      'serif': ['Lora', 'serif'],
+       'mono': ['Lora', 'monospace'],
+    },
+  
     extend: {
+
       colors: {
         "custom-blue-100": "#F6F8FA",
         "custom-blue-200": "#DADFF8",

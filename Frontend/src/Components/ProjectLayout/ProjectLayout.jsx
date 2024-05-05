@@ -5,6 +5,7 @@ import { FiSearch } from "react-icons/fi";
 import MenuItemData from "../MenuItem/MenuItemData";
 import Card from "../CardComponents/Card";
 import SideBarMenu from "../../Pages/SideBarMenu/SideBarMenu";
+import images from '../../assets/index';
 
 export default function ProjectLayout() {
   const [displaySideBarMenu, setdisplaySideBarMenu] = useState(true);
@@ -107,12 +108,15 @@ export default function ProjectLayout() {
         }`}
       >
         <Card
-        icon={<img src="path/to/icon.png" alt="Icon" />}
+        icon={<img src={images.Shieldblue} alt="Icon" />}
         height="25%"
         width="100%"
-        title="Custom Title"
-        subtitle="Custom Subtitle"
-        value="Custom Value"
+        title="Value of Generated"
+        subtitle="Demand notice"
+        value="4,400,000.00"
+        withSymbol= {true}
+        datepicker={true}
+        dateContent="April, 2024"
       />
 
         RIGHT
