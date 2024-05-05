@@ -3,9 +3,19 @@ import { FaChevronLeft } from "react-icons/fa";
 import { FiSearch } from "react-icons/fi";
 import { PiListBulletsFill, PiBuildingsFill } from "react-icons/pi";
 import { dummyData } from "../../Components/SearchInput/searchDummyData";
-import { DemandProperty, ProfileBox, SearchInput, MenuItem, MenuItemData } from "../../Components/Index";
+import {
+  DemandProperty,
+  ProfileBox,
+  SearchInput,
+  MenuItem,
+  MenuItemData,
+} from "../../Components/Index";
 
-export default function SideBarMenu({ hideSideBar, searchClicked }) {
+export default function SideBarMenu({
+  hideSideBar,
+  searchClicked,
+  showAddPropertyModal,
+}) {
   const [activeMenuItem, setActiveMenuItem] = useState("Overview Component");
   const [displaySearchIcon, setDisplaySearchIcon] = useState(true);
   const [borderState, setBorderState] = useState(false);
@@ -43,9 +53,7 @@ export default function SideBarMenu({ hideSideBar, searchClicked }) {
     ? "border-1.5 border-custom-color-two shadow-custom-100"
     : "";
 
-  let finalBorderStyle = borderState
-    ? changeBoxStyle
-    : "border-custom-color-one";
+  let finalBorderStyle = borderState ? changeBoxStyle : "";
 
   return (
     <div
@@ -92,9 +100,7 @@ export default function SideBarMenu({ hideSideBar, searchClicked }) {
             openNewDemandInvoiceModal={() => {
               alert("New Demand Invoice Modal");
             }}
-            openAddPropertyModal={() => {
-              alert("Add Property Modal");
-            }}
+            openAddPropertyModal={showAddPropertyModal}
           />
         </div>
       </div>

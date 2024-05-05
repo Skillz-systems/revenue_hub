@@ -5,6 +5,7 @@ import { FiSearch } from "react-icons/fi";
 import MenuItemData from "../MenuItem/MenuItemData";
 import SideBarMenu from "../../Pages/SideBarMenu/SideBarMenu";
 import TopNavigation from "../TopNavigation/TopNavigation";
+import AddPropertyModal from "../AddPropertyModal/AddPropertyModal";
 import Card from "../CardComponents/Card";
 
 export default function ProjectLayout() {
@@ -12,6 +13,8 @@ export default function ProjectLayout() {
   const [transitionSection, setTransitionSection] = useState(false);
   const [activeMenuItem, setActiveMenuItem] = useState("Overview Component");
   const [searchClicked, setSearchClicked] = useState(false);
+  const [displayAddPropertyModal, setDisplayAddPropertyModal] = useState(false);
+  const [propertyModalTransition, setPropertyModalTransition] = useState(false);
   const menuItems = MenuItemData();
 
   const handleMenuItemClick = (component) => {
@@ -35,7 +38,9 @@ export default function ProjectLayout() {
   };
 
   return (
-    <div className={`flex justify-between h-screen bg-custom-blue-100 lg:p-4 `}>
+    <div
+      className={`flex relative justify-between h-screen bg-custom-blue-100 lg:p-4 `}
+    >
       <div
         className={`${!transitionSection ? "flex w-60" : "flex pt-1 w-14"} `}
       >
@@ -43,6 +48,12 @@ export default function ProjectLayout() {
           <SideBarMenu
             hideSideBar={hideSideBar}
             searchClicked={searchClicked}
+            showAddPropertyModal={() => {
+              setDisplayAddPropertyModal(true);
+              setTimeout(() => {
+                setPropertyModalTransition(true);
+              }, 250);
+            }}
           />
         ) : (
           <div className="space-y-14" style={{ height: "95vh" }}>
@@ -122,6 +133,18 @@ export default function ProjectLayout() {
         value="Custom Value"
       /> */}
       </div>
+
+      {displayAddPropertyModal ? (
+        <AddPropertyModal
+          hideAddPropertyModal={() => {
+            setDisplayAddPropertyModal(false);
+            setTimeout(() => {
+              setPropertyModalTransition(false);
+            }, 300);
+          }}
+          propertyModalTransition={propertyModalTransition}
+        />
+      ) : null}
     </div>
   );
 }

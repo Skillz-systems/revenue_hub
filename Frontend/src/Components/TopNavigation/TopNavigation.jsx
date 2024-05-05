@@ -51,7 +51,7 @@ export default function TopNavigation({ userName, handleMenuClick }) {
       <div className="flex gap-4 w-auto">
         <div className="flex relative">
           <select
-            className="w-24 p-2 font-lexend appearance-none outline-none bg-custom-blue-100 border-o.6 border-custom-border shadow leading-tight rounded overflow-y-auto overscroll-contain scrollbar-thin scrollbar-thumb-color-text-two scrollbar-track-white"
+            className="w-24 p-2 font-lexend appearance-none outline-none bg-custom-blue-100 border-0.6 border-custom-border shadow leading-tight rounded overflow-y-auto overscroll-contain scrollbar-thin scrollbar-thumb-color-text-two scrollbar-track-white"
             onChange={handleYearChange}
             value={selectedYear}
           >
