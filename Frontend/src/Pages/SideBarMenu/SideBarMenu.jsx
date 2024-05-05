@@ -5,8 +5,6 @@ import { PiListBulletsFill, PiBuildingsFill } from "react-icons/pi";
 import { dummyData } from "../../Components/SearchInput/searchDummyData";
 import { DemandProperty, ProfileBox, SearchInput, MenuItem, MenuItemData } from "../../Components/Index";
 
-
-
 export default function SideBarMenu({ hideSideBar, searchClicked }) {
   const [activeMenuItem, setActiveMenuItem] = useState("Overview Component");
   const [displaySearchIcon, setDisplaySearchIcon] = useState(true);
@@ -51,7 +49,7 @@ export default function SideBarMenu({ hideSideBar, searchClicked }) {
 
   return (
     <div
-      className="flex-col w-full pb-6 pr-4 overflow-y-auto overscroll-contain scrollbar-thin scrollbar-thumb-color-text-two scrollbar-track-white "
+      className="flex-col w-full pb-6 pr-4 overflow-y-auto overscroll-contain scrollbar-thin scrollbar-thumb-color-text-two scrollbar-track-white"
       style={{ height: "95vh" }}
     >
       <div className="flex-col space-y-6">
@@ -60,6 +58,7 @@ export default function SideBarMenu({ hideSideBar, searchClicked }) {
           profileIcon={<FaChevronLeft />}
           title={"Profile"}
           designation={"Manager"}
+          location={"Wuse"}
           onHideSideBarMenu={hideSideBar}
         />
         <div className="flex-col space-y-3">
