@@ -17,6 +17,7 @@ import { IoSettingsOutline, IoSettings } from "react-icons/io5";
 const MenuItemData = () => {
   return [
     {
+      id: 1,
       menuIcon: <RiHome6Line />,
       menuIconTwo: <RiHome6Fill />,
       menuName: "Overview",
@@ -24,6 +25,7 @@ const MenuItemData = () => {
       componentName: "Overview Component",
     },
     {
+      id: 2,
       menuIcon: <PiBuildings />,
       menuIconTwo: <PiBuildingsFill />,
       menuName: "Properties",
@@ -31,6 +33,7 @@ const MenuItemData = () => {
       componentName: "Properties Component",
     },
     {
+      id: 3,
       menuIcon: <PiListBulletsBold />,
       menuIconTwo: <PiListBulletsFill />,
       menuName: "Demand Notice",
@@ -38,6 +41,7 @@ const MenuItemData = () => {
       componentName: "Demand Notice Component",
     },
     {
+      id: 4,
       menuIcon: <HiOutlineChartPie />,
       menuIconTwo: <HiChartPie />,
       menuName: "Statistics",
@@ -45,6 +49,7 @@ const MenuItemData = () => {
       componentName: "Statistic Component",
     },
     {
+      id: 5,
       menuIcon: <BsCreditCard2Front />,
       menuIconTwo: <BsCreditCard2FrontFill />,
       menuName: "Transactions",
@@ -52,6 +57,7 @@ const MenuItemData = () => {
       componentName: "Transactions Component",
     },
     {
+      id: 6,
       menuIcon: <BsPeople />,
       menuIconTwo: <BsPeopleFill />,
       menuName: "Staff",
@@ -59,6 +65,7 @@ const MenuItemData = () => {
       componentName: "Staff Component",
     },
     {
+      id: 7,
       menuIcon: <IoSettingsOutline />,
       menuIconTwo: <IoSettings />,
       menuName: "Settings",

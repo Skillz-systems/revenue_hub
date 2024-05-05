@@ -2,7 +2,11 @@ import React, { useState } from "react";
 import { TbCalendarDot } from "react-icons/tb";
 import { FaChevronDown } from "react-icons/fa";
 
-export default function TopNavigation({ userName, handleMenuClick }) {
+export default function TopNavigation({
+  userName,
+  handleMenuClick,
+  parentStyle,
+}) {
   const [selectedYear, setSelectedYear] = useState(2024);
 
   const handleYearChange = (event) => {
@@ -41,15 +45,17 @@ export default function TopNavigation({ userName, handleMenuClick }) {
   };
 
   return (
-    <div className="flex items-center justify-between p-4 border-b-0.6 border-custom-border">
+    <div
+      className={`flex items-center justify-between p-4 border-b-0.6 border-custom-border rounded-t ${parentStyle}`}
+    >
       <div className="flex-col w-auto">
         <h2 className="text-base font-bold">Welcome {userName},</h2>
         <p className="text-xs text-color-text-two font-lexend">
           {getCurrentDate()}
         </p>
       </div>
-      <div className="flex gap-4 w-auto">
-        <div className="flex relative">
+      <div className="flex w-auto gap-4">
+        <div className="relative flex">
           <select
             className="w-24 p-2 font-lexend appearance-none outline-none bg-custom-blue-100 border-0.6 border-custom-border shadow leading-tight rounded overflow-y-auto overscroll-contain scrollbar-thin scrollbar-thumb-color-text-two scrollbar-track-white"
             onChange={handleYearChange}

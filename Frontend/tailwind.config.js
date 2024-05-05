@@ -9,6 +9,7 @@ export default {
         "custom-blue-200": "#DADFF8",
         "custom-blue-300": "#8396E7",
         "custom-grey-100": "#EAEEF2",
+        "custom-grey-200": "#F3F4F7",
         "primary-color": "#4561DB",
         "color-text-one": "#050505",
         "color-text-two": "#828DA9",

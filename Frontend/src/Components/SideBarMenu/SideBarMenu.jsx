@@ -2,19 +2,20 @@ import { useState, useEffect } from "react";
 import { FaChevronLeft } from "react-icons/fa";
 import { FiSearch } from "react-icons/fi";
 import { PiListBulletsFill, PiBuildingsFill } from "react-icons/pi";
-import { dummyData } from "../../Components/SearchInput/searchDummyData";
+import { dummyData } from "../SearchInput/searchDummyData";
 import {
-  DemandProperty,
+  DemandPropertyButtons,
   ProfileBox,
   SearchInput,
   MenuItem,
   MenuItemData,
-} from "../../Components/Index";
+} from "../Index";
 
 export default function SideBarMenu({
   hideSideBar,
   searchClicked,
   showAddPropertyModal,
+  showAddDemandModal,
 }) {
   const [activeMenuItem, setActiveMenuItem] = useState("Overview Component");
   const [displaySearchIcon, setDisplaySearchIcon] = useState(true);
@@ -27,10 +28,10 @@ export default function SideBarMenu({
   };
 
   const dividerLogic = (index) => {
-    if (index === 4) {
+    if (index === 5) {
       return "mb-3";
     }
-    if (index === 5) {
+    if (index === 6) {
       return "mt-3";
     }
     return "";
@@ -92,25 +93,22 @@ export default function SideBarMenu({
             displaySearchIcon={displaySearchIcon}
             dummyData={dummyData}
           />
-          <DemandProperty
+          <DemandPropertyButtons
             iconOne={<PiListBulletsFill />}
             iconTwo={<PiBuildingsFill />}
             buttonTextOne={"New Demand Invoice"}
             buttonTextTwo={"Add Property"}
-            openNewDemandInvoiceModal={() => {
-              alert("New Demand Invoice Modal");
-            }}
+            openNewDemandInvoiceModal={showAddDemandModal}
             openAddPropertyModal={showAddPropertyModal}
           />
         </div>
       </div>
       <hr className="border-0.5 border-divider-grey my-4" />
       <div className="">
-        {menuItems.map((item, index) => (
-          <div className="flex-col space-y-1.5">
+        {menuItems.map((item) => (
+          <div key={item.id} className="flex-col space-y-1.5">
             <MenuItem
-              key={index}
-              parentDivStyle={`${dividerLogic(index)}`}
+              parentDivStyle={`${dividerLogic(item.componentName)}`}
               menuIcon={item.menuIcon}
               menuIconTwo={item.menuIconTwo}
               menuName={item.menuName}
@@ -120,7 +118,7 @@ export default function SideBarMenu({
                 handleMenuItemClick(item.componentName);
               }}
             />
-            {index === 4 && <hr className="border-0.5 border-divider-grey" />}
+            {item.id === 5 && <hr className="border-0.5 border-divider-grey" />}
           </div>
         ))}
       </div>

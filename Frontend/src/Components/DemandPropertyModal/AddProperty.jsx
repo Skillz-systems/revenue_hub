@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import lightCheckeredBackgroundPattern from "../../../public/lightCheckeredBackgroundPattern.png";
 import { data } from "./inputFieldData";
 
 export default function AddProperty({
@@ -80,11 +79,11 @@ export default function AddProperty({
       autoComplete="off"
     >
       <img
-        src={lightCheckeredBackgroundPattern}
+        src={"/lightCheckeredBackgroundPattern.png"}
         alt="Checkered Background"
-        className="w-1/2 absolute top-0 left-0 z-0"
+        className="absolute top-0 left-0 z-0 w-1/2"
       />
-      <div className="flex-col w-full absolute p-4 z-10">
+      <div className="absolute z-10 flex-col w-full p-4">
         <div
           className="flex items-start justify-between"
           style={{ height: "10vh" }}
@@ -92,7 +91,7 @@ export default function AddProperty({
           <h3 className="text-base font-bold text-color-text-two">
             NEW PROPERTY REGISTRATION
           </h3>
-          <div className="flex gap-4 items-center justify-between w-64">
+          <div className="flex items-center justify-between w-64 gap-4">
             <button
               className="w-1/2 text-xs text-color-dark-red font-lexend font-medium px-0.5 py-2 border-0.6 border-color-dark-red rounded"
               onClick={hideAddPropertyModal}
@@ -110,7 +109,7 @@ export default function AddProperty({
             </button>
           </div>
         </div>
-        <div className="flex-col space-y-4 pt-10" style={{ height: "90vh" }}>
+        <div className="flex-col pt-10 space-y-4" style={{ height: "90vh" }}>
           <div className="flex items-center justify-between w-5/12 gap-2 p-0.5 border-0.6 border-custom-color-one rounded">
             {data.section.map((item) => (
               <button

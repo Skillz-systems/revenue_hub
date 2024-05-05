@@ -1,7 +1,10 @@
-export { default as DemandProperty } from './DemandProperty/DemandProperty';
-export { default as MenuItem } from './MenuItem/MenuItem';
-export { default as ProfileBox } from './ProfileBox/ProfileBox';
-export { default as SearchInput } from './SearchInput/SearchInput';
-export { default as MenuItemData } from './MenuItem/MenuItemData';
-
-
+export { default as TopNavigation } from "./TopNavigation/TopNavigation";
+export { default as SideBarMenu } from "./SideBarMenu/SideBarMenu";
+export { default as MenuItem } from "./MenuItem/MenuItem";
+export { default as MenuItemData } from "./MenuItem/MenuItemData";
+export { default as ProfileBox } from "./ProfileBox/ProfileBox";
+export { default as SearchInput } from "./SearchInput/SearchInput";
+export { default as DemandPropertyButtons } from "./DemandPropertyButtons/DemandPropertyButtons";
+export { default as DemandPropertyModal } from "./DemandPropertyModal/DemandPropertyModal";
+export { default as AddProperty } from "./DemandPropertyModal/AddProperty";
+export { default as AddDemand } from "./DemandPropertyModal/AddDemand";
