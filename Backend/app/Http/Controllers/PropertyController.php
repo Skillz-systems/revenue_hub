@@ -13,6 +13,67 @@ class PropertyController extends Controller
 {
 
     /**
+     * List all Properties
+     * @OA\GET (
+     *     path="/api/property",
+     *     tags={"Property"},
+     *     summary="Get all properties",
+     *     description="Show list of all properties",
+     *     operationId="getProperties",
+     *     security={{"api_key":{}}},
+     *     @OA\Response(
+     *         response=200,
+     *         description="List of all properties",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="data", type="array",
+     *                  @OA\Items(
+     *                     type="object",
+     *                      @OA\Property(property="pid", type="integer", example="12354654"),
+     *                      @OA\Property(property="prop_addr", type="string", example="21 akidewa house 4"),
+     *                      @OA\Property(property="street_name", type="string", example="4553532"),
+     *                      @OA\Property(property="asset_no", type="string", example="566664565646"),
+     *                      @OA\Property(property="cadastral_zone", type="string", example="2"),
+     *                      @OA\Property(property="prop_type", type="string", example="residential"),
+     *                      @OA\Property(property="prop_use", type="string", example="school"),
+     *                      @OA\Property(property="rating_dist", type="string", example="oko"),
+     *                      @OA\Property(property="annual_value", type="string", example="233165498"),
+     *                      @OA\Property(property="rate_payable", type="string", example="89789"),
+     *                      @OA\Property(property="arrears", type="string", example="54654656"),
+     *                      @OA\Property(property="penalty", type="string", example="5546546"),
+     *                      @OA\Property(property="grand_total", type="string", example="56456"),
+     *                      @OA\Property(property="category", type="string", example="school"),
+     *                      @OA\Property(property="group", type="string", example="commercial"),
+     *                      @OA\Property(property="active", type="string", example="active"),
+     *                  ),
+     *             ),
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response="404",
+     *         description="Not found",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="status", type="string", example="error"),
+     *             @OA\Property(property="message", type="string", example="No property found"),
+     *         )
+     *     ),
+     * )
+     */
+
+    public function index()
+    {
+        $properties = Property::all();
+
+        if ($properties) {
+            return ShowPropertyResource::collection($properties);
+        }
+
+        return response()->json([
+            "status" => "error",
+            "message" => "No properties found",
+        ], 404);
+    }
+
+    /**
      * Add new property details.
          /**
      * @OA\POST(
