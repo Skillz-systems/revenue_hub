@@ -1,4 +1,16 @@
 const data = {
+  properties: {
+    propertyId: [
+      "13012894",
+      "13073105",
+      "13948573",
+      "13275981",
+      "13095642",
+      "13785429",
+      "13425736",
+      "13246857",
+    ],
+  },
   section: [
     {
       id: 1,
@@ -203,7 +215,7 @@ const data = {
           parentKey: "3",
           inputName: "occupantsEmail",
           placeholder: "Occupants Email",
-          inputType: "text",
+          inputType: "email",
           required: true,
         },
         {

@@ -1,4 +1,4 @@
-export default function DemandProperty({
+export default function DemandPropertyButtons({
   iconOne,
   iconTwo,
   buttonTextOne,
