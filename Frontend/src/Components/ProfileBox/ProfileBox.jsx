@@ -15,6 +15,7 @@ export default function ProfileBox({
         <span
           className="flex items-center justify-center w-5 h-5 text-xs border rounded-full text-color-text-two bg-custom-blue-200 border-custom-color-two"
           onClick={onHideSideBarMenu}
+          title="Shrink Sidebar Menu"
         >
           {profileIcon}
         </span>
