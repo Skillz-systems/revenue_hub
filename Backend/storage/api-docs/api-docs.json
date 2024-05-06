@@ -940,6 +940,104 @@
             }
         },
         "/api/staff": {
+            "get": {
+                "tags": [
+                    "Staff"
+                ],
+                "summary": "Get all staffs",
+                "description": "Show list of all staffs",
+                "operationId": "getStaffs",
+                "responses": {
+                    "200": {
+                        "description": "List of all staffs",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "properties": {
+                                                    "id": {
+                                                        "type": "integer",
+                                                        "example": 9
+                                                    },
+                                                    "name": {
+                                                        "type": "string",
+                                                        "example": "abc example2.com"
+                                                    },
+                                                    "email": {
+                                                        "type": "string",
+                                                        "example": "abc@example2.com"
+                                                    },
+                                                    "phone": {
+                                                        "type": "string",
+                                                        "example": "65728338352"
+                                                    },
+                                                    "zone": {
+                                                        "type": "string",
+                                                        "example": "nigeria"
+                                                    },
+                                                    "role": {
+                                                        "properties": {
+                                                            "id": {
+                                                                "type": "integer",
+                                                                "example": 2
+                                                            },
+                                                            "name": {
+                                                                "type": "string",
+                                                                "example": "Admin"
+                                                            }
+                                                        },
+                                                        "type": "object"
+                                                    },
+                                                    "created_at": {
+                                                        "type": "string",
+                                                        "format": "date-time",
+                                                        "example": "2024-05-01T20:44:43.000000Z"
+                                                    },
+                                                    "updated_at": {
+                                                        "type": "string",
+                                                        "format": "date-time",
+                                                        "example": "2024-05-01T20:44:43.000000Z"
+                                                    }
+                                                },
+                                                "type": "object"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "string",
+                                            "example": "error"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "No User found"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "api_key": []
+                    }
+                ]
+            },
             "post": {
                 "tags": [
                     "Staff"
