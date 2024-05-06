@@ -363,4 +363,58 @@ class PropertyController extends Controller
             "message" => "An error occured",
         ], 401);
     }
+
+
+    /**
+     * Delete Property
+     * @OA\Delete (
+     *     path="/api/property/{property}",
+     *     tags={"Property"},
+     *     summary="Delete a property",
+     *     description="This allow staff admin to delete property",
+     *     operationId="deleteProperty",
+     *     security={{"api_key":{}}},
+     *     @OA\Parameter(
+     *         in="path",
+     *         name="property",
+     *         required=true,
+     *         @OA\Schema(type="integer")
+     *     ),
+     
+     *     @OA\Response(
+     *         response=200,
+     *         description="Property deleted successfully",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="status", type="string", example="success"),
+     *             @OA\Property(property="message", type="string", example="Property deleted successfully"),
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response="404",
+     *         description="Not found",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="status", type="string", example="error"),
+     *             @OA\Property(property="message", type="string", example="Property not found"),
+     *         )
+     *     ),
+     * )
+     */
+
+    public function destroy($property)
+    {
+        $deleteProperty = Property::where('pid', $property)->first();
+        if ($deleteProperty) {
+            $deleteProperty->delete();
+            return response()->json([
+                "status" => "success",
+                "message" => "Property deleted successfully",
+            ], 200);
+        }
+
+
+        return response()->json([
+            "status" => "error",
+            "message" => "Property not found",
+        ], 404);
+    }
 }
