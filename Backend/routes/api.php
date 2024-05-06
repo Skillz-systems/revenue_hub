@@ -21,7 +21,7 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 });
 
 // Staff login route
-//Route::post('auth/login', [AuthController::class, 'login']);
+Route::post('auth/login', [AuthController::class, 'login']);
 
 // staff store new password route
 Route::post('auth/store-password/', [AuthController::class, 'storePassword']);
