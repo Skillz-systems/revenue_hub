@@ -27,4 +27,7 @@ class Property extends Model
         'group',
         'active',
     ];
+
+
+    protected $primaryKey = 'pid';
 }
