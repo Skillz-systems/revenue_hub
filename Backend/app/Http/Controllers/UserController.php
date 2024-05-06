@@ -227,10 +227,54 @@ class UserController extends Controller
     }
 
     /**
-     * Remove the specified resource from storage.
+     * Delete Staff
+     * @OA\Delete (
+     *     path="/api/staff/{staff}",
+     *     tags={"Staff"},
+     *     summary="Delete a staff",
+     *     description="This allow staff admin to delete staff",
+     *     operationId="deleteStaff",
+     *     security={{"api_key":{}}},
+     *     @OA\Parameter(
+     *         in="path",
+     *         name="staff",
+     *         required=true,
+     *         @OA\Schema(type="integer")
+     *     ),
+     
+     *     @OA\Response(
+     *         response=200,
+     *         description="Staff deleted successfully",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="status", type="string", example="success"),
+     *             @OA\Property(property="message", type="string", example="Staff deleted successfully"),
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response="404",
+     *         description="Not found",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="status", type="string", example="error"),
+     *             @OA\Property(property="message", type="string", example="Staff not found"),
+     *         )
+     *     ),
+     * )
      */
-    public function destroy(User $user)
+    public function destroy($user)
     {
-        //
+        $deleteStaff = User::where('id', $user)->first();
+        if ($deleteStaff) {
+            $deleteStaff->delete();
+            return response()->json([
+                "status" => "success",
+                "message" => "Staff deleted successfully",
+            ], 200);
+        }
+
+
+        return response()->json([
+            "status" => "error",
+            "message" => "Staff not found",
+        ], 404);
     }
 }
