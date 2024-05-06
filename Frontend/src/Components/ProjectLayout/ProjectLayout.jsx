@@ -7,6 +7,7 @@ import {Card} from "../Index";
 import SideBarMenu from "../../Pages/SideBarMenu/SideBarMenu";
 import images from '../../assets/index';
 import TopNavigation from "../TopNavigation/TopNavigation";
+import PropertyCard from "../PropertyCard/PropertyCard";
 
 
 export default function ProjectLayout() {
@@ -138,7 +139,7 @@ export default function ProjectLayout() {
       /></div>
         </div>
         
-
+        <PropertyCard />
         RIGHT
       </div>
     </div>
