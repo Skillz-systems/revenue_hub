@@ -1,7 +1,9 @@
 <?php
 
+use App\Models\User;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\ForgotPasswordController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -30,3 +32,6 @@ Route::middleware('auth:sanctum')->group(function () {
 
     Route::apiResource('/staff', UserController::class);
 });
+
+// staff forgot password route 
+Route::post('forgot-password', [ForgotPasswordController::class, 'forgotPassword']);
