@@ -128,18 +128,18 @@ export default function AddProperty({
               </button>
             ))}
           </div>
-          <div className="flex-col space-y-2">
+          <div className="flex-col pb-8 space-y-3">
             {data.section.map(
               (sectionItem) =>
                 activateState === sectionItem.id &&
                 sectionItem.fieldData.map((fieldItem) =>
-                  fieldItem.inputType === "text" ? (
+                  fieldItem.inputType === "text" || "email" ? (
                     <input
                       key={fieldItem.id}
-                      type="text"
+                      type={fieldItem.inputName === "text" ? "text" : "email"}
                       name={fieldItem.inputName}
                       value={formData[fieldItem.inputName] || ""}
-                      className={`w-full text-xs font-lexend px-4 py-2 border-0.6 outline-none rounded ${
+                      className={`w-full text-xs font-lexend h-12 px-4 py-2 border-0.6 outline-none rounded ${
                         formData[fieldItem.inputName]
                           ? "border-color-dark-green text-color-text-one"
                           : errorField === fieldItem.inputName
@@ -159,7 +159,7 @@ export default function AddProperty({
                       key={fieldItem.id}
                       name={fieldItem.inputName}
                       value={formData[fieldItem.inputName] || ""}
-                      className={`w-full text-xs font-lexend px-3 py-2 border-0.6 outline-none rounded ${
+                      className={`w-full text-xs font-lexend h-12 px-3 py-2 border-0.6 outline-none rounded ${
                         formData[fieldItem.inputName]
                           ? "border-color-dark-green text-color-text-one"
                           : errorField === fieldItem.inputName

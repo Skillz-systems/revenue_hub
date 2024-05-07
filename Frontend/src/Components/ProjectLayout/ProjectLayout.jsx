@@ -120,7 +120,7 @@ export default function ProjectLayout() {
         )}
       </div>
       <div
-        className={`flex-col bg-white border-0.6 border-custom-border rounded ${
+        className={`flex-col p-4 bg-white border-0.6 border-custom-border rounded ${
           transitionSection
             ? "w-full transition-all ease-in-out duration-500"
             : "w-5/6"
