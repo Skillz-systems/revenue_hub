@@ -10,6 +10,11 @@ export default function DemandInvoiceTable({ customTableData }) {
   const [displaySearchIcon, setDisplaySearchIcon] = useState(true);
   const [activeMenu, setActiveMenu] = useState(1);
   const [query, setQuery] = useState("");
+  const [editModal, setEditModal] = useState(null);
+
+  const handleEditModal = (recordId) => {
+    setEditModal(editModal === recordId ? null : recordId);
+  };
 
   useEffect(() => setActiveMenu(1), [query !== ""]);
 
@@ -117,10 +122,31 @@ export default function DemandInvoiceTable({ customTableData }) {
             <RiDeleteBin5Fill />
           </span>
           <span
-            className="border-0.6 border-custom-grey-100 text-custom-grey-300 px-2 py-2.5 rounded text-base hover:cursor-pointer"
-            title="Edit Invoice"
+            className="border-0.6 relative border-custom-grey-100 text-custom-grey-300 px-2 py-2.5 rounded text-base"
+            onClick={() => handleEditModal(record.id)}
           >
-            <HiOutlineDotsHorizontal />
+            <span title="Edit Invoice" className="hover:cursor-pointer">
+              <HiOutlineDotsHorizontal />
+            </span>
+            {editModal === record.id && (
+              <span className="absolute space-y-2 top-0 z-10 flex-col w-40 p-4 text-xs bg-white rounded shadow-md -left-44 border-0.6 border-custom-grey-100 text-color-text-black font-lexend">
+                <p className="hover:cursor-pointer" title="View Demand Notice">
+                  View Demand Notice
+                </p>
+                <p className="hover:cursor-pointer" title="View Property">
+                  View Property
+                </p>
+                {record.paymentStatus === "Expired" ? (
+                  <p className="hover:cursor-pointer" title="Generate Reminder">
+                    Generate Reminder
+                  </p>
+                ) : record.paymentStatus === "Unpaid" ? (
+                  <p className="hover:cursor-pointer" title="View Reminder">
+                    View Reminder
+                  </p>
+                ) : null}
+              </span>
+            )}
           </span>
         </span>
       </div>
