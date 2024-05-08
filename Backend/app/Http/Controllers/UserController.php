@@ -4,12 +4,13 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use App\Mail\RegisterMail;
-use App\Service\AuthService;
 use Illuminate\Http\Request;
 use App\Service\StaffService;
 use Illuminate\Support\Facades\Mail;
 use App\Http\Requests\StoreUserRequest;
+use App\Http\Resources\ShowUserResource;
 use App\Http\Resources\StoreUserResource;
+use Illuminate\Support\Facades\Validator;
 
 class UserController extends Controller
 {
@@ -46,6 +47,7 @@ class UserController extends Controller
      *             @OA\Property(property="message", type="string", example="Register Successfully"),
      *             @OA\Property(property="user", type="object",
      *                 @OA\Property(property="id", type="integer", example=9),
+     *                 @OA\Property(property="name", type="string", example="abc example2.com"),
      *                 @OA\Property(property="email", type="string", example="abc@example2.com"),
      *                 @OA\Property(property="phone", type="string", example="65728338352"),
      *                 @OA\Property(property="zone", type="string", example="nigeria"),
@@ -94,20 +96,134 @@ class UserController extends Controller
         //
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(User $user)
-    {
-        //
-    }
+
 
     /**
-     * Update the specified resource in storage.
+     * Update the staff details.
+         /**
+     * @OA\PUT(
+     *     path="/api/staff/{staff}",
+     *     tags={"Staff"},
+     *     summary="Update Staff Details",
+     *     description="This allow staff member to update their details",
+     *     operationId="updateStaff",
+     *     security={{"api_key":{}}},
+     *     @OA\Parameter(
+     *         in="path",
+     *         name="staff",
+     *         required=true,
+     *         @OA\Schema(type="string")
+     *     ), 
+     *     @OA\RequestBody(
+     *         @OA\MediaType(
+     *             mediaType="application/json",
+     *             @OA\Schema(
+     *                 @OA\Property(
+     *                      type="object",
+     *                      @OA\Property(
+     *                          property="name",
+     *                          type="string"
+     *                      ),
+     *                      @OA\Property(
+     *                          property="email",
+     *                          type="string"
+     *                      ),
+     *                      @OA\Property(
+     *                          property="phone",
+     *                          type="string"
+     *                      ),
+     *                      @OA\Property(
+     *                          property="zone",
+     *                          type="string"
+     *                      ),
+     *                 ),
+     *                 example={
+     *                     "name":"example name",
+     *                     "email":"example email",
+     *                     "phone":"example phone",
+     *                     "zone":"example zone"
+     *                }
+     *             )
+     *         )
+     *      ),
+     *     @OA\Response(
+     *         response="200",
+     *         description="Update Successful",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="status", type="string", example="success"),
+     *             @OA\Property(property="message", type="string", example="Update Successfully"),
+     *             @OA\Property(property="user", type="object",
+     *                 @OA\Property(property="id", type="integer", example=9),
+     *                 @OA\Property(property="name", type="string", example="abc kel"),
+     *                 @OA\Property(property="email", type="string", example="abc@example2.com"),
+     *                 @OA\Property(property="phone", type="string", example="65728338352"),
+     *                 @OA\Property(property="zone", type="string", example="nigeria"),
+     *                 @OA\Property(property="role", type="object",
+     *                     @OA\Property(property="id", type="integer", example=2),
+     *                     @OA\Property(property="name", type="string", example="Admin"),
+     *                 ),
+     *             ),
+     *        ),
+     *     ),
+     *     @OA\Response(
+     *         response="400",
+     *         description="All Fields are Required",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="status", type="string", example="error"),
+     *             @OA\Property(property="message", type="string", example="All Fields are required"),
+     *             @OA\Property(property="data", type="object",
+     *                  @OA\Property(property="name", type="string", example="name is required"),
+     *                  @OA\Property(property="email", type="string", example="email is required"),
+     *                  @OA\Property(property="phone", type="string", example="phone is required"),
+     *                  @OA\Property(property="zone", type="string", example="zone is required"),
+     *             ),
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response="401",
+     *         description="Credential error",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="status", type="string", example="error"),
+     *             @OA\Property(property="message", type="string", example="Credential error: You are not authorize"),
+     *         )
+     *     ),
+     *
+     * )
+     *
+     *
+     *
+     *
      */
-    public function update(Request $request, User $user)
+
+    public function update(Request $request, User $staff)
     {
-        //
+
+
+        $validator = Validator::make($request->all(), [
+            'name' => ['required', 'string', 'max:255'],
+            'email' => ['required', 'string'],
+            'phone' => ['required', 'string', 'min:11'],
+            'zone' => ['required', 'string', 'max:255'],
+        ]);
+
+
+        if ($validator->fails()) {
+            return response()->json([
+                'status' => 'error',
+                'message' => "All fields are required ",
+                "data" => $validator->errors()
+            ], 400);
+        }
+
+        $update = (new StaffService)->updateStaff($request, $staff);
+        if ($update) {
+            return new ShowUserResource($update);
+        }
+
+        return response()->json([
+            "status" => "error",
+            "message" => "Credential error: You are not authorize",
+        ], 401);
     }
 
     /**

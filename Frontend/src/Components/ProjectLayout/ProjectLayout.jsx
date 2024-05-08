@@ -2,15 +2,24 @@ import { useState } from "react";
 import MenuItemAlt from "../MenuItem/MenuItemAlt";
 import { GiHamburgerMenu } from "react-icons/gi";
 import { FiSearch } from "react-icons/fi";
-import MenuItemData from "../MenuItem/MenuItemData";
+import {
+  TopNavigation,
+  SideBarMenu,
+  MenuItemData,
+  DemandPropertyModal,
+  AddProperty,
+  AddDemand,
+} from "../Index";
 import Card from "../CardComponents/Card";
-import SideBarMenu from "../../Pages/SideBarMenu/SideBarMenu";
 
 export default function ProjectLayout() {
   const [displaySideBarMenu, setdisplaySideBarMenu] = useState(true);
   const [transitionSection, setTransitionSection] = useState(false);
   const [activeMenuItem, setActiveMenuItem] = useState("Overview Component");
   const [searchClicked, setSearchClicked] = useState(false);
+  const [displayAddPropertyModal, setDisplayAddPropertyModal] = useState(false);
+  const [displayAddDemandModal, setDisplayAddDemandModal] = useState(false);
+  const [propertyModalTransition, setPropertyModalTransition] = useState(false);
   const menuItems = MenuItemData();
 
   const handleMenuItemClick = (component) => {
@@ -34,7 +43,9 @@ export default function ProjectLayout() {
   };
 
   return (
-    <div className={`flex justify-between h-screen bg-custom-blue-100 lg:p-4 `}>
+    <div
+      className={`flex relative justify-between h-screen bg-custom-blue-100 lg:p-4 `}
+    >
       <div
         className={`${!transitionSection ? "flex w-60" : "flex pt-1 w-14"} `}
       >
@@ -42,6 +53,15 @@ export default function ProjectLayout() {
           <SideBarMenu
             hideSideBar={hideSideBar}
             searchClicked={searchClicked}
+            showAddPropertyModal={() => {
+              setDisplayAddPropertyModal(true);
+              setTimeout(() => {
+                setPropertyModalTransition(true);
+              }, 250);
+            }}
+            showAddDemandModal={() => {
+              setDisplayAddDemandModal(true);
+            }}
           />
         ) : (
           <div className="space-y-14" style={{ height: "95vh" }}>
@@ -106,17 +126,53 @@ export default function ProjectLayout() {
             : "w-5/6"
         }`}
       >
-        <Card
-        icon={<img src="path/to/icon.png" alt="Icon" />}
-        height="25%"
-        width="100%"
-        title="Custom Title"
-        subtitle="Custom Subtitle"
-        value="Custom Value"
-      />
-
-        RIGHT
+        <TopNavigation
+          userName={"John"}
+          handleMenuClick={() => {
+            alert("Opened Menu Modal");
+          }}
+        />
+        {/* <Card
+          icon={<img src="path/to/icon.png" alt="Icon" />}
+          height="25%"
+          width="100%"
+          title="Custom Title"
+          subtitle="Custom Subtitle"
+          value="Custom Value"
+        /> */}
       </div>
+
+      {displayAddPropertyModal ? (
+        <DemandPropertyModal
+          modalStyle={
+            "absolute top-0 left-0 z-20 flex items-start justify-end w-full h-screen p-4 overflow-hidden bg-black bg-opacity-40"
+          }
+        >
+          <AddProperty
+            hideAddPropertyModal={() => {
+              setDisplayAddPropertyModal(false);
+              setTimeout(() => {
+                setPropertyModalTransition(false);
+              }, 300);
+            }}
+            propertyModalTransition={propertyModalTransition}
+          />
+        </DemandPropertyModal>
+      ) : null}
+
+      {displayAddDemandModal ? (
+        <DemandPropertyModal
+          modalStyle={
+            "absolute top-0 left-0 z-20 w-full h-screen p-4 overflow-hidden bg-custom-blue-100"
+          }
+        >
+          <AddDemand
+            hideAddDemandModal={() => {
+              setDisplayAddDemandModal(false);
+            }}
+          />
+        </DemandPropertyModal>
+      ) : null}
     </div>
   );
 }
