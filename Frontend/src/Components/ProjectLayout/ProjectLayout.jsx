@@ -10,21 +10,21 @@ import {
   DemandPropertyModal,
   AddProperty,
   AddDemand,
-  DemandNotice,
+  Overview,
+  CardData,
 } from "../Index";
 
 export default function ProjectLayout() {
   const [displaySideBarMenu, setdisplaySideBarMenu] = useState(true);
   const [transitionSection, setTransitionSection] = useState(false);
-  const [activeMenuItem, setActiveMenuItem] = useState(
-    "Demand Notice Component"
-  );
-  const [activeComponent, setActiveComponent] = useState(<DemandNotice />);
+  const [activeMenuItem, setActiveMenuItem] = useState("Overview Component");
+  const [activeComponent, setActiveComponent] = useState(<Overview />);
   const [searchClicked, setSearchClicked] = useState(false);
   const [displayAddPropertyModal, setDisplayAddPropertyModal] = useState(false);
   const [displayAddDemandModal, setDisplayAddDemandModal] = useState(false);
   const [propertyModalTransition, setPropertyModalTransition] = useState(false);
   const menuItems = MenuItemData();
+  const cardData = CardData();
 
   const handleMenuItemClick = (component) => {
     setActiveMenuItem(component);
@@ -113,7 +113,7 @@ export default function ProjectLayout() {
         )}
       </div>
       <div
-        className={`flex-col p-4 space-y-8 bg-white border-0.6 border-b-0 rounded-b-none border-custom-border rounded overflow-auto overscroll-contain scrollbar-thin scrollbar-thumb-color-text-two scrollbar-track-white ${
+        className={`flex-col items-center justify-center p-4 pt-1 space-y-8 bg-white border-0.6 border-b-0 rounded-b-none border-custom-border rounded overflow-auto overscroll-contain scrollbar-thin scrollbar-thumb-color-text-two scrollbar-track-white ${
           transitionSection
             ? "w-full transition-all ease-in-out duration-500"
             : "w-5/6"
@@ -125,20 +125,10 @@ export default function ProjectLayout() {
             alert("Opened Menu Modal");
           }}
         />
-        <Card
-          icon={<img src="path/to/icon.png" alt="Icon" />}
-          height="25%"
-          width="100%"
-          title="Custom Title"
-          subtitle="Custom Subtitle"
-          value="Custom Value"
-        />
+        <Card cardData={cardData} />
         {activeComponent}
-        <p className="flex items-center justify-center text-xs font-lexend text-color-text-two">
-          This portal is a property of REVENUE HUB
-        </p>
       </div>
-      
+
       {displayAddPropertyModal ? (
         <DemandPropertyModal
           modalStyle={

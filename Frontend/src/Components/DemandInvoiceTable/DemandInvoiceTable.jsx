@@ -121,11 +121,12 @@ export default function DemandInvoiceTable({ customTableData }) {
           >
             <RiDeleteBin5Fill />
           </span>
-          <span
-            className="border-0.6 relative border-custom-grey-100 text-custom-grey-300 px-2 py-2.5 rounded text-base"
-            onClick={() => handleEditModal(record.id)}
-          >
-            <span title="Edit Invoice" className="hover:cursor-pointer">
+          <span className="border-0.6 relative border-custom-grey-100 text-custom-grey-300 px-2 py-2.5 rounded text-base">
+            <span
+              title="Edit Invoice"
+              className="hover:cursor-pointer"
+              onClick={() => handleEditModal(record.id)}
+            >
               <HiOutlineDotsHorizontal />
             </span>
             {editModal === record.id && (

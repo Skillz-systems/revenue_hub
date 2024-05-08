@@ -95,11 +95,12 @@ export default function TransactionsTable({ customTableData }) {
           {record.date}
         </span>
         <span className="flex flex-wrap items-center justify-center gap-1 width-12-percent">
-          <span
-            className="border-0.6 relative border-custom-grey-100 text-custom-grey-300 px-2 py-2.5 rounded text-base hover:cursor-pointer"
-            onClick={() => handleEditModal(record.id)}
-          >
-            <span title="Edit Transaction" className="hover:cursor-pointer">
+          <span className="border-0.6 relative border-custom-grey-100 text-custom-grey-300 px-2 py-2.5 rounded text-base hover:cursor-pointer">
+            <span
+              title="Edit Transaction"
+              className="hover:cursor-pointer"
+              onClick={() => handleEditModal(record.id)}
+            >
               <HiOutlineDotsHorizontal />
             </span>
             {editModal === record.id && (
