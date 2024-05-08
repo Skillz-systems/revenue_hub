@@ -7,7 +7,7 @@ import { RiDeleteBin5Fill } from "react-icons/ri";
 import { HiOutlineDotsHorizontal } from "react-icons/hi";
 import { TableSearchInput } from "../Index";
 
-export default function CustomTable({ customTableData }) {
+export default function DemandInvoiceTable({ customTableData }) {
   const [displaySearchIcon, setDisplaySearchIcon] = useState(true);
   const [activeMenu, setActiveMenu] = useState(1);
   const [query, setQuery] = useState("");

@@ -1,10 +1,10 @@
 import React from "react";
-import { CustomTable, customTableData } from "../Index";
+import { DemandInvoiceTable, customTableData } from "../Index";
 
 export default function DemandNotice() {
   return (
     <div>
-      <CustomTable customTableData={customTableData.demandNotice} />
+      <DemandInvoiceTable customTableData={customTableData.demandNotice} />
     </div>
   );
 }

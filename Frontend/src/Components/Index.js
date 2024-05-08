@@ -8,8 +8,8 @@ export { default as DemandPropertyButtons } from "./DemandPropertyButtons/Demand
 export { default as DemandPropertyModal } from "./DemandPropertyModal/DemandPropertyModal";
 export { default as AddProperty } from "./DemandPropertyModal/AddProperty";
 export { default as AddDemand } from "./DemandPropertyModal/AddDemand";
-export { default as CustomTable } from "./CustomTable/CustomTable";
+export { default as DemandInvoiceTable } from "./DemandInvoiceTable/DemandInvoiceTable";
 export { default as DemandNotice } from "./DemandNotice/DemandNotice";
 export { default as Transactions } from "./Transactions/Transactions";
-export { data as customTableData } from "./CustomTable/customTableData";
-export { default as TableSearchInput } from "./CustomTable/TableSearchInput";
+export { data as customTableData } from "./DemandInvoiceTable/customTableData";
+export { default as TableSearchInput } from "./DemandInvoiceTable/TableSearchInput";
