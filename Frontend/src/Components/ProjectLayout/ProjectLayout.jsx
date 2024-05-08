@@ -10,7 +10,8 @@ import {
   AddProperty,
   AddDemand,
 } from "../Index";
-import Card from "../CardComponents/Card";
+import { Card, PropertyCard } from "../Index";
+
 
 export default function ProjectLayout() {
   const [displaySideBarMenu, setdisplaySideBarMenu] = useState(true);
@@ -120,11 +121,10 @@ export default function ProjectLayout() {
         )}
       </div>
       <div
-        className={`flex-col p-4 bg-white border-0.6 border-custom-border rounded ${
-          transitionSection
+        className={`flex-col p-4 bg-white border-0.6 border-custom-border rounded ${transitionSection
             ? "w-full transition-all ease-in-out duration-500"
             : "w-5/6"
-        }`}
+          }`}
       >
         <TopNavigation
           userName={"John"}
@@ -132,14 +132,16 @@ export default function ProjectLayout() {
             alert("Opened Menu Modal");
           }}
         />
-        {/* <Card
-          icon={<img src="path/to/icon.png" alt="Icon" />}
-          height="25%"
-          width="100%"
-          title="Custom Title"
-          subtitle="Custom Subtitle"
-          value="Custom Value"
-        /> */}
+
+        <section className="grid grid-cols-1 sm:grid-cols-2  md:grid-cols-3 gap-2 w-full">
+          <PropertyCard />
+          <PropertyCard />
+          <PropertyCard />
+          <PropertyCard />
+          <PropertyCard />
+          <PropertyCard />
+        </section>
+
       </div>
 
       {displayAddPropertyModal ? (

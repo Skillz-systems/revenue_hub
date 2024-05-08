@@ -4,7 +4,7 @@ import images from '../../assets/index';
 
 const Card = ({ icon, title, subtitle, value, style, withSymbol = false, datepicker = false, dateContent, }) => {
     return (
-        <div className={` flex flex-col justify-between shadow-md p-4 rounded-md w-full h-[160px] bg-[#F4F6FF] border-border-red-500 ${style}`} >
+        <div className={` flex flex-col justify-between shadow-md p-2 rounded-md w-full h-[160px] border-border-red-500 ${style}`} >
             <div className='flex justify-between'>
                 <div className="flex space-x-4">
                     <div className="size-[40px]">
@@ -24,9 +24,6 @@ const Card = ({ icon, title, subtitle, value, style, withSymbol = false, datepic
                     </div>)}
                 </div>
             </div>
-
-
-
             <div className="">
                 {withSymbol && (<h3 className='text-slate-600'><img src={images.NairaSymbol} alt="Icon" /></h3>)}
                 <h1 className='font-normal font-Lora text-[32px]'>{value}</h1>
@@ -36,5 +33,3 @@ const Card = ({ icon, title, subtitle, value, style, withSymbol = false, datepic
 };
 
 export default Card;
-
-

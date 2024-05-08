@@ -8,3 +8,5 @@ export { default as DemandPropertyButtons } from "./DemandPropertyButtons/Demand
 export { default as DemandPropertyModal } from "./DemandPropertyModal/DemandPropertyModal";
 export { default as AddProperty } from "./DemandPropertyModal/AddProperty";
 export { default as AddDemand } from "./DemandPropertyModal/AddDemand";
+export { default as Card } from "./Card/Card";
+export { default as PropertyCard } from "./PropertyCard/PropertyCard";
