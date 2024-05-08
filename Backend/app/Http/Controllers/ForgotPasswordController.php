@@ -87,4 +87,90 @@ class ForgotPasswordController extends Controller
         }
     
     }
+
+    // function to reset the password 
+    // this function accept "token", "email", "password", "password_confirmation" as json then 
+    // when the password reset is successful the token is going to be removed from the database 
+    public function reset(Request $request)
+    {
+       /**
+ * @OA\Post(
+ *     path="api/reset-password",
+ *     tags={"Authentication"},
+ *     summary="Reset Password",
+ *     description="This endpoint allows users to reset their password by providing a valid token, email, and new password.",
+ *     requestBody={
+ *         required=true,
+ *         description="User's email, reset token, and new password",
+ *         content={
+ *             "application/json": {
+ *                 schema={
+ *                     required={"token", "email", "password", "password_confirmation"},
+ *                     properties={
+ *                         token={type="string", description="The reset token received via email", example="abcdef123456"},
+ *                         email={type="string", format="email", description="User's email address", example="user@example.com"},
+ *                         password={type="string", format="password", description="New password", example="new_password123"},
+ *                         password_confirmation={type="string", format="password", description="Confirmation of new password", example="new_password123"}
+ *                     }
+ *                 }
+ *             }
+ *         }
+ *     },
+ *     @OA\Response(
+ *         response=200,
+ *         description="Password reset successfully",
+ *         @OA\JsonContent(
+ *             @OA\Property(
+ *                 property="message",
+ *                 type="string",
+ *                 example="Password reset successfully"
+ *             )
+ *         )
+ *     ),
+ *     @OA\Response(
+ *         response=500,
+ *         description="Internal Server Error",
+ *         @OA\JsonContent(
+ *             @OA\Property(
+ *                 property="message",
+ *                 type="string",
+ *                 example="Something went wrong"
+ *             )
+ *         )
+ *     )
+ * )
+ */
+ 
+        $request->validate([
+            'token' => 'required',
+            'email' => 'required|email',
+            'password' => ['required', 'confirmed', RulesPassword::defaults()],
+        ]);
+
+        $status = Password::reset(
+            $request->only('email', 'password', 'password_confirmation', 'token'),
+            function ($user) use ($request) {
+                $user->forceFill([
+                    'password' => Hash::make($request->password),
+                    'remember_token' => Str::random(60),
+                ])->save();
+
+                $user->tokens()->delete();
+
+                event(new PasswordReset($user));
+            }
+        );
+
+        if ($status == Password::PASSWORD_RESET) {
+            return response([
+                'message'=> 'Password reset successfully'
+            ]);
+        }
+
+        return response([
+            'message'=> __($status)
+        ], 500);
+
+    }
+
 }
