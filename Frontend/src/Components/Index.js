@@ -8,3 +8,7 @@ export { default as DemandPropertyButtons } from "./DemandPropertyButtons/Demand
 export { default as DemandPropertyModal } from "./DemandPropertyModal/DemandPropertyModal";
 export { default as AddProperty } from "./DemandPropertyModal/AddProperty";
 export { default as AddDemand } from "./DemandPropertyModal/AddDemand";
+export { default as CustomTable } from "./CustomTable/CustomTable";
+export { default as DemandNotice } from "./DemandNotice/DemandNotice";
+export { default as Transactions } from "./Transactions/Transactions";
+export { data as customTableData } from "./CustomTable/customTableData";

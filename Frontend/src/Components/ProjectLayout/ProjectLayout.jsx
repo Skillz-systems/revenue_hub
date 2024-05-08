@@ -9,13 +9,16 @@ import {
   DemandPropertyModal,
   AddProperty,
   AddDemand,
+  DemandNotice,
 } from "../Index";
-import Card from "../CardComponents/Card";
 
 export default function ProjectLayout() {
   const [displaySideBarMenu, setdisplaySideBarMenu] = useState(true);
   const [transitionSection, setTransitionSection] = useState(false);
-  const [activeMenuItem, setActiveMenuItem] = useState("Overview Component");
+  const [activeMenuItem, setActiveMenuItem] = useState(
+    "Demand Notice Component"
+  );
+  const [activeComponent, setActiveComponent] = useState(<DemandNotice />);
   const [searchClicked, setSearchClicked] = useState(false);
   const [displayAddPropertyModal, setDisplayAddPropertyModal] = useState(false);
   const [displayAddDemandModal, setDisplayAddDemandModal] = useState(false);
@@ -44,10 +47,12 @@ export default function ProjectLayout() {
 
   return (
     <div
-      className={`flex relative justify-between h-screen bg-custom-blue-100 lg:p-4 `}
+      className={`flex relative justify-between h-screen bg-custom-blue-100 lg:p-4 lg:pb-0 `}
     >
       <div
-        className={`${!transitionSection ? "flex w-60" : "flex pt-1 w-14"} `}
+        className={`flex-col overflow-y-auto overscroll-contain scrollbar-thin scrollbar-thumb-color-text-two scrollbar-track-white ${
+          transitionSection ? "pt-1 w-14" : "w-2/12"
+        } `}
       >
         {displaySideBarMenu === true ? (
           <SideBarMenu
@@ -62,18 +67,13 @@ export default function ProjectLayout() {
             showAddDemandModal={() => {
               setDisplayAddDemandModal(true);
             }}
+            handleMenuItemClick={handleMenuItemClick}
+            activeMenuItem={activeMenuItem}
+            setActiveComponent={setActiveComponent}
           />
         ) : (
-          <div className="space-y-14" style={{ height: "95vh" }}>
-            <div
-              className=""
-              style={{
-                height: "20vh",
-                display: "flex",
-                flexDirection: "column",
-                gap: "1.25rem",
-              }}
-            >
+          <div className="space-y-14 w-9">
+            <div className="flex-col space-y-4">
               <span
                 className="flex items-center justify-center text-2xl w-9 text-primary-color"
                 title="Expand Sidebar Menu"
@@ -89,15 +89,7 @@ export default function ProjectLayout() {
                 <FiSearch />
               </span>
             </div>
-            <div
-              className="space-y-5 w-9"
-              style={{
-                height: "55vh",
-                display: "flex",
-                flexDirection: "column",
-                justifyContent: "space-evenly",
-              }}
-            >
+            <div className="flex-col space-y-5 justify-evenly w-9">
               {menuItems.map((item, index) => (
                 <>
                   <MenuItemAlt
@@ -120,7 +112,7 @@ export default function ProjectLayout() {
         )}
       </div>
       <div
-        className={`flex-col p-4 bg-white border-0.6 border-custom-border rounded ${
+        className={`flex-col p-4 space-y-8 bg-white border-0.6 border-b-0 rounded-b-none border-custom-border rounded overflow-auto overscroll-contain scrollbar-thin scrollbar-thumb-color-text-two scrollbar-track-white ${
           transitionSection
             ? "w-full transition-all ease-in-out duration-500"
             : "w-5/6"
@@ -132,14 +124,11 @@ export default function ProjectLayout() {
             alert("Opened Menu Modal");
           }}
         />
-        {/* <Card
-          icon={<img src="path/to/icon.png" alt="Icon" />}
-          height="25%"
-          width="100%"
-          title="Custom Title"
-          subtitle="Custom Subtitle"
-          value="Custom Value"
-        /> */}
+        {activeComponent}
+
+        <p className="flex items-center justify-center text-xs font-lexend text-color-text-two">
+          This portal is a property of REVENUE HUB
+        </p>
       </div>
 
       {displayAddPropertyModal ? (
