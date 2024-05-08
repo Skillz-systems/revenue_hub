@@ -13,6 +13,7 @@ import {
   BsPeopleFill,
 } from "react-icons/bs";
 import { IoSettingsOutline, IoSettings } from "react-icons/io5";
+import { DemandNotice, Transactions } from "../Index";
 
 const MenuItemData = () => {
   return [
@@ -23,6 +24,7 @@ const MenuItemData = () => {
       menuName: "Overview",
       menuItemCount: 0,
       componentName: "Overview Component",
+      component: <div>Overview</div>,
     },
     {
       id: 2,
@@ -31,6 +33,7 @@ const MenuItemData = () => {
       menuName: "Properties",
       menuItemCount: 570,
       componentName: "Properties Component",
+      component: <div>Properties</div>,
     },
     {
       id: 3,
@@ -39,6 +42,7 @@ const MenuItemData = () => {
       menuName: "Demand Notice",
       menuItemCount: 420,
       componentName: "Demand Notice Component",
+      component: <DemandNotice />,
     },
     {
       id: 4,
@@ -47,6 +51,7 @@ const MenuItemData = () => {
       menuName: "Statistics",
       menuItemCount: 0,
       componentName: "Statistic Component",
+      component: <div>Statistics</div>,
     },
     {
       id: 5,
@@ -55,6 +60,7 @@ const MenuItemData = () => {
       menuName: "Transactions",
       menuItemCount: 120,
       componentName: "Transactions Component",
+      component: <Transactions />,
     },
     {
       id: 6,
@@ -63,6 +69,7 @@ const MenuItemData = () => {
       menuName: "Staff",
       menuItemCount: 12,
       componentName: "Staff Component",
+      component: <div>Staff</div>,
     },
     {
       id: 7,
@@ -71,6 +78,7 @@ const MenuItemData = () => {
       menuName: "Settings",
       menuItemCount: 0,
       componentName: "Settings Component",
+      component: <div>Settings</div>,
     },
   ];
 };
