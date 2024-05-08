@@ -6,10 +6,12 @@ import { GoDotFill } from "react-icons/go";
 import { TbCurrencyNaira } from "react-icons/tb";
 import { RiDeleteBin5Fill } from "react-icons/ri";
 import { HiOutlineDotsHorizontal } from "react-icons/hi";
+import TableSearchInput from "./TableSearchInput";
 
 export default function CustomTable({ customTableData }) {
   const [displaySearchIcon, setDisplaySearchIcon] = useState(true);
   const [activeMenu, setActiveMenu] = useState(1);
+  const [query, setQuery] = useState("");
 
   function formatNumberWithCommas(number) {
     // Convert the number to a string
@@ -44,6 +46,84 @@ export default function CustomTable({ customTableData }) {
       ? filterRecordsByPaymentStatus(customTableData.records, "Expired")
       : [];
 
+  const handleQueryChange = (event) => {
+    setQuery(event.target.value);
+  };
+
+  const filteredResults = query
+    ? customTableData.records.filter((record) =>
+        Object.values(record).some(
+          (value) =>
+            typeof value === "string" &&
+            value.toLowerCase().includes(query.toLowerCase())
+        )
+      )
+    : [];
+
+  const recordField = (record) => {
+    return (
+      <div
+        key={record.id}
+        className="flex items-center justify-between gap-1 text-xs"
+      >
+        <span className="flex flex-wrap items-center justify-center w-24 h-10 px-2 py-1 text-sm font-medium rounded text-color-text-three bg-custom-blue-400">
+          {record.pin}
+        </span>
+        <span className="flex flex-wrap items-center w-2/12 font-lexend text-color-text-black">
+          {record.address}
+        </span>
+        <span className="flex flex-wrap items-center width-5-percent text-color-text-black font-lexend text-10px">
+          {record.date}
+        </span>
+        <span
+          className={`flex flex-wrap items-center px-4 py-1 justify-center rounded-xl width-12-percent font-light font-lexend text-color-text-black text-10px border-0.6 border-custom-grey-100
+        ${
+          record.propertyUse === "Commercial"
+            ? "bg-color-light-red"
+            : record.propertyUse === "Residential"
+            ? "bg-color-light-yellow"
+            : "bg-custom-blue-200"
+        }
+        `}
+        >
+          {record.propertyUse.toUpperCase()}
+        </span>
+        <span className="flex flex-wrap items-center justify-center p-1 font-light rounded width-12-percent font-lexend text-custom-blue-500 bg-custom-blue-100 border-0.6 border-custom-grey-100">
+          {record.cadestralZone}
+        </span>
+        <span className="flex flex-wrap items-center justify-center text-sm width-12-percent text-color-text-black font-chonburi">
+          {formatNumberWithCommas(record.ratePayable)}
+        </span>
+        <span
+          className={`flex flex-wrap items-center justify-center width-12-percent p-1 font-light text-white rounded font-lexend
+        ${
+          record.paymentStatus === "Expired"
+            ? "bg-color-bright-red"
+            : record.paymentStatus === "Unpaid"
+            ? "bg-color-bright-orange"
+            : "bg-color-bright-green"
+        }
+        `}
+        >
+          {record.paymentStatus}
+        </span>
+        <span className="flex flex-wrap items-center w-1/12 gap-1 ">
+          <span
+            className="border-0.6 border-custom-grey-100 text-custom-grey-300 px-2 py-2.5 rounded text-base hover:cursor-pointer"
+            title="Delete Invoice"
+          >
+            <RiDeleteBin5Fill />
+          </span>
+          <span
+            className="border-0.6 border-custom-grey-100 text-custom-grey-300 px-2 py-2.5 rounded text-base hover:cursor-pointer"
+            title="Edit Invoice"
+          >
+            <HiOutlineDotsHorizontal />
+          </span>
+        </span>
+      </div>
+    );
+  };
   return (
     <div className="flex-col space-y-4 p-4 border-0.6 border-custom-grey-100 rounded-lg">
       <div className="flex flex-wrap items-start justify-between ">
@@ -75,13 +155,13 @@ export default function CustomTable({ customTableData }) {
             </div>
           ))}
         </div>
-        <SearchInput
+        <TableSearchInput
           parentBoxStyle="flex items-center justify-between p-2 bg-custom-grey-100 rounded-3xl border border-custom-color-one"
           inputBoxStyle={` ${
             displaySearchIcon ? "w-10/12" : "w-full"
           } text-xs outline-none bg-inherit font-lexend text-color-text-two`}
           iconBoxStyle={"text-base text-primary-color hover:cursor-pointer"}
-          placeholder={"Search here"}
+          placeholder={"Search records"}
           searchIcon={<FiSearch />}
           handleOnInput={(event) => {
             event.preventDefault();
@@ -91,11 +171,9 @@ export default function CustomTable({ customTableData }) {
               setDisplaySearchIcon(true);
             }
           }}
-          handleSearch={(value) => {
-            alert(`Opened Information on ${value}`);
-          }}
           displaySearchIcon={displaySearchIcon}
-          dummyData={dummyData}
+          query={query}
+          handleQueryChange={handleQueryChange}
         />
       </div>
 
@@ -124,68 +202,23 @@ export default function CustomTable({ customTableData }) {
           ))}
         </div>
         <div className="flex-col space-y-4">
-          {filteredRecords.map((record) => (
-            <div
-              key={record.id}
-              className="flex items-center justify-between gap-1 text-xs"
-            >
-              <span className="flex flex-wrap items-center justify-center w-24 h-10 px-2 py-1 text-sm font-medium rounded text-color-text-three bg-custom-blue-400">
-                {record.pin}
-              </span>
-              <span className="flex flex-wrap items-center w-2/12 font-lexend text-color-text-black">
-                {record.address}
-              </span>
-              <span className="flex flex-wrap items-center width-5-percent text-color-text-black font-lexend text-10px">
-                {record.date}
-              </span>
-              <span
-                className={`flex flex-wrap items-center px-4 py-1 justify-center rounded-xl width-12-percent font-light font-lexend text-color-text-black text-10px border-0.6 border-custom-grey-100
-              ${
-                record.propertyUse === "Commercial"
-                  ? "bg-color-light-red"
-                  : record.propertyUse === "Residential"
-                  ? "bg-color-light-yellow"
-                  : "bg-custom-blue-200"
-              }
-              `}
-              >
-                {record.propertyUse.toUpperCase()}
-              </span>
-              <span className="flex flex-wrap items-center justify-center p-1 font-light rounded width-12-percent font-lexend text-custom-blue-500 bg-custom-blue-100 border-0.6 border-custom-grey-100">
-                {record.cadestralZone}
-              </span>
-              <span className="flex flex-wrap items-center justify-center text-sm width-12-percent text-color-text-black font-chonburi">
-                {formatNumberWithCommas(record.ratePayable)}
-              </span>
-              <span
-                className={`flex flex-wrap items-center justify-center width-12-percent p-1 font-light text-white rounded font-lexend
-               ${
-                 record.paymentStatus === "Expired"
-                   ? "bg-color-bright-red"
-                   : record.paymentStatus === "Unpaid"
-                   ? "bg-color-bright-orange"
-                   : "bg-color-bright-green"
-               }
-              `}
-              >
-                {record.paymentStatus}
-              </span>
-              <span className="flex flex-wrap items-center w-1/12 gap-1 ">
-                <span
-                  className="border-0.6 border-custom-grey-100 text-custom-grey-300 px-2 py-2.5 rounded text-base hover:cursor-pointer"
-                  title="Delete Invoice"
-                >
-                  <RiDeleteBin5Fill />
-                </span>
-                <span
-                  className="border-0.6 border-custom-grey-100 text-custom-grey-300 px-2 py-2.5 rounded text-base hover:cursor-pointer"
-                  title="Edit Invoice"
-                >
-                  <HiOutlineDotsHorizontal />
-                </span>
-              </span>
-            </div>
-          ))}
+          {query === "" ? (
+            filteredRecords.length > 0 ? (
+              filteredRecords.map((record) => recordField(record))
+            ) : (
+              <p className="text-sm font-medium font-lexend text-color-text-black">
+                No results found.
+              </p>
+            )
+          ) : (
+            filteredResults.length > 0 ? (
+              filteredResults.map((record) => recordField(record))
+            ) : (
+              <p className="text-sm font-medium font-lexend text-color-text-black">
+                No results found.
+              </p>
+            )
+          )}
         </div>
       </div>
       <div>
