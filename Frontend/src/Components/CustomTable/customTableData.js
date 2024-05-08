@@ -69,7 +69,7 @@ const data = {
       },
       {
         id: 4,
-        name: "Paid Demand Notices",
+        name: "Expired Demand Notices",
         count: 42,
       },
     ],
@@ -96,7 +96,7 @@ const data = {
         ],
         cadestralZone: zones[Math.floor(Math.random() * 50)],
         ratePayable: Math.floor(1000 + Math.random() * 100000),
-        paymentStatus: ["Paid", "Unpaid"][Math.floor(Math.random() * 2)],
+        paymentStatus: ["Paid", "Unpaid", "Expired"][Math.floor(Math.random() * 3)],
       },
       {
         id: 2,
@@ -110,7 +110,7 @@ const data = {
         ],
         cadestralZone: zones[Math.floor(Math.random() * 50)],
         ratePayable: Math.floor(1000 + Math.random() * 100000),
-        paymentStatus: ["Paid", "Unpaid"][Math.floor(Math.random() * 2)],
+        paymentStatus: ["Paid", "Unpaid", "Expired"][Math.floor(Math.random() * 3)],
       },
       {
         id: 3,
@@ -124,7 +124,7 @@ const data = {
         ],
         cadestralZone: zones[Math.floor(Math.random() * 50)],
         ratePayable: Math.floor(1000 + Math.random() * 100000),
-        paymentStatus: ["Paid", "Unpaid"][Math.floor(Math.random() * 2)],
+        paymentStatus: ["Paid", "Unpaid", "Expired"][Math.floor(Math.random() * 3)],
       },
       {
         id: 4,
@@ -138,7 +138,7 @@ const data = {
         ],
         cadestralZone: zones[Math.floor(Math.random() * 50)],
         ratePayable: Math.floor(1000 + Math.random() * 100000),
-        paymentStatus: ["Paid", "Unpaid"][Math.floor(Math.random() * 2)],
+        paymentStatus: ["Paid", "Unpaid", "Expired"][Math.floor(Math.random() * 3)],
       },
       {
         id: 5,
@@ -152,7 +152,7 @@ const data = {
         ],
         cadestralZone: zones[Math.floor(Math.random() * 50)],
         ratePayable: Math.floor(1000 + Math.random() * 100000),
-        paymentStatus: ["Paid", "Unpaid"][Math.floor(Math.random() * 2)],
+        paymentStatus: ["Paid", "Unpaid", "Expired"][Math.floor(Math.random() * 3)],
       },
       {
         id: 6,
@@ -166,7 +166,7 @@ const data = {
         ],
         cadestralZone: zones[Math.floor(Math.random() * 50)],
         ratePayable: Math.floor(1000 + Math.random() * 100000),
-        paymentStatus: ["Paid", "Unpaid"][Math.floor(Math.random() * 2)],
+        paymentStatus: ["Paid", "Unpaid", "Expired"][Math.floor(Math.random() * 3)],
       },
       {
         id: 7,
@@ -180,7 +180,7 @@ const data = {
         ],
         cadestralZone: zones[Math.floor(Math.random() * 50)],
         ratePayable: Math.floor(1000 + Math.random() * 100000),
-        paymentStatus: ["Paid", "Unpaid"][Math.floor(Math.random() * 2)],
+        paymentStatus: ["Paid", "Unpaid", "Expired"][Math.floor(Math.random() * 3)],
       },
       {
         id: 8,
@@ -194,7 +194,7 @@ const data = {
         ],
         cadestralZone: zones[Math.floor(Math.random() * 50)],
         ratePayable: Math.floor(1000 + Math.random() * 100000),
-        paymentStatus: ["Paid", "Unpaid"][Math.floor(Math.random() * 2)],
+        paymentStatus: ["Paid", "Unpaid", "Expired"][Math.floor(Math.random() * 3)],
       },
       {
         id: 9,
@@ -208,7 +208,7 @@ const data = {
         ],
         cadestralZone: zones[Math.floor(Math.random() * 50)],
         ratePayable: Math.floor(1000 + Math.random() * 100000),
-        paymentStatus: ["Paid", "Unpaid"][Math.floor(Math.random() * 2)],
+        paymentStatus: ["Paid", "Unpaid", "Expired"][Math.floor(Math.random() * 3)],
       },
       {
         id: 10,
@@ -222,7 +222,7 @@ const data = {
         ],
         cadestralZone: zones[Math.floor(Math.random() * 50)],
         ratePayable: Math.floor(1000 + Math.random() * 100000),
-        paymentStatus: ["Paid", "Unpaid"][Math.floor(Math.random() * 2)],
+        paymentStatus: ["Paid", "Unpaid", "Expired"][Math.floor(Math.random() * 3)],
       },
     ],
   },

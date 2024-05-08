@@ -29,6 +29,21 @@ export default function CustomTable({ customTableData }) {
     return formattedNumber;
   }
 
+  function filterRecordsByPaymentStatus(records, status) {
+    return records.filter((record) => record.paymentStatus === status);
+  }
+
+  const filteredRecords =
+    activeMenu === 1
+      ? customTableData.records
+      : activeMenu === 2
+      ? filterRecordsByPaymentStatus(customTableData.records, "Paid")
+      : activeMenu === 3
+      ? filterRecordsByPaymentStatus(customTableData.records, "Unpaid")
+      : activeMenu === 4
+      ? filterRecordsByPaymentStatus(customTableData.records, "Expired")
+      : [];
+
   return (
     <div className="flex-col space-y-4 p-4 border-0.6 border-custom-grey-100 rounded-lg">
       <div className="flex flex-wrap items-start justify-between ">
@@ -109,7 +124,7 @@ export default function CustomTable({ customTableData }) {
           ))}
         </div>
         <div className="flex-col space-y-4">
-          {customTableData.records.map((record) => (
+          {filteredRecords.map((record) => (
             <div
               key={record.id}
               className="flex items-center justify-between gap-1 text-xs"
@@ -145,8 +160,10 @@ export default function CustomTable({ customTableData }) {
               <span
                 className={`flex flex-wrap items-center justify-center width-12-percent p-1 font-light text-white rounded font-lexend
                ${
-                 record.paymentStatus === "Unpaid"
+                 record.paymentStatus === "Expired"
                    ? "bg-color-bright-red"
+                   : record.paymentStatus === "Unpaid"
+                   ? "bg-color-bright-orange"
                    : "bg-color-bright-green"
                }
               `}
