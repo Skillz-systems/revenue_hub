@@ -12,3 +12,4 @@ export { default as CustomTable } from "./CustomTable/CustomTable";
 export { default as DemandNotice } from "./DemandNotice/DemandNotice";
 export { default as Transactions } from "./Transactions/Transactions";
 export { data as customTableData } from "./CustomTable/customTableData";
+export { default as TableSearchInput } from "./CustomTable/TableSearchInput";

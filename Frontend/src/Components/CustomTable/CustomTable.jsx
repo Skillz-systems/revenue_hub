@@ -1,12 +1,11 @@
 import React, { useState } from "react";
 import { SearchInput } from "../Index";
-import { dummyData } from "../SearchInput/searchDummyData";
 import { FiSearch } from "react-icons/fi";
 import { GoDotFill } from "react-icons/go";
 import { TbCurrencyNaira } from "react-icons/tb";
 import { RiDeleteBin5Fill } from "react-icons/ri";
 import { HiOutlineDotsHorizontal } from "react-icons/hi";
-import TableSearchInput from "./TableSearchInput";
+import { TableSearchInput } from "../Index";
 
 export default function CustomTable({ customTableData }) {
   const [displaySearchIcon, setDisplaySearchIcon] = useState(true);
@@ -210,14 +209,12 @@ export default function CustomTable({ customTableData }) {
                 No results found.
               </p>
             )
+          ) : filteredResults.length > 0 ? (
+            filteredResults.map((record) => recordField(record))
           ) : (
-            filteredResults.length > 0 ? (
-              filteredResults.map((record) => recordField(record))
-            ) : (
-              <p className="text-sm font-medium font-lexend text-color-text-black">
-                No results found.
-              </p>
-            )
+            <p className="text-sm font-medium font-lexend text-color-text-black">
+              No results found.
+            </p>
           )}
         </div>
       </div>
