@@ -215,7 +215,7 @@ const data = {
           parentKey: "3",
           inputName: "occupantsEmail",
           placeholder: "Occupants Email",
-          inputType: "email",
+          inputType: "text",
           required: true,
         },
         {
