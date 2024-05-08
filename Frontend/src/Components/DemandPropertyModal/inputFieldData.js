@@ -19,8 +19,8 @@ const data = {
         {
           id: 1,
           parentKey: "1",
-          inputName: "zone",
-          placeholder: "Zone",
+          inputName: "cadestralZone",
+          placeholder: "Cadestral Zone",
           inputType: "select",
           options: [
             { id: 1, name: "Abaji" },
