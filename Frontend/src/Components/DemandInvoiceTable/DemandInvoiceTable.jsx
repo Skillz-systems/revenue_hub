@@ -1,5 +1,4 @@
-import React, { useState } from "react";
-import { SearchInput } from "../Index";
+import React, { useState, useEffect } from "react";
 import { FiSearch } from "react-icons/fi";
 import { GoDotFill } from "react-icons/go";
 import { TbCurrencyNaira } from "react-icons/tb";
@@ -11,6 +10,8 @@ export default function DemandInvoiceTable({ customTableData }) {
   const [displaySearchIcon, setDisplaySearchIcon] = useState(true);
   const [activeMenu, setActiveMenu] = useState(1);
   const [query, setQuery] = useState("");
+
+  useEffect(() => setActiveMenu(1), [query !== ""]);
 
   function formatNumberWithCommas(number) {
     // Convert the number to a string
@@ -93,19 +94,21 @@ export default function DemandInvoiceTable({ customTableData }) {
         <span className="flex flex-wrap items-center justify-center text-sm width-12-percent text-color-text-black font-chonburi">
           {formatNumberWithCommas(record.ratePayable)}
         </span>
-        <span
-          className={`flex flex-wrap items-center justify-center width-12-percent p-1 font-light text-white rounded font-lexend
-        ${
-          record.paymentStatus === "Expired"
-            ? "bg-color-bright-red"
-            : record.paymentStatus === "Unpaid"
-            ? "bg-color-bright-orange"
-            : "bg-color-bright-green"
-        }
-        `}
-        >
-          {record.paymentStatus}
-        </span>
+        <div className="flex items-center justify-center width-12-percent">
+          <span
+            className={`flex flex-wrap items-center justify-center px-2 p-1 font-light text-white rounded font-lexend
+          ${
+            record.paymentStatus === "Expired"
+              ? "bg-color-bright-red"
+              : record.paymentStatus === "Unpaid"
+              ? "bg-color-bright-orange"
+              : "bg-color-bright-green"
+          }
+          `}
+          >
+            {record.paymentStatus}
+          </span>
+        </div>
         <span className="flex flex-wrap items-center w-1/12 gap-1 ">
           <span
             className="border-0.6 border-custom-grey-100 text-custom-grey-300 px-2 py-2.5 rounded text-base hover:cursor-pointer"

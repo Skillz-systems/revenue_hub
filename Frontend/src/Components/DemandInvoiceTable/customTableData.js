@@ -226,7 +226,161 @@ const data = {
       },
     ],
   },
-  transactions: {},
+  transactions: {
+    menu: [
+      {
+        id: 1,
+        name: "All Transactions",
+        count: 120,
+      },
+      {
+        id: 2,
+        name: "Manually confirmed Transactions",
+        count: 42,
+      },
+    ],
+    columns: [
+      { id: 1, name: "DEMAND NOTICE NUMBER" },
+      { id: 2, name: "PIN" },
+      { id: 3, name: "ADDRESS" },
+      { id: 4, name: "TYPE" },
+      { id: 5, name: "RATE PAYABLE" },
+      { id: 6, name: "DATE PAID" },
+      { id: 7, name: "ACTIONS" },
+    ],
+    records: [
+      {
+        id: 1,
+        demandNoticeNumber: `13${Math.floor(100000000 + Math.random() * 900000000)}`,
+        pin: `13${Math.floor(100000000 + Math.random() * 900000000)}`,
+        address: `House 1, Street ${Math.floor(
+          1 + Math.random() * 100
+        )}, Abuja`,
+        type: ["Mobile Transfer", "Bank Transfer",][
+          Math.floor(Math.random() * 2)
+        ],
+        ratePayable: Math.floor(1000 + Math.random() * 100000),
+        date: `12/${Math.floor(1 + Math.random() * 12)}/2024`,
+      },
+      {
+        id: 2,
+        demandNoticeNumber: `13${Math.floor(100000000 + Math.random() * 900000000)}`,
+        pin: `13${Math.floor(100000000 + Math.random() * 900000000)}`,
+        address: `House 1, Street ${Math.floor(
+          1 + Math.random() * 100
+        )}, Abuja`,
+        type: ["Mobile Transfer", "Bank Transfer",][
+          Math.floor(Math.random() * 2)
+        ],
+        ratePayable: Math.floor(1000 + Math.random() * 100000),
+        date: `12/${Math.floor(1 + Math.random() * 12)}/2024`,
+      },
+      {
+        id: 3,
+        demandNoticeNumber: `13${Math.floor(100000000 + Math.random() * 900000000)}`,
+        pin: `13${Math.floor(100000000 + Math.random() * 900000000)}`,
+        address: `House 1, Street ${Math.floor(
+          1 + Math.random() * 100
+        )}, Abuja`,
+        type: ["Mobile Transfer", "Bank Transfer",][
+          Math.floor(Math.random() * 2)
+        ],
+        ratePayable: Math.floor(1000 + Math.random() * 100000),
+        date: `12/${Math.floor(1 + Math.random() * 12)}/2024`,
+      },
+      {
+        id: 4,
+        demandNoticeNumber: `13${Math.floor(100000000 + Math.random() * 900000000)}`,
+        pin: `13${Math.floor(100000000 + Math.random() * 900000000)}`,
+        address: `House 1, Street ${Math.floor(
+          1 + Math.random() * 100
+        )}, Abuja`,
+        type: ["Mobile Transfer", "Bank Transfer",][
+          Math.floor(Math.random() * 2)
+        ],
+        ratePayable: Math.floor(1000 + Math.random() * 100000),
+        date: `12/${Math.floor(1 + Math.random() * 12)}/2024`,
+      },
+      {
+        id: 5,
+        demandNoticeNumber: `13${Math.floor(100000000 + Math.random() * 900000000)}`,
+        pin: `13${Math.floor(100000000 + Math.random() * 900000000)}`,
+        address: `House 1, Street ${Math.floor(
+          1 + Math.random() * 100
+        )}, Abuja`,
+        type: ["Mobile Transfer", "Bank Transfer",][
+          Math.floor(Math.random() * 2)
+        ],
+        ratePayable: Math.floor(1000 + Math.random() * 100000),
+        date: `12/${Math.floor(1 + Math.random() * 12)}/2024`,
+      },
+      {
+        id: 6,
+        demandNoticeNumber: `13${Math.floor(100000000 + Math.random() * 900000000)}`,
+        pin: `13${Math.floor(100000000 + Math.random() * 900000000)}`,
+        address: `House 1, Street ${Math.floor(
+          1 + Math.random() * 100
+        )}, Abuja`,
+        type: ["Mobile Transfer", "Bank Transfer",][
+          Math.floor(Math.random() * 2)
+        ],
+        ratePayable: Math.floor(1000 + Math.random() * 100000),
+        date: `12/${Math.floor(1 + Math.random() * 12)}/2024`,
+      },
+      {
+        id: 7,
+        demandNoticeNumber: `13${Math.floor(100000000 + Math.random() * 900000000)}`,
+        pin: `13${Math.floor(100000000 + Math.random() * 900000000)}`,
+        address: `House 1, Street ${Math.floor(
+          1 + Math.random() * 100
+        )}, Abuja`,
+        type: ["Mobile Transfer", "Bank Transfer",][
+          Math.floor(Math.random() * 2)
+        ],
+        ratePayable: Math.floor(1000 + Math.random() * 100000),
+        date: `12/${Math.floor(1 + Math.random() * 12)}/2024`,
+      },
+      {
+        id: 8,
+        demandNoticeNumber: `13${Math.floor(100000000 + Math.random() * 900000000)}`,
+        pin: `13${Math.floor(100000000 + Math.random() * 900000000)}`,
+        address: `House 1, Street ${Math.floor(
+          1 + Math.random() * 100
+        )}, Abuja`,
+        type: ["Mobile Transfer", "Bank Transfer",][
+          Math.floor(Math.random() * 2)
+        ],
+        ratePayable: Math.floor(1000 + Math.random() * 100000),
+        date: `12/${Math.floor(1 + Math.random() * 12)}/2024`,
+      },
+      {
+        id: 9,
+        demandNoticeNumber: `13${Math.floor(100000000 + Math.random() * 900000000)}`,
+        pin: `13${Math.floor(100000000 + Math.random() * 900000000)}`,
+        address: `House 1, Street ${Math.floor(
+          1 + Math.random() * 100
+        )}, Abuja`,
+        type: ["Mobile Transfer", "Bank Transfer",][
+          Math.floor(Math.random() * 2)
+        ],
+        ratePayable: Math.floor(1000 + Math.random() * 100000),
+        date: `12/${Math.floor(1 + Math.random() * 12)}/2024`,
+      },
+      {
+        id: 10,
+        demandNoticeNumber: `13${Math.floor(100000000 + Math.random() * 900000000)}`,
+        pin: `13${Math.floor(100000000 + Math.random() * 900000000)}`,
+        address: `House 1, Street ${Math.floor(
+          1 + Math.random() * 100
+        )}, Abuja`,
+        type: ["Mobile Transfer", "Bank Transfer",][
+          Math.floor(Math.random() * 2)
+        ],
+        ratePayable: Math.floor(1000 + Math.random() * 100000),
+        date: `12/${Math.floor(1 + Math.random() * 12)}/2024`,
+      }
+    ]
+  },
   staff: {},
   setting: {},
 };
