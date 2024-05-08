@@ -4,6 +4,7 @@ export { default as MenuItem } from "./MenuItem/MenuItem";
 export { default as MenuItemData } from "./MenuItem/MenuItemData";
 export { default as ProfileBox } from "./ProfileBox/ProfileBox";
 export { default as SearchInput } from "./SearchInput/SearchInput";
+export { default as Card } from "./Card/Card";
 export { default as DemandPropertyButtons } from "./DemandPropertyButtons/DemandPropertyButtons";
 export { default as DemandPropertyModal } from "./DemandPropertyModal/DemandPropertyModal";
 export { default as AddProperty } from "./DemandPropertyModal/AddProperty";
