@@ -19,6 +19,8 @@ import {
   Overview,
   Staff,
   Settings,
+  Properties,
+  customTableData,
 } from "../Index";
 
 const MenuItemData = () => {
@@ -31,6 +33,7 @@ const MenuItemData = () => {
       menuItemCount: 0,
       componentName: "Overview Component",
       component: <Overview />,
+      route: "/",
     },
     {
       id: 2,
@@ -39,16 +42,18 @@ const MenuItemData = () => {
       menuName: "Properties",
       menuItemCount: 570,
       componentName: "Properties Component",
-      component: <div>Properties</div>,
+      component: <Properties />,
+      route: "/properties",
     },
     {
       id: 3,
       menuIcon: <PiListBulletsBold />,
       menuIconTwo: <PiListBulletsFill />,
       menuName: "Demand Notice",
-      menuItemCount: 420,
+      menuItemCount: customTableData.demandNotice.records.length,
       componentName: "Demand Notice Component",
       component: <DemandNotice />,
+      route: "/demand-notice",
     },
     {
       id: 4,
@@ -57,25 +62,27 @@ const MenuItemData = () => {
       menuName: "Statistics",
       menuItemCount: 0,
       componentName: "Statistic Component",
-      component: <div>Statistics</div>,
+      route: "/statistics",
     },
     {
       id: 5,
       menuIcon: <BsCreditCard2Front />,
       menuIconTwo: <BsCreditCard2FrontFill />,
       menuName: "Transactions",
-      menuItemCount: 120,
+      menuItemCount: customTableData.transactions.records.length,
       componentName: "Transactions Component",
       component: <Transactions />,
+      route: "/transactions",
     },
     {
       id: 6,
       menuIcon: <BsPeople />,
       menuIconTwo: <BsPeopleFill />,
       menuName: "Staff",
-      menuItemCount: 12,
+      menuItemCount: customTableData.staff.records.length,
       componentName: "Staff Component",
       component: <Staff />,
+      route: "/staff",
     },
     {
       id: 7,
@@ -85,6 +92,7 @@ const MenuItemData = () => {
       menuItemCount: 0,
       componentName: "Settings Component",
       component: <Settings />,
+      route: "/settings",
     },
   ];
 };

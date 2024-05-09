@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 export default function MenuItem({
   menuId,
   parentDivStyle,
@@ -7,9 +8,10 @@ export default function MenuItem({
   menuItemCount,
   isActive,
   setComponent,
+  route,
 }) {
   return (
-    <div
+    <Link
       key={menuId}
       className={`flex items-center justify-between px-1.5 py-2 transition ease-in-out  hover:cursor-pointer hover:translate-x-1
       ${parentDivStyle}
@@ -21,6 +23,7 @@ export default function MenuItem({
       `}
       title={menuName}
       onClick={setComponent}
+      to={route}
     >
       <div className="flex items-center space-x-2">
         <span
@@ -43,6 +46,6 @@ export default function MenuItem({
           {menuItemCount}
         </span>
       ) : null}
-    </div>
+    </Link>
   );
 }

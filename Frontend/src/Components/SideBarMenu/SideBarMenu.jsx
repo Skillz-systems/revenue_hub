@@ -103,6 +103,7 @@ export default function SideBarMenu({
                 handleMenuItemClick(item.componentName);
                 setActiveComponent(item.component);
               }}
+              route={item.route}
             />
             {item.id === 5 && (
               <div className="py-2">

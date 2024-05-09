@@ -10,15 +10,14 @@ import {
   DemandPropertyModal,
   AddProperty,
   AddDemand,
-  Overview,
   CardData,
 } from "../Index";
 
-export default function ProjectLayout() {
+export default function ProjectLayout({ page }) {
   const [displaySideBarMenu, setdisplaySideBarMenu] = useState(true);
   const [transitionSection, setTransitionSection] = useState(false);
   const [activeMenuItem, setActiveMenuItem] = useState("Overview Component");
-  const [activeComponent, setActiveComponent] = useState(<Overview />);
+  const [activeComponent, setActiveComponent] = useState(page);
   const [searchClicked, setSearchClicked] = useState(false);
   const [displayAddPropertyModal, setDisplayAddPropertyModal] = useState(false);
   const [displayAddDemandModal, setDisplayAddDemandModal] = useState(false);
@@ -110,6 +109,7 @@ export default function ProjectLayout() {
                       handleMenuItemClick(item.componentName);
                       setActiveComponent(item.component);
                     }}
+                    route={item.route}
                   />
                   {item.id === 4 && (
                     <div className="py-2">

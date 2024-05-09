@@ -1,3 +1,5 @@
+import { Link } from "react-router-dom";
+
 export default function MenuItemAlt({
   menuId,
   menuIcon,
@@ -5,13 +7,15 @@ export default function MenuItemAlt({
   menuName,
   isActive,
   setComponent,
+  route,
 }) {
   return (
-    <div
+    <Link
       key={menuId}
       className={`flex items-center justify-center transition ease-in-out  hover:cursor-pointer hover:translate-x-1`}
       title={menuName}
       onClick={setComponent}
+      to={route}
     >
       <span
         className={`text-xl text-color-text-two ${
@@ -20,6 +24,6 @@ export default function MenuItemAlt({
       >
         {isActive ? menuIconTwo : menuIcon}
       </span>
-    </div>
+    </Link>
   );
 }

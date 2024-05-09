@@ -20,3 +20,6 @@ export { default as CardData } from "./Card/CardData";
 export { default as Staff } from "./Staff/Staff";
 export { default as StaffTable } from "./Staff/StaffTable";
 export { default as Settings } from "./Settings/Settings";
+export { default as Properties } from "./Properties/Properties";
+export { default as PropertiesTable } from "./Properties/PropertiesTable";
+export { default as Statistics } from "./Statistics/Statistics";
