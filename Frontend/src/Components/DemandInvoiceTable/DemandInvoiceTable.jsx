@@ -5,6 +5,7 @@ import { TbCurrencyNaira } from "react-icons/tb";
 import { RiDeleteBin5Fill } from "react-icons/ri";
 import { HiOutlineDotsHorizontal } from "react-icons/hi";
 import { TableSearchInput } from "../Index";
+import { formatNumberWithCommas } from "../../Utils/client";
 
 export default function DemandInvoiceTable({ customTableData }) {
   const [displaySearchIcon, setDisplaySearchIcon] = useState(true);
@@ -17,24 +18,6 @@ export default function DemandInvoiceTable({ customTableData }) {
   };
 
   useEffect(() => setActiveMenu(1), [query !== ""]);
-
-  function formatNumberWithCommas(number) {
-    // Convert the number to a string
-    const numStr = String(number);
-
-    // Split the string into integer and decimal parts (if any)
-    const [integerPart, decimalPart] = numStr.split(".");
-
-    // Add commas to the integer part
-    const formattedInteger = integerPart.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-
-    // Combine the integer and decimal parts (if any)
-    const formattedNumber = decimalPart
-      ? `${formattedInteger}.${decimalPart}`
-      : formattedInteger;
-
-    return formattedNumber;
-  }
 
   function filterRecordsByPaymentStatus(records, status) {
     return records.filter((record) => record.paymentStatus === status);
