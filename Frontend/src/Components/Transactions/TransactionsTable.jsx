@@ -9,6 +9,11 @@ export default function TransactionsTable({ customTableData }) {
   const [displaySearchIcon, setDisplaySearchIcon] = useState(true);
   const [activeMenu, setActiveMenu] = useState(1);
   const [query, setQuery] = useState("");
+  const [editModal, setEditModal] = useState(null);
+
+  const handleEditModal = (recordId) => {
+    setEditModal(editModal === recordId ? null : recordId);
+  };
 
   useEffect(() => setActiveMenu(1), [query !== ""]);
 
@@ -60,7 +65,10 @@ export default function TransactionsTable({ customTableData }) {
 
   const recordField = (record) => {
     return (
-      <div key={record.id} className="flex items-center justify-between gap-1 text-xs">
+      <div
+        key={record.id}
+        className="flex items-center justify-between gap-1 text-xs"
+      >
         <span className="flex flex-wrap items-center justify-center w-2/12 h-10 px-2 py-1 text-sm font-medium rounded text-color-text-three bg-custom-blue-400">
           {record.demandNoticeNumber}
         </span>
@@ -87,11 +95,21 @@ export default function TransactionsTable({ customTableData }) {
           {record.date}
         </span>
         <span className="flex flex-wrap items-center justify-center gap-1 width-12-percent">
-          <span
-            className="border-0.6 border-custom-grey-100 text-custom-grey-300 px-2 py-2.5 rounded text-base hover:cursor-pointer"
-            title="Edit Invoice"
-          >
-            <HiOutlineDotsHorizontal />
+          <span className="border-0.6 relative border-custom-grey-100 text-custom-grey-300 px-2 py-2.5 rounded text-base hover:cursor-pointer">
+            <span
+              title="Edit Transaction"
+              className="hover:cursor-pointer"
+              onClick={() => handleEditModal(record.id)}
+            >
+              <HiOutlineDotsHorizontal />
+            </span>
+            {editModal === record.id && (
+              <span className="absolute space-y-2 top-0 z-10 flex-col w-36 p-4 text-xs text-center bg-white rounded shadow-md -left-44 border-0.6 border-custom-grey-100 text-color-text-black font-lexend">
+                <p className="hover:cursor-pointer" title="Edit Transaction">
+                  View Transaction
+                </p>
+              </span>
+            )}
           </span>
         </span>
       </div>
@@ -160,6 +178,7 @@ export default function TransactionsTable({ customTableData }) {
               ${[2].includes(column.id) && "w-20"}
               ${[4, 5, 7].includes(column.id) && "width-12-percent"}
               ${column.id === 6 && "width-1/12"}
+              ${column.id === 7 && "justify-center"}
               `}
             >
               <GoDotFill />

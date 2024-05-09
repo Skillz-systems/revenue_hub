@@ -13,7 +13,7 @@ import {
   BsPeopleFill,
 } from "react-icons/bs";
 import { IoSettingsOutline, IoSettings } from "react-icons/io5";
-import { DemandNotice, Transactions } from "../Index";
+import { DemandNotice, Transactions, Overview } from "../Index";
 
 const MenuItemData = () => {
   return [
@@ -24,7 +24,7 @@ const MenuItemData = () => {
       menuName: "Overview",
       menuItemCount: 0,
       componentName: "Overview Component",
-      component: <div>Overview</div>,
+      component: <Overview />,
     },
     {
       id: 2,

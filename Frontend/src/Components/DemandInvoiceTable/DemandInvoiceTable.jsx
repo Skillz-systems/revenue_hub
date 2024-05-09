@@ -5,31 +5,19 @@ import { TbCurrencyNaira } from "react-icons/tb";
 import { RiDeleteBin5Fill } from "react-icons/ri";
 import { HiOutlineDotsHorizontal } from "react-icons/hi";
 import { TableSearchInput } from "../Index";
+import { formatNumberWithCommas } from "../../Utils/client";
 
 export default function DemandInvoiceTable({ customTableData }) {
   const [displaySearchIcon, setDisplaySearchIcon] = useState(true);
   const [activeMenu, setActiveMenu] = useState(1);
   const [query, setQuery] = useState("");
+  const [editModal, setEditModal] = useState(null);
+
+  const handleEditModal = (recordId) => {
+    setEditModal(editModal === recordId ? null : recordId);
+  };
 
   useEffect(() => setActiveMenu(1), [query !== ""]);
-
-  function formatNumberWithCommas(number) {
-    // Convert the number to a string
-    const numStr = String(number);
-
-    // Split the string into integer and decimal parts (if any)
-    const [integerPart, decimalPart] = numStr.split(".");
-
-    // Add commas to the integer part
-    const formattedInteger = integerPart.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-
-    // Combine the integer and decimal parts (if any)
-    const formattedNumber = decimalPart
-      ? `${formattedInteger}.${decimalPart}`
-      : formattedInteger;
-
-    return formattedNumber;
-  }
 
   function filterRecordsByPaymentStatus(records, status) {
     return records.filter((record) => record.paymentStatus === status);
@@ -116,11 +104,33 @@ export default function DemandInvoiceTable({ customTableData }) {
           >
             <RiDeleteBin5Fill />
           </span>
-          <span
-            className="border-0.6 border-custom-grey-100 text-custom-grey-300 px-2 py-2.5 rounded text-base hover:cursor-pointer"
-            title="Edit Invoice"
-          >
-            <HiOutlineDotsHorizontal />
+          <span className="border-0.6 relative border-custom-grey-100 text-custom-grey-300 px-2 py-2.5 rounded text-base">
+            <span
+              title="Edit Invoice"
+              className="hover:cursor-pointer"
+              onClick={() => handleEditModal(record.id)}
+            >
+              <HiOutlineDotsHorizontal />
+            </span>
+            {editModal === record.id && (
+              <span className="absolute space-y-2 top-0 z-10 flex-col w-40 p-4 text-xs bg-white rounded shadow-md -left-44 border-0.6 border-custom-grey-100 text-color-text-black font-lexend">
+                <p className="hover:cursor-pointer" title="View Demand Notice">
+                  View Demand Notice
+                </p>
+                <p className="hover:cursor-pointer" title="View Property">
+                  View Property
+                </p>
+                {record.paymentStatus === "Expired" ? (
+                  <p className="hover:cursor-pointer" title="Generate Reminder">
+                    Generate Reminder
+                  </p>
+                ) : record.paymentStatus === "Unpaid" ? (
+                  <p className="hover:cursor-pointer" title="View Reminder">
+                    View Reminder
+                  </p>
+                ) : null}
+              </span>
+            )}
           </span>
         </span>
       </div>

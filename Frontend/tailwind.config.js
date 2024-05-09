@@ -6,9 +6,9 @@ export default {
     fontFamily: {
       'sans': ['Lora', 'sans-serif'],
       'serif': ['Lora', 'serif'],
-       'mono': ['Lora', 'monospace'],
+      'mono': ['Lora', 'monospace'],
     },
-  
+
     extend: {
 
       colors: {
@@ -26,6 +26,7 @@ export default {
         "color-text-three": "#2E4192",
         "color-dark-red": "#D6236A",
         "color-light-red": "#F7D3E1",
+        "color-light-green": "#E3FAD6",
         "color-bright-red": "#ED0027",
         "color-light-yellow": "#FFF3D5",
         "color-bright-orange": "#FFA02E",
