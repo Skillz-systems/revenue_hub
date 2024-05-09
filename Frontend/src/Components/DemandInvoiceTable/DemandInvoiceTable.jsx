@@ -5,47 +5,56 @@ import { TbCurrencyNaira } from "react-icons/tb";
 import { RiDeleteBin5Fill } from "react-icons/ri";
 import { HiOutlineDotsHorizontal } from "react-icons/hi";
 import { TableSearchInput } from "../Index";
-import { formatNumberWithCommas } from "../../Utils/client";
+import {
+  formatNumberWithCommas,
+  filterRecordsByKeyAndValue,
+} from "../../Utils/client";
 
 export default function DemandInvoiceTable({ customTableData }) {
   const [displaySearchIcon, setDisplaySearchIcon] = useState(true);
   const [activeMenu, setActiveMenu] = useState(1);
   const [query, setQuery] = useState("");
   const [editModal, setEditModal] = useState(null);
+  const [displayColumn, setDisplayColumn] = useState(true);
 
   const handleEditModal = (recordId) => {
     setEditModal(editModal === recordId ? null : recordId);
   };
 
-  useEffect(() => setActiveMenu(1), [query !== ""]);
-
-  function filterRecordsByPaymentStatus(records, status) {
-    return records.filter((record) => record.paymentStatus === status);
-  }
-
-  const filteredRecords =
-    activeMenu === 1
-      ? customTableData.records
-      : activeMenu === 2
-      ? filterRecordsByPaymentStatus(customTableData.records, "Paid")
-      : activeMenu === 3
-      ? filterRecordsByPaymentStatus(customTableData.records, "Unpaid")
-      : activeMenu === 4
-      ? filterRecordsByPaymentStatus(customTableData.records, "Expired")
-      : [];
+  useEffect(() => {
+    setActiveMenu(1);
+    setDisplayColumn(false);
+  }, [query !== ""]);
 
   const handleQueryChange = (event) => {
     setQuery(event.target.value);
   };
 
+  const filteredRecords =
+    activeMenu === 1
+      ? customTableData.records
+      : activeMenu === 2
+        ? filterRecordsByKeyAndValue(customTableData.records, "paymentStatus", "Paid")
+        : activeMenu === 3
+          ? filterRecordsByKeyAndValue(customTableData.records, "paymentStatus", "Unpaid")
+          : activeMenu === 4
+            ? filterRecordsByKeyAndValue(customTableData.records, "paymentStatus", "Expired")
+            : [];
+
+
   const filteredResults = query
     ? customTableData.records.filter((record) =>
-        Object.values(record).some(
-          (value) =>
-            typeof value === "string" &&
-            value.toLowerCase().includes(query.toLowerCase())
-        )
-      )
+      Object.values(record).some((value) => {
+        if (typeof value === "string") {
+          // For string values, perform case-insensitive comparison
+          return value.toLowerCase().includes(query.toLowerCase());
+        } else if (typeof value === "number" || Number.isInteger(value)) {
+          // For numeric values, stringify and compare
+          return String(value).toLowerCase().includes(query.toLowerCase());
+        }
+        return false; // Ignore other data types
+      })
+    )
     : [];
 
   const recordField = (record) => {
@@ -65,13 +74,12 @@ export default function DemandInvoiceTable({ customTableData }) {
         </span>
         <span
           className={`flex flex-wrap items-center px-4 py-1 justify-center rounded-xl width-12-percent font-light font-lexend text-color-text-black text-10px border-0.6 border-custom-grey-100
-        ${
-          record.propertyUse === "Commercial"
-            ? "bg-color-light-red"
-            : record.propertyUse === "Residential"
-            ? "bg-color-light-yellow"
-            : "bg-custom-blue-200"
-        }
+        ${record.propertyUse === "Commercial"
+              ? "bg-color-light-red"
+              : record.propertyUse === "Residential"
+                ? "bg-color-light-yellow"
+                : "bg-custom-blue-200"
+            }
         `}
         >
           {record.propertyUse.toUpperCase()}
@@ -85,13 +93,12 @@ export default function DemandInvoiceTable({ customTableData }) {
         <div className="flex items-center justify-center width-12-percent">
           <span
             className={`flex flex-wrap items-center justify-center px-2 p-1 font-light text-white rounded font-lexend
-          ${
-            record.paymentStatus === "Expired"
-              ? "bg-color-bright-red"
-              : record.paymentStatus === "Unpaid"
-              ? "bg-color-bright-orange"
-              : "bg-color-bright-green"
-          }
+          ${record.paymentStatus === "Expired"
+                ? "bg-color-bright-red"
+                : record.paymentStatus === "Unpaid"
+                  ? "bg-color-bright-orange"
+                  : "bg-color-bright-green"
+              }
           `}
           >
             {record.paymentStatus}
@@ -138,40 +145,64 @@ export default function DemandInvoiceTable({ customTableData }) {
   };
   return (
     <div className="flex-col space-y-4 p-4 border-0.6 border-custom-grey-100 rounded-lg">
-      <div className="flex flex-wrap items-start justify-between ">
+      <div className="flex items-start justify-between">
         <div className="flex items-center justify-between border-0.6 border-custom-grey-100 rounded p-1">
-          {customTableData.menu.map((menu) => (
-            <div
-              key={menu.id}
-              className={`flex items-start justify-between gap-2 px-2 py-1 text-xs font-lexend hover:cursor-pointer ${
-                activeMenu === menu.id
-                  ? "bg-primary-color rounded"
-                  : "bg-inherit"
-              }`}
-              onClick={() => {
-                setActiveMenu(menu.id);
-              }}
-            >
-              <span
-                className={`${
-                  activeMenu === menu.id
-                    ? "font-medium text-white"
-                    : "text-color-text-two"
-                }`}
+          {customTableData.menu.map((menu) =>
+            displayColumn === false && query !== "" && menu.id > 1 ? null : (
+              <div
+                key={menu.id}
+                className={`flex items-start justify-between gap-2 px-2 py-1 text-xs font-lexend hover:cursor-pointer ${activeMenu === menu.id
+                    ? "bg-primary-color rounded"
+                    : "bg-inherit"
+                  }`}
+                onClick={() => {
+                  setActiveMenu(menu.id);
+                }}
               >
-                {menu.name}
-              </span>
-              <span className="px-1 border rounded text-color-text-three bg-custom-blue-200 border-custom-color-two">
-                {menu.count}
-              </span>
-            </div>
-          ))}
+                <span
+                  className={`${activeMenu === menu.id
+                      ? "font-medium text-white"
+                      : "text-color-text-two"
+                    }`}
+                >
+                  {menu.name}
+                </span>
+                <span className="px-1 border rounded text-color-text-three bg-custom-blue-200 border-custom-color-two">
+                  {menu.id === 1 ? (
+                    filteredResults.length > 0
+                      ? filteredResults.length
+                      : filteredResults < 1 && query != ""
+                        ? 0
+                        : customTableData.records.length
+                  ) : menu.id === 2 ? (
+                    filterRecordsByKeyAndValue(
+                      customTableData.records,
+                      "paymentStatus",
+                      "Paid"
+                    ).length
+
+                  ) : menu.id === 3 ? (
+                    filterRecordsByKeyAndValue(
+                      customTableData.records,
+                      "paymentStatus",
+                      "Unpaid"
+                    ).length
+                  ) :
+                    filterRecordsByKeyAndValue(
+                      customTableData.records,
+                      "paymentStatus",
+                      "Expired"
+                    ).length
+                  }
+                </span>
+              </div>
+            )
+          )}
         </div>
         <TableSearchInput
           parentBoxStyle="flex items-center justify-between p-2 bg-custom-grey-100 rounded-3xl border border-custom-color-one"
-          inputBoxStyle={` ${
-            displaySearchIcon ? "w-10/12" : "w-full"
-          } text-xs outline-none bg-inherit font-lexend text-color-text-two`}
+          inputBoxStyle={` ${displaySearchIcon ? "w-10/12" : "w-full"
+            } text-xs outline-none bg-inherit font-lexend text-color-text-two`}
           iconBoxStyle={"text-base text-primary-color hover:cursor-pointer"}
           placeholder={"Search records"}
           searchIcon={<FiSearch />}
