@@ -2,11 +2,10 @@ import React, { useState, useEffect } from "react";
 import { FiSearch } from "react-icons/fi";
 import { GoDotFill } from "react-icons/go";
 import { TbCurrencyNaira } from "react-icons/tb";
-import { RiDeleteBin5Fill } from "react-icons/ri";
 import { HiOutlineDotsHorizontal } from "react-icons/hi";
 import { TableSearchInput } from "../Index";
 
-export default function DemandInvoiceTable({ customTableData }) {
+export default function TransactionsTable({ customTableData }) {
   const [displaySearchIcon, setDisplaySearchIcon] = useState(true);
   const [activeMenu, setActiveMenu] = useState(1);
   const [query, setQuery] = useState("");
@@ -31,19 +30,18 @@ export default function DemandInvoiceTable({ customTableData }) {
     return formattedNumber;
   }
 
-  function filterRecordsByPaymentStatus(records, status) {
-    return records.filter((record) => record.paymentStatus === status);
+  function filterTransactionsByPaymentType(records, status) {
+    return records.filter((record) => record.type === status);
   }
 
   const filteredRecords =
     activeMenu === 1
       ? customTableData.records
       : activeMenu === 2
-      ? filterRecordsByPaymentStatus(customTableData.records, "Paid")
-      : activeMenu === 3
-      ? filterRecordsByPaymentStatus(customTableData.records, "Unpaid")
-      : activeMenu === 4
-      ? filterRecordsByPaymentStatus(customTableData.records, "Expired")
+      ? filterTransactionsByPaymentType(
+          customTableData.records,
+          "Bank Transfer"
+        )
       : [];
 
   const handleQueryChange = (event) => {
@@ -62,60 +60,33 @@ export default function DemandInvoiceTable({ customTableData }) {
 
   const recordField = (record) => {
     return (
-      <div
-        key={record.id}
-        className="flex items-center justify-between gap-1 text-xs"
-      >
-        <span className="flex flex-wrap items-center justify-center w-24 h-10 px-2 py-1 text-sm font-medium rounded text-color-text-three bg-custom-blue-400">
+      <div key={record.id} className="flex items-center justify-between gap-1 text-xs">
+        <span className="flex flex-wrap items-center justify-center w-2/12 h-10 px-2 py-1 text-sm font-medium rounded text-color-text-three bg-custom-blue-400">
+          {record.demandNoticeNumber}
+        </span>
+        <span className="flex flex-wrap items-center justify-center w-20 p-1 text-xs font-medium rounded text-color-text-black bg-custom-blue-100 border-0.6 border-custom-color-one">
           {record.pin}
         </span>
         <span className="flex flex-wrap items-center w-2/12 font-lexend text-color-text-black">
           {record.address}
         </span>
-        <span className="flex flex-wrap items-center width-5-percent text-color-text-black font-lexend text-10px">
-          {record.date}
-        </span>
         <span
-          className={`flex flex-wrap items-center px-4 py-1 justify-center rounded-xl width-12-percent font-light font-lexend text-color-text-black text-10px border-0.6 border-custom-grey-100
-        ${
-          record.propertyUse === "Commercial"
-            ? "bg-color-light-red"
-            : record.propertyUse === "Residential"
-            ? "bg-color-light-yellow"
-            : "bg-custom-blue-200"
-        }
-        `}
+          className={`flex flex-wrap text-center items-center px-2 py-1 justify-center rounded-xl width-12-percent font-light font-lexend text-color-text-black text-10px border-0.6 border-custom-grey-100
+            ${
+              record.type === "Mobile Transfer"
+                ? "bg-color-light-red"
+                : "bg-color-light-yellow"
+            }`}
         >
-          {record.propertyUse.toUpperCase()}
-        </span>
-        <span className="flex flex-wrap items-center justify-center p-1 font-light rounded width-12-percent font-lexend text-custom-blue-500 bg-custom-blue-100 border-0.6 border-custom-grey-100">
-          {record.cadestralZone}
+          {record.type.toUpperCase()}
         </span>
         <span className="flex flex-wrap items-center justify-center text-sm width-12-percent text-color-text-black font-chonburi">
           {formatNumberWithCommas(record.ratePayable)}
         </span>
-        <div className="flex items-center justify-center width-12-percent">
-          <span
-            className={`flex flex-wrap items-center justify-center px-2 p-1 font-light text-white rounded font-lexend
-          ${
-            record.paymentStatus === "Expired"
-              ? "bg-color-bright-red"
-              : record.paymentStatus === "Unpaid"
-              ? "bg-color-bright-orange"
-              : "bg-color-bright-green"
-          }
-          `}
-          >
-            {record.paymentStatus}
-          </span>
-        </div>
-        <span className="flex flex-wrap items-center w-1/12 gap-1 ">
-          <span
-            className="border-0.6 border-custom-grey-100 text-custom-grey-300 px-2 py-2.5 rounded text-base hover:cursor-pointer"
-            title="Delete Invoice"
-          >
-            <RiDeleteBin5Fill />
-          </span>
+        <span className="flex flex-wrap items-center justify-center w-1/12 text-color-text-black font-lexend text-10px">
+          {record.date}
+        </span>
+        <span className="flex flex-wrap items-center justify-center gap-1 width-12-percent">
           <span
             className="border-0.6 border-custom-grey-100 text-custom-grey-300 px-2 py-2.5 rounded text-base hover:cursor-pointer"
             title="Edit Invoice"
@@ -185,10 +156,10 @@ export default function DemandInvoiceTable({ customTableData }) {
             <div
               key={column.id}
               className={`flex items-center gap-1 w-1/12 text-color-text-two text-10px font-lexend
-              ${column.id === 1 && "w-24"}
-              ${column.id === 2 && "w-2/12"}
-              ${column.id === 3 && "width-5-percent"}
-              ${[4, 5, 6, 7].includes(column.id) && "width-12-percent"}
+              ${[1, 3].includes(column.id) && "w-2/12"}
+              ${[2].includes(column.id) && "w-20"}
+              ${[4, 5, 7].includes(column.id) && "width-12-percent"}
+              ${column.id === 6 && "width-1/12"}
               `}
             >
               <GoDotFill />

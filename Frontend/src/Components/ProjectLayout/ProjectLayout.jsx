@@ -5,6 +5,7 @@ import { FiSearch } from "react-icons/fi";
 import {
   TopNavigation,
   SideBarMenu,
+  Card,
   MenuItemData,
   DemandPropertyModal,
   AddProperty,
@@ -124,13 +125,20 @@ export default function ProjectLayout() {
             alert("Opened Menu Modal");
           }}
         />
+        <Card
+          icon={<img src="path/to/icon.png" alt="Icon" />}
+          height="25%"
+          width="100%"
+          title="Custom Title"
+          subtitle="Custom Subtitle"
+          value="Custom Value"
+        />
         {activeComponent}
-
         <p className="flex items-center justify-center text-xs font-lexend text-color-text-two">
           This portal is a property of REVENUE HUB
         </p>
       </div>
-
+      
       {displayAddPropertyModal ? (
         <DemandPropertyModal
           modalStyle={

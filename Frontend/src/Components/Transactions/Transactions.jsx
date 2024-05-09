@@ -1,7 +1,10 @@
-import React from 'react'
+import React from "react";
+import { TransactionsTable, customTableData } from "../Index";
 
 export default function Transactions() {
   return (
-    <div>Transactions</div>
-  )
+    <div>
+      <TransactionsTable customTableData={customTableData.transactions} />
+    </div>
+  );
 }
