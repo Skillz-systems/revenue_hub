@@ -17,3 +17,6 @@ export { default as Transactions } from "./Transactions/Transactions";
 export { default as TransactionsTable } from "./Transactions/TransactionsTable";
 export { default as Overview } from "./Overview/Overview";
 export { default as CardData } from "./Card/CardData";
+export { default as Staff } from "./Staff/Staff";
+export { default as StaffTable } from "./Staff/StaffTable";
+export { default as Settings } from "./Settings/Settings";

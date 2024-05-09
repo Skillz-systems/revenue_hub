@@ -1,13 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { FiSearch } from "react-icons/fi";
 import { GoDotFill } from "react-icons/go";
-import { TbCurrencyNaira } from "react-icons/tb";
+import { HiUsers } from "react-icons/hi2";
 import { HiOutlineDotsHorizontal } from "react-icons/hi";
 import { TableSearchInput } from "../Index";
-import {
-  formatNumberWithCommas,
-  filterRecordsByKeyAndValue,
-} from "../../Utils/client";
+import { filterRecordsByKeyAndValue } from "../../Utils/client";
 
 export default function TransactionsTable({ customTableData }) {
   const [displaySearchIcon, setDisplaySearchIcon] = useState(true);
@@ -33,11 +30,9 @@ export default function TransactionsTable({ customTableData }) {
     activeMenu === 1
       ? customTableData.records
       : activeMenu === 2
-      ? filterRecordsByKeyAndValue(
-          customTableData.records,
-          "type",
-          "Bank Transfer"
-        )
+      ? filterRecordsByKeyAndValue(customTableData.records, "type", "Manager")
+      : activeMenu === 3
+      ? filterRecordsByKeyAndValue(customTableData.records, "type", "Officer")
       : [];
 
   const filteredResults = query
@@ -61,32 +56,29 @@ export default function TransactionsTable({ customTableData }) {
         key={record.id}
         className="flex items-center justify-between gap-1 text-xs"
       >
-        <span className="flex flex-wrap items-center justify-center w-2/12 h-10 px-2 py-1 text-sm font-medium rounded text-color-text-three bg-custom-blue-400">
-          {record.demandNoticeNumber}
+        <span className="flex flex-wrap items-center justify-center h-10 px-2 py-1 text-sm font-medium rounded width-12-percent text-color-text-three bg-custom-blue-400">
+          {record.staffId}
         </span>
-        <span className="flex flex-wrap items-center justify-center w-20 p-1 text-xs font-medium rounded text-color-text-black bg-custom-blue-100 border-0.6 border-custom-color-one">
-          {record.pin}
+        <span className="flex flex-wrap items-center w-40 text-sm font-bold rounded font-lexend text-color-text-black">
+          {record.fullName}
         </span>
-        <span className="flex flex-wrap items-center w-2/12 font-lexend text-color-text-black">
-          {record.address}
+        <span className="flex flex-wrap items-center w-2/12 text-xs font-lexend text-color-text-black">
+          {record.email}
+        </span>
+        <span className="flex flex-wrap items-center justify-center w-2/12 text-xs font-lexend text-color-text-black">
+          {record.phoneNumber}
         </span>
         <span
-          className={`flex flex-wrap text-center items-center px-2 py-1 justify-center rounded-xl width-12-percent font-light font-lexend text-color-text-black text-10px border-0.6 border-custom-grey-100
+          className={`flex flex-wrap text-center items-center px-2 py-1 justify-center rounded-xl w-1/12 font-light font-lexend text-color-text-black text-10px border-0.6 border-custom-grey-100
             ${
-              record.type === "Mobile Transfer"
+              record.type === "Manager"
                 ? "bg-color-light-red"
                 : "bg-color-light-yellow"
             }`}
         >
           {record.type.toUpperCase()}
         </span>
-        <span className="flex flex-wrap items-center justify-center text-sm width-12-percent text-color-text-black font-chonburi">
-          {formatNumberWithCommas(record.ratePayable)}
-        </span>
-        <span className="flex flex-wrap items-center justify-center w-1/12 text-color-text-black font-lexend text-10px">
-          {record.date}
-        </span>
-        <span className="flex flex-wrap items-center justify-center gap-1 width-12-percent">
+        <span className="flex flex-wrap items-center justify-center w-1/12 gap-1">
           <span className="border-0.6 relative border-custom-grey-100 text-custom-grey-300 px-2 py-2.5 rounded text-base hover:cursor-pointer">
             <span
               title="Edit Transaction"
@@ -96,9 +88,12 @@ export default function TransactionsTable({ customTableData }) {
               <HiOutlineDotsHorizontal />
             </span>
             {editModal === record.id && (
-              <span className="absolute space-y-2 top-0 z-10 flex-col w-36 p-4 text-xs text-center bg-white rounded shadow-md -left-44 border-0.6 border-custom-grey-100 text-color-text-black font-lexend">
-                <p className="hover:cursor-pointer" title="Edit Transaction">
-                  View Transaction
+              <span className="absolute space-y-2 top-0 z-10 flex-col w-36 p-4 text-xs bg-white rounded shadow-md -left-44 border-0.6 border-custom-grey-100 text-color-text-black font-lexend">
+                <p className="hover:cursor-pointer" title="View Staff Details">
+                  View Staff Details
+                </p>
+                <p className="hover:cursor-pointer" title="Remove Staff">
+                  Remove Staff
                 </p>
               </span>
             )}
@@ -140,59 +135,81 @@ export default function TransactionsTable({ customTableData }) {
                       : filteredResults < 1 && query != ""
                       ? 0
                       : customTableData.records.length
+                    : menu.id === 2
+                    ? filterRecordsByKeyAndValue(
+                        customTableData.records,
+                        "type",
+                        "Manager"
+                      ).length
                     : filterRecordsByKeyAndValue(
                         customTableData.records,
                         "type",
-                        "Bank Transfer"
+                        "Officer"
                       ).length}
                 </span>
               </div>
             )
           )}
         </div>
-        <TableSearchInput
-          parentBoxStyle="flex items-center justify-between p-2 bg-custom-grey-100 rounded-3xl border border-custom-color-one"
-          inputBoxStyle={` ${
-            displaySearchIcon ? "w-10/12" : "w-full"
-          } text-xs outline-none bg-inherit font-lexend text-color-text-two`}
-          iconBoxStyle={"text-base text-primary-color hover:cursor-pointer"}
-          placeholder={"Search records"}
-          searchIcon={<FiSearch />}
-          handleOnInput={(event) => {
-            event.preventDefault();
-            if (event.target.value) {
-              setDisplaySearchIcon(false);
-            } else {
-              setDisplaySearchIcon(true);
-            }
-          }}
-          displaySearchIcon={displaySearchIcon}
-          query={query}
-          handleQueryChange={handleQueryChange}
-        />
+        <div className="flex items-center justify-between gap-4">
+          <TableSearchInput
+            parentBoxStyle="flex items-center justify-between p-2 bg-custom-grey-100 rounded-3xl border border-custom-color-one"
+            inputBoxStyle={` ${
+              displaySearchIcon ? "w-10/12" : "w-full"
+            } text-xs outline-none bg-inherit font-lexend text-color-text-two`}
+            iconBoxStyle={"text-base text-primary-color hover:cursor-pointer"}
+            placeholder={"Search records"}
+            searchIcon={<FiSearch />}
+            handleOnInput={(event) => {
+              event.preventDefault();
+              if (event.target.value) {
+                setDisplaySearchIcon(false);
+              } else {
+                setDisplaySearchIcon(true);
+              }
+            }}
+            displaySearchIcon={displaySearchIcon}
+            query={query}
+            handleQueryChange={handleQueryChange}
+          />
+          <button
+            type="button"
+            className="flex items-center justify-between p-2 space-x-1 border rounded button-gradient-one border-custom-color-two shadow-custom-100"
+            style={{ width: "35%" }}
+            title="New Staff"
+            onClick={() => {
+              alert("Add Staff");
+            }}
+          >
+            <span className="text-sm text-white">
+              <HiUsers />
+            </span>
+            <span
+              className="font-medium text-left text-white ellipsis font-lexend"
+              style={{ fontSize: "0.6875rem" }}
+            >
+              New Staff
+            </span>
+          </button>
+        </div>
       </div>
 
-      <div className="flex-col space-y-6 ">
+      <div className="flex-col space-y-6">
         <div className="flex items-center justify-between gap-1">
           {customTableData.columns.map((column) => (
             <div
               key={column.id}
               className={`flex items-center gap-1 w-1/12 text-color-text-two text-10px font-lexend
-              ${[1, 3].includes(column.id) && "w-2/12"}
-              ${[2].includes(column.id) && "w-20"}
-              ${[4, 5, 7].includes(column.id) && "width-12-percent"}
-              ${column.id === 6 && "w-1/12"}
-              ${[5, 6, 7].includes(column.id) && "justify-center"}
+              ${column.id === 1 && "width-12-percent"}
+              ${column.id === 2 && "w-40"}
+              ${[3, 4].includes(column.id) && "w-2/12"}
+              ${column.id === 4 && "justify-center"}
+              ${[5, 6].includes(column.id) && "w-1/12 justify-center"}
               `}
             >
               <GoDotFill />
               <span className="flex items-center justify-center gap-1">
                 {column.name}
-                {column.name === "RATE PAYABLE" ? (
-                  <span className="text-base text-color-bright-green">
-                    <TbCurrencyNaira />
-                  </span>
-                ) : null}
               </span>
             </div>
           ))}

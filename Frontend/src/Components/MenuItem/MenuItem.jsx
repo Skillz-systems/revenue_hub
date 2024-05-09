@@ -1,4 +1,5 @@
 export default function MenuItem({
+  menuId,
   parentDivStyle,
   menuIcon,
   menuIconTwo,
@@ -9,6 +10,7 @@ export default function MenuItem({
 }) {
   return (
     <div
+      key={menuId}
       className={`flex items-center justify-between px-1.5 py-2 transition ease-in-out  hover:cursor-pointer hover:translate-x-1
       ${parentDivStyle}
       ${

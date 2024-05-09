@@ -13,7 +13,13 @@ import {
   BsPeopleFill,
 } from "react-icons/bs";
 import { IoSettingsOutline, IoSettings } from "react-icons/io5";
-import { DemandNotice, Transactions, Overview } from "../Index";
+import {
+  DemandNotice,
+  Transactions,
+  Overview,
+  Staff,
+  Settings,
+} from "../Index";
 
 const MenuItemData = () => {
   return [
@@ -69,7 +75,7 @@ const MenuItemData = () => {
       menuName: "Staff",
       menuItemCount: 12,
       componentName: "Staff Component",
-      component: <div>Staff</div>,
+      component: <Staff />,
     },
     {
       id: 7,
@@ -78,7 +84,7 @@ const MenuItemData = () => {
       menuName: "Settings",
       menuItemCount: 0,
       componentName: "Settings Component",
-      component: <div>Settings</div>,
+      component: <Settings />,
     },
   ];
 };

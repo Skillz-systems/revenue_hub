@@ -94,17 +94,20 @@ export default function ProjectLayout() {
               {menuItems.map((item, index) => (
                 <>
                   <MenuItemAlt
-                    key={index}
+                    menuId={index}
                     menuIcon={item.menuIcon}
                     menuIconTwo={item.menuIconTwo}
                     menuName={item.menuName}
                     isActive={activeMenuItem === item.componentName}
                     setComponent={() => {
                       handleMenuItemClick(item.componentName);
+                      setActiveComponent(item.component);
                     }}
                   />
-                  {index === 4 && (
-                    <hr className="border-0.5 border-divider-grey" />
+                  {item.id === 4 && (
+                    <div className="py-2">
+                      <hr className="border-0.5 border-divider-grey" />
+                    </div>
                   )}
                 </>
               ))}
