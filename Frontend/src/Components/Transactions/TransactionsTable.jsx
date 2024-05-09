@@ -4,62 +4,54 @@ import { GoDotFill } from "react-icons/go";
 import { TbCurrencyNaira } from "react-icons/tb";
 import { HiOutlineDotsHorizontal } from "react-icons/hi";
 import { TableSearchInput } from "../Index";
+import {
+  formatNumberWithCommas,
+  filterRecordsByKeyAndValue,
+} from "../../Utils/client";
 
 export default function TransactionsTable({ customTableData }) {
   const [displaySearchIcon, setDisplaySearchIcon] = useState(true);
   const [activeMenu, setActiveMenu] = useState(1);
   const [query, setQuery] = useState("");
   const [editModal, setEditModal] = useState(null);
+  const [displayColumn, setDisplayColumn] = useState(true);
 
   const handleEditModal = (recordId) => {
     setEditModal(editModal === recordId ? null : recordId);
   };
 
-  useEffect(() => setActiveMenu(1), [query !== ""]);
-
-  function formatNumberWithCommas(number) {
-    // Convert the number to a string
-    const numStr = String(number);
-
-    // Split the string into integer and decimal parts (if any)
-    const [integerPart, decimalPart] = numStr.split(".");
-
-    // Add commas to the integer part
-    const formattedInteger = integerPart.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-
-    // Combine the integer and decimal parts (if any)
-    const formattedNumber = decimalPart
-      ? `${formattedInteger}.${decimalPart}`
-      : formattedInteger;
-
-    return formattedNumber;
-  }
-
-  function filterTransactionsByPaymentType(records, status) {
-    return records.filter((record) => record.type === status);
-  }
-
-  const filteredRecords =
-    activeMenu === 1
-      ? customTableData.records
-      : activeMenu === 2
-      ? filterTransactionsByPaymentType(
-          customTableData.records,
-          "Bank Transfer"
-        )
-      : [];
+  useEffect(() => {
+    setActiveMenu(1);
+    setDisplayColumn(false);
+  }, [query !== ""]);
 
   const handleQueryChange = (event) => {
     setQuery(event.target.value);
   };
 
+  const filteredRecords =
+    activeMenu === 1
+      ? customTableData.records
+      : activeMenu === 2
+      ? filterRecordsByKeyAndValue(
+          customTableData.records,
+          "type",
+          "Bank Transfer"
+        )
+      : [];
+
   const filteredResults = query
     ? customTableData.records.filter((record) =>
-        Object.values(record).some(
-          (value) =>
-            typeof value === "string" &&
-            value.toLowerCase().includes(query.toLowerCase())
-        )
+        Object.values(record).some((value) => {
+          if (typeof value === "string") {
+            // For string values, perform case-insensitive comparison
+            return value.toLowerCase().includes(query.toLowerCase());
+          } else if (typeof value === "number" || Number.isInteger(value)) {
+            // For numeric values, stringify and compare
+            return String(value).toLowerCase().includes(query.toLowerCase());
+          }
+          return false; // Ignore other data types
+        })
       )
     : [];
 
@@ -117,34 +109,46 @@ export default function TransactionsTable({ customTableData }) {
   };
   return (
     <div className="flex-col space-y-4 p-4 border-0.6 border-custom-grey-100 rounded-lg">
-      <div className="flex flex-wrap items-start justify-between ">
+      <div className="flex items-start justify-between ">
         <div className="flex items-center justify-between border-0.6 border-custom-grey-100 rounded p-1">
-          {customTableData.menu.map((menu) => (
-            <div
-              key={menu.id}
-              className={`flex items-start justify-between gap-2 px-2 py-1 text-xs font-lexend hover:cursor-pointer ${
-                activeMenu === menu.id
-                  ? "bg-primary-color rounded"
-                  : "bg-inherit"
-              }`}
-              onClick={() => {
-                setActiveMenu(menu.id);
-              }}
-            >
-              <span
-                className={`${
+          {customTableData.menu.map((menu) =>
+            displayColumn === false && query !== "" && menu.id > 1 ? null : (
+              <div
+                key={menu.id}
+                className={`flex items-start justify-between gap-2 px-2 py-1 text-xs font-lexend hover:cursor-pointer ${
                   activeMenu === menu.id
-                    ? "font-medium text-white"
-                    : "text-color-text-two"
+                    ? "bg-primary-color rounded"
+                    : "bg-inherit"
                 }`}
+                onClick={() => {
+                  setActiveMenu(menu.id);
+                }}
               >
-                {menu.name}
-              </span>
-              <span className="px-1 border rounded text-color-text-three bg-custom-blue-200 border-custom-color-two">
-                {menu.count}
-              </span>
-            </div>
-          ))}
+                <span
+                  className={`${
+                    activeMenu === menu.id
+                      ? "font-medium text-white"
+                      : "text-color-text-two"
+                  }`}
+                >
+                  {menu.name}
+                </span>
+                <span className="px-1 border rounded text-color-text-three bg-custom-blue-200 border-custom-color-two">
+                  {menu.id === 1
+                    ? filteredResults.length > 0
+                      ? filteredResults.length
+                      : filteredResults < 1 && query != ""
+                      ? 0
+                      : customTableData.records.length
+                    : filterRecordsByKeyAndValue(
+                        customTableData.records,
+                        "type",
+                        "Bank Transfer"
+                      ).length}
+                </span>
+              </div>
+            )
+          )}
         </div>
         <TableSearchInput
           parentBoxStyle="flex items-center justify-between p-2 bg-custom-grey-100 rounded-3xl border border-custom-color-one"

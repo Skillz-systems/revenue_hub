@@ -51,8 +51,8 @@ export default function ProjectLayout() {
       className={`flex relative justify-between h-screen bg-custom-blue-100 lg:p-4 lg:pb-0 `}
     >
       <div
-        className={`flex-col overflow-y-auto overscroll-contain scrollbar-thin scrollbar-thumb-color-text-two scrollbar-track-white ${
-          transitionSection ? "pt-1 w-14" : "w-2/12"
+        className={`flex-col pb-6 overflow-y-auto overscroll-contain scrollbar-thin scrollbar-thumb-color-text-two scrollbar-track-white ${
+          transitionSection ? "pt-1 w-14" : "w-[230px]"
         } `}
       >
         {displaySideBarMenu === true ? (

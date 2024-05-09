@@ -15,3 +15,7 @@ export function formatNumberWithCommas(number) {
 
     return formattedNumber;
 }
+
+export function filterRecordsByKeyAndValue(recordsArray, key, value) {
+    return recordsArray.filter((record) => record[key] === value);
+}
