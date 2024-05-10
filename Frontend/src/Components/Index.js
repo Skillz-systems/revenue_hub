@@ -8,13 +8,12 @@ export { default as DemandPropertyButtons } from "./DemandPropertyButtons/Demand
 export { default as DemandPropertyModal } from "./DemandPropertyModal/DemandPropertyModal";
 export { default as AddProperty } from "./DemandPropertyModal/AddProperty";
 export { default as AddDemand } from "./DemandPropertyModal/AddDemand";
-<<<<<<< HEAD
+
 export { default as Card } from "./Card/Card";
 export { default as PropertyCard } from "./PropertyCard/PropertyCard";
-=======
+
 export { default as DemandInvoiceTable } from "./DemandInvoiceTable/DemandInvoiceTable";
 export { default as DemandNotice } from "./DemandNotice/DemandNotice";
 export { default as Transactions } from "./Transactions/Transactions";
 export { data as customTableData } from "./DemandInvoiceTable/customTableData";
 export { default as TableSearchInput } from "./DemandInvoiceTable/TableSearchInput";
->>>>>>> f46570dd49620fe975cf8a7d011a3348f3257e57

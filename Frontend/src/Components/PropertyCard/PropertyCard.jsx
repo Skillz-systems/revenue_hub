@@ -5,29 +5,29 @@ import BorderColorIcon from '@mui/icons-material/BorderColor';
 
 
 
-function PropertyCard({ houseType, paymentStatus }) {
+function PropertyCard({ houseType, paymentStatus, pin, address, Zone, location, Value}) {
     return (
         <div className="w-full h-fit rounded-md border border-gray-300  space-y-5">
             <div className=" flex items-center justify-between border-b border-gray-300 px-2 py-3">
                 {/* TOP LEFT */}
                 <div className="flex items-center space-x-1">
-                    <span className="font-lora font-bold text-base leading-[1.28] text-black">1237489982</span>
-                    <span className="font-lexend font-light leading-[12.5px] text-[10px] bg-pink-200 rounded-full">COMMERCIAL</span>
+                    <span className="font-lora font-bold text-base leading-[1.28] text-black">{pin}</span>
+                    <span className="font-lexend font-light leading-[12.5px] text-[10px] bg-pink-200 rounded-full">{houseType}</span>
                 </div>
                 {/* TOP RIGHT */}
-                <div className="flex items-center justify-center rounded-lg bg-pink-500 text-white font-lexend text-xs font-light leading-[12.5] w-[80px] h-[15px]">Ungenerated</div>
+                <div className="flex items-center justify-center rounded-lg bg-pink-500 text-white font-lexend text-xs font-light leading-[12.5] w-[80px] h-[15px]">{paymentStatus}</div>
             </div>
 
             <div className='px-2 py-1'>
-                <span className=' font-lexend font-normal text-xs leading-[15px] text-blue-900 line-clamp-1'>House 40, Drive 2, Prince and Princes Estate</span>
+                <span className=' font-lexend font-normal text-xs leading-[15px] text-blue-900 line-clamp-1'>{address}</span>
                 <div className="flex items-center space-x-3 mt-2">
                     <div className='flex items-center space-x-1 bg-gray-200 rounded-md'>
                         <img src={images.Ellipse} className='size-[6px]' />
-                        <span className='text-blue-900 font-lexend font-light text-xs leading-15  '>Amac 1</span>
+                        <span className='text-blue-900 font-lexend font-light text-xs leading-15  '>{Zone}</span>
                     </div>
                     <div className='flex items-center space-x-1  bg-gray-200 rounded-md'>
                         <img src={images.Ellipse} className='size-[6px]' />
-                        <span className='text-blue-900 font-lexend font-light text-xs leading-3.75'>Gwarimpa</span>
+                        <span className='text-blue-900 font-lexend font-light text-xs leading-3.75'>{location}</span>
                     </div>
 
                 </div>
@@ -39,7 +39,7 @@ function PropertyCard({ houseType, paymentStatus }) {
                 </div>
                 <div className='flex items-center space-x-1 '>
                     <img src={images.Vector} className='w-[16px] h-[16px]' />
-                    <p className='font-chonburi font-normal text-base leading-[1.2] text-gray-800'>12,000.00</p>
+                    <p className='font-chonburi font-normal text-base leading-[1.2] text-gray-800'>{Value}</p>
                 </div>
             </div>
             <div className="flex justify-between items-center bg-gray-300 px-2 py-3  border-b border-gray-300 p-2">
