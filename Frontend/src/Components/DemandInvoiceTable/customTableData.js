@@ -49,28 +49,70 @@ let zones = [
   "Zuba",
 ];
 
+const africanFirstNames = [
+  "Abimbola",
+  "Chinwe",
+  "Fatou",
+  "Kwame",
+  "Lamidi",
+  "Ngozi",
+  "Oluwafemi",
+  "Sadio",
+  "Thabo",
+  "Yaa",
+  "Naledi",
+  "Adeola",
+  "Aisha",
+  "Akinyi",
+  "Lumumba",
+  "Nkosazana",
+  "Mandla",
+  "Patience",
+  "Sekou",
+  "Aminata",
+];
+
+const africanLastNames = [
+  "Abdul",
+  "Diop",
+  "Gebre",
+  "Kante",
+  "Mandela",
+  "Mbeki",
+  "Mugabe",
+  "Nkrumah",
+  "Obasanjo",
+  "Zuma",
+  "Nkosi",
+  "Kenku",
+  "Braima",
+  "Diallo",
+  "Nyongo",
+  "Girum",
+  "Dlamini",
+  "Mugisha",
+  "Touré",
+  "Ouedraogo",
+];
+
 const data = {
   demandNotice: {
     menu: [
       {
         id: 1,
         name: "All Demand Notices",
-        count: 420,
       },
       {
         id: 2,
         name: "Paid Demand Notices",
-        count: 174,
       },
       {
         id: 3,
         name: "Unpaid Demand Notices",
-        count: 246,
       },
       {
         id: 4,
         name: "Expired Demand Notices",
-        count: 42,
       },
     ],
     columns: [
@@ -86,7 +128,7 @@ const data = {
     records: [
       {
         id: 1,
-        pin: `13${Math.floor(100000000 + Math.random() * 900000000)}`,
+        pin: `13${Math.floor(10000000 + Math.random() * 900000000)}`,
         address: `House 1, Street ${Math.floor(
           1 + Math.random() * 100
         )}, Abuja`,
@@ -100,7 +142,7 @@ const data = {
       },
       {
         id: 2,
-        pin: `13${Math.floor(100000000 + Math.random() * 900000000)}`,
+        pin: `13${Math.floor(10000000 + Math.random() * 900000000)}`,
         address: `House 2, Street ${Math.floor(
           1 + Math.random() * 100
         )}, Abuja`,
@@ -114,7 +156,7 @@ const data = {
       },
       {
         id: 3,
-        pin: `13${Math.floor(100000000 + Math.random() * 900000000)}`,
+        pin: `13${Math.floor(10000000 + Math.random() * 900000000)}`,
         address: `House 3, Street ${Math.floor(
           1 + Math.random() * 100
         )}, Abuja`,
@@ -128,7 +170,7 @@ const data = {
       },
       {
         id: 4,
-        pin: `13${Math.floor(100000000 + Math.random() * 900000000)}`,
+        pin: `13${Math.floor(10000000 + Math.random() * 900000000)}`,
         address: `House 4, Street ${Math.floor(
           1 + Math.random() * 100
         )}, Abuja`,
@@ -142,7 +184,7 @@ const data = {
       },
       {
         id: 5,
-        pin: `13${Math.floor(100000000 + Math.random() * 900000000)}`,
+        pin: `13${Math.floor(10000000 + Math.random() * 900000000)}`,
         address: `House 5, Street ${Math.floor(
           1 + Math.random() * 100
         )}, Abuja`,
@@ -156,7 +198,7 @@ const data = {
       },
       {
         id: 6,
-        pin: `13${Math.floor(100000000 + Math.random() * 900000000)}`,
+        pin: `13${Math.floor(10000000 + Math.random() * 900000000)}`,
         address: `House 6, Street ${Math.floor(
           1 + Math.random() * 100
         )}, Abuja`,
@@ -170,7 +212,7 @@ const data = {
       },
       {
         id: 7,
-        pin: `13${Math.floor(100000000 + Math.random() * 900000000)}`,
+        pin: `13${Math.floor(10000000 + Math.random() * 900000000)}`,
         address: `House 7, Street ${Math.floor(
           1 + Math.random() * 100
         )}, Abuja`,
@@ -184,7 +226,7 @@ const data = {
       },
       {
         id: 8,
-        pin: `13${Math.floor(100000000 + Math.random() * 900000000)}`,
+        pin: `13${Math.floor(10000000 + Math.random() * 900000000)}`,
         address: `House 8, Street ${Math.floor(
           1 + Math.random() * 100
         )}, Abuja`,
@@ -198,7 +240,7 @@ const data = {
       },
       {
         id: 9,
-        pin: `13${Math.floor(100000000 + Math.random() * 900000000)}`,
+        pin: `13${Math.floor(10000000 + Math.random() * 900000000)}`,
         address: `House 9, Street ${Math.floor(
           1 + Math.random() * 100
         )}, Abuja`,
@@ -212,7 +254,7 @@ const data = {
       },
       {
         id: 10,
-        pin: `13${Math.floor(100000000 + Math.random() * 900000000)}`,
+        pin: `13${Math.floor(10000000 + Math.random() * 900000000)}`,
         address: `House 10, Street ${Math.floor(
           1 + Math.random() * 100
         )}, Abuja`,
@@ -226,8 +268,305 @@ const data = {
       },
     ],
   },
-  transactions: {},
-  staff: {},
+  transactions: {
+    menu: [
+      {
+        id: 1,
+        name: "All Transactions",
+      },
+      {
+        id: 2,
+        name: "Manually confirmed Transactions",
+      },
+    ],
+    columns: [
+      { id: 1, name: "DEMAND NOTICE NUMBER" },
+      { id: 2, name: "PIN" },
+      { id: 3, name: "ADDRESS" },
+      { id: 4, name: "TYPE" },
+      { id: 5, name: "RATE PAYABLE" },
+      { id: 6, name: "DATE PAID" },
+      { id: 7, name: "ACTIONS" },
+    ],
+    records: [
+      {
+        id: 1,
+        demandNoticeNumber: `156${Math.floor(10000000 + Math.random() * 900000000)}`,
+        pin: `13${Math.floor(10000000 + Math.random() * 900000000)}`,
+        address: `House 1, Street ${Math.floor(
+          1 + Math.random() * 100
+        )}, Abuja`,
+        type: ["Mobile Transfer", "Bank Transfer",][
+          Math.floor(Math.random() * 2)
+        ],
+        ratePayable: Math.floor(1000 + Math.random() * 100000),
+        date: `12/${Math.floor(1 + Math.random() * 12)}/2024`,
+      },
+      {
+        id: 2,
+        demandNoticeNumber: `156${Math.floor(10000000 + Math.random() * 900000000)}`,
+        pin: `13${Math.floor(10000000 + Math.random() * 900000000)}`,
+        address: `House 1, Street ${Math.floor(
+          1 + Math.random() * 100
+        )}, Abuja`,
+        type: ["Mobile Transfer", "Bank Transfer",][
+          Math.floor(Math.random() * 2)
+        ],
+        ratePayable: Math.floor(1000 + Math.random() * 100000),
+        date: `12/${Math.floor(1 + Math.random() * 12)}/2024`,
+      },
+      {
+        id: 3,
+        demandNoticeNumber: `156${Math.floor(10000000 + Math.random() * 900000000)}`,
+        pin: `13${Math.floor(10000000 + Math.random() * 900000000)}`,
+        address: `House 1, Street ${Math.floor(
+          1 + Math.random() * 100
+        )}, Abuja`,
+        type: ["Mobile Transfer", "Bank Transfer",][
+          Math.floor(Math.random() * 2)
+        ],
+        ratePayable: Math.floor(1000 + Math.random() * 100000),
+        date: `12/${Math.floor(1 + Math.random() * 12)}/2024`,
+      },
+      {
+        id: 4,
+        demandNoticeNumber: `156${Math.floor(10000000 + Math.random() * 900000000)}`,
+        pin: `13${Math.floor(10000000 + Math.random() * 900000000)}`,
+        address: `House 1, Street ${Math.floor(
+          1 + Math.random() * 100
+        )}, Abuja`,
+        type: ["Mobile Transfer", "Bank Transfer",][
+          Math.floor(Math.random() * 2)
+        ],
+        ratePayable: Math.floor(1000 + Math.random() * 100000),
+        date: `12/${Math.floor(1 + Math.random() * 12)}/2024`,
+      },
+      {
+        id: 5,
+        demandNoticeNumber: `156${Math.floor(10000000 + Math.random() * 900000000)}`,
+        pin: `13${Math.floor(10000000 + Math.random() * 900000000)}`,
+        address: `House 1, Street ${Math.floor(
+          1 + Math.random() * 100
+        )}, Abuja`,
+        type: ["Mobile Transfer", "Bank Transfer",][
+          Math.floor(Math.random() * 2)
+        ],
+        ratePayable: Math.floor(1000 + Math.random() * 100000),
+        date: `12/${Math.floor(1 + Math.random() * 12)}/2024`,
+      },
+      {
+        id: 6,
+        demandNoticeNumber: `156${Math.floor(10000000 + Math.random() * 900000000)}`,
+        pin: `13${Math.floor(10000000 + Math.random() * 900000000)}`,
+        address: `House 1, Street ${Math.floor(
+          1 + Math.random() * 100
+        )}, Abuja`,
+        type: ["Mobile Transfer", "Bank Transfer",][
+          Math.floor(Math.random() * 2)
+        ],
+        ratePayable: Math.floor(1000 + Math.random() * 100000),
+        date: `12/${Math.floor(1 + Math.random() * 12)}/2024`,
+      },
+      {
+        id: 7,
+        demandNoticeNumber: `156${Math.floor(10000000 + Math.random() * 900000000)}`,
+        pin: `13${Math.floor(10000000 + Math.random() * 900000000)}`,
+        address: `House 1, Street ${Math.floor(
+          1 + Math.random() * 100
+        )}, Abuja`,
+        type: ["Mobile Transfer", "Bank Transfer",][
+          Math.floor(Math.random() * 2)
+        ],
+        ratePayable: Math.floor(1000 + Math.random() * 100000),
+        date: `12/${Math.floor(1 + Math.random() * 12)}/2024`,
+      },
+      {
+        id: 8,
+        demandNoticeNumber: `156${Math.floor(10000000 + Math.random() * 900000000)}`,
+        pin: `13${Math.floor(10000000 + Math.random() * 900000000)}`,
+        address: `House 1, Street ${Math.floor(
+          1 + Math.random() * 100
+        )}, Abuja`,
+        type: ["Mobile Transfer", "Bank Transfer",][
+          Math.floor(Math.random() * 2)
+        ],
+        ratePayable: Math.floor(1000 + Math.random() * 100000),
+        date: `12/${Math.floor(1 + Math.random() * 12)}/2024`,
+      },
+      {
+        id: 9,
+        demandNoticeNumber: `156${Math.floor(10000000 + Math.random() * 900000000)}`,
+        pin: `13${Math.floor(10000000 + Math.random() * 900000000)}`,
+        address: `House 1, Street ${Math.floor(
+          1 + Math.random() * 100
+        )}, Abuja`,
+        type: ["Mobile Transfer", "Bank Transfer",][
+          Math.floor(Math.random() * 2)
+        ],
+        ratePayable: Math.floor(1000 + Math.random() * 100000),
+        date: `12/${Math.floor(1 + Math.random() * 12)}/2024`,
+      },
+      {
+        id: 10,
+        demandNoticeNumber: `156${Math.floor(10000000 + Math.random() * 900000000)}`,
+        pin: `13${Math.floor(10000000 + Math.random() * 900000000)}`,
+        address: `House 1, Street ${Math.floor(
+          1 + Math.random() * 100
+        )}, Abuja`,
+        type: ["Mobile Transfer", "Bank Transfer",][
+          Math.floor(Math.random() * 2)
+        ],
+        ratePayable: Math.floor(1000 + Math.random() * 100000),
+        date: `12/${Math.floor(1 + Math.random() * 12)}/2024`,
+      }
+    ]
+  },
+  staff: {
+    menu: [
+      {
+        id: 1,
+        name: "All Staff",
+      },
+      {
+        id: 2,
+        name: "All Managers",
+      },
+      {
+        id: 3,
+        name: "All Officers",
+      },
+    ],
+    columns: [
+      { id: 1, name: "STAFF ID" },
+      { id: 2, name: "FULL NAME" },
+      { id: 3, name: "EMAIL" },
+      { id: 4, name: "PHONE NUMBER" },
+      { id: 5, name: "TYPE" },
+      { id: 6, name: "ACTIONS" },
+    ],
+    records: [
+      {
+        id: 1,
+        staffId: `13${Math.floor(100000000 + Math.random() * 900000000)}`,
+        fullName: `${africanFirstNames[Math.floor(Math.random() * africanFirstNames.length)]} ${africanLastNames[Math.floor(Math.random() * africanLastNames.length)]}`,
+        email: `${africanFirstNames[Math.floor(Math.random() * africanFirstNames.length)]}${Math.floor(
+          1 + Math.random() * 100
+        )}@gmail.com`,
+        phoneNumber: `080${Math.floor(100000 + Math.random() * 9999999)}`,
+        type: ["Manager", "Officer",][
+          Math.floor(Math.random() * 2)
+        ],
+      },
+      {
+        id: 2,
+        staffId: `13${Math.floor(100000000 + Math.random() * 900000000)}`,
+        fullName: `${africanFirstNames[Math.floor(Math.random() * africanFirstNames.length)]} ${africanLastNames[Math.floor(Math.random() * africanLastNames.length)]}`,
+       email: `${africanFirstNames[Math.floor(Math.random() * africanFirstNames.length)]}${Math.floor(
+          1 + Math.random() * 100
+        )}@gmail.com`,
+        phoneNumber: `080${Math.floor(100000 + Math.random() * 9999999)}`,
+        type: ["Manager", "Officer",][
+          Math.floor(Math.random() * 2)
+        ],
+      },
+      {
+        id: 3,
+        staffId: `13${Math.floor(100000000 + Math.random() * 900000000)}`,
+        fullName: `${africanFirstNames[Math.floor(Math.random() * africanFirstNames.length)]} ${africanLastNames[Math.floor(Math.random() * africanLastNames.length)]}`,
+       email: `${africanFirstNames[Math.floor(Math.random() * africanFirstNames.length)]}${Math.floor(
+          1 + Math.random() * 100
+        )}@gmail.com`,
+        phoneNumber: `080${Math.floor(100000 + Math.random() * 9999999)}`,
+        type: ["Manager", "Officer",][
+          Math.floor(Math.random() * 2)
+        ],
+      },
+      {
+        id: 4,
+        staffId: `13${Math.floor(100000000 + Math.random() * 900000000)}`,
+        fullName: `${africanFirstNames[Math.floor(Math.random() * africanFirstNames.length)]} ${africanLastNames[Math.floor(Math.random() * africanLastNames.length)]}`,
+       email: `${africanFirstNames[Math.floor(Math.random() * africanFirstNames.length)]}${Math.floor(
+          1 + Math.random() * 100
+        )}@gmail.com`,
+        phoneNumber: `080${Math.floor(100000 + Math.random() * 9999999)}`,
+        type: ["Manager", "Officer",][
+          Math.floor(Math.random() * 2)
+        ],
+      },
+      {
+        id: 5,
+        staffId: `13${Math.floor(100000000 + Math.random() * 900000000)}`,
+        fullName: `${africanFirstNames[Math.floor(Math.random() * africanFirstNames.length)]} ${africanLastNames[Math.floor(Math.random() * africanLastNames.length)]}`,
+       email: `${africanFirstNames[Math.floor(Math.random() * africanFirstNames.length)]}${Math.floor(
+          1 + Math.random() * 100
+        )}@gmail.com`,
+        phoneNumber: `080${Math.floor(100000 + Math.random() * 9999999)}`,
+        type: ["Manager", "Officer",][
+          Math.floor(Math.random() * 2)
+        ],
+      },
+      {
+        id: 6,
+        staffId: `13${Math.floor(100000000 + Math.random() * 900000000)}`,
+        fullName: `${africanFirstNames[Math.floor(Math.random() * africanFirstNames.length)]} ${africanLastNames[Math.floor(Math.random() * africanLastNames.length)]}`,
+       email: `${africanFirstNames[Math.floor(Math.random() * africanFirstNames.length)]}${Math.floor(
+          1 + Math.random() * 100
+        )}@gmail.com`,
+        phoneNumber: `080${Math.floor(100000 + Math.random() * 9999999)}`,
+        type: ["Manager", "Officer",][
+          Math.floor(Math.random() * 2)
+        ],
+      },
+      {
+        id: 7,
+        staffId: `13${Math.floor(100000000 + Math.random() * 900000000)}`,
+        fullName: `${africanFirstNames[Math.floor(Math.random() * africanFirstNames.length)]} ${africanLastNames[Math.floor(Math.random() * africanLastNames.length)]}`,
+       email: `${africanFirstNames[Math.floor(Math.random() * africanFirstNames.length)]}${Math.floor(
+          1 + Math.random() * 100
+        )}@gmail.com`,
+        phoneNumber: `080${Math.floor(100000 + Math.random() * 9999999)}`,
+        type: ["Manager", "Officer",][
+          Math.floor(Math.random() * 2)
+        ],
+      },
+      {
+        id: 8,
+        staffId: `13${Math.floor(100000000 + Math.random() * 900000000)}`,
+        fullName: `${africanFirstNames[Math.floor(Math.random() * africanFirstNames.length)]} ${africanLastNames[Math.floor(Math.random() * africanLastNames.length)]}`,
+       email: `${africanFirstNames[Math.floor(Math.random() * africanFirstNames.length)]}${Math.floor(
+          1 + Math.random() * 100
+        )}@gmail.com`,
+        phoneNumber: `080${Math.floor(100000 + Math.random() * 9999999)}`,
+        type: ["Manager", "Officer",][
+          Math.floor(Math.random() * 2)
+        ],
+      },
+      {
+        id: 9,
+        staffId: `13${Math.floor(100000000 + Math.random() * 900000000)}`,
+        fullName: `${africanFirstNames[Math.floor(Math.random() * africanFirstNames.length)]} ${africanLastNames[Math.floor(Math.random() * africanLastNames.length)]}`,
+       email: `${africanFirstNames[Math.floor(Math.random() * africanFirstNames.length)]}${Math.floor(
+          1 + Math.random() * 100
+        )}@gmail.com`,
+        phoneNumber: `080${Math.floor(100000 + Math.random() * 9999999)}`,
+        type: ["Manager", "Officer",][
+          Math.floor(Math.random() * 2)
+        ],
+      },
+      {
+        id: 10,
+        staffId: `13${Math.floor(100000000 + Math.random() * 900000000)}`,
+        fullName: `${africanFirstNames[Math.floor(Math.random() * africanFirstNames.length)]} ${africanLastNames[Math.floor(Math.random() * africanLastNames.length)]}`,
+       email: `${africanFirstNames[Math.floor(Math.random() * africanFirstNames.length)]}${Math.floor(
+          1 + Math.random() * 100
+        )}@gmail.com`,
+        phoneNumber: `080${Math.floor(100000 + Math.random() * 9999999)}`,
+        type: ["Manager", "Officer",][
+          Math.floor(Math.random() * 2)
+        ],
+      }
+    ]
+  },
   setting: {},
 };
 

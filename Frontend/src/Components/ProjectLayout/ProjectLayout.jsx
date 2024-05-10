@@ -5,25 +5,26 @@ import { FiSearch } from "react-icons/fi";
 import {
   TopNavigation,
   SideBarMenu,
+  Card,
   MenuItemData,
   DemandPropertyModal,
   AddProperty,
   AddDemand,
-  DemandNotice,
+  Overview,
+  CardData,
 } from "../Index";
 
 export default function ProjectLayout() {
   const [displaySideBarMenu, setdisplaySideBarMenu] = useState(true);
   const [transitionSection, setTransitionSection] = useState(false);
-  const [activeMenuItem, setActiveMenuItem] = useState(
-    "Demand Notice Component"
-  );
-  const [activeComponent, setActiveComponent] = useState(<DemandNotice />);
+  const [activeMenuItem, setActiveMenuItem] = useState("Overview Component");
+  const [activeComponent, setActiveComponent] = useState(<Overview />);
   const [searchClicked, setSearchClicked] = useState(false);
   const [displayAddPropertyModal, setDisplayAddPropertyModal] = useState(false);
   const [displayAddDemandModal, setDisplayAddDemandModal] = useState(false);
   const [propertyModalTransition, setPropertyModalTransition] = useState(false);
   const menuItems = MenuItemData();
+  const cardData = CardData();
 
   const handleMenuItemClick = (component) => {
     setActiveMenuItem(component);
@@ -50,9 +51,16 @@ export default function ProjectLayout() {
       className={`flex relative justify-between h-screen bg-custom-blue-100 lg:p-4 lg:pb-0 `}
     >
       <div
-        className={`flex-col overflow-y-auto overscroll-contain scrollbar-thin scrollbar-thumb-color-text-two scrollbar-track-white ${
-          transitionSection ? "pt-1 w-14" : "w-2/12"
-        } `}
+        className={`flex-col pb-6 overflow-y-auto overscroll-contain scrollbar-thin scrollbar-thumb-color-text-two scrollbar-track-white ${
+          transitionSection ? "pt-1 w-14" : "w-[230px]"
+        }
+        ${
+          activeMenuItem === "Settings Component" &&
+          displaySideBarMenu === false
+            ? "pt-1 w-14"
+            : activeMenuItem === "Settings Component" && "w-[270px]"
+        } 
+        `}
       >
         {displaySideBarMenu === true ? (
           <SideBarMenu
@@ -93,17 +101,20 @@ export default function ProjectLayout() {
               {menuItems.map((item, index) => (
                 <>
                   <MenuItemAlt
-                    key={index}
+                    menuId={index}
                     menuIcon={item.menuIcon}
                     menuIconTwo={item.menuIconTwo}
                     menuName={item.menuName}
                     isActive={activeMenuItem === item.componentName}
                     setComponent={() => {
                       handleMenuItemClick(item.componentName);
+                      setActiveComponent(item.component);
                     }}
                   />
-                  {index === 4 && (
-                    <hr className="border-0.5 border-divider-grey" />
+                  {item.id === 4 && (
+                    <div className="py-2">
+                      <hr className="border-0.5 border-divider-grey" />
+                    </div>
                   )}
                 </>
               ))}
@@ -111,8 +122,28 @@ export default function ProjectLayout() {
           </div>
         )}
       </div>
+
+      {activeMenuItem === "Settings Component" ? (
+        <div className="flex-col px-4 space-y-2 w-[200px] text-color-text-on font-lexend border-l-0.5 border-divider-grey">
+          <div
+            className="p-2 text-xs rounded border-0.6 border-custom-color-two hover:bg-primary-color hover:text-white hover:cursor-pointer"
+            title="Your account information"
+            onClick={() => alert("Account Page")}
+          >
+            Your Account
+          </div>
+          <div
+            className="p-2 text-xs rounded border-0.6 border-custom-color-two hover:bg-primary-color hover:text-white hover:cursor-pointer"
+            title="Change your password"
+            onClick={() => alert("Password Page")}
+          >
+            Change Password
+          </div>
+        </div>
+      ) : null}
+
       <div
-        className={`flex-col p-4 space-y-8 bg-white border-0.6 border-b-0 rounded-b-none border-custom-border rounded overflow-auto overscroll-contain scrollbar-thin scrollbar-thumb-color-text-two scrollbar-track-white ${
+        className={`flex-col items-center justify-center p-4 pt-1 space-y-8 bg-white border-0.6 border-b-0 rounded-b-none border-custom-border rounded overflow-auto overscroll-contain scrollbar-thin scrollbar-thumb-color-text-two scrollbar-track-white ${
           transitionSection
             ? "w-full transition-all ease-in-out duration-500"
             : "w-5/6"
@@ -124,11 +155,8 @@ export default function ProjectLayout() {
             alert("Opened Menu Modal");
           }}
         />
+        <Card cardData={cardData} />
         {activeComponent}
-
-        <p className="flex items-center justify-center text-xs font-lexend text-color-text-two">
-          This portal is a property of REVENUE HUB
-        </p>
       </div>
 
       {displayAddPropertyModal ? (

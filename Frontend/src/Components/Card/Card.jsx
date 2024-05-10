@@ -1,35 +1,54 @@
-import React from 'react';
-import images from '../../assets/index';
+import { TbCurrencyNaira } from "react-icons/tb";
+import { formatNumberWithCommas } from "../../Utils/client";
 
-
-const Card = ({ icon, title, subtitle, value, style, withSymbol = false, datepicker = false, dateContent, }) => {
-    return (
-        <div className={` flex flex-col justify-between shadow-md p-2 rounded-md w-full h-[160px] border-border-red-500 ${style}`} >
-            <div className='flex justify-between'>
-                <div className="flex space-x-4">
-                    <div className="size-[40px]">
-                        {icon}
-                    </div>
-
-                    <div className="flex flex-col justify-center ">
-                        <h3 className='text-gray-400 font-lexend font-[400] text-[12px] leading-[14px]'>{title}</h3>
-                        <h1 className='text-stone-950 font-bold font-lexend font-[600] text[14px] leading-[16px]'>{subtitle}</h1>
-                    </div>
-                </div>
-                <div>
-                    {datepicker && (<div className='flex space-between h-fit w-fit items-center border rounded-md border border-[#CCD0DC] p-1 space-x-1 bg-[#F6F8FA]'>
-                        <div className='font-lexend font-medium text-gray-400 text-base tracking-wide'>{dateContent}</div>
-                        <div className='h-3 w-[1px] bg-[#CCD0DC]'></div>
-                        <img src={images.DateIcon} alt='dateIcon' className='w-4 h-4' />
-                    </div>)}
-                </div>
+const Card = ({ cardData }) => {
+  return (
+    <div className="grid grid-cols-3 gap-x-4 gap-y-8">
+      {cardData.map((card) => (
+        <div
+          key={card.id}
+          className={`flex-col items-start p-4 space-y-8 border-0.6 w-full border-custom-color-one shadow rounded
+          ${card.id === 1 && "bg-custom-grey-200"}`}
+        >
+          <div className="flex items-center gap-2">
+            <div className="flex items-start space-x-3">
+              <span
+                className={`flex items-center justify-center w-10 h-10 p-2 text-2xl rounded 
+                ${
+                  [1, 2, 3].includes(card.id) &&
+                  "bg-custom-blue-200 text-primary-color"
+                }
+                ${card.id === 4 && "bg-color-light-green text-color-dark-green"}
+                ${
+                  [5, 6].includes(card.id) &&
+                  "bg-color-light-yellow text-color-bright-orange"
+                }
+              `}
+              >
+                {card.icon}
+              </span>
+              <div className="flex-col items-start">
+                <p className="text-xs text-color-text-two font-lexend">
+                  {card.description}
+                </p>
+                <p className="text-sm font-semibold text-color-text-one font-lexend">
+                  {card.name}
+                </p>
+              </div>
             </div>
-            <div className="">
-                {withSymbol && (<h3 className='text-slate-600'><img src={images.NairaSymbol} alt="Icon" /></h3>)}
-                <h1 className='font-normal font-Lora text-[32px]'>{value}</h1>
-            </div>
+          </div>
+          <div className="flex items-center gap-2">
+            {card.id === 1 ? (
+              <span className="text-2xl text-color-bright-green">
+                <TbCurrencyNaira />
+              </span>
+            ) : null}
+            <p className="text-3xl">{formatNumberWithCommas(card.value)}</p>
+          </div>
         </div>
-    );
+      ))}
+    </div>
+  );
 };
 
 export default Card;

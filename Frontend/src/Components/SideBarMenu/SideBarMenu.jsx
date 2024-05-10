@@ -24,16 +24,6 @@ export default function SideBarMenu({
   const [borderState, setBorderState] = useState(false);
   const menuItems = MenuItemData();
 
-  const dividerLogic = (index) => {
-    if (index === 5) {
-      return "mb-3";
-    }
-    if (index === 6) {
-      return "mt-3";
-    }
-    return "";
-  };
-
   useEffect(() => {
     let timeout;
     if (searchClicked) {
@@ -54,7 +44,7 @@ export default function SideBarMenu({
   let finalBorderStyle = borderState ? changeBoxStyle : "";
 
   return (
-    <div className="flex-col w-full pb-6 pr-4">
+    <div className="flex-col w-full pr-3">
       <div className="flex-col space-y-6">
         <ProfileBox
           profileName={"Revenuehub.ng"}
@@ -98,11 +88,12 @@ export default function SideBarMenu({
         </div>
       </div>
       <hr className="border-0.5 border-divider-grey my-4" />
-      <div className="">
+      <div className="flex-col space-y-2">
         {menuItems.map((item) => (
-          <div key={item.id} className="flex-col space-y-1.5">
+          <>
             <MenuItem
-              parentDivStyle={`${dividerLogic(item.componentName)}`}
+              parentDivStyle={""}
+              menuId={item.id}
               menuIcon={item.menuIcon}
               menuIconTwo={item.menuIconTwo}
               menuName={item.menuName}
@@ -113,8 +104,12 @@ export default function SideBarMenu({
                 setActiveComponent(item.component);
               }}
             />
-            {item.id === 5 && <hr className="border-0.5 border-divider-grey" />}
-          </div>
+            {item.id === 5 && (
+              <div className="py-2">
+                <hr className="border-0.5 border-divider-grey" />
+              </div>
+            )}
+          </>
         ))}
       </div>
     </div>

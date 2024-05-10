@@ -1,62 +1,60 @@
-import React, { useState } from "react";
-import { SearchInput } from "../Index";
+import React, { useState, useEffect } from "react";
 import { FiSearch } from "react-icons/fi";
 import { GoDotFill } from "react-icons/go";
 import { TbCurrencyNaira } from "react-icons/tb";
 import { RiDeleteBin5Fill } from "react-icons/ri";
 import { HiOutlineDotsHorizontal } from "react-icons/hi";
 import { TableSearchInput } from "../Index";
+import {
+  formatNumberWithCommas,
+  filterRecordsByKeyAndValue,
+} from "../../Utils/client";
 
 export default function DemandInvoiceTable({ customTableData }) {
   const [displaySearchIcon, setDisplaySearchIcon] = useState(true);
   const [activeMenu, setActiveMenu] = useState(1);
   const [query, setQuery] = useState("");
+  const [editModal, setEditModal] = useState(null);
+  const [displayColumn, setDisplayColumn] = useState(true);
 
-  function formatNumberWithCommas(number) {
-    // Convert the number to a string
-    const numStr = String(number);
+  const handleEditModal = (recordId) => {
+    setEditModal(editModal === recordId ? null : recordId);
+  };
 
-    // Split the string into integer and decimal parts (if any)
-    const [integerPart, decimalPart] = numStr.split(".");
-
-    // Add commas to the integer part
-    const formattedInteger = integerPart.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-
-    // Combine the integer and decimal parts (if any)
-    const formattedNumber = decimalPart
-      ? `${formattedInteger}.${decimalPart}`
-      : formattedInteger;
-
-    return formattedNumber;
-  }
-
-  function filterRecordsByPaymentStatus(records, status) {
-    return records.filter((record) => record.paymentStatus === status);
-  }
-
-  const filteredRecords =
-    activeMenu === 1
-      ? customTableData.records
-      : activeMenu === 2
-      ? filterRecordsByPaymentStatus(customTableData.records, "Paid")
-      : activeMenu === 3
-      ? filterRecordsByPaymentStatus(customTableData.records, "Unpaid")
-      : activeMenu === 4
-      ? filterRecordsByPaymentStatus(customTableData.records, "Expired")
-      : [];
+  useEffect(() => {
+    setActiveMenu(1);
+    setDisplayColumn(false);
+  }, [query !== ""]);
 
   const handleQueryChange = (event) => {
     setQuery(event.target.value);
   };
 
+  const filteredRecords =
+    activeMenu === 1
+      ? customTableData.records
+      : activeMenu === 2
+        ? filterRecordsByKeyAndValue(customTableData.records, "paymentStatus", "Paid")
+        : activeMenu === 3
+          ? filterRecordsByKeyAndValue(customTableData.records, "paymentStatus", "Unpaid")
+          : activeMenu === 4
+            ? filterRecordsByKeyAndValue(customTableData.records, "paymentStatus", "Expired")
+            : [];
+
+
   const filteredResults = query
     ? customTableData.records.filter((record) =>
-        Object.values(record).some(
-          (value) =>
-            typeof value === "string" &&
-            value.toLowerCase().includes(query.toLowerCase())
-        )
-      )
+      Object.values(record).some((value) => {
+        if (typeof value === "string") {
+          // For string values, perform case-insensitive comparison
+          return value.toLowerCase().includes(query.toLowerCase());
+        } else if (typeof value === "number" || Number.isInteger(value)) {
+          // For numeric values, stringify and compare
+          return String(value).toLowerCase().includes(query.toLowerCase());
+        }
+        return false; // Ignore other data types
+      })
+    )
     : [];
 
   const recordField = (record) => {
@@ -76,13 +74,12 @@ export default function DemandInvoiceTable({ customTableData }) {
         </span>
         <span
           className={`flex flex-wrap items-center px-4 py-1 justify-center rounded-xl width-12-percent font-light font-lexend text-color-text-black text-10px border-0.6 border-custom-grey-100
-        ${
-          record.propertyUse === "Commercial"
-            ? "bg-color-light-red"
-            : record.propertyUse === "Residential"
-            ? "bg-color-light-yellow"
-            : "bg-custom-blue-200"
-        }
+        ${record.propertyUse === "Commercial"
+              ? "bg-color-light-red"
+              : record.propertyUse === "Residential"
+                ? "bg-color-light-yellow"
+                : "bg-custom-blue-200"
+            }
         `}
         >
           {record.propertyUse.toUpperCase()}
@@ -93,19 +90,20 @@ export default function DemandInvoiceTable({ customTableData }) {
         <span className="flex flex-wrap items-center justify-center text-sm width-12-percent text-color-text-black font-chonburi">
           {formatNumberWithCommas(record.ratePayable)}
         </span>
-        <span
-          className={`flex flex-wrap items-center justify-center width-12-percent p-1 font-light text-white rounded font-lexend
-        ${
-          record.paymentStatus === "Expired"
-            ? "bg-color-bright-red"
-            : record.paymentStatus === "Unpaid"
-            ? "bg-color-bright-orange"
-            : "bg-color-bright-green"
-        }
-        `}
-        >
-          {record.paymentStatus}
-        </span>
+        <div className="flex items-center justify-center width-12-percent">
+          <span
+            className={`flex flex-wrap items-center justify-center px-2 p-1 font-light text-white rounded font-lexend
+          ${record.paymentStatus === "Expired"
+                ? "bg-color-bright-red"
+                : record.paymentStatus === "Unpaid"
+                  ? "bg-color-bright-orange"
+                  : "bg-color-bright-green"
+              }
+          `}
+          >
+            {record.paymentStatus}
+          </span>
+        </div>
         <span className="flex flex-wrap items-center w-1/12 gap-1 ">
           <span
             className="border-0.6 border-custom-grey-100 text-custom-grey-300 px-2 py-2.5 rounded text-base hover:cursor-pointer"
@@ -113,11 +111,33 @@ export default function DemandInvoiceTable({ customTableData }) {
           >
             <RiDeleteBin5Fill />
           </span>
-          <span
-            className="border-0.6 border-custom-grey-100 text-custom-grey-300 px-2 py-2.5 rounded text-base hover:cursor-pointer"
-            title="Edit Invoice"
-          >
-            <HiOutlineDotsHorizontal />
+          <span className="border-0.6 relative border-custom-grey-100 text-custom-grey-300 px-2 py-2.5 rounded text-base">
+            <span
+              title="Edit Invoice"
+              className="hover:cursor-pointer"
+              onClick={() => handleEditModal(record.id)}
+            >
+              <HiOutlineDotsHorizontal />
+            </span>
+            {editModal === record.id && (
+              <span className="absolute space-y-2 top-0 z-10 flex-col w-40 p-4 text-xs bg-white rounded shadow-md -left-44 border-0.6 border-custom-grey-100 text-color-text-black font-lexend">
+                <p className="hover:cursor-pointer" title="View Demand Notice">
+                  View Demand Notice
+                </p>
+                <p className="hover:cursor-pointer" title="View Property">
+                  View Property
+                </p>
+                {record.paymentStatus === "Expired" ? (
+                  <p className="hover:cursor-pointer" title="Generate Reminder">
+                    Generate Reminder
+                  </p>
+                ) : record.paymentStatus === "Unpaid" ? (
+                  <p className="hover:cursor-pointer" title="View Reminder">
+                    View Reminder
+                  </p>
+                ) : null}
+              </span>
+            )}
           </span>
         </span>
       </div>
@@ -125,40 +145,64 @@ export default function DemandInvoiceTable({ customTableData }) {
   };
   return (
     <div className="flex-col space-y-4 p-4 border-0.6 border-custom-grey-100 rounded-lg">
-      <div className="flex flex-wrap items-start justify-between ">
+      <div className="flex items-start justify-between">
         <div className="flex items-center justify-between border-0.6 border-custom-grey-100 rounded p-1">
-          {customTableData.menu.map((menu) => (
-            <div
-              key={menu.id}
-              className={`flex items-start justify-between gap-2 px-2 py-1 text-xs font-lexend hover:cursor-pointer ${
-                activeMenu === menu.id
-                  ? "bg-primary-color rounded"
-                  : "bg-inherit"
-              }`}
-              onClick={() => {
-                setActiveMenu(menu.id);
-              }}
-            >
-              <span
-                className={`${
-                  activeMenu === menu.id
-                    ? "font-medium text-white"
-                    : "text-color-text-two"
-                }`}
+          {customTableData.menu.map((menu) =>
+            displayColumn === false && query !== "" && menu.id > 1 ? null : (
+              <div
+                key={menu.id}
+                className={`flex items-start justify-between gap-2 px-2 py-1 text-xs font-lexend hover:cursor-pointer ${activeMenu === menu.id
+                    ? "bg-primary-color rounded"
+                    : "bg-inherit"
+                  }`}
+                onClick={() => {
+                  setActiveMenu(menu.id);
+                }}
               >
-                {menu.name}
-              </span>
-              <span className="px-1 border rounded text-color-text-three bg-custom-blue-200 border-custom-color-two">
-                {menu.count}
-              </span>
-            </div>
-          ))}
+                <span
+                  className={`${activeMenu === menu.id
+                      ? "font-medium text-white"
+                      : "text-color-text-two"
+                    }`}
+                >
+                  {menu.name}
+                </span>
+                <span className="px-1 border rounded text-color-text-three bg-custom-blue-200 border-custom-color-two">
+                  {menu.id === 1 ? (
+                    filteredResults.length > 0
+                      ? filteredResults.length
+                      : filteredResults < 1 && query != ""
+                        ? 0
+                        : customTableData.records.length
+                  ) : menu.id === 2 ? (
+                    filterRecordsByKeyAndValue(
+                      customTableData.records,
+                      "paymentStatus",
+                      "Paid"
+                    ).length
+
+                  ) : menu.id === 3 ? (
+                    filterRecordsByKeyAndValue(
+                      customTableData.records,
+                      "paymentStatus",
+                      "Unpaid"
+                    ).length
+                  ) :
+                    filterRecordsByKeyAndValue(
+                      customTableData.records,
+                      "paymentStatus",
+                      "Expired"
+                    ).length
+                  }
+                </span>
+              </div>
+            )
+          )}
         </div>
         <TableSearchInput
           parentBoxStyle="flex items-center justify-between p-2 bg-custom-grey-100 rounded-3xl border border-custom-color-one"
-          inputBoxStyle={` ${
-            displaySearchIcon ? "w-10/12" : "w-full"
-          } text-xs outline-none bg-inherit font-lexend text-color-text-two`}
+          inputBoxStyle={` ${displaySearchIcon ? "w-10/12" : "w-full"
+            } text-xs outline-none bg-inherit font-lexend text-color-text-two`}
           iconBoxStyle={"text-base text-primary-color hover:cursor-pointer"}
           placeholder={"Search records"}
           searchIcon={<FiSearch />}
@@ -186,6 +230,7 @@ export default function DemandInvoiceTable({ customTableData }) {
               ${column.id === 2 && "w-2/12"}
               ${column.id === 3 && "width-5-percent"}
               ${[4, 5, 6, 7].includes(column.id) && "width-12-percent"}
+              ${[6, 7].includes(column.id) && "justify-center"}
               `}
             >
               <GoDotFill />
