@@ -21,6 +21,7 @@ import {
   Settings,
   Properties,
   customTableData,
+  Statistics,
 } from "../Index";
 
 const MenuItemData = () => {
@@ -59,6 +60,7 @@ const MenuItemData = () => {
       menuName: "Statistics",
       menuItemCount: 0,
       componentName: "Statistic Component",
+      component: <Statistics />,
     },
     {
       id: 5,
