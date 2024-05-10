@@ -5,7 +5,6 @@ export default function MenuItemAlt({
   menuIcon,
   menuIconTwo,
   menuName,
-  isActive,
   setComponent,
   route,
 }) {
@@ -23,7 +22,7 @@ export default function MenuItemAlt({
           location.pathname === route ? "text-primary-color" : ""
         }`}
       >
-        {isActive ? menuIconTwo : menuIcon}
+        {location.pathname === route ? menuIconTwo : menuIcon}
       </span>
     </Link>
   );

@@ -109,7 +109,6 @@ export default function ProjectLayout({ page }) {
                     menuIcon={item.menuIcon}
                     menuIconTwo={item.menuIconTwo}
                     menuName={item.menuName}
-                    isActive={activeMenuItem === item.componentName}
                     setComponent={() => {
                       handleMenuItemClick(item.componentName);
                       setActiveComponent(item.component);

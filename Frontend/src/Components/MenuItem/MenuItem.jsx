@@ -6,7 +6,6 @@ export default function MenuItem({
   menuIconTwo,
   menuName,
   menuItemCount,
-  isActive,
   setComponent,
   route,
 }) {
@@ -29,14 +28,14 @@ export default function MenuItem({
       <div className="flex items-center space-x-2">
         <span
           className={`text-2xl text-color-text-two ${
-            isActive ? "text-primary-color" : ""
+            location.pathname === route ? "text-primary-color" : ""
           }`}
         >
-          {isActive ? menuIconTwo : menuIcon}
+          {location.pathname === route ? menuIconTwo : menuIcon}
         </span>
         <span
           className={`text-xs text-left text-color-text-two font-lexend ${
-            isActive ? "text-primary-color font-semibold" : ""
+            location.pathname === route ? "text-primary-color font-semibold" : ""
           }`}
         >
           {menuName}

@@ -98,7 +98,6 @@ export default function SideBarMenu({
               menuIconTwo={item.menuIconTwo}
               menuName={item.menuName}
               menuItemCount={item.menuItemCount}
-              isActive={activeMenuItem === item.componentName}
               setComponent={() => {
                 handleMenuItemClick(item.componentName);
                 setActiveComponent(item.component);
