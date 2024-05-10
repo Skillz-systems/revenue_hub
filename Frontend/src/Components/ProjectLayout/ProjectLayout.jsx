@@ -6,25 +6,30 @@ import {
   TopNavigation,
   SideBarMenu,
   Card,
+  Card2,
   MenuItemData,
   DemandPropertyModal,
   AddProperty,
   AddDemand,
-  Overview,
   CardData,
+  CardData2,
+  Overview,
 } from "../Index";
+import { useLocation } from "react-router-dom";
 
 export default function ProjectLayout() {
   const [displaySideBarMenu, setdisplaySideBarMenu] = useState(true);
   const [transitionSection, setTransitionSection] = useState(false);
   const [activeMenuItem, setActiveMenuItem] = useState("Overview Component");
-  const [activeComponent, setActiveComponent] = useState(<Overview />);
+  const [activeComponent, setActiveComponent] = useState(<Overview/>);
   const [searchClicked, setSearchClicked] = useState(false);
   const [displayAddPropertyModal, setDisplayAddPropertyModal] = useState(false);
   const [displayAddDemandModal, setDisplayAddDemandModal] = useState(false);
   const [propertyModalTransition, setPropertyModalTransition] = useState(false);
   const menuItems = MenuItemData();
   const cardData = CardData();
+  const cardData2 = CardData2();
+  const location = useLocation();
 
   const handleMenuItemClick = (component) => {
     setActiveMenuItem(component);
@@ -155,7 +160,11 @@ export default function ProjectLayout() {
             alert("Opened Menu Modal");
           }}
         />
-        <Card cardData={cardData} />
+        {location.pathname === "/properties" ? (
+          <Card2 cardData={cardData2} />
+        ) : (
+          <Card cardData={cardData} />
+        )}
         {activeComponent}
       </div>
 
