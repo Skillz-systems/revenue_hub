@@ -13,14 +13,15 @@ import {
   AddDemand,
   CardData,
   CardData2,
+  Overview,
 } from "../Index";
 import { useLocation } from "react-router-dom";
 
-export default function ProjectLayout({ page }) {
+export default function ProjectLayout() {
   const [displaySideBarMenu, setdisplaySideBarMenu] = useState(true);
   const [transitionSection, setTransitionSection] = useState(false);
   const [activeMenuItem, setActiveMenuItem] = useState("Overview Component");
-  const [activeComponent, setActiveComponent] = useState(page);
+  const [activeComponent, setActiveComponent] = useState(<Overview/>);
   const [searchClicked, setSearchClicked] = useState(false);
   const [displayAddPropertyModal, setDisplayAddPropertyModal] = useState(false);
   const [displayAddDemandModal, setDisplayAddDemandModal] = useState(false);
@@ -109,11 +110,11 @@ export default function ProjectLayout({ page }) {
                     menuIcon={item.menuIcon}
                     menuIconTwo={item.menuIconTwo}
                     menuName={item.menuName}
+                    isActive={activeMenuItem === item.componentName}
                     setComponent={() => {
                       handleMenuItemClick(item.componentName);
                       setActiveComponent(item.component);
                     }}
-                    route={item.route}
                   />
                   {item.id === 4 && (
                     <div className="py-2">

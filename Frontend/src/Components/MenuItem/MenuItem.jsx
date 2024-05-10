@@ -1,4 +1,3 @@
-import { Link, useLocation } from "react-router-dom";
 export default function MenuItem({
   menuId,
   parentDivStyle,
@@ -7,35 +6,33 @@ export default function MenuItem({
   menuName,
   menuItemCount,
   setComponent,
-  route,
+  isActive,
 }) {
-  const location = useLocation();
   return (
-    <Link
+    <div
       key={menuId}
       className={`flex items-center justify-between px-1.5 py-2 transition ease-in-out  hover:cursor-pointer hover:translate-x-1
       ${parentDivStyle}
       ${
-        location.pathname === route
+        isActive
           ? "bg-white border-1.5 border-custom-color-two rounded shadow-custom-100"
           : ""
       }
       `}
       title={menuName}
       onClick={setComponent}
-      to={route}
     >
       <div className="flex items-center space-x-2">
         <span
           className={`text-2xl text-color-text-two ${
-            location.pathname === route ? "text-primary-color" : ""
+            isActive ? "text-primary-color" : ""
           }`}
         >
-          {location.pathname === route ? menuIconTwo : menuIcon}
+          {isActive ? menuIconTwo : menuIcon}
         </span>
         <span
           className={`text-xs text-left text-color-text-two font-lexend ${
-            location.pathname === route ? "text-primary-color font-semibold" : ""
+            isActive ? "text-primary-color font-semibold" : ""
           }`}
         >
           {menuName}
@@ -46,6 +43,6 @@ export default function MenuItem({
           {menuItemCount}
         </span>
       ) : null}
-    </Link>
+    </div>
   );
 }

@@ -1,4 +1,3 @@
-import { Link, useLocation } from "react-router-dom";
 
 export default function MenuItemAlt({
   menuId,
@@ -6,24 +5,22 @@ export default function MenuItemAlt({
   menuIconTwo,
   menuName,
   setComponent,
-  route,
+  isActive
 }) {
-  const location = useLocation();
   return (
-    <Link
+    <div
       key={menuId}
       className={`flex items-center justify-center transition ease-in-out  hover:cursor-pointer hover:translate-x-1`}
       title={menuName}
       onClick={setComponent}
-      to={route}
     >
       <span
         className={`text-xl text-color-text-two ${
-          location.pathname === route ? "text-primary-color" : ""
+          isActive ? "text-primary-color" : ""
         }`}
       >
-        {location.pathname === route ? menuIconTwo : menuIcon}
+        {isActive ? menuIconTwo : menuIcon}
       </span>
-    </Link>
+    </div>
   );
 }

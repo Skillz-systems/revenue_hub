@@ -33,7 +33,6 @@ const MenuItemData = () => {
       menuItemCount: 0,
       componentName: "Overview Component",
       component: <Overview />,
-      route: "/",
     },
     {
       id: 2,
@@ -43,7 +42,6 @@ const MenuItemData = () => {
       menuItemCount: 570,
       componentName: "Properties Component",
       component: <Properties />,
-      route: "/properties",
     },
     {
       id: 3,
@@ -53,7 +51,6 @@ const MenuItemData = () => {
       menuItemCount: customTableData.demandNotice.records.length,
       componentName: "Demand Notice Component",
       component: <DemandNotice />,
-      route: "/demand-notice",
     },
     {
       id: 4,
@@ -62,7 +59,6 @@ const MenuItemData = () => {
       menuName: "Statistics",
       menuItemCount: 0,
       componentName: "Statistic Component",
-      route: "/statistics",
     },
     {
       id: 5,
@@ -72,7 +68,6 @@ const MenuItemData = () => {
       menuItemCount: customTableData.transactions.records.length,
       componentName: "Transactions Component",
       component: <Transactions />,
-      route: "/transactions",
     },
     {
       id: 6,
@@ -82,7 +77,6 @@ const MenuItemData = () => {
       menuItemCount: customTableData.staff.records.length,
       componentName: "Staff Component",
       component: <Staff />,
-      route: "/staff",
     },
     {
       id: 7,
@@ -92,7 +86,6 @@ const MenuItemData = () => {
       menuItemCount: 0,
       componentName: "Settings Component",
       component: <Settings />,
-      route: "/settings",
     },
   ];
 };
