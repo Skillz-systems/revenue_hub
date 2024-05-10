@@ -39,7 +39,7 @@ const MenuItemData = () => {
       menuIcon: <PiBuildings />,
       menuIconTwo: <PiBuildingsFill />,
       menuName: "Properties",
-      menuItemCount: 570,
+      menuItemCount: customTableData.properties.records.length,
       componentName: "Properties Component",
       component: <Properties />,
     },
