@@ -230,6 +230,7 @@ export default function DemandInvoiceTable({ customTableData }) {
               ${column.id === 2 && "w-2/12"}
               ${column.id === 3 && "width-5-percent"}
               ${[4, 5, 6, 7].includes(column.id) && "width-12-percent"}
+              ${[6, 7].includes(column.id) && "justify-center"}
               `}
             >
               <GoDotFill />

@@ -53,7 +53,14 @@ export default function ProjectLayout() {
       <div
         className={`flex-col pb-6 overflow-y-auto overscroll-contain scrollbar-thin scrollbar-thumb-color-text-two scrollbar-track-white ${
           transitionSection ? "pt-1 w-14" : "w-[230px]"
-        } `}
+        }
+        ${
+          activeMenuItem === "Settings Component" &&
+          displaySideBarMenu === false
+            ? "pt-1 w-14"
+            : activeMenuItem === "Settings Component" && "w-[270px]"
+        } 
+        `}
       >
         {displaySideBarMenu === true ? (
           <SideBarMenu
@@ -94,17 +101,20 @@ export default function ProjectLayout() {
               {menuItems.map((item, index) => (
                 <>
                   <MenuItemAlt
-                    key={index}
+                    menuId={index}
                     menuIcon={item.menuIcon}
                     menuIconTwo={item.menuIconTwo}
                     menuName={item.menuName}
                     isActive={activeMenuItem === item.componentName}
                     setComponent={() => {
                       handleMenuItemClick(item.componentName);
+                      setActiveComponent(item.component);
                     }}
                   />
-                  {index === 4 && (
-                    <hr className="border-0.5 border-divider-grey" />
+                  {item.id === 4 && (
+                    <div className="py-2">
+                      <hr className="border-0.5 border-divider-grey" />
+                    </div>
                   )}
                 </>
               ))}
@@ -112,6 +122,26 @@ export default function ProjectLayout() {
           </div>
         )}
       </div>
+
+      {activeMenuItem === "Settings Component" ? (
+        <div className="flex-col px-4 space-y-2 w-[200px] text-color-text-on font-lexend border-l-0.5 border-divider-grey">
+          <div
+            className="p-2 text-xs rounded border-0.6 border-custom-color-two hover:bg-primary-color hover:text-white hover:cursor-pointer"
+            title="Your account information"
+            onClick={() => alert("Account Page")}
+          >
+            Your Account
+          </div>
+          <div
+            className="p-2 text-xs rounded border-0.6 border-custom-color-two hover:bg-primary-color hover:text-white hover:cursor-pointer"
+            title="Change your password"
+            onClick={() => alert("Password Page")}
+          >
+            Change Password
+          </div>
+        </div>
+      ) : null}
+
       <div
         className={`flex-col items-center justify-center p-4 pt-1 space-y-8 bg-white border-0.6 border-b-0 rounded-b-none border-custom-border rounded overflow-auto overscroll-contain scrollbar-thin scrollbar-thumb-color-text-two scrollbar-track-white ${
           transitionSection
