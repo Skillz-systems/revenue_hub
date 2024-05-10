@@ -95,6 +95,20 @@ const africanLastNames = [
   "Ouedraogo",
 ];
 
+const generateRandomPropertyRecord = () => {
+  return {
+    id: Math.floor(1 + Math.random() * 1000),
+    pin: `13${Math.floor(10000000 + Math.random() * 900000000)}`,
+    propertyUse: ["Commercial", "Residential", "School"][Math.floor(Math.random() * 3)],
+    paymentStatus: ["Paid", "Unpaid", "Ungenerated"][Math.floor(Math.random() * 3)],
+    address: `House ${Math.floor(1 + Math.random() * 100)}, Street, Abuja`,
+    cadestralZone: zones[Math.floor(Math.random() * zones.length)],
+    ratePayable: Math.floor(1000 + Math.random() * 100000),
+    amacZones: ["Amac 1", "Amac 2", "Amac 3"][Math.floor(Math.random() * 3)],
+  };
+};
+const propertyRecords = Array.from({ length: 21 }, generateRandomPropertyRecord);
+
 const generateRandomDemandRecord = () => {
   return {
     id: Math.floor(1 + Math.random() * 1000),
@@ -143,7 +157,9 @@ const generateRandomStaffRecord = () => {
 const staffRecords = Array.from({ length: 30 }, generateRandomStaffRecord);
 
 const data = {
-  properties: {},
+  properties: {
+    records: propertyRecords,
+  },
   demandNotice: {
     menu: [
       {

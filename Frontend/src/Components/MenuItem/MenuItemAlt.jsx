@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 
 export default function MenuItemAlt({
   menuId,
@@ -9,6 +9,7 @@ export default function MenuItemAlt({
   setComponent,
   route,
 }) {
+  const location = useLocation();
   return (
     <Link
       key={menuId}
@@ -19,7 +20,7 @@ export default function MenuItemAlt({
     >
       <span
         className={`text-xl text-color-text-two ${
-          isActive ? "text-primary-color" : ""
+          location.pathname === route ? "text-primary-color" : ""
         }`}
       >
         {isActive ? menuIconTwo : menuIcon}

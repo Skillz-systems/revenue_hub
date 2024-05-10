@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 export default function MenuItem({
   menuId,
   parentDivStyle,
@@ -10,13 +10,14 @@ export default function MenuItem({
   setComponent,
   route,
 }) {
+  const location = useLocation();
   return (
     <Link
       key={menuId}
       className={`flex items-center justify-between px-1.5 py-2 transition ease-in-out  hover:cursor-pointer hover:translate-x-1
       ${parentDivStyle}
       ${
-        isActive
+        location.pathname === route
           ? "bg-white border-1.5 border-custom-color-two rounded shadow-custom-100"
           : ""
       }
