@@ -121,7 +121,7 @@ const generateRandomDemandRecord = () => {
     paymentStatus: ["Paid", "Unpaid", "Expired"][Math.floor(Math.random() * 3)],
   };
 };
-const demandRecords = Array.from({ length: 20 }, generateRandomDemandRecord);
+const demandRecords = Array.from({ length: 50 }, generateRandomDemandRecord);
 
 const generateRandomTransactionRecord = () => {
   return {

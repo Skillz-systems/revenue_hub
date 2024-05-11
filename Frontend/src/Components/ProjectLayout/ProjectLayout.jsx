@@ -15,7 +15,6 @@ import {
   CardData2,
   Overview,
 } from "../Index";
-import { useLocation } from "react-router-dom";
 
 export default function ProjectLayout() {
   const [displaySideBarMenu, setdisplaySideBarMenu] = useState(true);
@@ -29,7 +28,6 @@ export default function ProjectLayout() {
   const menuItems = MenuItemData();
   const cardData = CardData();
   const cardData2 = CardData2();
-  const location = useLocation();
 
   const handleMenuItemClick = (component) => {
     setActiveMenuItem(component);
@@ -56,7 +54,7 @@ export default function ProjectLayout() {
       className={`flex relative justify-between h-screen bg-custom-blue-100 lg:p-4 lg:pb-0 `}
     >
       <div
-        className={`test flex-col pb-6 overflow-y-auto overscroll-contain scrollbar-thin scrollbar-thumb-color-text-two scrollbar-track-white ${
+        className={`flex-col pb-6 overflow-y-auto overscroll-contain scrollbar-thin scrollbar-thumb-color-text-two scrollbar-track-white ${
           transitionSection ? "pt-1 w-14" : "w-[19%]"
         }
         ${
@@ -148,7 +146,7 @@ export default function ProjectLayout() {
       ) : null}
 
       <div
-        className={`test flex-col items-center justify-center p-4 pt-1 space-y-8 bg-white border-0.6 border-b-0 rounded-b-none border-custom-border rounded overflow-auto overscroll-contain scrollbar-thin scrollbar-thumb-color-text-two scrollbar-track-white ${
+        className={`flex-col items-center justify-center p-4 pt-1 space-y-8 bg-white border-0.6 border-b-0 rounded-b-none border-custom-border rounded overflow-auto overscroll-contain scrollbar-thin scrollbar-thumb-color-text-two scrollbar-track-white ${
           transitionSection
             ? "w-full transition-all ease-in-out duration-500"
             : "w-[81%]"
@@ -160,7 +158,7 @@ export default function ProjectLayout() {
             alert("Opened Menu Modal");
           }}
         />
-        {location.pathname === "/properties" ? (
+        {activeMenuItem === "Properties Component" ? (
           <Card2 cardData={cardData2} />
         ) : (
           <Card cardData={cardData} />

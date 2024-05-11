@@ -3,8 +3,8 @@ import { FiSearch } from "react-icons/fi";
 import { GoDotFill } from "react-icons/go";
 import { HiUsers } from "react-icons/hi2";
 import { HiOutlineDotsHorizontal } from "react-icons/hi";
-import { TableSearchInput } from "../Index";
-import { filterRecordsByKeyAndValue } from "../../Utils/client";
+import { TableSearchInput, Pagination } from "../Index";
+import { filterRecordsByKeyAndValue, ScrollToTop } from "../../Utils/client";
 
 export default function TransactionsTable({ customTableData }) {
   const [displaySearchIcon, setDisplaySearchIcon] = useState(true);
@@ -12,6 +12,47 @@ export default function TransactionsTable({ customTableData }) {
   const [query, setQuery] = useState("");
   const [editModal, setEditModal] = useState(null);
   const [displayColumn, setDisplayColumn] = useState(true);
+
+  // PAGINATION LOGIC
+  const [currentPage, setCurrentPage] = useState(0);
+  const [propertiesPerPage, setPropertiesPerPage] = useState(12);
+  const [currentStyle, setCurrentStyle] = useState();
+
+  const offset = currentPage * propertiesPerPage;
+
+  const handlePageChange = ({ selected }) => {
+    setCurrentPage(selected);
+    ScrollToTop("top-container");
+  };
+
+  const handlePropertiesPerPageChange = (e) => {
+    setPropertiesPerPage(parseInt(e.target.value));
+    setCurrentPage(0);
+    ScrollToTop("top-container");
+  };
+
+  const currentProperties = (data) => {
+    return data.slice(offset, offset + propertiesPerPage);
+  };
+
+  const paginationStyles = {
+    containerClassName: "flex flex-wrap font-lexend space-x-2",
+    activeClassName:
+      "flex items-center justify-center px-2.5 w-[32px] h-[32px] bg-custom-blue-200 border border-primary-color rounded ",
+    activeLinkClassName: "text-sm text-primary-color font-mulish font-bold",
+    previousClassName:
+      "flex items-center justify-center h-[32px] px-2.5 border border-divider-grey rounded",
+    previousLinkClassName: "text-sm text-color-text-one",
+    nextClassName:
+      "flex items-center justify-center h-[32px] px-2.5 border border-divider-grey rounded",
+    nextLinkClassName: "text-sm text-color-text-one",
+    pageClassName: `flex items-center justify-center w-[32px] h-[32px] px-2.5 border border-divider-grey rounded`,
+    pageLinkClassName: "text-sm text-color-text-two font-mulish",
+    breakLabel: <HiOutlineDotsHorizontal />,
+    breakClassName:
+      "flex items-center justify-center h-[32px] px-2 border border-divider-grey rounded",
+    breakLinkClassName: "text-base text-color-text-two font-mulish",
+  };
 
   const handleEditModal = (recordId) => {
     setEditModal(editModal === recordId ? null : recordId);
@@ -28,11 +69,15 @@ export default function TransactionsTable({ customTableData }) {
 
   const filteredRecords =
     activeMenu === 1
-      ? customTableData.records
+      ? currentProperties(customTableData.records)
       : activeMenu === 2
-      ? filterRecordsByKeyAndValue(customTableData.records, "type", "Manager")
+      ? currentProperties(
+          filterRecordsByKeyAndValue(customTableData.records, "type", "Manager")
+        )
       : activeMenu === 3
-      ? filterRecordsByKeyAndValue(customTableData.records, "type", "Officer")
+      ? currentProperties(
+          filterRecordsByKeyAndValue(customTableData.records, "type", "Officer")
+        )
       : [];
 
   const filteredResults = query
@@ -49,6 +94,8 @@ export default function TransactionsTable({ customTableData }) {
         })
       )
     : [];
+
+  const pageCount = Math.ceil(LengthByActiveMenu() / propertiesPerPage);
 
   const recordField = (record) => {
     return (
@@ -102,8 +149,26 @@ export default function TransactionsTable({ customTableData }) {
       </div>
     );
   };
+
+  function LengthByActiveMenu() {
+    return activeMenu === 1
+      ? filteredResults.length > 0
+        ? filteredResults.length
+        : filteredResults < 1 && query != ""
+        ? 0
+        : customTableData.records.length
+      : activeMenu === 2
+      ? filterRecordsByKeyAndValue(customTableData.records, "type", "Manager")
+          .length
+      : filterRecordsByKeyAndValue(customTableData.records, "type", "Officer")
+          .length;
+  }
+
   return (
-    <div className="flex-col space-y-4 p-4 border-0.6 border-custom-grey-100 rounded-lg">
+    <div
+      id="top-container"
+      className="flex-col space-y-4 p-4 border-0.6 border-custom-grey-100 rounded-lg"
+    >
       <div className="flex items-start justify-between ">
         <div className="flex items-center justify-between border-0.6 border-custom-grey-100 rounded p-1">
           {customTableData.menu.map((menu) =>
@@ -117,6 +182,8 @@ export default function TransactionsTable({ customTableData }) {
                 }`}
                 onClick={() => {
                   setActiveMenu(menu.id);
+                  setCurrentPage(0);
+                  setCurrentStyle(0);
                 }}
               >
                 <span
@@ -232,8 +299,37 @@ export default function TransactionsTable({ customTableData }) {
           )}
         </div>
       </div>
-      <div>
-        <b className="p-1 text-sm ">PAGINATION COMPONENT</b>
+      <div className="flex justify-between p-4 item-center">
+        <div className="flex flex-wrap w-[70%]">
+          <Pagination
+            pageCount={pageCount}
+            pageRangeDisplayed={2}
+            marginPagesDisplayed={0}
+            onPageChange={handlePageChange}
+            paginationStyles={paginationStyles}
+            forcePage={currentStyle}
+          />
+        </div>
+        <p className="flex items-center gap-2 justify-end w-[30%] text-xs text-color-text-two font-lexend">
+          Showing
+          <select
+            className="flex items-center outline-none justify-center w-[60px] h-[32px] px-2.5 border border-divider-grey rounded text-color-text-one"
+            onChange={handlePropertiesPerPageChange}
+            value={
+              LengthByActiveMenu() > propertiesPerPage
+                ? propertiesPerPage
+                : LengthByActiveMenu()
+            }
+          >
+            {Array.from({ length: LengthByActiveMenu() }, (_, index) => (
+              <option key={index} value={1 + index}>
+                {1 + index}
+              </option>
+            ))}
+          </select>
+          of <span id="length">{LengthByActiveMenu()}</span>
+          entries
+        </p>
       </div>
     </div>
   );
