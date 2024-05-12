@@ -386,7 +386,7 @@ export default function DemandInvoiceTable({ customTableData }) {
               </option>
             ))}
           </select>
-          of <span id="length">{LengthByActiveMenu()}</span>
+          of <span>{LengthByActiveMenu()}</span>
           entries
         </p>
       </div>

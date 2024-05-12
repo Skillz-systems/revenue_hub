@@ -49,6 +49,10 @@ let zones = [
   "Zuba",
 ];
 
+const propertyUse = ["Commercial", "Residential", "School"];
+
+export { zones, propertyUse }
+
 const africanFirstNames = [
   "Abimbola",
   "Chinwe",
@@ -107,7 +111,7 @@ const generateRandomPropertyRecord = () => {
     amacZones: ["Amac 1", "Amac 2", "Amac 3"][Math.floor(Math.random() * 3)],
   };
 };
-const propertyRecords = Array.from({ length: 75 }, generateRandomPropertyRecord);
+const propertyRecords = Array.from({ length: 500 }, generateRandomPropertyRecord);
 
 const generateRandomDemandRecord = () => {
   return {
