@@ -128,7 +128,7 @@ export default function TransactionsTable({ customTableData }) {
         <span className="flex flex-wrap items-center justify-center w-1/12 gap-1">
           <span className="border-0.6 relative border-custom-grey-100 text-custom-grey-300 px-2 py-2.5 rounded text-base hover:cursor-pointer">
             <span
-              title="Edit Transaction"
+              title="Edit Staffs Details"
               className="hover:cursor-pointer"
               onClick={() => handleEditModal(record.id)}
             >

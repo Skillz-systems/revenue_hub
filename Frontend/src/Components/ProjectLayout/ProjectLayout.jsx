@@ -20,7 +20,7 @@ export default function ProjectLayout() {
   const [displaySideBarMenu, setdisplaySideBarMenu] = useState(true);
   const [transitionSection, setTransitionSection] = useState(false);
   const [activeMenuItem, setActiveMenuItem] = useState("Overview Component");
-  const [activeComponent, setActiveComponent] = useState(<Overview/>);
+  const [activeComponent, setActiveComponent] = useState(<Overview />);
   const [searchClicked, setSearchClicked] = useState(false);
   const [displayAddPropertyModal, setDisplayAddPropertyModal] = useState(false);
   const [displayAddDemandModal, setDisplayAddDemandModal] = useState(false);
@@ -61,7 +61,9 @@ export default function ProjectLayout() {
           activeMenuItem === "Settings Component" &&
           displaySideBarMenu === false
             ? "pt-1 w-14"
-            : activeMenuItem === "Settings Component" ? "w-[270px]" : ""
+            : activeMenuItem === "Settings Component"
+            ? "w-[270px]"
+            : ""
         } 
         `}
       >
@@ -77,6 +79,9 @@ export default function ProjectLayout() {
             }}
             showAddDemandModal={() => {
               setDisplayAddDemandModal(true);
+              setTimeout(() => {
+                setPropertyModalTransition(true);
+              }, 250);
             }}
             handleMenuItemClick={handleMenuItemClick}
             activeMenuItem={activeMenuItem}
@@ -187,13 +192,17 @@ export default function ProjectLayout() {
       {displayAddDemandModal ? (
         <DemandPropertyModal
           modalStyle={
-            "absolute top-0 left-0 z-20 w-full h-screen p-4 overflow-hidden bg-custom-blue-100"
+            "absolute top-0 left-0 z-20 flex items-start justify-end w-full h-screen p-4 overflow-hidden bg-black bg-opacity-40"
           }
         >
           <AddDemand
             hideAddDemandModal={() => {
               setDisplayAddDemandModal(false);
+              setTimeout(() => {
+                setPropertyModalTransition(false);
+              }, 300);
             }}
+            propertyModalTransition={propertyModalTransition}
           />
         </DemandPropertyModal>
       ) : null}
