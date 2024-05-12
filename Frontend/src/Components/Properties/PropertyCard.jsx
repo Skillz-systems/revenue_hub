@@ -6,7 +6,7 @@ import { BiSolidEditAlt } from "react-icons/bi";
 import { HiOutlineDotsHorizontal } from "react-icons/hi";
 
 export default function PropertiesTable({
-  id,
+  key,
   pin,
   propertyUse,
   paymentStatus,
@@ -17,7 +17,7 @@ export default function PropertiesTable({
 }) {
   return (
     <div
-      key={id}
+      key={key}
       className="flex-col border border-divider-grey w-[32%] rounded"
     >
       <div className="flex items-center justify-between px-2.5 py-3 gap-1 border-b border-divider-grey">

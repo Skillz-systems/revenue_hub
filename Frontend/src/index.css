@@ -25,6 +25,10 @@
   font-family: "Chonburi", serif;
 }
 
+.font-mulish{
+  font-family: "Mulish", sans-serif;
+}
+
 .ellipsis {
   overflow: hidden;
   white-space: nowrap;

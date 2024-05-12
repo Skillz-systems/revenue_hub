@@ -107,7 +107,7 @@ const generateRandomPropertyRecord = () => {
     amacZones: ["Amac 1", "Amac 2", "Amac 3"][Math.floor(Math.random() * 3)],
   };
 };
-const propertyRecords = Array.from({ length: 21 }, generateRandomPropertyRecord);
+const propertyRecords = Array.from({ length: 75 }, generateRandomPropertyRecord);
 
 const generateRandomDemandRecord = () => {
   return {
@@ -121,7 +121,7 @@ const generateRandomDemandRecord = () => {
     paymentStatus: ["Paid", "Unpaid", "Expired"][Math.floor(Math.random() * 3)],
   };
 };
-const demandRecords = Array.from({ length: 20 }, generateRandomDemandRecord);
+const demandRecords = Array.from({ length: 50 }, generateRandomDemandRecord);
 
 const generateRandomTransactionRecord = () => {
   return {
@@ -142,7 +142,7 @@ const transactionRecords = Array.from({ length: 15 }, generateRandomTransactionR
 
 const generateRandomStaffRecord = () => {
   return {
-    id: 1,
+    id: Math.floor(1 + Math.random() * 1000),
     staffId: `13${Math.floor(100000000 + Math.random() * 900000000)}`,
     fullName: `${africanFirstNames[Math.floor(Math.random() * africanFirstNames.length)]} ${africanLastNames[Math.floor(Math.random() * africanLastNames.length)]}`,
     email: `${africanFirstNames[Math.floor(Math.random() * africanFirstNames.length)]}${Math.floor(
@@ -190,6 +190,10 @@ const data = {
       { id: 8, name: "ACTIONS" },
     ],
     records: demandRecords,
+  },
+  statistics: {
+    invoicesGenerated: [],
+    valuegenerated: [],
   },
   transactions: {
     menu: [
