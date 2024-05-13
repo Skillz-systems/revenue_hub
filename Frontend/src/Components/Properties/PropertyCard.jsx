@@ -13,10 +13,12 @@ export default function PropertiesTable({
   amacZone,
   cadestralZone,
   ratePaybale,
+  setViewPropertyModal,
 }) {
   return (
     <div
-      className="flex-col border border-divider-grey w-[32%] rounded"
+      className="flex-col border border-divider-grey w-[32%] rounded hover:cursor-pointer"
+      onClick={setViewPropertyModal}
     >
       <div className="flex items-center justify-between px-2.5 py-3 gap-1 border-b border-divider-grey">
         <div className="flex items-center justify-between gap-2">

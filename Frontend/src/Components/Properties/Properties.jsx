@@ -1,5 +1,11 @@
 import React, { useState } from "react";
-import { PropertyCard, customTableData, Pagination } from "../Index";
+import {
+  PropertyCard,
+  customTableData,
+  Pagination,
+  DemandPropertyModal,
+  ViewPropertyModal,
+} from "../Index";
 import { BsCaretDownFill } from "react-icons/bs";
 import { HiOutlineDotsHorizontal } from "react-icons/hi";
 import { ScrollToTop } from "../../Utils/client";
@@ -8,6 +14,15 @@ import { zones, propertyUse } from "../DemandInvoiceTable/customTableData";
 export default function Properties() {
   const [districtState, setDistrictState] = useState("");
   const [propertyUseState, setPropertyUseState] = useState("");
+  const [viewPropertyModal, setViewPropertyModal] = useState(null);
+  const [propertyModalTransition, setPropertyModalTransition] = useState(false);
+
+  const handleViewPropertyModal = (property) => {
+    setViewPropertyModal(property);
+    setTimeout(() => {
+      setPropertyModalTransition(true);
+    }, 250);
+  };
 
   const handleSelectDistrict = (event) => {
     const selectedDistrict = event.target.value;
@@ -126,7 +141,7 @@ export default function Properties() {
   }
 
   return (
-    <>
+    <div>
       <hr className="border-0.5 mb-8 border-custom-grey-100" />
       <div
         id="top-container"
@@ -200,6 +215,7 @@ export default function Properties() {
                   amacZone={property.amacZones}
                   cadestralZone={property.cadestralZone}
                   ratePaybale={property.ratePayable}
+                  setViewPropertyModal={() => handleViewPropertyModal(property)}
                 />
               ))
             ) : (
@@ -219,6 +235,7 @@ export default function Properties() {
                   amacZone={property.amacZones}
                   cadestralZone={property.cadestralZone}
                   ratePaybale={property.ratePayable}
+                  setViewPropertyModal={() => handleViewPropertyModal(property)}
                 />
               ))
             ) : (
@@ -238,6 +255,7 @@ export default function Properties() {
                   amacZone={property.amacZones}
                   cadestralZone={property.cadestralZone}
                   ratePaybale={property.ratePayable}
+                  setViewPropertyModal={() => handleViewPropertyModal(property)}
                 />
               ))
             ) : (
@@ -255,6 +273,7 @@ export default function Properties() {
                 amacZone={property.amacZones}
                 cadestralZone={property.cadestralZone}
                 ratePaybale={property.ratePayable}
+                setViewPropertyModal={() => handleViewPropertyModal(property)}
               />
             ))
           ) : (
@@ -298,6 +317,24 @@ export default function Properties() {
           </p>
         </div>
       </div>
-    </>
+      {viewPropertyModal ? (
+        <DemandPropertyModal
+          modalStyle={
+            "absolute top-0 left-0 z-20 flex items-start justify-end w-full h-screen p-4 overflow-hidden bg-black bg-opacity-40"
+          }
+        >
+          <ViewPropertyModal
+            hideViewPropertyModal={() => {
+              setViewPropertyModal(false);
+              setTimeout(() => {
+                setPropertyModalTransition(false);
+              }, 300);
+            }}
+            propertyModalTransition={propertyModalTransition}
+            customTableData={viewPropertyModal}
+          />
+        </DemandPropertyModal>
+      ) : null}
+    </div>
   );
 }
