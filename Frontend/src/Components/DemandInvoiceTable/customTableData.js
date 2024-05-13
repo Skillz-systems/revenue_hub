@@ -49,6 +49,10 @@ let zones = [
   "Zuba",
 ];
 
+const propertyUse = ["Commercial", "Residential", "School"];
+
+export { zones, propertyUse }
+
 const africanFirstNames = [
   "Abimbola",
   "Chinwe",
@@ -99,15 +103,20 @@ const generateRandomPropertyRecord = () => {
   return {
     id: Math.floor(1 + Math.random() * 1000),
     pin: `13${Math.floor(10000000 + Math.random() * 900000000)}`,
+    assetNumber: `209${Math.floor(10000000 + Math.random() * 900000000)}`,
     propertyUse: ["Commercial", "Residential", "School"][Math.floor(Math.random() * 3)],
+    propertyType: ["Consolidated", "Unconsolidated"][Math.floor(Math.random() * 2)],
+    occupationStatus: ["Occupied", "Unoccupied"][Math.floor(Math.random() * 2)],
     paymentStatus: ["Paid", "Unpaid", "Ungenerated"][Math.floor(Math.random() * 3)],
     address: `House ${Math.floor(1 + Math.random() * 100)}, Street, Abuja`,
     cadestralZone: zones[Math.floor(Math.random() * zones.length)],
     ratePayable: Math.floor(1000 + Math.random() * 100000),
     amacZones: ["Amac 1", "Amac 2", "Amac 3"][Math.floor(Math.random() * 3)],
+    annualValue: `${Math.floor(Math.random() * 10000000) + 1}.00`,
+    daysToNextInvoice: Math.floor(Math.random() * 500) + 1,
   };
 };
-const propertyRecords = Array.from({ length: 75 }, generateRandomPropertyRecord);
+const propertyRecords = Array.from({ length: 500 }, generateRandomPropertyRecord);
 
 const generateRandomDemandRecord = () => {
   return {
@@ -119,6 +128,7 @@ const generateRandomDemandRecord = () => {
     cadestralZone: zones[Math.floor(Math.random() * zones.length)],
     ratePayable: Math.floor(1000 + Math.random() * 100000),
     paymentStatus: ["Paid", "Unpaid", "Expired"][Math.floor(Math.random() * 3)],
+    propertyData: generateRandomPropertyRecord(),
   };
 };
 const demandRecords = Array.from({ length: 50 }, generateRandomDemandRecord);
