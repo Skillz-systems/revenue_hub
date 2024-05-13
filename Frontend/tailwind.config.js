@@ -34,6 +34,8 @@ export default {
         "color-text-black": "#49526A",
         "color-dark-green": "#2FA52D",
         "divider-grey": "#CCD0DC",
+        "very-light-grey": "#F9F9F9",
+        "blueberry" : "#A2B0ED",
       },
       borderWidth: {
         1.5: "1.5px",

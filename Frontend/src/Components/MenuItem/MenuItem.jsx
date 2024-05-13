@@ -5,8 +5,8 @@ export default function MenuItem({
   menuIconTwo,
   menuName,
   menuItemCount,
-  isActive,
   setComponent,
+  isActive,
 }) {
   return (
     <div

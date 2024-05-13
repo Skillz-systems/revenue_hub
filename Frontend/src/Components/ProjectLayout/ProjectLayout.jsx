@@ -6,12 +6,14 @@ import {
   TopNavigation,
   SideBarMenu,
   Card,
+  Card2,
   MenuItemData,
   DemandPropertyModal,
   AddProperty,
   AddDemand,
-  Overview,
   CardData,
+  CardData2,
+  Overview,
 } from "../Index";
 
 export default function ProjectLayout() {
@@ -25,6 +27,7 @@ export default function ProjectLayout() {
   const [propertyModalTransition, setPropertyModalTransition] = useState(false);
   const menuItems = MenuItemData();
   const cardData = CardData();
+  const cardData2 = CardData2();
 
   const handleMenuItemClick = (component) => {
     setActiveMenuItem(component);
@@ -52,13 +55,15 @@ export default function ProjectLayout() {
     >
       <div
         className={`flex-col pb-6 overflow-y-auto overscroll-contain scrollbar-thin scrollbar-thumb-color-text-two scrollbar-track-white ${
-          transitionSection ? "pt-1 w-14" : "w-[230px]"
+          transitionSection ? "pt-1 w-14" : "w-[19%]"
         }
         ${
           activeMenuItem === "Settings Component" &&
           displaySideBarMenu === false
             ? "pt-1 w-14"
-            : activeMenuItem === "Settings Component" && "w-[270px]"
+            : activeMenuItem === "Settings Component"
+            ? "w-[270px]"
+            : ""
         } 
         `}
       >
@@ -74,6 +79,9 @@ export default function ProjectLayout() {
             }}
             showAddDemandModal={() => {
               setDisplayAddDemandModal(true);
+              setTimeout(() => {
+                setPropertyModalTransition(true);
+              }, 250);
             }}
             handleMenuItemClick={handleMenuItemClick}
             activeMenuItem={activeMenuItem}
@@ -146,7 +154,7 @@ export default function ProjectLayout() {
         className={`flex-col items-center justify-center p-4 pt-1 space-y-8 bg-white border-0.6 border-b-0 rounded-b-none border-custom-border rounded overflow-auto overscroll-contain scrollbar-thin scrollbar-thumb-color-text-two scrollbar-track-white ${
           transitionSection
             ? "w-full transition-all ease-in-out duration-500"
-            : "w-5/6"
+            : "w-[81%]"
         }`}
       >
         <TopNavigation
@@ -155,7 +163,11 @@ export default function ProjectLayout() {
             alert("Opened Menu Modal");
           }}
         />
-        <Card cardData={cardData} />
+        {activeMenuItem === "Properties Component" ? (
+          <Card2 cardData={cardData2} />
+        ) : (
+          <Card cardData={cardData} />
+        )}
         {activeComponent}
       </div>
 
@@ -180,13 +192,17 @@ export default function ProjectLayout() {
       {displayAddDemandModal ? (
         <DemandPropertyModal
           modalStyle={
-            "absolute top-0 left-0 z-20 w-full h-screen p-4 overflow-hidden bg-custom-blue-100"
+            "absolute top-0 left-0 z-20 flex items-start justify-end w-full h-screen p-4 overflow-hidden bg-black bg-opacity-40"
           }
         >
           <AddDemand
             hideAddDemandModal={() => {
               setDisplayAddDemandModal(false);
+              setTimeout(() => {
+                setPropertyModalTransition(false);
+              }, 300);
             }}
+            propertyModalTransition={propertyModalTransition}
           />
         </DemandPropertyModal>
       ) : null}

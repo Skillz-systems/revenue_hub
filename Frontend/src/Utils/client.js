@@ -19,3 +19,13 @@ export function formatNumberWithCommas(number) {
 export function filterRecordsByKeyAndValue(recordsArray, key, value) {
     return recordsArray.filter((record) => record[key] === value);
 }
+
+export function ScrollToTop(id) {
+    const topContainer = document.getElementById(id);
+    if (topContainer) {
+      topContainer.scrollIntoView({
+        behavior: "smooth",
+        block: "start",
+      });
+    }
+  }

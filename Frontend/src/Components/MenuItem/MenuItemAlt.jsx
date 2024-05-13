@@ -1,10 +1,11 @@
+
 export default function MenuItemAlt({
   menuId,
   menuIcon,
   menuIconTwo,
   menuName,
-  isActive,
   setComponent,
+  isActive
 }) {
   return (
     <div
