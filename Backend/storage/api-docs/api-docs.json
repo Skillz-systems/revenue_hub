@@ -1124,6 +1124,64 @@
             }
         },
         "/api/staff/{staff}": {
+            "get": {
+                "tags": [
+                    "Staff"
+                ],
+                "summary": "Get a staff",
+                "description": "Show details of a staff",
+                "operationId": "getStaff",
+                "parameters": [
+                    {
+                        "name": "staff",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Show details of a staff",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/ShowUserResource"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "string",
+                                            "example": "error"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "No Staff found"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "api_key": []
+                    }
+                ]
+            },
             "put": {
                 "tags": [
                     "Staff"

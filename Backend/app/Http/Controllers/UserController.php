@@ -129,12 +129,56 @@ class UserController extends Controller
         ], 200);
     }
 
+
+
     /**
-     * Display the specified resource.
+     * Show  User
+     * @OA\GET (
+     *     path="/api/staff/{staff}",
+     *     tags={"Staff"},
+     *     summary="Get a staff",
+     *     description="Show details of a staff",
+     *     operationId="getStaff",
+     *     security={{"api_key":{}}},
+     *     @OA\Parameter(
+     *         in="path",
+     *         name="staff",
+     *         required=true,
+     *         @OA\Schema(type="integer")
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Show details of a staff",
+     *         @OA\JsonContent(
+     *             type="array",
+     *             @OA\Items(ref="#/components/schemas/ShowUserResource")
+     *         ),
+     *     ),
+     *     @OA\Response(
+     *         response="404",
+     *         description="Not found",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="status", type="string", example="error"),
+     *             @OA\Property(property="message", type="string", example="No Staff found"),
+     *         )
+     *     ),
+     * )
      */
-    public function show(User $user)
+    public function show($user)
     {
-        //
+        $getUser = User::find($user);
+
+        if ($getUser) {
+            return response()->json([
+                "status" => "success",
+                "data" =>  ShowUserResource::make($getUser)
+            ], 200);
+        }
+
+        return response()->json([
+            "status" => "error",
+            "message" => "No Staff Found",
+        ], 404);
     }
 
 
@@ -258,7 +302,11 @@ class UserController extends Controller
 
         $update = (new StaffService)->updateStaff($request, $staff);
         if ($update) {
-            return new ShowUserResource($update);
+            return response()->json([
+                'status' => 'error',
+                'message' => "All fields are required ",
+                "data" => new ShowUserResource($update)
+            ], 200);
         }
 
         return response()->json([
