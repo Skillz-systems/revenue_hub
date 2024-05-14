@@ -35,7 +35,11 @@ export default {
         "color-dark-green": "#2FA52D",
         "divider-grey": "#CCD0DC",
         "very-light-grey": "#F9F9F9",
-        "blueberry" : "#A2B0ED",
+        "blueberry": "#A2B0ED",
+        "darkblueberry": "#3951B6",
+        "darkerblueberry": "#172049",
+        "lightblue": "#EFF2FF",
+        "light-red": "#FFF7FA",
       },
       borderWidth: {
         1.5: "1.5px",
