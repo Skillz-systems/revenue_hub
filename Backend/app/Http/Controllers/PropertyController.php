@@ -164,6 +164,7 @@ class PropertyController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'pid' => ['required', 'integer', 'max:255', 'unique:properties'],
+            'occupant' => ['required', 'string', 'max:255'],
             'prop_addr' => ['required', 'string', 'max:255'],
             'street_name' => ['required', 'string', 'max:255'],
             'asset_no' => ['required', 'string', 'max:255'],
@@ -346,6 +347,7 @@ class PropertyController extends Controller
     {
 
         $validator = Validator::make($request->all(), [
+            'occupant' => ['required', 'string', 'max:255'],
             'prop_addr' => ['required', 'string', 'max:255'],
             'street_name' => ['required', 'string', 'max:255'],
             'asset_no' => ['required', 'string', 'max:255'],
@@ -438,5 +440,86 @@ class PropertyController extends Controller
             "status" => "error",
             "message" => "Property not found",
         ], 404);
+    }
+    /**
+     * Add new property details.
+         /**
+     * @OA\POST(
+     *     path="/api/property/upload",
+     *     tags={"Property"},
+     *     summary="Upload New Property Details",
+     *     description="This allow staff admin to upload new property details from a csv file",
+     *     operationId="uploadProperty",
+     *     security={{"api_key":{}}},
+     *     @OA\RequestBody(
+     *         @OA\MediaType(
+     *             mediaType="multipart/form-data",
+     *             @OA\Schema(
+     *                 type="object",
+     *                 required={"file"},
+     *                 @OA\Property( property="file", type="file", format="binary", description="File to upload (csv)" ),
+     *             )
+     *         )
+     *      ),
+     *     @OA\Response(
+     *         response="200",
+     *         description="Property uploaded successfully",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="status", type="string", example="success"),
+     *             @OA\Property(property="message", type="string", example="Property uploaded successfully"),
+     *         ),
+     *     ),
+     *     @OA\Response(
+     *         response="400",
+     *         description="All Fields are Required",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="status", type="string", example="error"),
+     *             @OA\Property(property="message", type="string", example="All Fields are required"),
+     *             @OA\Property(property="data", type="object",
+     *             ),
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response="401",
+     *         description="An error occured",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="status", type="string", example="error"),
+     *             @OA\Property(property="message", type="string", example="An error occured"),
+     *         )
+     *     ),
+     *
+     * )
+     *
+     *
+     *
+     *
+     */
+    public function upload(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'file' => ['required',  'mimes:csv,txt'],
+
+        ]);
+
+
+        if ($validator->fails()) {
+            return response()->json([
+                'status' => 'error',
+                "data" => $validator->errors()
+            ], 400);
+        }
+
+        $upload = (new PropertyService)->uploadProperty($request);
+        if ($upload) {
+            return response()->json([
+                'status' => 'success',
+                "message" => "Properties Uploaded Successfull"
+            ], 200);
+        }
+
+        return response()->json([
+            "status" => "error",
+            "message" => "An error occured",
+        ], 401);
     }
 }

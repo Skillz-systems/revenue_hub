@@ -18,6 +18,7 @@ class PropertyFactory extends Factory
     {
         return [
             'pid' => fake()->randomNumber(8),
+            'occupant' => fake()->name(),
             'prop_addr' => fake()->address(),
             'street_name' => fake()->streetAddress(),
             'asset_no' => 'AMC/B14/TR/' . fake()->randomDigit(),

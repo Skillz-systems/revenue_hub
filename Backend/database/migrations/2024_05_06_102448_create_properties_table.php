@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::create('properties', function (Blueprint $table) {
             $table->unsignedBigInteger('pid')->primary()->unique();
+            $table->string('occupant');
             $table->string('prop_addr');
             $table->string('street_name');
             $table->string('asset_no');

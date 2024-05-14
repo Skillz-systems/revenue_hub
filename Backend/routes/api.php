@@ -28,4 +28,5 @@ Route::middleware('auth:sanctum')->group(function () {
 
     Route::apiResource('/staff', UserController::class);
     Route::apiResource('/property', PropertyController::class);
+    Route::post('/property/upload', [PropertyController::class, 'upload']);
 });

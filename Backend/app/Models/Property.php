@@ -11,6 +11,7 @@ class Property extends Model
 
     protected $fillable = [
         'pid',
+        'occupant',
         'prop_addr',
         'street_name',
         'asset_no',
