@@ -953,60 +953,10 @@
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "properties": {
-                                        "data": {
-                                            "type": "array",
-                                            "items": {
-                                                "properties": {
-                                                    "id": {
-                                                        "type": "integer",
-                                                        "example": 9
-                                                    },
-                                                    "name": {
-                                                        "type": "string",
-                                                        "example": "abc example2.com"
-                                                    },
-                                                    "email": {
-                                                        "type": "string",
-                                                        "example": "abc@example2.com"
-                                                    },
-                                                    "phone": {
-                                                        "type": "string",
-                                                        "example": "65728338352"
-                                                    },
-                                                    "zone": {
-                                                        "type": "string",
-                                                        "example": "nigeria"
-                                                    },
-                                                    "role": {
-                                                        "properties": {
-                                                            "id": {
-                                                                "type": "integer",
-                                                                "example": 2
-                                                            },
-                                                            "name": {
-                                                                "type": "string",
-                                                                "example": "Admin"
-                                                            }
-                                                        },
-                                                        "type": "object"
-                                                    },
-                                                    "created_at": {
-                                                        "type": "string",
-                                                        "format": "date-time",
-                                                        "example": "2024-05-01T20:44:43.000000Z"
-                                                    },
-                                                    "updated_at": {
-                                                        "type": "string",
-                                                        "format": "date-time",
-                                                        "example": "2024-05-01T20:44:43.000000Z"
-                                                    }
-                                                },
-                                                "type": "object"
-                                            }
-                                        }
-                                    },
-                                    "type": "object"
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/StoreUserResource"
+                                    }
                                 }
                             }
                         }
@@ -1420,6 +1370,33 @@
         }
     },
     "components": {
+        "schemas": {
+            "ShowPropertyResource": {
+                "title": "Show Property Resource",
+                "description": "Show Property Resource",
+                "type": "object"
+            },
+            "ShowUserResource": {
+                "title": "Show Staff Resource",
+                "description": "Show Staff Resource",
+                "type": "object"
+            },
+            "StorePropertyResource": {
+                "title": "Store Property Resource",
+                "description": "Store Property Resource",
+                "type": "object"
+            },
+            "StoreUserResource": {
+                "title": "Store Staff Resource",
+                "description": "Store Staff Resource",
+                "type": "object"
+            },
+            "User": {
+                "title": "Staff Model",
+                "description": "Staff model",
+                "type": "object"
+            }
+        },
         "securitySchemes": {
             "api_key": {
                 "type": "apiKey",

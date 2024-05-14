@@ -28,23 +28,9 @@ class UserController extends Controller
      *         response=200,
      *         description="List of all staffs",
      *         @OA\JsonContent(
-     *             @OA\Property(property="data", type="array",
-     *                  @OA\Items(
-     *                     type="object",
-     *                     @OA\Property(property="id", type="integer", example=9),
-     *                     @OA\Property(property="name", type="string", example="abc example2.com"),
-     *                     @OA\Property(property="email", type="string", example="abc@example2.com"),
-     *                     @OA\Property(property="phone", type="string", example="65728338352"),
-     *                     @OA\Property(property="zone", type="string", example="nigeria"),
-     *                     @OA\Property(property="role", type="object",
-     *                         @OA\Property(property="id", type="integer", example=2),
-     *                         @OA\Property(property="name", type="string", example="Admin"),
-     *                     ),
-     *                     @OA\Property(property="created_at", type="string", format="date-time", example="2024-05-01T20:44:43.000000Z"),
-     *                     @OA\Property(property="updated_at", type="string", format="date-time", example="2024-05-01T20:44:43.000000Z"),
-     *                  ),
-     *             ),
-     *         )
+     *             type="array",
+     *             @OA\Items(ref="#/components/schemas/StoreUserResource")
+     *         ),
      *     ),
      *     @OA\Response(
      *         response="404",

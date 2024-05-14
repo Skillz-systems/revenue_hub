@@ -5,6 +5,17 @@ namespace App\Http\Resources;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
+/**
+ * Class ShowPropertyResource.
+ *
+ *
+ * @OA\Schema(
+ *     schema="ShowPropertyResource",
+ *     type="object",
+ *     title="Show Property Resource",
+ *     description="Show Property Resource",
+ * )
+ */
 class ShowPropertyResource extends JsonResource
 {
     /**
