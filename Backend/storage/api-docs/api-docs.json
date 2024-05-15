@@ -518,6 +518,253 @@
                 ]
             }
         },
+        "/api/property/{property}": {
+            "put": {
+                "tags": [
+                    "Property"
+                ],
+                "summary": "Update Property Details",
+                "description": "This allow staff admin to update property details",
+                "operationId": "updateProperty",
+                "parameters": [
+                    {
+                        "name": "property",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "": {
+                                        "properties": {
+                                            "prop_addr": {
+                                                "type": "string"
+                                            },
+                                            "street_name": {
+                                                "type": "string"
+                                            },
+                                            "asset_no": {
+                                                "type": "string"
+                                            },
+                                            "cadastral_zone": {
+                                                "type": "string"
+                                            },
+                                            "prop_type": {
+                                                "type": "string"
+                                            },
+                                            "prop_use": {
+                                                "type": "string"
+                                            },
+                                            "rating_dist": {
+                                                "type": "string"
+                                            },
+                                            "annual_value": {
+                                                "type": "string"
+                                            },
+                                            "rate_payable": {
+                                                "type": "integer"
+                                            },
+                                            "arrears": {
+                                                "type": "integer"
+                                            },
+                                            "penalty": {
+                                                "type": "integer"
+                                            },
+                                            "grand_total": {
+                                                "type": "integer"
+                                            },
+                                            "category": {
+                                                "type": "string"
+                                            },
+                                            "group": {
+                                                "type": "string"
+                                            },
+                                            "active": {
+                                                "type": "string"
+                                            }
+                                        },
+                                        "type": "object"
+                                    }
+                                },
+                                "type": "object",
+                                "example": {
+                                    "prop_addr": "string",
+                                    "street_name": "string",
+                                    "asset_no": "string",
+                                    "cadastral_zone": "string",
+                                    "prop_type": "string",
+                                    "prop_use": "string",
+                                    "rating_dist": "string",
+                                    "annual_value": "integer",
+                                    "rate_payable": "integer",
+                                    "arrears": "integer",
+                                    "penalty": "integer",
+                                    "grand_total": "integer",
+                                    "category": "string",
+                                    "group": "string",
+                                    "active": "string"
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Property Updated Successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "string",
+                                            "example": "success"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Property Updated Successfully"
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "pid": {
+                                                    "type": "string",
+                                                    "example": "12354654"
+                                                },
+                                                "prop_addr": {
+                                                    "type": "string",
+                                                    "example": "21 akidewa house 4"
+                                                },
+                                                "street_name": {
+                                                    "type": "string",
+                                                    "example": "4553532"
+                                                },
+                                                "asset_no": {
+                                                    "type": "string",
+                                                    "example": "566664565646"
+                                                },
+                                                "cadastral_zone": {
+                                                    "type": "string",
+                                                    "example": "2"
+                                                },
+                                                "prop_type": {
+                                                    "type": "string",
+                                                    "example": "residential"
+                                                },
+                                                "prop_use": {
+                                                    "type": "string",
+                                                    "example": "school"
+                                                },
+                                                "rating_dist": {
+                                                    "type": "string",
+                                                    "example": "oko"
+                                                },
+                                                "annual_value": {
+                                                    "type": "string",
+                                                    "example": "233165498"
+                                                },
+                                                "rate_payable": {
+                                                    "type": "string",
+                                                    "example": "89789"
+                                                },
+                                                "arrears": {
+                                                    "type": "string",
+                                                    "example": "54654656"
+                                                },
+                                                "penalty": {
+                                                    "type": "string",
+                                                    "example": "5546546"
+                                                },
+                                                "grand_total": {
+                                                    "type": "string",
+                                                    "example": "56456"
+                                                },
+                                                "category": {
+                                                    "type": "string",
+                                                    "example": "school"
+                                                },
+                                                "group": {
+                                                    "type": "string",
+                                                    "example": "commercial"
+                                                },
+                                                "active": {
+                                                    "type": "string",
+                                                    "example": "active"
+                                                },
+                                                "created_at": {
+                                                    "type": "string",
+                                                    "format": "date-time",
+                                                    "example": "2024-05-06T11:54:58.000000Z"
+                                                },
+                                                "updated_at": {
+                                                    "type": "string",
+                                                    "format": "date-time",
+                                                    "example": "2024-05-06T11:54:58.000000Z"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "All Fields are Required",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "string",
+                                            "example": "error"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "All Fields are required"
+                                        },
+                                        "data": {
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "An error occured",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "string",
+                                            "example": "error"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "An error occured"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "api_key": []
+                    }
+                ]
+            }
+        },
         "/api/staff": {
             "post": {
                 "tags": [

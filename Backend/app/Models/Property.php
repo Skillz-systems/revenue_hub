@@ -11,6 +11,7 @@ class Property extends Model
 
     protected $fillable = [
         'pid',
+        'occupant',
         'prop_addr',
         'street_name',
         'asset_no',
@@ -20,11 +21,14 @@ class Property extends Model
         'rating_dist',
         'annual_value',
         'rate_payable',
-        'arrears',
-        'penalty',
+        //'arrears',
+        //'penalty',
         'grand_total',
         'category',
         'group',
         'active',
     ];
+
+
+    public const PENALTY = 10;
 }
