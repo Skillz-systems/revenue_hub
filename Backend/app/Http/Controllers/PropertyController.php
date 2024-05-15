@@ -384,11 +384,10 @@ class PropertyController extends Controller
      * )
      */
 
-    public function destroy($property)
+    public function destroy(Property $property)
     {
-        $deleteProperty = Property::where('pid', $property)->first();
-        if ($deleteProperty) {
-            $deleteProperty->delete();
+        if ($property) {
+            $property->delete();
             return response()->json([
                 "status" => "success",
                 "message" => "Property deleted successfully",
