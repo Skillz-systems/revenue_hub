@@ -5,7 +5,7 @@ export default function AddProperty({
   hideAddPropertyModal,
   propertyModalTransition,
 }) {
-  const [activateState, setActiveState] = useState(1);
+  const [activateState, setActiveState] = useState(0);
   const [errorState, setErrorState] = useState();
   const [errorField, setErrorField] = useState(false);
   const [formData, setFormData] = useState({});
@@ -133,10 +133,10 @@ export default function AddProperty({
               (sectionItem) =>
                 activateState === sectionItem.id &&
                 sectionItem.fieldData.map((fieldItem) =>
-                  fieldItem.inputType === "text" || "email" ? (
+                  fieldItem.inputType === "text" ? (
                     <input
                       key={fieldItem.id}
-                      type={fieldItem.inputName === "text" ? "text" : "email"}
+                      type={fieldItem.inputName}
                       name={fieldItem.inputName}
                       value={formData[fieldItem.inputName] || ""}
                       className={`w-full text-xs font-lexend h-12 px-4 py-2 border-0.6 outline-none rounded ${
