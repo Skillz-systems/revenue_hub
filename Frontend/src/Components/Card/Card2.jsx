@@ -1,7 +1,7 @@
 import { TbCurrencyNaira } from "react-icons/tb";
 import { formatNumberWithCommas } from "../../Utils/client";
 
-const Card = ({ cardData }) => {
+const Card2 = ({ cardData }) => {
   return (
     <div className="grid grid-cols-3 gap-x-4 gap-y-8">
       {cardData.map((card) => (
@@ -15,14 +15,13 @@ const Card = ({ cardData }) => {
               <span
                 className={`flex items-center justify-center w-10 h-10 p-2 text-2xl rounded 
                 ${
-                  [1, 2, 3].includes(card.id) &&
+                  [1].includes(card.id) &&
                   "bg-custom-blue-200 text-primary-color"
                 }
-                ${card.id === 4 && "bg-color-light-green text-color-dark-green"}
                 ${
-                  [5, 6].includes(card.id) &&
+                  [2, 3].includes(card.id) &&
                   "bg-color-light-yellow text-color-bright-orange"
-                }
+                }  
               `}
               >
                 {card.icon}
@@ -38,11 +37,6 @@ const Card = ({ cardData }) => {
             </div>
           </div>
           <div className="flex items-center gap-2">
-            {card.id === 1 ? (
-              <span className="text-2xl text-color-bright-green">
-                <TbCurrencyNaira />
-              </span>
-            ) : null}
             <p className="text-3xl">{formatNumberWithCommas(card.value)}</p>
           </div>
         </div>
@@ -51,4 +45,4 @@ const Card = ({ cardData }) => {
   );
 };
 
-export default Card;
+export default Card2;

@@ -21,6 +21,14 @@
   font-family: "Lexend", sans-serif;
 }
 
+.font-chonburi {
+  font-family: "Chonburi", serif;
+}
+
+.font-mulish{
+  font-family: "Mulish", sans-serif;
+}
+
 .ellipsis {
   overflow: hidden;
   white-space: nowrap;
@@ -33,6 +41,26 @@
 
 .button-gradient-two {
   background-image: linear-gradient(to bottom, #ffffff 0%, #c9d1f7 100%);
+}
+
+.text-10px {
+  font-size: 10px;
+}
+
+.width-12-percent {
+  width: 12%;
+}
+
+.width-7-percent {
+  width: 7%;
+}
+
+.width-5-percent {
+  width: 5%;
+}
+
+.width-88px {
+  width: 88px;
 }
 
 .test {
