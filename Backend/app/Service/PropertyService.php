@@ -9,9 +9,8 @@ class PropertyService
     public function storeProperty($request)
     {
         $property = Property::create([
-            'status' => "success",
-            'message' => "Property added successfully",
             'pid' => $request->pid,
+            'occupant' => $request->prop_addr,
             'prop_addr' => $request->prop_addr,
             'street_name' => $request->street_name,
             'asset_no' => $request->asset_no,
@@ -21,13 +20,28 @@ class PropertyService
             'rating_dist' => $request->rating_dist,
             'annual_value' => $request->annual_value,
             'rate_payable' => $request->rate_payable,
-            'arrears' => $request->arrears,
-            'penalty' => $request->penalty,
+            //'arrears' => $request->arrears,
+            //'penalty' => $request->penalty,
             'grand_total' => $request->grand_total,
             'category' => $request->category,
             'group' => $request->group,
             'active' => $request->active,
         ]);
         return $property;
+    }
+
+    public function updateProperty($request, $property)
+    {
+
+        if ($property) {
+
+            if ($property->update($request->all())) {
+                return $property;
+            }
+
+            return false;
+        }
+
+        return false;
     }
 }
