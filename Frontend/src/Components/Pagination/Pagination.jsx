@@ -1,4 +1,4 @@
-import ReactPaginate from "react-paginate";
+import React from "react";
 
 export default function Pagination({
   pageCount,
