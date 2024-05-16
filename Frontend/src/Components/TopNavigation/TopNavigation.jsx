@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import { TbCalendarDot } from "react-icons/tb";
 import { FaChevronDown } from "react-icons/fa";
+import { IoPersonCircle } from "react-icons/io5";
+import { GrPowerShutdown } from "react-icons/gr";
 
 export default function TopNavigation({
   userName,
@@ -8,6 +10,11 @@ export default function TopNavigation({
   parentStyle,
 }) {
   const [selectedYear, setSelectedYear] = useState(2024);
+  const [menuState, setMenuState] = useState(false);
+
+  const displayMenu = () => {
+    setMenuState(!menuState);
+  };
 
   const handleYearChange = (event) => {
     setSelectedYear(parseInt(event.target.value));
@@ -71,12 +78,32 @@ export default function TopNavigation({
             <TbCalendarDot />
           </span>
         </div>
-        <span
-          className="text-base text-color-text-two flex items-center p-2 border-0.6 border-custom-border rounded bg-inherit hover:cursor-pointer"
-          title="Menu"
-          onClick={handleMenuClick}
-        >
-          <FaChevronDown />
+        <span className="text-base relative text-color-text-two flex items-center p-2 border-0.6 border-custom-border rounded bg-inherit hover:cursor-pointer">
+          <span title="Menu" onClick={displayMenu}>
+            <FaChevronDown />
+          </span>
+          {menuState ? (
+            <span className="absolute space-y-2 top-0 z-10 flex-col w-36 p-4 text-xs bg-white rounded shadow-md -left-40 border-0.6 border-custom-grey-100 text-color-text-black font-lexend">
+              <p
+                className="flex items-center justify-between hover:cursor-pointer"
+                title="View Profile"
+              >
+                View Profile
+                <span className="text-base text-primary-color">
+                  <IoPersonCircle />
+                </span>
+              </p>
+              <p
+                className="flex items-center justify-between hover:cursor-pointer"
+                title="Logout"
+              >
+                Logout
+                <span className="text-base text-color-dark-red">
+                  <GrPowerShutdown />
+                </span>
+              </p>
+            </span>
+          ) : null}
         </span>
       </div>
     </div>

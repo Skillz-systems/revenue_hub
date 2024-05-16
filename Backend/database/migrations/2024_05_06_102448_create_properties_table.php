@@ -12,7 +12,9 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('properties', function (Blueprint $table) {
-            $table->unsignedBigInteger('pid')->primary()->unique();
+            $table->id();
+            $table->unsignedBigInteger('pid');
+            $table->string('occupant');
             $table->string('prop_addr');
             $table->string('street_name');
             $table->string('asset_no');
@@ -22,8 +24,8 @@ return new class extends Migration
             $table->string('rating_dist');
             $table->string('annual_value');
             $table->string('rate_payable');
-            $table->string('arrears');
-            $table->string('penalty');
+            //$table->string('arrears');
+            //$table->string('penalty');
             $table->string('grand_total');
             $table->string('category')->nullable();
             $table->string('group');
