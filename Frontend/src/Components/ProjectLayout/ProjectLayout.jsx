@@ -5,14 +5,10 @@ import { FiSearch } from "react-icons/fi";
 import {
   TopNavigation,
   SideBarMenu,
-  Card,
-  Card2,
   MenuItemData,
   DemandPropertyModal,
   AddProperty,
   AddDemand,
-  CardData,
-  CardData2,
   Overview,
 } from "../Index";
 
@@ -26,8 +22,6 @@ export default function ProjectLayout() {
   const [displayAddDemandModal, setDisplayAddDemandModal] = useState(false);
   const [propertyModalTransition, setPropertyModalTransition] = useState(false);
   const menuItems = MenuItemData();
-  const cardData = CardData();
-  const cardData2 = CardData2();
 
   const handleMenuItemClick = (component) => {
     setActiveMenuItem(component);
@@ -163,11 +157,6 @@ export default function ProjectLayout() {
             alert("Opened Menu Modal");
           }}
         />
-        {activeMenuItem === "Properties Component" ? (
-          <Card2 cardData={cardData2} />
-        ) : (
-          <Card cardData={cardData} />
-        )}
         {activeComponent}
       </div>
 

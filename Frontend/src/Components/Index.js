@@ -27,3 +27,4 @@ export { default as PropertyCard } from "./Properties/PropertyCard";
 export { default as Statistics } from "./Statistics/Statistics";
 export { default as Pagination } from "./Pagination/Pagination";
 export { default as ViewPropertyModal } from "./Properties/ViewPropertyModal";
+export { TableData } from "./DemandInvoiceTable/newTableData";
