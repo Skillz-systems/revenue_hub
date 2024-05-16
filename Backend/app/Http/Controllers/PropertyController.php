@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Property;
 use Illuminate\Http\Request;
 use App\Service\PropertyService;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 use App\Http\Resources\ShowPropertyResource;
 use App\Http\Resources\StorePropertyResource;
@@ -374,11 +375,19 @@ class PropertyController extends Controller
      *         )
      *     ),
      *     @OA\Response(
-     *         response="404",
-     *         description="Not found",
+     *         response="401",
+     *         description="You dont Have Permission",
      *         @OA\JsonContent(
      *             @OA\Property(property="status", type="string", example="error"),
-     *             @OA\Property(property="message", type="string", example="Property not found"),
+     *             @OA\Property(property="message", type="string", example="You dont Have Permission"),
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response="402",
+     *         description="An error occured",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="status", type="string", example="error"),
+     *             @OA\Property(property="message", type="string", example="An error occured"),
      *         )
      *     ),
      * )
@@ -386,18 +395,25 @@ class PropertyController extends Controller
 
     public function destroy(Property $property)
     {
-        if ($property) {
-            $property->delete();
-            return response()->json([
-                "status" => "success",
-                "message" => "Property deleted successfully",
-            ], 200);
-        }
 
+        if (Auth::user()->role_id == 1) {
+
+            if ($property->delete()) {
+                return response()->json([
+                    "status" => "success",
+                    "message" => "Property deleted successfully",
+                ], 200);
+            }
+
+            return response()->json([
+                "status" => "error",
+                "message" => "An error occured",
+            ], 402);
+        }
 
         return response()->json([
             "status" => "error",
-            "message" => "Property not found",
-        ], 404);
+            "message" => "You dont Have Permission",
+        ], 401);
     }
 }
