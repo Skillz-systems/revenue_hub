@@ -144,7 +144,7 @@ export default function DemandInvoiceTable({ customTableData }) {
         <span className="flex flex-wrap items-center w-2/12 font-lexend text-color-text-black">
           {demandNoticeInformation.propertyAddress}
         </span>
-        <span className="flex flex-wrap items-center width-5-percent text-color-text-black font-lexend text-10px">
+        <span className="flex flex-wrap items-center w-[5%]text-color-text-black font-lexend text-[10px]">
           {
             demandNoticeInformation.demandInvoiceData[
               demandNoticeInformation.demandInvoiceData.length - 1
@@ -152,7 +152,7 @@ export default function DemandInvoiceTable({ customTableData }) {
           }
         </span>
         <span
-          className={`flex flex-wrap items-center px-4 py-1 justify-center rounded-xl width-12-percent font-light font-lexend text-color-text-black text-10px border-0.6 border-custom-grey-100
+          className={`flex flex-wrap items-center px-4 py-1 justify-center rounded-xl w-[12%] font-light font-lexend text-color-text-black text-[10px] border-0.6 border-custom-grey-100
         ${
           demandNoticeInformation.propertyUse === "Commercial"
             ? "bg-color-light-red"
@@ -164,13 +164,13 @@ export default function DemandInvoiceTable({ customTableData }) {
         >
           {demandNoticeInformation.propertyUse.toUpperCase()}
         </span>
-        <span className="flex flex-wrap items-center justify-center p-1 font-light rounded width-12-percent font-lexend text-custom-blue-500 bg-custom-blue-100 border-0.6 border-custom-grey-100">
+        <span className="flex flex-wrap items-center justify-center p-1 font-light rounded w-[12%] font-lexend text-custom-blue-500 bg-custom-blue-100 border-0.6 border-custom-grey-100">
           {demandNoticeInformation.cadestralZone}
         </span>
-        <span className="flex flex-wrap items-center justify-center text-sm width-12-percent text-color-text-black font-chonburi">
+        <span className="flex flex-wrap items-center justify-center text-sm w-[12%] text-color-text-black font-chonburi">
           {formatNumberWithCommas(demandNoticeInformation.ratePayable)}
         </span>
-        <div className="flex items-center justify-center width-12-percent">
+        <div className="flex items-center justify-center w-[12%]">
           <span
             className={`flex flex-wrap items-center justify-center px-2 p-1 font-light text-white rounded font-lexend
           ${
@@ -346,11 +346,11 @@ export default function DemandInvoiceTable({ customTableData }) {
               (column) => (
                 <div
                   key={column.id}
-                  className={`flex items-center gap-1 w-1/12 text-color-text-two text-10px font-lexend
+                  className={`flex items-center gap-1 w-1/12 text-color-text-two text-[10px] font-lexend
             ${column.id === 1 && "w-24"}
             ${column.id === 2 && "w-2/12"}
             ${column.id === 3 && "width-5-percent"}
-            ${[4, 5, 6, 7].includes(column.id) && "width-12-percent"}
+            ${[4, 5, 6, 7].includes(column.id) && "w-[12%]"}
             ${[6, 7].includes(column.id) && "justify-center"}
             `}
                 >
