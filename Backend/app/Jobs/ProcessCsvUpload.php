@@ -31,7 +31,7 @@ class ProcessCsvUpload implements ShouldQueue
         // this allows one file to be processed every 30 seconds
         Redis::throttle('upload-csv')->allow(1)->every(30)->then(function () {
 
-            var_dump("Processing files" + $this->file);
+            var_dump("Processing files" . $this->file);
             $data = array_map('str_getcsv', file($this->file));
 
             dd($data);
@@ -42,7 +42,7 @@ class ProcessCsvUpload implements ShouldQueue
                 dd($row);
             }
 
-            dump("done files" + $this->file);
+            dump("done files" . $this->file);
             // delete the file after adding it to database
             unlink($this->file);*/
         }, function () {
