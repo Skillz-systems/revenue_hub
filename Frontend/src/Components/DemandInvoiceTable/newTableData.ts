@@ -306,6 +306,8 @@ const generateStaffRecord = () => {
 }
 const staffInformation: StaffInformationType = Array.from({ length: 30 }, generateStaffRecord);
 
+const accountInformation: StaffRecord = generateStaffRecord();
+
 const cardInformation = {
     totalRegisteredProperties: propertyInformation.length,
     totalGeneratedDemandNotices: demandNoticeInformation.length,
@@ -401,4 +403,4 @@ const staticInformation = {
 export { PropertyInformationType, TransactionInformationType, StaffInformationType };
 const TableData = { staticInformation, propertyInformation, demandNoticeInformation, transactionInformation, staffInformation, cardInformation }
 
-export { TableData, cadestralZones }
+export { TableData, cadestralZones, accountInformation }

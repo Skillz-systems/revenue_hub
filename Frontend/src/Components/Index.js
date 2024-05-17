@@ -31,3 +31,6 @@ export { default as ViewPropertyModal } from "./Properties/ViewPropertyModal";
 export { TableData } from "./DemandInvoiceTable/newTableData";
 export { default as AddNewStaffModal } from "./Staff/AddNewStaffModal";
 export { default as ViewStaffModal } from "./Staff/ViewStaffModal";
+export { default as Accounts } from "./Settings/Accounts";
+export { default as Password } from "./Settings/Password";
+export { accountInformation } from "./DemandInvoiceTable/newTableData";
