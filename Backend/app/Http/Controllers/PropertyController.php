@@ -65,7 +65,10 @@ class PropertyController extends Controller
         $properties = Property::all();
 
         if ($properties) {
-            return ShowPropertyResource::collection($properties);
+            return response()->json([
+                "status" => "success",
+                "data" => ShowPropertyResource::collection($properties)
+            ], 200);
         }
 
         return response()->json([
