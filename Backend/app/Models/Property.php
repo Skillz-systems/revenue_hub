@@ -21,8 +21,8 @@ class Property extends Model
         'rating_dist',
         'annual_value',
         'rate_payable',
-        'arrears',
-        'penalty',
+        //'arrears',
+        //'penalty',
         'grand_total',
         'category',
         'group',
@@ -30,5 +30,5 @@ class Property extends Model
     ];
 
 
-    protected $primaryKey = 'pid';
+    public const PENALTY = 10;
 }
