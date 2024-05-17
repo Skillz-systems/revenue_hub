@@ -495,7 +495,9 @@ class PropertyController extends Controller
         $upload = (new PropertyService)->uploadProperty($request);
         if ($upload) {
 
-            (new PropertyService)->importToDb();
+            $csvUpload = (new PropertyService)->importToDb();
+
+            dd($csvUpload);
             return response()->json([
                 'status' => 'success',
                 "message" => "Properties Uploaded Successfull"
