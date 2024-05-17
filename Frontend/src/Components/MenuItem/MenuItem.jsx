@@ -1,27 +1,30 @@
 export default function MenuItem({
+  menuId,
   parentDivStyle,
   menuIcon,
   menuIconTwo,
   menuName,
   menuItemCount,
-  isActive,
   setComponent,
+  isActive,
 }) {
   return (
     <div
-      className={`flex items-center justify-between space-x-2 px-1.5 py-2.5 transition ease-in-out  hover:cursor-pointer hover:translate-x-1
+      key={menuId}
+      className={`flex items-center justify-between px-1.5 py-2 transition ease-in-out  hover:cursor-pointer hover:translate-x-1
       ${parentDivStyle}
       ${
         isActive
           ? "bg-white border-1.5 border-custom-color-two rounded shadow-custom-100"
           : ""
-      }`}
+      }
+      `}
       title={menuName}
       onClick={setComponent}
     >
       <div className="flex items-center space-x-2">
         <span
-          className={`text-xl text-color-text-two ${
+          className={`text-2xl text-color-text-two ${
             isActive ? "text-primary-color" : ""
           }`}
         >

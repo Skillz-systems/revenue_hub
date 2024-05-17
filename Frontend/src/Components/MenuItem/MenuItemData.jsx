@@ -13,57 +13,81 @@ import {
   BsPeopleFill,
 } from "react-icons/bs";
 import { IoSettingsOutline, IoSettings } from "react-icons/io5";
+import {
+  DemandNotice,
+  Transactions,
+  Overview,
+  Staff,
+  Settings,
+  Properties,
+  Statistics,
+  TableData,
+} from "../Index";
 
 const MenuItemData = () => {
   return [
     {
+      id: 1,
       menuIcon: <RiHome6Line />,
       menuIconTwo: <RiHome6Fill />,
       menuName: "Overview",
       menuItemCount: 0,
       componentName: "Overview Component",
+      component: <Overview />,
     },
     {
+      id: 2,
       menuIcon: <PiBuildings />,
       menuIconTwo: <PiBuildingsFill />,
       menuName: "Properties",
-      menuItemCount: 570,
+      menuItemCount: TableData.cardInformation.totalRegisteredProperties,
       componentName: "Properties Component",
+      component: <Properties />,
     },
     {
+      id: 3,
       menuIcon: <PiListBulletsBold />,
       menuIconTwo: <PiListBulletsFill />,
       menuName: "Demand Notice",
-      menuItemCount: 420,
+      menuItemCount: TableData.cardInformation.totalGeneratedDemandNotices,
       componentName: "Demand Notice Component",
+      component: <DemandNotice />,
     },
     {
+      id: 4,
       menuIcon: <HiOutlineChartPie />,
       menuIconTwo: <HiChartPie />,
       menuName: "Statistics",
       menuItemCount: 0,
       componentName: "Statistic Component",
+      component: <Statistics />,
     },
     {
+      id: 5,
       menuIcon: <BsCreditCard2Front />,
       menuIconTwo: <BsCreditCard2FrontFill />,
       menuName: "Transactions",
-      menuItemCount: 120,
+      menuItemCount: TableData.cardInformation.transactionInformationValue,
       componentName: "Transactions Component",
+      component: <Transactions />,
     },
     {
+      id: 6,
       menuIcon: <BsPeople />,
       menuIconTwo: <BsPeopleFill />,
       menuName: "Staff",
-      menuItemCount: 12,
+      menuItemCount: TableData.staffInformation.length,
       componentName: "Staff Component",
+      component: <Staff />,
     },
     {
+      id: 7,
       menuIcon: <IoSettingsOutline />,
       menuIconTwo: <IoSettings />,
       menuName: "Settings",
       menuItemCount: 0,
       componentName: "Settings Component",
+      component: <Settings />,
     },
   ];
 };

@@ -5,9 +5,10 @@ namespace App\Service;
 use App\Models\User;
 use App\Mail\RegisterMail;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 use App\Http\Resources\StoreUserResource;
-use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 
 class StaffService
@@ -65,5 +66,23 @@ class StaffService
         }
 
         //return true;
+    }
+
+
+    function updateStaff($request, $user)
+    {
+        if (AUth::user()->id == $user->id) {
+            $updateDetail = User::find($user->id);
+            $updateDetail->update([
+                'name' => $request->name,
+                'email' => $request->email,
+                'phone' => $request->phone,
+                'zone' => $request->zone
+            ]);
+
+            return $updateDetail;
+        }
+
+        return false;
     }
 }

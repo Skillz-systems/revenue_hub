@@ -3,6 +3,7 @@ export default function ProfileBox({
   profileIcon,
   title,
   designation,
+  location,
   onHideSideBarMenu,
 }) {
   return (
@@ -14,15 +15,21 @@ export default function ProfileBox({
         <span
           className="flex items-center justify-center w-5 h-5 text-xs border rounded-full text-color-text-two bg-custom-blue-200 border-custom-color-two"
           onClick={onHideSideBarMenu}
+          title="Shrink Sidebar Menu"
         >
           {profileIcon}
         </span>
       </div>
       <div className="flex bg-primary-color p-1.5 items-center justify-between rounded">
         <p className="text-xs text-white font-lexend">{title}</p>
-        <p className="px-1 text-xs font-semibold uppercase bg-white rounded-sm text-primary-color font-lexend">
-          {designation}
-        </p>
+        <span className="flex gap-1">
+          <p className="px-1 text-xs font-semibold uppercase bg-white rounded-sm text-primary-color font-lexend">
+            {designation}
+          </p>
+          <p className="px-1 text-xs font-semibold uppercase bg-white rounded-sm text-primary-color font-lexend">
+            {location}
+          </p>
+        </span>
       </div>
     </div>
   );

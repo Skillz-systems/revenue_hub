@@ -2,13 +2,15 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\LoginUserRequest;
-use App\Http\Requests\StaffStorePasswordRequest;
 use App\Models\User;
 use App\Service\AuthService;
-use App\Service\StaffService;
 use Illuminate\Http\Request;
+use App\Service\StaffService;
 use Illuminate\Support\Facades\Auth;
+use App\Http\Resources\LoginResource;
+use App\Http\Requests\LoginUserRequest;
+use Illuminate\Support\Facades\Validator;
+use App\Http\Requests\StaffStorePasswordRequest;
 
 class AuthController extends Controller
 {
@@ -53,18 +55,52 @@ class AuthController extends Controller
      )
      *     ),
      *     @OA\Response(
+     *         response="400",
+     *         description="All Fields are Required",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="status", type="string", example="error"),
+     *             @OA\Property(property="message", type="string", example="ensure that all required filed are properly filled"),
+     *             @OA\Property(property="data", type="object",
+     *                  @OA\Property(property="email", type="string", example="email is required"),
+     *                  @OA\Property(property="password", type="string", example="password is required"),
+     *             ),
+     *         )
+     *     ),
+     *     @OA\Response(
      *         response="401",
      *         description="Credential not match",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="status", type="string", example="error"),
+     *             @OA\Property(property="message", type="string", example="Credential not match"),
+     *         )
      *     ),
      *
      * )
      */
-    public function login(LoginUserRequest $request)
+    public function login(Request $request)
     {
+        $validator = Validator::make($request->all(), [
+            'email' => ['required', 'string'],
+            'password' => ['required', 'string', 'min:8']
+        ]);
 
-        //$login = (new AuthService)->LoginStaff($request);
+        if ($validator->fails()) {
+            return response()->json([
+                'status' => 'error',
+                'message' => "ensure that all required filed are properly filled ",
+                "data" => $validator->errors()
+            ], 400);
+        }
 
-        //return $login;
+        $login = (new AuthService)->LoginStaff($request);
+        if ($login) {
+            return new LoginResource($login);
+        }
+
+        return response()->json([
+            "status" => "error",
+            "message" => "Credential not match",
+        ], 401);
     }
 
 
