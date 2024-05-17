@@ -253,7 +253,7 @@ const generateTransactionRecord = (demandNotice: PropertyRecord): TransactionRec
         id: Math.floor(1 + Math.random() * 1000),
         transactionId: `304${Math.floor(10000000 + Math.random() * 900000000)} `,
         transactionType: paymentType[Math.floor(Math.random() * 2)],
-        transactionDate: `${randomDay} /${randomMonth}/${randomYear} `,
+        transactionDate: `${randomDay}/${randomMonth}/${randomYear} `,
         transactionTime: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' }),
         propertyDetails: {
             demandNoticeNumber: demandNotice.demandInvoiceData[demandNotice.demandInvoiceData.length - 1].demandNoticeNumber,

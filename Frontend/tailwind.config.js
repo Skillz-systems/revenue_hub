@@ -40,6 +40,8 @@ export default {
         "darkerblueberry": "#172049",
         "lightblue": "#EFF2FF",
         "light-red": "#FFF7FA",
+        "neon-green": "#C2F6AE",
+        "light-neon-green": "#F7FFF2",
       },
       borderWidth: {
         1.5: "1.5px",

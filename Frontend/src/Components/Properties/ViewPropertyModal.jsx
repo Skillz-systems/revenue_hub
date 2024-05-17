@@ -16,7 +16,7 @@ export default function ViewPropertyModal({
 }) {
   const [activateState, setActiveState] = useState(0);
   const [daysUntilDue, setDaysUntilDue] = useState(null);
-
+  const [editModal, setEditModal] = useState(false);
   const generateDueDate = () => {
     // Split the date string into day, month, and year
     const [day, month, year] =
@@ -185,14 +185,14 @@ export default function ViewPropertyModal({
                     },
                     {
                       name: "Rating District",
-                      value: customTableData.cadestralZone,
+                      value: customTableData.cadestralZone.toUpperCase(),
                     },
                   ].map((item) => (
                     <div className="flex items-center justify-between font-lexend">
                       <p className="px-1 py-0.5 text-darkblueberry rounded bg-lightblue text-xs">
                         {item.name}
                       </p>
-                      <p className="flex w-[50%] justify-end text-xs font-bold text-color-text-black">
+                      <p className="flex w-[50%] justify-end text-xs font-medium text-color-text-black">
                         {item.value}
                       </p>
                     </div>
@@ -218,32 +218,35 @@ export default function ViewPropertyModal({
                     },
                     {
                       name: "Occupation Status",
-                      value: customTableData.occupationStatus,
+                      value: customTableData.occupationStatus.toUpperCase(),
                     },
                   ].map((item, index) => (
                     <div className="flex items-center justify-between font-lexend">
                       <p className="px-1 py-0.5 text-darkerblueberry rounded bg-custom-blue-100 text-xs">
                         {item.name}
                       </p>
-                      <p className="flex w-[50%] justify-end text-xs font-bold">
+                      <p className="flex w-[50%] justify-end text-xs font-medium">
                         <span
                           className={`flex items-center justify-center 
+                    
                         ${
-                          index === 4
-                            ? item.value === "Unoccupied"
-                              ? "text-color-bright-red"
-                              : "text-color-bright-green"
+                          index === 4 &&
+                          customTableData.occupationStatus === "Unoccupied"
+                            ? "text-color-bright-red"
+                            : index === 4 &&
+                              customTableData.occupationStatus === "Occupied"
+                            ? "text-color-bright-green"
                             : "text-color-text-black"
                         }
                         ${
                           index === 3 &&
                           customTableData.propertyUse === "Commercial"
-                            ? "bg-color-light-red rounded-lg px-1 font-light font-lexend text-color-text-black text-[10px] border-0.6 border-custom-grey-100"
+                            ? "bg-color-light-red rounded-lg px-1 font-light font-lexend text-color-text-black text-[10px] border-[0.4px] border-divider-grey"
                             : index === 3 &&
                               customTableData.propertyUse === "Residential"
-                            ? "bg-color-light-yellow rounded-lg px-1 font-light font-lexend text-color-text-black text-[10px] border-0.6 border-custom-grey-100"
+                            ? "bg-color-light-yellow rounded-lg px-1 font-light font-lexend text-color-text-black text-[10px] border-[0.4px] border-divider-grey"
                             : index === 3
-                            ? "bg-custom-blue-200 rounded-lg px-1 font-light font-lexend text-color-text-black text-[10px] border-0.6 border-custom-grey-100"
+                            ? "bg-custom-blue-200 rounded-lg px-1 font-light font-lexend text-color-text-black text-[10px] border-[0.4px] border-divider-grey"
                             : ""
                         }
                       `}
@@ -300,7 +303,7 @@ export default function ViewPropertyModal({
                         {item.name}
                       </p>
                       <p
-                        className={`flex w-[50%] justify-end text-xs font-bold ${
+                        className={`flex w-[50%] justify-end text-xs font-medium ${
                           index === 3
                             ? "text-color-bright-red"
                             : "text-color-text-black"
@@ -365,7 +368,7 @@ export default function ViewPropertyModal({
                     <p className="px-1 py-0.5 text-darkerblueberry rounded bg-custom-blue-100 text-xs">
                       {item.name}
                     </p>
-                    <p className="flex w-[50%] justify-end text-xs font-bold text-color-text-black">
+                    <p className="flex w-[50%] justify-end text-xs font-medium text-color-text-black">
                       {item.value}
                     </p>
                   </div>
@@ -399,6 +402,13 @@ export default function ViewPropertyModal({
                   </span>
                 ) : null}
               </div>
+            ) : null}
+
+            {activateState === 2 &&
+            customTableData.paymentStatus === "Ungenerated" ? (
+              <p className="text-sm text-color-text-black font-lexend">
+                No Invoice has been generated on this property.
+              </p>
             ) : null}
 
             {activateState === 2 &&
@@ -455,33 +465,45 @@ export default function ViewPropertyModal({
                     <span
                       title="Edit Invoice"
                       className="hover:cursor-pointer"
-                      //  onClick={() => handleEditModal(record.id)}
+                      onClick={() => setEditModal(!editModal)}
                     >
                       <HiOutlineDotsHorizontal />
                     </span>
-                    {/* {editModal === record.id && (
-                     <span className="absolute space-y-2 top-0 z-10 flex-col w-40 p-4 text-xs bg-white rounded shadow-md -left-44 border-0.6 border-custom-grey-100 text-color-text-black font-lexend">
-                       <p className="hover:cursor-pointer" title="View Demand Notice">
-                         View Demand Notice
-                       </p>
-                       <p
-                         className="hover:cursor-pointer"
-                         title="View Property"
-                        //  onClick={() => handleViewPropertyModal(record.propertyData)}
-                       >
-                         View Property
-                       </p>
-                       {customTableData.paymentStatus === "Expired" ? (
-                         <p className="hover:cursor-pointer" title="Generate Reminder">
-                           Generate Reminder
-                         </p>
-                       ) : customTableData.paymentStatus === "Unpaid" ? (
-                         <p className="hover:cursor-pointer" title="View Reminder">
-                           View Reminder
-                         </p>
-                       ) : null}
-                     </span>
-                   )} */}
+                    {editModal && (
+                      <span className="absolute space-y-2 top-0 z-10 flex-col w-40 p-4 text-xs bg-white rounded shadow-md -left-44 border-0.6 border-custom-grey-100 text-color-text-black font-lexend">
+                        <p
+                          className="hover:cursor-pointer"
+                          title="View Demand Notice"
+                          onClick={() => alert("Demand Notice")}
+                        >
+                          View Demand Notice
+                        </p>
+                        <p
+                          className="hover:cursor-pointer"
+                          title="View Property"
+                          onClick={() => setActiveState(0)}
+                        >
+                          View Property
+                        </p>
+                        {customTableData.paymentStatus === "Expired" ? (
+                          <p
+                            className="hover:cursor-pointer"
+                            title="Generate Reminder"
+                            onClick={() => alert("Generate Reminder")}
+                          >
+                            Generate Reminder
+                          </p>
+                        ) : customTableData.paymentStatus === "Unpaid" ? (
+                          <p
+                            className="hover:cursor-pointer"
+                            title="View Reminder"
+                            onClick={() => alert("View Reminder")}
+                          >
+                            View Reminder
+                          </p>
+                        ) : null}
+                      </span>
+                    )}
                   </span>
                 </span>
               </div>

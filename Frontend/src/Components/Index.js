@@ -16,6 +16,7 @@ export { default as DemandNotice } from "./DemandNotice/DemandNotice";
 export { default as TableSearchInput } from "./DemandInvoiceTable/TableSearchInput";
 export { default as Transactions } from "./Transactions/Transactions";
 export { default as TransactionsTable } from "./Transactions/TransactionsTable";
+export { default as ViewTransactionModal } from "./Transactions/ViewTransactionModal";
 export { default as Overview } from "./Overview/Overview";
 export { default as CardData } from "./Card/CardData";
 export { default as CardData2 } from "./Card/CardData2";
