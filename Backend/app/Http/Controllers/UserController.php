@@ -105,7 +105,7 @@ class UserController extends Controller
      *     path="/api/staff/{staff}",
      *     tags={"Staff"},
      *     summary="Update Staff Details",
-     *     description="This allow staff member to update there details",
+     *     description="This allow staff member to update their details",
      *     operationId="updateStaff",
      *     security={{"api_key":{}}},
      *     @OA\Parameter(
