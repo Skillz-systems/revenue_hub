@@ -278,25 +278,33 @@ const transactionInformation: TransactionInformationType = generateTransactionRe
 interface StaffRecord {
     id: number;
     staffId: string;
+    firstName: string;
+    lastName: string;
+    middleName: string;
     fullName: string;
     email: string;
     phoneNumber: string;
-    type: string;
+    designation: string;
+    staffZone: string;
 }
 
 const generateStaffRecord = () => {
     return {
         id: Math.floor(1 + Math.random() * 1000),
         staffId: `13${Math.floor(100000000 + Math.random() * 900000000)} `,
+        firstName: africanFirstNames[Math.floor(Math.random() * africanFirstNames.length)],
+        lastName: africanLastNames[Math.floor(Math.random() * africanLastNames.length)],
+        middleName: africanLastNames[Math.floor(Math.random() * africanLastNames.length)],
         fullName: `${africanFirstNames[Math.floor(Math.random() * africanFirstNames.length)]} ${africanLastNames[Math.floor(Math.random() * africanLastNames.length)]} `,
         email: `${africanFirstNames[Math.floor(Math.random() * africanFirstNames.length)]}${Math.floor(
             1 + Math.random() * 100
         )
             } @gmail.com`,
         phoneNumber: `080${Math.floor(100000 + Math.random() * 9999999)} `,
-        type: ["Manager", "Officer",][
+        designation: ["Manager", "Officer", "Admin", "Enforcer"][
             Math.floor(Math.random() * 2)
         ],
+        staffZone: cadestralZones[Math.floor(Math.random() * cadestralZones.length)],
     }
 }
 const staffInformation: StaffInformationType = Array.from({ length: 30 }, generateStaffRecord);
@@ -388,7 +396,7 @@ const staticInformation = {
             { id: 2, name: "FULL NAME" },
             { id: 3, name: "EMAIL" },
             { id: 4, name: "PHONE NUMBER" },
-            { id: 5, name: "TYPE" },
+            { id: 5, name: "DESIGNATION" },
             { id: 6, name: "ACTIONS" },
         ],
     },
@@ -396,4 +404,4 @@ const staticInformation = {
 export { PropertyInformationType, TransactionInformationType, StaffInformationType };
 const TableData = { staticInformation, propertyInformation, demandNoticeInformation, transactionInformation, staffInformation, cardInformation }
 
-export { TableData }
+export { TableData, cadestralZones }
