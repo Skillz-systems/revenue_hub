@@ -32,6 +32,7 @@ class ShowPropertyResource extends JsonResource
             'category' => $this->category,
             'group' => $this->group,
             'active' => $this->active,
+            "status" => "success"
         ];
     }
 }
