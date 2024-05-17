@@ -78,7 +78,11 @@ class PropertyService
 
         // get one file at a time and process it
         foreach ($files as $file) {
-            ProcessCsvUpload::dispatch($file);
+            var_dump($file);
+            //ProcessCsvUpload::dispatch($file);
         }
+
+
+        return $files;
     }
 }
