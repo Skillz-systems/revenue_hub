@@ -6,14 +6,15 @@ import { BiSolidEditAlt } from "react-icons/bi";
 import { HiOutlineDotsHorizontal } from "react-icons/hi";
 
 export default function PropertiesTable({
-  pin,
+  personalIdentificationNumber,
   propertyUse,
   paymentStatus,
-  address,
-  amacZone,
+  propertyAddress,
+  group,
   cadestralZone,
   ratePaybale,
   setViewPropertyModal,
+  occupationStatus,
 }) {
   return (
     <div
@@ -22,7 +23,9 @@ export default function PropertiesTable({
     >
       <div className="flex items-center justify-between px-2.5 py-3 gap-1 border-b border-divider-grey">
         <div className="flex items-center justify-between gap-2">
-          <span className="text-xs font-bold text-color-text-one">{pin}</span>
+          <span className="text-xs font-bold text-color-text-one">
+            {personalIdentificationNumber}
+          </span>
           <span
             className={`rounded-md px-2 py-0.5 font-light font-lexend text-color-text-black text-10px border-0.6 border-custom-grey-100
             ${
@@ -41,8 +44,10 @@ export default function PropertiesTable({
           className={`rounded-md px-2 py-0.5 font-light text-[10px] text-white font-lexend
           ${
             paymentStatus === "Ungenerated"
-              ? "bg-color-bright-orange"
+              ? "bg-primary-color"
               : paymentStatus === "Unpaid"
+              ? "bg-color-bright-orange"
+              : paymentStatus === "Expired"
               ? "bg-color-bright-red"
               : "bg-color-bright-green"
           }
@@ -53,14 +58,14 @@ export default function PropertiesTable({
       </div>
       <div className="fle-col px-2.5 py-3 space-y-2">
         <div className="text-xs font-lexend text-color-text-black">
-          {address}
+          {propertyAddress}
         </div>
         <div className="flex items-center gap-2">
           <span className="flex items-center gap-0.5 px-1 py-0.5 text-xs font-light rounded font-lexend text-custom-blue-500 bg-custom-blue-100 border-0.6 border-custom-grey-100">
             <span className="text-blueberry">
               <GoDotFill />
             </span>
-            {amacZone}
+            {group}
           </span>
           <span className="flex items-center gap-0.5 px-1 py-0.5 text-xs font-light rounded font-lexend text-custom-blue-500 bg-custom-blue-100 border-0.6 border-custom-grey-100">
             <GoDotFill />
@@ -81,7 +86,7 @@ export default function PropertiesTable({
       </div>
       <div className="bg-custom-blue-100 flex items-center justify-between px-2.5 py-3 border-t border-divider-grey">
         <span className="text-xs font-lexend text-color-text-two">
-          Occupied Property
+          {occupationStatus}
         </span>
         <div className="flex items-center justify-between gap-2">
           <span className="text-blueberry flex items-center justify-center rounded w-[30px] h-[30px] p-0.5 border-0.6 border-custom-grey-100">

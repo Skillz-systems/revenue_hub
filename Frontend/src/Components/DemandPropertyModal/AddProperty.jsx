@@ -5,7 +5,7 @@ export default function AddProperty({
   hideAddPropertyModal,
   propertyModalTransition,
 }) {
-  const [activateState, setActiveState] = useState(0);
+  const [activateState, setActiveState] = useState(1);
   const [errorState, setErrorState] = useState();
   const [errorField, setErrorField] = useState(false);
   const [formData, setFormData] = useState({});

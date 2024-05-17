@@ -1,5 +1,6 @@
 import { RiShieldStarFill } from "react-icons/ri";
 import { IoAlertCircleSharp } from "react-icons/io5";
+import { TableData } from "../Index";
 
 export default function CardData() {
   return [
@@ -8,42 +9,42 @@ export default function CardData() {
       icon: <RiShieldStarFill />,
       description: "Value of Generated",
       name: "Demand Notices",
-      value: 4000444,
+      value: TableData.cardInformation.overallDemandNoticeValue,
     },
     {
       id: 2,
       icon: <RiShieldStarFill />,
       description: "Total Number of Registered",
       name: "Properties",
-      value: 570,
+      value: TableData.cardInformation.totalRegisteredProperties,
     },
     {
       id: 3,
       icon: <RiShieldStarFill />,
       description: "Total Number of Generated ",
       name: "Demand Notices",
-      value: 420,
+      value: TableData.cardInformation.totalGeneratedDemandNotices,
     },
     {
       id: 4,
       icon: <RiShieldStarFill />,
       description: "Total Number of Paid",
       name: "Demand Notices",
-      value: 174,
+      value: TableData.cardInformation.totalPaidDemandNotices,
     },
     {
       id: 5,
       icon: <IoAlertCircleSharp />,
       description: "Total Number of Pending",
       name: "Demand Notices",
-      value: 246,
+      value: TableData.cardInformation.totalPendingDemandNotices,
     },
     {
       id: 6,
       icon: <IoAlertCircleSharp />,
       description: "Expiring",
       name: "Demand Notices",
-      value: 42,
+      value: TableData.cardInformation.expiringDemandNotices,
     },
   ];
 }
