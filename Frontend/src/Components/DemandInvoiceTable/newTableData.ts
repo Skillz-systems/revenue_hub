@@ -296,13 +296,10 @@ const generateStaffRecord = () => {
         lastName: africanLastNames[Math.floor(Math.random() * africanLastNames.length)],
         middleName: africanLastNames[Math.floor(Math.random() * africanLastNames.length)],
         fullName: `${africanFirstNames[Math.floor(Math.random() * africanFirstNames.length)]} ${africanLastNames[Math.floor(Math.random() * africanLastNames.length)]} `,
-        email: `${africanFirstNames[Math.floor(Math.random() * africanFirstNames.length)]}${Math.floor(
-            1 + Math.random() * 100
-        )
-            } @gmail.com`,
+        email: `${africanFirstNames[Math.floor(Math.random() * africanFirstNames.length)]}${Math.floor(1 + Math.random() * 100)}@gmail.com`,
         phoneNumber: `080${Math.floor(100000 + Math.random() * 9999999)} `,
         designation: ["Manager", "Officer", "Admin", "Enforcer"][
-            Math.floor(Math.random() * 2)
+            Math.floor(Math.random() * 4)
         ],
         staffZone: cadestralZones[Math.floor(Math.random() * cadestralZones.length)],
     }

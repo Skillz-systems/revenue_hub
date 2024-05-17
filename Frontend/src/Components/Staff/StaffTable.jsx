@@ -8,6 +8,7 @@ import {
   Pagination,
   DemandPropertyModal,
   AddNewStaffModal,
+  ViewStaffModal,
 } from "../Index";
 import { filterRecordsByKeyAndValue, ScrollToTop } from "../../Utils/client";
 
@@ -18,6 +19,7 @@ export default function StaffTable({ customTableData }) {
   const [editModal, setEditModal] = useState(null);
   const [displayColumn, setDisplayColumn] = useState(true);
   const [newStaffModal, setNewStaffModal] = useState(false);
+  const [viewStaffModal, setViewStaffModal] = useState(null);
   const [propertyModalTransition, setPropertyModalTransition] = useState(false);
 
   // PAGINATION LOGIC
@@ -135,7 +137,11 @@ export default function StaffTable({ customTableData }) {
             ${
               staffInformation.designation === "Manager"
                 ? "bg-color-light-red"
-                : "bg-color-light-yellow"
+                : staffInformation.designation === "Officer"
+                ? "bg-color-light-yellow"
+                : staffInformation.designation === "Admin"
+                ? "bg-color-bright-green text-white"
+                : "bg-primary-color text-white"
             }`}
         >
           {staffInformation.designation.toUpperCase()}
@@ -151,7 +157,16 @@ export default function StaffTable({ customTableData }) {
             </span>
             {editModal === staffInformation.id && (
               <span className="absolute space-y-2 top-0 z-10 flex-col w-36 p-4 text-xs bg-white rounded shadow-md -left-44 border-0.6 border-custom-grey-100 text-color-text-black font-lexend">
-                <p className="hover:cursor-pointer" title="View Staff Details">
+                <p
+                  className="hover:cursor-pointer"
+                  title="View Staff Details"
+                  onClick={() => {
+                    setViewStaffModal(staffInformation);
+                    setTimeout(() => {
+                      setPropertyModalTransition(true);
+                    }, 250);
+                  }}
+                >
                   View Staff Details
                 </p>
                 <p className="hover:cursor-pointer" title="Remove Staff">
@@ -357,21 +372,35 @@ export default function StaffTable({ customTableData }) {
           </p>
         </div>
       </div>
-      {newStaffModal ? (
+      {newStaffModal || viewStaffModal ? (
         <DemandPropertyModal
           modalStyle={
             "absolute top-0 left-0 z-20 flex items-start justify-end w-full h-screen p-4 overflow-hidden bg-black bg-opacity-40"
           }
         >
-          <AddNewStaffModal
-            hideNewStaffModal={() => {
-              setNewStaffModal(false);
-              setTimeout(() => {
-                setPropertyModalTransition(false);
-              }, 300);
-            }}
-            propertyModalTransition={propertyModalTransition}
-          />
+          {newStaffModal && (
+            <AddNewStaffModal
+              hideNewStaffModal={() => {
+                setNewStaffModal(false);
+                setTimeout(() => {
+                  setPropertyModalTransition(false);
+                }, 300);
+              }}
+              propertyModalTransition={propertyModalTransition}
+            />
+          )}
+          {viewStaffModal && (
+            <ViewStaffModal
+              hideViewStaffModal={() => {
+                setViewStaffModal(false);
+                setTimeout(() => {
+                  setPropertyModalTransition(false);
+                }, 300);
+              }}
+              propertyModalTransition={propertyModalTransition}
+              customTableData={viewStaffModal}
+            />
+          )}
         </DemandPropertyModal>
       ) : null}
     </div>
