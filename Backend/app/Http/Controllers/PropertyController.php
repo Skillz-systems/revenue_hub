@@ -24,7 +24,7 @@ class PropertyController extends Controller
      *     security={{"api_key":{}}},
      *     @OA\Response(
      *         response=200,
-     *         description="List of all properties",
+     *         description="success",
      *         @OA\JsonContent(
      *             @OA\Property(property="data", type="array",
      *                  @OA\Items(
