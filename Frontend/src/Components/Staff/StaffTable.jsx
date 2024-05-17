@@ -120,7 +120,7 @@ export default function StaffTable({ customTableData }) {
         key={staffInformation.id}
         className="flex items-center justify-between gap-1 text-xs"
       >
-        <span className="flex flex-wrap items-center justify-center h-10 px-2 py-1 text-sm font-medium rounded width-12-percent text-color-text-three bg-custom-blue-400">
+        <span className="flex flex-wrap items-center justify-center h-10 px-2 py-1 text-sm font-medium rounded w-[12%] text-color-text-three bg-custom-blue-400">
           {staffInformation.staffId}
         </span>
         <span className="flex flex-wrap items-center w-40 text-sm font-bold rounded font-lexend text-color-text-black">
@@ -133,7 +133,7 @@ export default function StaffTable({ customTableData }) {
           {staffInformation.phoneNumber}
         </span>
         <span
-          className={`flex flex-wrap text-center items-center px-2 py-1 justify-center rounded-xl w-1/12 font-light font-lexend text-color-text-black text-10px border-0.6 border-custom-grey-100
+          className={`flex flex-wrap text-center items-center px-2 py-1 justify-center rounded-xl w-1/12 font-light font-lexend text-color-text-black text-[10px] border-0.6 border-custom-grey-100
             ${
               staffInformation.designation === "Manager"
                 ? "bg-color-light-red"
@@ -306,8 +306,8 @@ export default function StaffTable({ customTableData }) {
             {customTableData.staticInformation.staff.columns.map((column) => (
               <div
                 key={column.id}
-                className={`flex items-center gap-1 w-1/12 text-color-text-two text-10px font-lexend
-            ${column.id === 1 && "width-12-percent"}
+                className={`flex items-center gap-1 w-1/12 text-color-text-two text-[10px] font-lexend
+            ${column.id === 1 && "w-[12%]"}
             ${column.id === 2 && "w-40"}
             ${[3, 4].includes(column.id) && "w-2/12"}
             ${column.id === 4 && "justify-center"}

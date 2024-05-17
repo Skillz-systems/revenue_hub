@@ -84,7 +84,7 @@ export default function ViewPropertyModal({
                 {customTableData.personalIdentificationNumber}
               </p>
               <span
-                className={`rounded-lg px-1 font-light font-lexend text-color-text-black text-10px border-0.6 border-custom-grey-100
+                className={`rounded-lg px-1 font-light font-lexend text-color-text-black text-[10px] border-0.6 border-custom-grey-100
                 ${
                   customTableData.propertyUse === "Commercial"
                     ? "bg-color-light-red"
@@ -417,10 +417,10 @@ export default function ViewPropertyModal({
                 <span className="flex flex-wrap items-center justify-center w-20 h-8 px-2 py-1 text-xs font-medium rounded text-color-text-three bg-custom-blue-400">
                   {customTableData.personalIdentificationNumber}
                 </span>
-                <span className="flex flex-wrap items-center text-10px font-lexend text-color-text-black">
+                <span className="flex flex-wrap items-center text-[10px] font-lexend text-color-text-black">
                   {customTableData.propertyAddress}
                 </span>
-                <span className="flex flex-wrap items-center text-color-text-black font-lexend text-10px">
+                <span className="flex flex-wrap items-center text-color-text-black font-lexend text-[10px]">
                   {
                     customTableData.demandInvoiceData[
                       customTableData.demandInvoiceData.length - 1
@@ -428,7 +428,7 @@ export default function ViewPropertyModal({
                   }
                 </span>
                 <span
-                  className={`flex-wrap hidden items-center px-1 py-0.5 justify-center rounded-xl font-light font-lexend text-color-text-black text-10px border-0.6 border-custom-grey-100 group-hover:flex
+                  className={`flex-wrap hidden items-center px-1 py-0.5 justify-center rounded-xl font-light font-lexend text-color-text-black text-[10px] border-0.6 border-custom-grey-100 group-hover:flex
                   ${
                     customTableData.propertyUse === "Commercial"
                       ? "bg-color-light-red"
