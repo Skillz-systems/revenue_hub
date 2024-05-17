@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { MdCancel } from "react-icons/md";
 import { BiSolidEditAlt } from "react-icons/bi";
 import { PiBuildingsFill } from "react-icons/pi";
@@ -7,6 +7,7 @@ import { TbCurrencyNaira } from "react-icons/tb";
 import { BsCalendar2EventFill } from "react-icons/bs";
 import { formatNumberWithCommas } from "../../Utils/client";
 import { HiOutlineDotsHorizontal } from "react-icons/hi";
+import { FaPeopleRoof } from "react-icons/fa6";
 
 export default function ViewPropertyModal({
   hideViewPropertyModal,
@@ -14,13 +15,55 @@ export default function ViewPropertyModal({
   customTableData,
 }) {
   const [activateState, setActiveState] = useState(0);
-  //   console.log("MODAL DATA:", customTableData);
+  const [daysUntilDue, setDaysUntilDue] = useState(null);
+
+  const generateDueDate = () => {
+    // Split the date string into day, month, and year
+    const [day, month, year] =
+      customTableData.demandInvoiceData[
+        customTableData.demandInvoiceData.length - 1
+      ].dateCreated.split("/");
+
+    // Create a new Date object with the correct order of day, month, and year
+    const dateCreated = new Date(`${month}/${day}/${year}`);
+
+    // Add 365 days to the date
+    const dueDate = new Date(dateCreated);
+    dueDate.setDate(dateCreated.getDate() + 365);
+
+    // Format the due date as desired
+    return dueDate.toDateString();
+  };
+
+  useEffect(() => {
+    const dueDate = new Date(generateDueDate());
+    const currentDate = new Date();
+    const differenceInTime = dueDate.getTime() - currentDate.getTime();
+    const differenceInDays = Math.ceil(differenceInTime / (1000 * 3600 * 24));
+    setDaysUntilDue(differenceInDays);
+  }, [
+    customTableData.demandInvoiceData[
+      customTableData.demandInvoiceData.length - 1
+    ].dateCreated,
+  ]);
+
+  const grandTotal = formatNumberWithCommas(
+    customTableData.annualValue +
+      customTableData.ratePayable +
+      customTableData.demandInvoiceData[
+        customTableData.demandInvoiceData.length - 1
+      ].arrears -
+      customTableData.demandInvoiceData[
+        customTableData.demandInvoiceData.length - 1
+      ].penalty
+  );
+
   return (
     <>
       <div
         className={`flex-col relative bg-white rounded overflow-y-auto overscroll-contain scrollbar-thin scrollbar-thumb-color-text-two scrollbar-track-white ${
           propertyModalTransition
-            ? "w-5/12 transition-all ease-in-out duration-500"
+            ? "w-6/12 transition-all ease-in-out duration-500"
             : "w-32"
         }`}
         style={{ height: "95vh" }}
@@ -38,7 +81,7 @@ export default function ViewPropertyModal({
             <div className="flex items-center gap-2">
               <h3 className="text-base font-bold text-color-text-two">PIN</h3>
               <p className="font-bold text-color-text-one">
-                {customTableData.pin}
+                {customTableData.personalIdentificationNumber}
               </p>
               <span
                 className={`rounded-lg px-1 font-light font-lexend text-color-text-black text-10px border-0.6 border-custom-grey-100
@@ -57,8 +100,10 @@ export default function ViewPropertyModal({
                 className={`rounded-md px-2 py-0.5 font-light text-[10px] text-white font-lexend
                 ${
                   customTableData.paymentStatus === "Ungenerated"
-                    ? "bg-color-bright-orange"
+                    ? "bg-primary-color"
                     : customTableData.paymentStatus === "Unpaid"
+                    ? "bg-color-bright-orange"
+                    : customTableData.paymentStatus === "Expired"
                     ? "bg-color-bright-red"
                     : "bg-color-bright-green"
                 }
@@ -84,13 +129,13 @@ export default function ViewPropertyModal({
               </span>
             </div>
           </div>
-          <div className="flex-col space-y-6 h-[120vh]">
-            <div className="flex w-[55%] items-center gap-2 p-0.5 border-0.6 border-custom-color-one rounded">
+          <div className="flex-col space-y-6">
+            <div className="flex items-center gap-2 p-0.5 border-0.6 border-custom-color-one rounded">
               {["Details", "Occupant Details", "Invoices"].map(
                 (item, index) => (
                   <button
                     key={index}
-                    className={`text-xs text-color-text-two font-lexend px-2 py-1 ${
+                    className={`flex gap-2 text-xs text-color-text-two font-lexend px-2 py-1 ${
                       activateState === index
                         ? "text-white font-medium bg-primary-color rounded"
                         : ""
@@ -101,6 +146,13 @@ export default function ViewPropertyModal({
                     }}
                   >
                     {item}
+                    {item === "Invoices" ? (
+                      customTableData.paymentStatus !== "Ungenerated" ? (
+                        <span className="px-1.5 text-xs border rounded text-color-text-three font-lexend bg-custom-blue-200 border-custom-color-two">
+                          {/* {customTableData.demandInvoiceData.length} */}1
+                        </span>
+                      ) : null
+                    ) : null}
                   </button>
                 )
               )}
@@ -117,7 +169,7 @@ export default function ViewPropertyModal({
                   {[
                     {
                       name: "Property Identification Number",
-                      value: customTableData.pin,
+                      value: customTableData.personalIdentificationNumber,
                     },
                     {
                       name: "Asset Number",
@@ -129,11 +181,11 @@ export default function ViewPropertyModal({
                     },
                     {
                       name: "Property Address",
-                      value: customTableData.address,
+                      value: customTableData.propertyAddress,
                     },
                     {
                       name: "Rating District",
-                      value: customTableData.amacZones,
+                      value: customTableData.cadestralZone,
                     },
                   ].map((item) => (
                     <div className="flex items-center justify-between font-lexend">
@@ -155,7 +207,7 @@ export default function ViewPropertyModal({
                   </div>
                   {[
                     { name: "Category", value: customTableData.propertyUse },
-                    { name: "Group", value: customTableData.amacZones },
+                    { name: "Group", value: customTableData.group },
                     {
                       name: "Property Type",
                       value: customTableData.propertyType,
@@ -168,13 +220,36 @@ export default function ViewPropertyModal({
                       name: "Occupation Status",
                       value: customTableData.occupationStatus,
                     },
-                  ].map((item) => (
+                  ].map((item, index) => (
                     <div className="flex items-center justify-between font-lexend">
                       <p className="px-1 py-0.5 text-darkerblueberry rounded bg-custom-blue-100 text-xs">
                         {item.name}
                       </p>
-                      <p className="flex w-[50%] justify-end text-xs font-bold text-color-text-black">
-                        {item.value}
+                      <p className="flex w-[50%] justify-end text-xs font-bold">
+                        <span
+                          className={`flex items-center justify-center 
+                        ${
+                          index === 4
+                            ? item.value === "Unoccupied"
+                              ? "text-color-bright-red"
+                              : "text-color-bright-green"
+                            : "text-color-text-black"
+                        }
+                        ${
+                          index === 3 &&
+                          customTableData.propertyUse === "Commercial"
+                            ? "bg-color-light-red rounded-lg px-1 font-light font-lexend text-color-text-black text-[10px] border-0.6 border-custom-grey-100"
+                            : index === 3 &&
+                              customTableData.propertyUse === "Residential"
+                            ? "bg-color-light-yellow rounded-lg px-1 font-light font-lexend text-color-text-black text-[10px] border-0.6 border-custom-grey-100"
+                            : index === 3
+                            ? "bg-custom-blue-200 rounded-lg px-1 font-light font-lexend text-color-text-black text-[10px] border-0.6 border-custom-grey-100"
+                            : ""
+                        }
+                      `}
+                        >
+                          {index === 3 ? item.value.toUpperCase() : item.value}
+                        </span>
                       </p>
                     </div>
                   ))}
@@ -193,17 +268,45 @@ export default function ViewPropertyModal({
                         customTableData.annualValue
                       ),
                     },
-                    { name: "Rate Payable", value: "0.00" },
-                    { name: "Arrears", value: "0.00" },
-                    { name: "Penalty", value: "0.00" },
-                    { name: "Grand Total", value: "0.00" },
-                  ].map((item) => (
-                    <div className="flex items-center justify-between font-lexend">
+                    {
+                      name: "Rate Payable",
+                      value: formatNumberWithCommas(
+                        customTableData.ratePayable
+                      ),
+                    },
+                    {
+                      name: "Arrears",
+                      value: formatNumberWithCommas(
+                        customTableData.demandInvoiceData[
+                          customTableData.demandInvoiceData.length - 1
+                        ].arrears
+                      ),
+                    },
+                    {
+                      name: "Penalty",
+                      value: formatNumberWithCommas(
+                        customTableData.demandInvoiceData[
+                          customTableData.demandInvoiceData.length - 1
+                        ].penalty
+                      ),
+                    },
+                    { name: "Grand Total", value: grandTotal },
+                  ].map((item, index) => (
+                    <div
+                      key={index}
+                      className="flex items-center justify-between font-lexend"
+                    >
                       <p className="px-1 py-0.5 text-darkerblueberry rounded bg-custom-blue-100 text-xs">
                         {item.name}
                       </p>
-                      <p className="flex w-[50%] justify-end text-xs font-bold text-color-text-black">
-                        {item.value}
+                      <p
+                        className={`flex w-[50%] justify-end text-xs font-bold ${
+                          index === 3
+                            ? "text-color-bright-red"
+                            : "text-color-text-black"
+                        }`}
+                      >
+                        {index === 3 ? `(${item.value})` : item.value}
                       </p>
                     </div>
                   ))}
@@ -211,38 +314,115 @@ export default function ViewPropertyModal({
               </>
             ) : null}
 
+            {activateState === 1 &&
+            customTableData.occupationStatus === "Occupied" &&
+            customTableData.paymentStatus !== "Ungenerated" ? (
+              <div className="flex-col p-2 space-y-2 border-0.6 rounded border-color-text-two">
+                <div className="flex items-center gap-1.5 text-xs text-color-text-two font-lexend">
+                  <span className="text-lg">
+                    <FaPeopleRoof />
+                  </span>
+                  OCCUPANT DETAILS
+                </div>
+                {[
+                  {
+                    name: "First Name",
+                    value:
+                      customTableData.occupantInfo[
+                        customTableData.occupantInfo.length - 1
+                      ].firstName,
+                  },
+                  {
+                    name: "LastName",
+                    value:
+                      customTableData.occupantInfo[
+                        customTableData.occupantInfo.length - 1
+                      ].lastName,
+                  },
+                  {
+                    name: "Phone Number",
+                    value:
+                      customTableData.occupantInfo[
+                        customTableData.occupantInfo.length - 1
+                      ].phoneNumber,
+                  },
+                  {
+                    name: "Email",
+                    value:
+                      customTableData.occupantInfo[
+                        customTableData.occupantInfo.length - 1
+                      ].email,
+                  },
+                  {
+                    name: "Marital Status",
+                    value:
+                      customTableData.occupantInfo[
+                        customTableData.occupantInfo.length - 1
+                      ].maritalStatus,
+                  },
+                ].map((item) => (
+                  <div className="flex items-center justify-between font-lexend">
+                    <p className="px-1 py-0.5 text-darkerblueberry rounded bg-custom-blue-100 text-xs">
+                      {item.name}
+                    </p>
+                    <p className="flex w-[50%] justify-end text-xs font-bold text-color-text-black">
+                      {item.value}
+                    </p>
+                  </div>
+                ))}
+              </div>
+            ) : null}
+
+            {activateState === 1 &&
+            customTableData.occupationStatus === "Unoccupied" ? (
+              <p className="text-sm text-color-text-black font-lexend">
+                There are no current occupants on the property.
+              </p>
+            ) : null}
             {activateState !== 2 ? (
               <div className="flex items-center justify-between p-2 space-y-2 border-0.6 rounded bg-light-red border-color-light-red font-lexend">
                 <div className="flex items-center gap-1.5 text-color-dark-red">
                   <BsCalendar2EventFill />
-                  <p className="text-xs">DAYS TO NEXT INVOICE</p>
+                  <p className="text-xs">
+                    {customTableData.paymentStatus === "Ungenerated"
+                      ? "No Invoice has been generated on this property"
+                      : customTableData.paymentStatus === "Expired"
+                      ? "DEMAND INVOICE HAS EXPIRED"
+                      : customTableData.paymentStatus === "Paid"
+                      ? "DEMAND INOICE HAS BEEN PAID"
+                      : "DAYS TO NEXT INVOICE"}
+                  </p>
                 </div>
-                <span className="px-2 py-0.5 rounded text-xs bg-color-light-red text-darkerblueberry">
-                  {customTableData.daysToNextInvoice}
-                </span>
+                {customTableData.paymentStatus === "Unpaid" ? (
+                  <span className="px-2 py-0.5 rounded text-xs bg-color-light-red text-darkerblueberry">
+                    {daysUntilDue}
+                  </span>
+                ) : null}
               </div>
             ) : null}
 
-            {activateState === 2 ? (
-              <div
-                className="flex items-center justify-between gap-3 text-xs group"
-              >
+            {activateState === 2 &&
+            customTableData.paymentStatus !== "Ungenerated" ? (
+              <div className="flex items-center justify-between gap-3 text-xs group">
                 <span className="flex flex-wrap items-center justify-center w-20 h-8 px-2 py-1 text-xs font-medium rounded text-color-text-three bg-custom-blue-400">
-                  {customTableData.pin}
+                  {customTableData.personalIdentificationNumber}
                 </span>
-                <span className="flex flex-wrap items-center text-xs font-lexend text-color-text-black">
-                  {customTableData.address}
+                <span className="flex flex-wrap items-center text-10px font-lexend text-color-text-black">
+                  {customTableData.propertyAddress}
                 </span>
                 <span className="flex flex-wrap items-center text-color-text-black font-lexend text-10px">
-                  {/* {customTableData.date} */}
-                  12/04/2024
+                  {
+                    customTableData.demandInvoiceData[
+                      customTableData.demandInvoiceData.length - 1
+                    ].dateCreated
+                  }
                 </span>
                 <span
                   className={`flex-wrap hidden items-center px-1 py-0.5 justify-center rounded-xl font-light font-lexend text-color-text-black text-10px border-0.6 border-custom-grey-100 group-hover:flex
                   ${
                     customTableData.propertyUse === "Commercial"
                       ? "bg-color-light-red"
-                      : customTableData === "Residential"
+                      : customTableData.propertyUse === "Residential"
                       ? "bg-color-light-yellow"
                       : "bg-custom-blue-200"
                   }
@@ -257,10 +437,12 @@ export default function ViewPropertyModal({
                   <span
                     className={`flex flex-wrap items-center justify-center px-1 p-0.5 font-light text-white rounded font-lexend text-[10px]
                  ${
-                   customTableData.paymentStatus === "Expired"
-                     ? "bg-color-bright-red"
+                   customTableData.paymentStatus === "Ungenerated"
+                     ? "bg-primary-color"
                      : customTableData.paymentStatus === "Unpaid"
                      ? "bg-color-bright-orange"
+                     : customTableData.paymentStatus === "Expired"
+                     ? "bg-color-bright-red"
                      : "bg-color-bright-green"
                  }
                  `}

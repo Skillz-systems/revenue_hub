@@ -6,7 +6,7 @@ import { HiOutlineDotsHorizontal } from "react-icons/hi";
 import { TableSearchInput, Pagination } from "../Index";
 import { filterRecordsByKeyAndValue, ScrollToTop } from "../../Utils/client";
 
-export default function TransactionsTable({ customTableData }) {
+export default function StaffTable({ customTableData }) {
   const [displaySearchIcon, setDisplaySearchIcon] = useState(true);
   const [activeMenu, setActiveMenu] = useState(1);
   const [query, setQuery] = useState("");
@@ -69,19 +69,19 @@ export default function TransactionsTable({ customTableData }) {
 
   const filteredRecords =
     activeMenu === 1
-      ? currentProperties(customTableData.records)
+      ? currentProperties(customTableData.staffInformation)
       : activeMenu === 2
       ? currentProperties(
-          filterRecordsByKeyAndValue(customTableData.records, "type", "Manager")
+          filterRecordsByKeyAndValue(customTableData.staffInformation, "type", "Manager")
         )
       : activeMenu === 3
       ? currentProperties(
-          filterRecordsByKeyAndValue(customTableData.records, "type", "Officer")
+          filterRecordsByKeyAndValue(customTableData.staffInformation, "type", "Officer")
         )
       : [];
 
   const filteredResults = query
-    ? customTableData.records.filter((record) =>
+    ? customTableData.staffInformation.filter((record) =>
         Object.values(record).some((value) => {
           if (typeof value === "string") {
             // For string values, perform case-insensitive comparison
@@ -97,44 +97,44 @@ export default function TransactionsTable({ customTableData }) {
 
   const pageCount = Math.ceil(LengthByActiveMenu() / propertiesPerPage);
 
-  const recordField = (record) => {
+  const recordField = (staffInformation) => {
     return (
       <div
-        key={record.id}
+        key={staffInformation.id}
         className="flex items-center justify-between gap-1 text-xs"
       >
         <span className="flex flex-wrap items-center justify-center h-10 px-2 py-1 text-sm font-medium rounded width-12-percent text-color-text-three bg-custom-blue-400">
-          {record.staffId}
+          {staffInformation.staffId}
         </span>
         <span className="flex flex-wrap items-center w-40 text-sm font-bold rounded font-lexend text-color-text-black">
-          {record.fullName}
+          {staffInformation.fullName}
         </span>
         <span className="flex flex-wrap items-center w-2/12 text-xs font-lexend text-color-text-black">
-          {record.email}
+          {staffInformation.email}
         </span>
         <span className="flex flex-wrap items-center justify-center w-2/12 text-xs font-lexend text-color-text-black">
-          {record.phoneNumber}
+          {staffInformation.phoneNumber}
         </span>
         <span
           className={`flex flex-wrap text-center items-center px-2 py-1 justify-center rounded-xl w-1/12 font-light font-lexend text-color-text-black text-10px border-0.6 border-custom-grey-100
             ${
-              record.type === "Manager"
+              staffInformation.type === "Manager"
                 ? "bg-color-light-red"
                 : "bg-color-light-yellow"
             }`}
         >
-          {record.type.toUpperCase()}
+          {staffInformation.type.toUpperCase()}
         </span>
         <span className="flex flex-wrap items-center justify-center w-1/12 gap-1">
           <span className="border-0.6 relative border-custom-grey-100 text-custom-grey-300 px-2 py-2.5 rounded text-base hover:cursor-pointer">
             <span
               title="Edit Staffs Details"
               className="hover:cursor-pointer"
-              onClick={() => handleEditModal(record.id)}
+              onClick={() => handleEditModal(staffInformation.id)}
             >
               <HiOutlineDotsHorizontal />
             </span>
-            {editModal === record.id && (
+            {editModal === staffInformation.id && (
               <span className="absolute space-y-2 top-0 z-10 flex-col w-36 p-4 text-xs bg-white rounded shadow-md -left-44 border-0.6 border-custom-grey-100 text-color-text-black font-lexend">
                 <p className="hover:cursor-pointer" title="View Staff Details">
                   View Staff Details
@@ -156,11 +156,11 @@ export default function TransactionsTable({ customTableData }) {
         ? filteredResults.length
         : filteredResults < 1 && query != ""
         ? 0
-        : customTableData.records.length
+        : customTableData.staffInformation.length
       : activeMenu === 2
-      ? filterRecordsByKeyAndValue(customTableData.records, "type", "Manager")
+      ? filterRecordsByKeyAndValue(customTableData.staffInformation, "type", "Manager")
           .length
-      : filterRecordsByKeyAndValue(customTableData.records, "type", "Officer")
+      : filterRecordsByKeyAndValue(customTableData.staffInformation, "type", "Officer")
           .length;
   }
 
@@ -171,7 +171,7 @@ export default function TransactionsTable({ customTableData }) {
     >
       <div className="flex items-start justify-between ">
         <div className="flex items-center justify-between border-0.6 border-custom-grey-100 rounded p-1">
-          {customTableData.menu.map((menu) =>
+          {customTableData.staticInformation.staff.menu.map((menu) =>
             displayColumn === false && query !== "" && menu.id > 1 ? null : (
               <div
                 key={menu.id}
@@ -201,15 +201,15 @@ export default function TransactionsTable({ customTableData }) {
                       ? filteredResults.length
                       : filteredResults < 1 && query != ""
                       ? 0
-                      : customTableData.records.length
+                      : customTableData.staffInformation.length
                     : menu.id === 2
                     ? filterRecordsByKeyAndValue(
-                        customTableData.records,
+                        customTableData.staffInformation,
                         "type",
                         "Manager"
                       ).length
                     : filterRecordsByKeyAndValue(
-                        customTableData.records,
+                        customTableData.staffInformation,
                         "type",
                         "Officer"
                       ).length}
@@ -263,7 +263,7 @@ export default function TransactionsTable({ customTableData }) {
 
       <div className="flex-col space-y-6">
         <div className="flex items-center justify-between gap-1">
-          {customTableData.columns.map((column) => (
+          {customTableData.staticInformation.staff.columns.map((column) => (
             <div
               key={column.id}
               className={`flex items-center gap-1 w-1/12 text-color-text-two text-10px font-lexend

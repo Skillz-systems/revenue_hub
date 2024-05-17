@@ -1,17 +1,16 @@
 import React, { useState } from "react";
 import {
   PropertyCard,
-  customTableData,
   Pagination,
   DemandPropertyModal,
   ViewPropertyModal,
   Card,
   CardData2,
+  TableData,
 } from "../Index";
 import { BsCaretDownFill } from "react-icons/bs";
 import { HiOutlineDotsHorizontal } from "react-icons/hi";
 import { ScrollToTop } from "../../Utils/client";
-import { zones, propertyUse } from "../DemandInvoiceTable/customTableData";
 
 export default function Properties() {
   const cardData = CardData2();
@@ -71,7 +70,7 @@ export default function Properties() {
     ScrollToTop("top-container");
   };
 
-  const currentProperties = customTableData.properties.records.slice(
+  const currentProperties = TableData.propertyInformation.slice(
     offset,
     offset + propertiesPerPage
   );
@@ -98,7 +97,7 @@ export default function Properties() {
   // PAGINATION LOGIC END
 
   const filteredDistrictResults = districtState
-    ? customTableData.properties.records.filter((record) =>
+    ? TableData.propertyInformation.filter((record) =>
         Object.values(record).some((value) => {
           if (typeof value === "string") {
             return value.toLowerCase().includes(districtState.toLowerCase());
@@ -109,7 +108,7 @@ export default function Properties() {
     : [];
 
   const filteredPropertyUseResults = propertyUseState
-    ? customTableData.properties.records.filter((record) =>
+    ? TableData.propertyInformation.filter((record) =>
         Object.values(record).some((value) => {
           if (typeof value === "string") {
             return value.toLowerCase().includes(propertyUseState.toLowerCase());
@@ -140,7 +139,7 @@ export default function Properties() {
       ? filteredPropertyUseResults.length > 0
         ? filteredPropertyUseResults.length
         : 0
-      : customTableData.properties.records.length;
+      : TableData.propertyInformation.length;
   }
 
   return (
@@ -191,7 +190,7 @@ export default function Properties() {
                 value={districtState}
               >
                 <option value="All Districts"> All Districts</option>
-                {zones.map((district, index) => (
+                {TableData.staticInformation.zones.map((district, index) => (
                   <option key={index} value={district}>
                     {district}
                   </option>
@@ -211,7 +210,7 @@ export default function Properties() {
                 value={propertyUseState}
               >
                 <option value="All Property Use">All Property Use</option>
-                {propertyUse.map((type, index) => (
+                {TableData.staticInformation.propertyUse.map((type, index) => (
                   <option key={index} value={type}>
                     {type}
                   </option>
@@ -237,13 +236,16 @@ export default function Properties() {
               filteredCombinedResults.map((property) => (
                 <PropertyCard
                   key={property.id}
-                  pin={property.pin}
+                  personalIdentificationNumber={
+                    property.personalIdentificationNumber
+                  }
                   propertyUse={property.propertyUse}
                   paymentStatus={property.paymentStatus}
-                  address={property.address}
-                  amacZone={property.amacZones}
+                  propertyAddress={property.propertyAddress}
+                  group={property.group}
                   cadestralZone={property.cadestralZone}
                   ratePaybale={property.ratePayable}
+                  occupationStatus={property.occupationStatus}
                   setViewPropertyModal={() => handleViewPropertyModal(property)}
                 />
               ))
@@ -257,13 +259,16 @@ export default function Properties() {
               filteredDistrictResults.map((property) => (
                 <PropertyCard
                   key={property.id}
-                  pin={property.pin}
+                  personalIdentificationNumber={
+                    property.personalIdentificationNumber
+                  }
                   propertyUse={property.propertyUse}
                   paymentStatus={property.paymentStatus}
-                  address={property.address}
-                  amacZone={property.amacZones}
+                  propertyAddress={property.propertyAddress}
+                  group={property.group}
                   cadestralZone={property.cadestralZone}
                   ratePaybale={property.ratePayable}
+                  occupationStatus={property.occupationStatus}
                   setViewPropertyModal={() => handleViewPropertyModal(property)}
                 />
               ))
@@ -277,13 +282,16 @@ export default function Properties() {
               filteredPropertyUseResults.map((property) => (
                 <PropertyCard
                   key={property.id}
-                  pin={property.pin}
+                  personalIdentificationNumber={
+                    property.personalIdentificationNumber
+                  }
                   propertyUse={property.propertyUse}
                   paymentStatus={property.paymentStatus}
-                  address={property.address}
-                  amacZone={property.amacZones}
+                  propertyAddress={property.propertyAddress}
+                  group={property.group}
                   cadestralZone={property.cadestralZone}
                   ratePaybale={property.ratePayable}
+                  occupationStatus={property.occupationStatus}
                   setViewPropertyModal={() => handleViewPropertyModal(property)}
                 />
               ))
@@ -295,13 +303,17 @@ export default function Properties() {
           ) : currentProperties.length > 0 ? (
             currentProperties.map((property) => (
               <PropertyCard
-                pin={property.pin}
+                key={property.id}
+                personalIdentificationNumber={
+                  property.personalIdentificationNumber
+                }
                 propertyUse={property.propertyUse}
                 paymentStatus={property.paymentStatus}
-                address={property.address}
-                amacZone={property.amacZones}
+                propertyAddress={property.propertyAddress}
+                group={property.group}
                 cadestralZone={property.cadestralZone}
                 ratePaybale={property.ratePayable}
+                occupationStatus={property.occupationStatus}
                 setViewPropertyModal={() => handleViewPropertyModal(property)}
               />
             ))
@@ -354,7 +366,7 @@ export default function Properties() {
         >
           <ViewPropertyModal
             hideViewPropertyModal={() => {
-              setViewPropertyModal(false);
+              setViewPropertyModal(null);
               setTimeout(() => {
                 setPropertyModalTransition(false);
               }, 300);

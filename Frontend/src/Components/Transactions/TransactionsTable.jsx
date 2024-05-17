@@ -73,19 +73,19 @@ export default function TransactionsTable({ customTableData }) {
 
   const filteredRecords =
     activeMenu === 1
-      ? currentProperties(customTableData.records)
+      ? currentProperties(customTableData.transactionInformation)
       : activeMenu === 2
       ? currentProperties(
           filterRecordsByKeyAndValue(
-            customTableData.records,
-            "type",
+            customTableData.transactionInformation,
+            "transactionType",
             "Bank Transfer"
           )
         )
       : [];
 
   const filteredResults = query
-    ? customTableData.records.filter((record) =>
+    ? customTableData.transactionInformation.filter((record) =>
         Object.values(record).some((value) => {
           if (typeof value === "string") {
             // For string values, perform case-insensitive comparison
@@ -101,47 +101,47 @@ export default function TransactionsTable({ customTableData }) {
 
   const pageCount = Math.ceil(LengthByActiveMenu() / propertiesPerPage);
 
-  const recordField = (record) => {
+  const recordField = (transactionInformation) => {
     return (
       <div
-        key={record.id}
+        key={transactionInformation.id}
         className="flex items-center justify-between gap-1 text-xs"
       >
         <span className="flex flex-wrap items-center justify-center w-2/12 h-10 px-2 py-1 text-sm font-medium rounded text-color-text-three bg-custom-blue-400">
-          {record.demandNoticeNumber}
+          {transactionInformation.propertyDetails.demandNoticeNumber}
         </span>
         <span className="flex flex-wrap items-center justify-center w-20 p-1 text-xs font-medium rounded text-color-text-black bg-custom-blue-100 border-0.6 border-custom-color-one">
-          {record.pin}
+          {transactionInformation.propertyDetails.personalIdentificationNumber}
         </span>
         <span className="flex flex-wrap items-center w-2/12 font-lexend text-color-text-black">
-          {record.address}
+          {transactionInformation.propertyDetails.address}
         </span>
         <span
           className={`flex flex-wrap text-center items-center px-2 py-1 justify-center rounded-xl width-12-percent font-light font-lexend text-color-text-black text-10px border-0.6 border-custom-grey-100
             ${
-              record.type === "Mobile Transfer"
+              transactionInformation.transactionType === "Mobile Transfer"
                 ? "bg-color-light-red"
                 : "bg-color-light-yellow"
             }`}
         >
-          {record.type.toUpperCase()}
+          {transactionInformation.transactionType.toUpperCase()}
         </span>
         <span className="flex flex-wrap items-center justify-center text-sm width-12-percent text-color-text-black font-chonburi">
-          {formatNumberWithCommas(record.ratePayable)}
+          {formatNumberWithCommas(transactionInformation.propertyDetails.ratePayable)}
         </span>
         <span className="flex flex-wrap items-center justify-center w-1/12 text-color-text-black font-lexend text-10px">
-          {record.date}
+          {transactionInformation.date}
         </span>
         <span className="flex flex-wrap items-center justify-center gap-1 width-12-percent">
           <span className="border-0.6 relative border-custom-grey-100 text-custom-grey-300 px-2 py-2.5 rounded text-base hover:cursor-pointer">
             <span
               title="Edit Transaction"
               className="hover:cursor-pointer"
-              onClick={() => handleEditModal(record.id)}
+              onClick={() => handleEditModal(transactionInformation.id)}
             >
               <HiOutlineDotsHorizontal />
             </span>
-            {editModal === record.id && (
+            {editModal === transactionInformation.id && (
               <span className="absolute space-y-2 top-0 z-10 flex-col w-36 p-4 text-xs text-center bg-white rounded shadow-md -left-44 border-0.6 border-custom-grey-100 text-color-text-black font-lexend">
                 <p className="hover:cursor-pointer" title="Edit Transaction">
                   View Transaction
@@ -160,10 +160,10 @@ export default function TransactionsTable({ customTableData }) {
         ? filteredResults.length
         : filteredResults < 1 && query != ""
         ? 0
-        : customTableData.records.length
+        : customTableData.transactionInformation.length
       : filterRecordsByKeyAndValue(
-          customTableData.records,
-          "type",
+          customTableData.transactionInformation,
+          "transactionType",
           "Bank Transfer"
         ).length;
   }
@@ -175,7 +175,7 @@ export default function TransactionsTable({ customTableData }) {
     >
       <div className="flex items-start justify-between">
         <div className="flex items-center justify-between border-0.6 border-custom-grey-100 rounded p-1">
-          {customTableData.menu.map((menu) =>
+          {customTableData.staticInformation.transactions.menu.map((menu) =>
             displayColumn === false && query !== "" && menu.id > 1 ? null : (
               <div
                 key={menu.id}
@@ -205,10 +205,10 @@ export default function TransactionsTable({ customTableData }) {
                       ? filteredResults.length
                       : filteredResults < 1 && query != ""
                       ? 0
-                      : customTableData.records.length
+                      : customTableData.transactionInformation.length
                     : filterRecordsByKeyAndValue(
-                        customTableData.records,
-                        "type",
+                        customTableData.transactionInformation,
+                        "transactionType",
                         "Bank Transfer"
                       ).length}
                 </span>
@@ -240,7 +240,7 @@ export default function TransactionsTable({ customTableData }) {
 
       <div className="flex-col space-y-6 ">
         <div className="flex items-center justify-between gap-1">
-          {customTableData.columns.map((column) => (
+          {customTableData.staticInformation.transactions.columns.map((column) => (
             <div
               key={column.id}
               className={`flex items-center gap-1 w-1/12 text-color-text-two text-10px font-lexend

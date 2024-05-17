@@ -128,14 +128,13 @@ const generateRandomDate = (Start, End) => {
 
 // Define types for the exported arrays
 type PropertyInformationType = PropertyRecord[];
-type DemandNoticeInformationType = DemandNoticeRecord[];
 type TransactionInformationType = TransactionRecord[];
 type StaffInformationType = StaffRecord[];
 
 interface PropertyRecord {
     id: number;
     dateRegistered: string;
-    annualValue: string;
+    annualValue: number;
     ratePayable: number;
     paymentStatus: string;
     assetNumber: string;
@@ -148,25 +147,32 @@ interface PropertyRecord {
     ratingDistrict: string;
     group: string;
     occupationStatus: string;
-    occupantInfo: {
+    occupantInfo: [{
         id: number;
         firstName: string;
         lastName: string;
         phoneNumber: string;
         email: string;
         maritalStatus: string;
-    };
+    }];
+    demandInvoiceData: {
+        id: number;
+        demandNoticeNumber: string;
+        arrears: number;
+        penalty: number,
+        dateCreated: any;
+    }[];
 }
 
 const generatePropertyRecord = (): PropertyRecord => {
     return {
         id: Math.floor(1 + Math.random() * 1000),
         dateRegistered: generateRandomDate(2010, 2024),
-        annualValue: `${Math.floor(Math.random() * 10000000) + 1}.00`,
-        ratePayable: Math.floor(1000 + Math.random() * 10000000),
+        annualValue: Math.floor(Math.random() * 10000000) + 1,
+        ratePayable: Math.floor((Math.floor(Math.random() * 10000000) + 1) / 12),
         paymentStatus: paymentStatus[Math.floor(Math.random() * paymentStatus.length)],
-        assetNumber: `209${Math.floor(10000000 + Math.random() * 900000000)}`,
-        personalIdentificationNumber: `13${Math.floor(10000000 + Math.random() * 900000000)}`,
+        assetNumber: `209${Math.floor(10000000 + Math.random() * 900000000)} `,
+        personalIdentificationNumber: `13${Math.floor(10000000 + Math.random() * 900000000)} `,
         propertyAddress: `No. ${Math.floor(1 + Math.random() * 150)}, ${africanFirstNames[Math.floor(Math.random() * africanFirstNames.length)]} Street, ${cadestralZones[Math.floor(Math.random() * cadestralZones.length)]}, Abuja`,
         category: propertyUse[Math.floor(Math.random() * propertyType.length)],
         propertyUse: propertyUse[Math.floor(Math.random() * propertyType.length)],
@@ -175,19 +181,38 @@ const generatePropertyRecord = (): PropertyRecord => {
         ratingDistrict: cadestralZones[Math.floor(Math.random() * cadestralZones.length)],
         group: group[Math.floor(Math.random() * group.length)],
         occupationStatus: occupationStatus[Math.floor(Math.random() * occupationStatus.length)],
-        occupantInfo: {
-            id: Math.floor(1 + Math.random() * 1000),
-            firstName: africanFirstNames[Math.floor(Math.random() * africanFirstNames.length)],
-            lastName: africanLastNames[Math.floor(Math.random() * africanLastNames.length)],
-            phoneNumber: `080${Math.floor(100000 + Math.random() * 9999999)}`,
-            email: `${africanFirstNames[Math.floor(Math.random() * africanFirstNames.length)]}${Math.floor(1 + Math.random() * 100)}@gmail.com`,
-            maritalStatus: maritalStatus[Math.floor(Math.random() * maritalStatus.length)]
-        },
+        occupantInfo: [
+            {
+                id: Math.floor(1 + Math.random() * 1000),
+                firstName: africanFirstNames[Math.floor(Math.random() * africanFirstNames.length)],
+                lastName: africanLastNames[Math.floor(Math.random() * africanLastNames.length)],
+                phoneNumber: `080${Math.floor(100000 + Math.random() * 9999999)} `,
+                email: `${africanFirstNames[Math.floor(Math.random() * africanFirstNames.length)]}${Math.floor(1 + Math.random() * 100)}@gmail.com`,
+                maritalStatus: maritalStatus[Math.floor(Math.random() * maritalStatus.length)]
+            }
+        ],
+        demandInvoiceData: [
+            {
+                id: Math.floor(1 + Math.random() * 1000),
+                demandNoticeNumber: `156${Math.floor(10000000 + Math.random() * 900000000)} `,
+                arrears: Math.floor(1000 + Math.random() * 1000000),
+                penalty: Math.floor(1000 + Math.random() * 100000),
+                dateCreated: generateRandomDate(2023, 2024),
+            },
+            {
+                id: Math.floor(1 + Math.random() * 1000),
+                demandNoticeNumber: `156${Math.floor(10000000 + Math.random() * 900000000)} `,
+                arrears: Math.floor(1000 + Math.random() * 1000000),
+                penalty: Math.floor(1000 + Math.random() * 100000),
+                dateCreated: generateRandomDate(2023, 2024),
+            },
+        ]
     };
 }
 const propertyInformation: PropertyInformationType = Array.from({ length: 500 }, generatePropertyRecord);
-const propertiesWithDemandNotice: PropertyInformationType = Array.from({ length: 100 }, generatePropertyRecord);
-const propertiesWithPaidPaymentStatus: PropertyInformationType = propertiesWithDemandNotice.filter(property => property.paymentStatus === "Paid");
+const filteredPropertiesWithDemandNotice = propertyInformation.filter(property => property.paymentStatus !== "Ungenerated");
+const propertiesWithPaidPaymentStatus: PropertyInformationType = filteredPropertiesWithDemandNotice.filter(property => property.paymentStatus === "Paid");
+const demandNoticeInformation = filteredPropertiesWithDemandNotice;
 
 const thirtyDaysAgo: Date = new Date(currentDate);
 thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
@@ -197,39 +222,9 @@ const propertiesRegisteredLast30Days: PropertyRecord[] = propertyInformation.fil
     return propertyDateRegistered >= thirtyDaysAgo && propertyDateRegistered <= currentDate;
 });
 
-interface DemandNoticeRecord {
-    id: number;
-    demandNoticeNumber: string;
-    propertyInformation: PropertyRecord;
-    arrears: number;
-    penalty: number;
-    dateCreated: string;
-    dueDate: number;
-    daysToNextInvoice: number;
-}
 
-const generateDemandNoticeRecord = (property: PropertyRecord): DemandNoticeRecord => {
-    // Generate a random date for dateCreated that is greater than dateRegistered
-    const startDate = new Date(property.dateRegistered);
-    const endDate = new Date(); // Current date
-    const randomDateCreated = generateRandomDate(startDate, endDate);
-
-    return {
-        id: Math.floor(1 + Math.random() * 1000),
-        demandNoticeNumber: `156${Math.floor(10000000 + Math.random() * 900000000)}`,
-        propertyInformation: { ...property },
-        arrears: Math.floor(1000 + Math.random() * 1000000),
-        penalty: Math.floor(1000 + Math.random() * 100000),
-        dateCreated: randomDateCreated,
-        dueDate: dueDate.setDate(dueDate.getDate() + 365),
-        daysToNextInvoice: Math.floor(dueDate - currentDate / (1000 * 60 * 60 * 24)),
-    }
-}
-const filteredPropertiesWithDemandNotice = propertiesWithDemandNotice.filter(property => property.paymentStatus !== "Ungenerated");
-const demandNoticeInformation: DemandNoticeInformationType = filteredPropertiesWithDemandNotice.map(generateDemandNoticeRecord);
-
-const overallValueRecord = (demandNotice) => {
-    const totalValue = (parseFloat(demandNotice.propertyInformation.annualValue) + demandNotice.propertyInformation.ratePayable + demandNotice.arrears) - demandNotice.penalty;
+const overallValueRecord = (demandNotice: PropertyRecord) => {
+    const totalValue = (demandNotice.annualValue + demandNotice.ratePayable + demandNotice.demandInvoiceData[demandNotice.demandInvoiceData.length - 1].arrears) - demandNotice.demandInvoiceData[demandNotice.demandInvoiceData.length - 1].penalty;
     return { grandTotal: totalValue };
 };
 const overallInformation = demandNoticeInformation.map(overallValueRecord);
@@ -241,35 +236,44 @@ interface TransactionRecord {
     transactionDate: string;
     transactionTime: string;
     propertyDetails: {
+        demandNoticeNumber: string;
         personalIdentificationNumber: string;
         assetNumber: string;
         cadastralZone: string;
         address: string;
         ratingDistrict: string;
+        ratePayable: number;
     };
     transactionAmount: number;
     transactionStatus: string;
 }
 
-const generateTransactionRecord = (property: PropertyRecord): TransactionRecord => {
+const generateTransactionRecord = (demandNotice: PropertyRecord): TransactionRecord => {
     return {
         id: Math.floor(1 + Math.random() * 1000),
-        transactionId: `304${Math.floor(10000000 + Math.random() * 900000000)}`,
+        transactionId: `304${Math.floor(10000000 + Math.random() * 900000000)} `,
         transactionType: paymentType[Math.floor(Math.random() * 2)],
-        transactionDate: `${randomDay}/${randomMonth}/${randomYear}`,
+        transactionDate: `${randomDay} /${randomMonth}/${randomYear} `,
         transactionTime: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' }),
         propertyDetails: {
-            personalIdentificationNumber: property.personalIdentificationNumber,
-            assetNumber: property.assetNumber,
-            cadastralZone: property.cadestralZone,
-            address: property.propertyAddress,
-            ratingDistrict: property.ratingDistrict
+            demandNoticeNumber: demandNotice.demandInvoiceData[demandNotice.demandInvoiceData.length - 1].demandNoticeNumber,
+            personalIdentificationNumber: demandNotice.personalIdentificationNumber,
+            assetNumber: demandNotice.assetNumber,
+            cadastralZone: demandNotice.cadestralZone,
+            address: demandNotice.propertyAddress,
+            ratingDistrict: demandNotice.ratingDistrict,
+            ratePayable: demandNotice.ratePayable,
         },
-        transactionAmount: property.ratePayable,
+        transactionAmount: demandNotice.ratePayable,
         transactionStatus: "Successful",
     }
 }
-const transactionInformation: TransactionInformationType = propertiesWithPaidPaymentStatus.map(generateTransactionRecord);
+const generateTransactionRecordsFromDemandNotices = (demandNotice: PropertyInformationType): TransactionInformationType => {
+    return demandNotice.map((demandNotice) => generateTransactionRecord(demandNotice));
+};
+const transactionInformation: TransactionInformationType = generateTransactionRecordsFromDemandNotices(
+    demandNoticeInformation.filter((demandNotice) => demandNotice.paymentStatus === "Paid")
+);
 
 interface StaffRecord {
     id: number;
@@ -283,12 +287,13 @@ interface StaffRecord {
 const generateStaffRecord = () => {
     return {
         id: Math.floor(1 + Math.random() * 1000),
-        staffId: `13${Math.floor(100000000 + Math.random() * 900000000)}`,
-        fullName: `${africanFirstNames[Math.floor(Math.random() * africanFirstNames.length)]} ${africanLastNames[Math.floor(Math.random() * africanLastNames.length)]}`,
+        staffId: `13${Math.floor(100000000 + Math.random() * 900000000)} `,
+        fullName: `${africanFirstNames[Math.floor(Math.random() * africanFirstNames.length)]} ${africanLastNames[Math.floor(Math.random() * africanLastNames.length)]} `,
         email: `${africanFirstNames[Math.floor(Math.random() * africanFirstNames.length)]}${Math.floor(
             1 + Math.random() * 100
-        )}@gmail.com`,
-        phoneNumber: `080${Math.floor(100000 + Math.random() * 9999999)}`,
+        )
+            } @gmail.com`,
+        phoneNumber: `080${Math.floor(100000 + Math.random() * 9999999)} `,
         type: ["Manager", "Officer",][
             Math.floor(Math.random() * 2)
         ],
@@ -300,15 +305,18 @@ const cardInformation = {
     totalRegisteredProperties: propertyInformation.length,
     totalGeneratedDemandNotices: demandNoticeInformation.length,
     totalPaidDemandNotices: propertiesWithPaidPaymentStatus.length,
-    totalPendingDemandNotices: demandNoticeInformation.filter(demandNotice => demandNotice.propertyInformation.paymentStatus === "Unpaid").length,
-    expiringDemandNotices: demandNoticeInformation.filter(demandNotice => demandNotice.propertyInformation.paymentStatus === "Expired").length,
+    totalPendingDemandNotices: demandNoticeInformation.filter(demandNotice => demandNotice.paymentStatus === "Unpaid").length,
+    expiringDemandNotices: demandNoticeInformation.filter(demandNotice => demandNotice.paymentStatus === "Expired").length,
     totalRegisteredPropertiesLast30Days: propertiesRegisteredLast30Days.length,
     totalUngeneratedProperties: propertyInformation.filter(property => property.paymentStatus === "Ungenerated").length,
     propertiesWithoutRatingDistrict: propertyInformation.filter(property => !property.ratingDistrict || property.ratingDistrict.trim() === "").length || 0,
-    overallDemandNoticeValue: overallInformation.reduce((totalValue, overallInfo) => { return totalValue + overallInfo.grandTotal; }, 0)
+    overallDemandNoticeValue: overallInformation.reduce((totalValue, overallInfo) => { return totalValue + overallInfo.grandTotal; }, 0),
+    transactionInformationValue: transactionInformation.length,
 };
 
 const staticInformation = {
+    zones: cadestralZones,
+    propertyUse: propertyUse,
     demandNotice: {
         menu: [
             {
@@ -385,7 +393,7 @@ const staticInformation = {
         ],
     },
 }
-export { PropertyInformationType, DemandNoticeInformationType, TransactionInformationType, StaffInformationType };
+export { PropertyInformationType, TransactionInformationType, StaffInformationType };
 const TableData = { staticInformation, propertyInformation, demandNoticeInformation, transactionInformation, staffInformation, cardInformation }
 
 export { TableData }

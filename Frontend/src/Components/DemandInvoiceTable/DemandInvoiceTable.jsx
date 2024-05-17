@@ -88,11 +88,11 @@ export default function DemandInvoiceTable({ customTableData }) {
 
   const filteredRecords =
     activeMenu === 1
-      ? currentProperties(customTableData.records)
+      ? currentProperties(customTableData.demandNoticeInformation)
       : activeMenu === 2
       ? currentProperties(
           filterRecordsByKeyAndValue(
-            customTableData.records,
+            customTableData.demandNoticeInformation,
             "paymentStatus",
             "Paid"
           )
@@ -100,7 +100,7 @@ export default function DemandInvoiceTable({ customTableData }) {
       : activeMenu === 3
       ? currentProperties(
           filterRecordsByKeyAndValue(
-            customTableData.records,
+            customTableData.demandNoticeInformation,
             "paymentStatus",
             "Unpaid"
           )
@@ -108,7 +108,7 @@ export default function DemandInvoiceTable({ customTableData }) {
       : activeMenu === 4
       ? currentProperties(
           filterRecordsByKeyAndValue(
-            customTableData.records,
+            customTableData.demandNoticeInformation,
             "paymentStatus",
             "Expired"
           )
@@ -116,7 +116,7 @@ export default function DemandInvoiceTable({ customTableData }) {
       : [];
 
   const filteredResults = query
-    ? customTableData.records.filter((record) =>
+    ? customTableData.demandNoticeInformation.filter((record) =>
         Object.values(record).some((value) => {
           if (typeof value === "string") {
             // For string values, perform case-insensitive comparison
@@ -132,53 +132,57 @@ export default function DemandInvoiceTable({ customTableData }) {
 
   const pageCount = Math.ceil(LengthByActiveMenu() / propertiesPerPage);
 
-  const recordField = (record) => {
+  const recordField = (demandNoticeInformation) => {
     return (
       <div
-        key={record.id}
+        key={demandNoticeInformation.id}
         className="flex items-center justify-between gap-1 text-xs"
       >
         <span className="flex flex-wrap items-center justify-center w-24 h-10 px-2 py-1 text-sm font-medium rounded text-color-text-three bg-custom-blue-400">
-          {record.pin}
+          {demandNoticeInformation.personalIdentificationNumber}
         </span>
         <span className="flex flex-wrap items-center w-2/12 font-lexend text-color-text-black">
-          {record.address}
+          {demandNoticeInformation.propertyAddress}
         </span>
         <span className="flex flex-wrap items-center width-5-percent text-color-text-black font-lexend text-10px">
-          {record.date}
+          {
+            demandNoticeInformation.demandInvoiceData[
+              demandNoticeInformation.demandInvoiceData.length - 1
+            ].dateCreated
+          }
         </span>
         <span
           className={`flex flex-wrap items-center px-4 py-1 justify-center rounded-xl width-12-percent font-light font-lexend text-color-text-black text-10px border-0.6 border-custom-grey-100
         ${
-          record.propertyUse === "Commercial"
+          demandNoticeInformation.propertyUse === "Commercial"
             ? "bg-color-light-red"
-            : record.propertyUse === "Residential"
+            : demandNoticeInformation.propertyUse === "Residential"
             ? "bg-color-light-yellow"
             : "bg-custom-blue-200"
         }
         `}
         >
-          {record.propertyUse.toUpperCase()}
+          {demandNoticeInformation.propertyUse.toUpperCase()}
         </span>
         <span className="flex flex-wrap items-center justify-center p-1 font-light rounded width-12-percent font-lexend text-custom-blue-500 bg-custom-blue-100 border-0.6 border-custom-grey-100">
-          {record.cadestralZone}
+          {demandNoticeInformation.cadestralZone}
         </span>
         <span className="flex flex-wrap items-center justify-center text-sm width-12-percent text-color-text-black font-chonburi">
-          {formatNumberWithCommas(record.ratePayable)}
+          {formatNumberWithCommas(demandNoticeInformation.ratePayable)}
         </span>
         <div className="flex items-center justify-center width-12-percent">
           <span
             className={`flex flex-wrap items-center justify-center px-2 p-1 font-light text-white rounded font-lexend
           ${
-            record.paymentStatus === "Expired"
+            demandNoticeInformation.paymentStatus === "Expired"
               ? "bg-color-bright-red"
-              : record.paymentStatus === "Unpaid"
+              : demandNoticeInformation.paymentStatus === "Unpaid"
               ? "bg-color-bright-orange"
               : "bg-color-bright-green"
           }
           `}
           >
-            {record.paymentStatus}
+            {demandNoticeInformation.paymentStatus}
           </span>
         </div>
         <span className="flex flex-wrap items-center w-1/12 gap-1 ">
@@ -192,11 +196,11 @@ export default function DemandInvoiceTable({ customTableData }) {
             <span
               title="Edit Invoice"
               className="hover:cursor-pointer"
-              onClick={() => handleEditModal(record.id)}
+              onClick={() => handleEditModal(demandNoticeInformation.id)}
             >
               <HiOutlineDotsHorizontal />
             </span>
-            {editModal === record.id && (
+            {editModal === demandNoticeInformation.id && (
               <span className="absolute space-y-2 top-0 z-10 flex-col w-40 p-4 text-xs bg-white rounded shadow-md -left-44 border-0.6 border-custom-grey-100 text-color-text-black font-lexend">
                 <p className="hover:cursor-pointer" title="View Demand Notice">
                   View Demand Notice
@@ -204,15 +208,17 @@ export default function DemandInvoiceTable({ customTableData }) {
                 <p
                   className="hover:cursor-pointer"
                   title="View Property"
-                  onClick={() => handleViewPropertyModal(record.propertyData)}
+                  onClick={() =>
+                    handleViewPropertyModal(demandNoticeInformation)
+                  }
                 >
                   View Property
                 </p>
-                {record.paymentStatus === "Expired" ? (
+                {demandNoticeInformation.paymentStatus === "Expired" ? (
                   <p className="hover:cursor-pointer" title="Generate Reminder">
                     Generate Reminder
                   </p>
-                ) : record.paymentStatus === "Unpaid" ? (
+                ) : demandNoticeInformation.paymentStatus === "Unpaid" ? (
                   <p className="hover:cursor-pointer" title="View Reminder">
                     View Reminder
                   </p>
@@ -231,21 +237,21 @@ export default function DemandInvoiceTable({ customTableData }) {
         ? filteredResults.length
         : filteredResults < 1 && query != ""
         ? 0
-        : customTableData.records.length
+        : customTableData.demandNoticeInformation.length
       : activeMenu === 2
       ? filterRecordsByKeyAndValue(
-          customTableData.records,
+          customTableData.demandNoticeInformation,
           "paymentStatus",
           "Paid"
         ).length
       : activeMenu === 3
       ? filterRecordsByKeyAndValue(
-          customTableData.records,
+          customTableData.demandNoticeInformation,
           "paymentStatus",
           "Unpaid"
         ).length
       : filterRecordsByKeyAndValue(
-          customTableData.records,
+          customTableData.demandNoticeInformation,
           "paymentStatus",
           "Expired"
         ).length;
@@ -259,7 +265,7 @@ export default function DemandInvoiceTable({ customTableData }) {
       >
         <div className="flex items-start justify-between">
           <div className="flex items-center justify-between border-0.6 border-custom-grey-100 rounded p-1">
-            {customTableData.menu.map((menu) =>
+            {customTableData.staticInformation.demandNotice.menu.map((menu) =>
               displayColumn === false && query !== "" && menu.id > 1 ? null : (
                 <div
                   key={menu.id}
@@ -289,21 +295,21 @@ export default function DemandInvoiceTable({ customTableData }) {
                         ? filteredResults.length
                         : filteredResults < 1 && query != ""
                         ? 0
-                        : customTableData.records.length
+                        : customTableData.demandNoticeInformation.length
                       : menu.id === 2
                       ? filterRecordsByKeyAndValue(
-                          customTableData.records,
+                          customTableData.demandNoticeInformation,
                           "paymentStatus",
                           "Paid"
                         ).length
                       : menu.id === 3
                       ? filterRecordsByKeyAndValue(
-                          customTableData.records,
+                          customTableData.demandNoticeInformation,
                           "paymentStatus",
                           "Unpaid"
                         ).length
                       : filterRecordsByKeyAndValue(
-                          customTableData.records,
+                          customTableData.demandNoticeInformation,
                           "paymentStatus",
                           "Expired"
                         ).length}
@@ -336,28 +342,30 @@ export default function DemandInvoiceTable({ customTableData }) {
 
         <div className="flex-col space-y-6 ">
           <div className="flex items-center justify-between gap-1">
-            {customTableData.columns.map((column) => (
-              <div
-                key={column.id}
-                className={`flex items-center gap-1 w-1/12 text-color-text-two text-10px font-lexend
+            {customTableData.staticInformation.demandNotice.columns.map(
+              (column) => (
+                <div
+                  key={column.id}
+                  className={`flex items-center gap-1 w-1/12 text-color-text-two text-10px font-lexend
             ${column.id === 1 && "w-24"}
             ${column.id === 2 && "w-2/12"}
             ${column.id === 3 && "width-5-percent"}
             ${[4, 5, 6, 7].includes(column.id) && "width-12-percent"}
             ${[6, 7].includes(column.id) && "justify-center"}
             `}
-              >
-                <GoDotFill />
-                <span className="flex items-center justify-center gap-1">
-                  {column.name}
-                  {column.name === "RATE PAYABLE" ? (
-                    <span className="text-base text-color-bright-green">
-                      <TbCurrencyNaira />
-                    </span>
-                  ) : null}
-                </span>
-              </div>
-            ))}
+                >
+                  <GoDotFill />
+                  <span className="flex items-center justify-center gap-1">
+                    {column.name}
+                    {column.name === "RATE PAYABLE" ? (
+                      <span className="text-base text-color-bright-green">
+                        <TbCurrencyNaira />
+                      </span>
+                    ) : null}
+                  </span>
+                </div>
+              )
+            )}
           </div>
           <div className="flex-col space-y-4">
             {query === "" ? (

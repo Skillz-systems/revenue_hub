@@ -1,5 +1,5 @@
 import React from "react";
-import { TransactionsTable, customTableData, Card, CardData } from "../Index";
+import { TransactionsTable, TableData, Card, CardData } from "../Index";
 
 export default function Transactions() {
   const cardData = CardData();
@@ -35,7 +35,7 @@ export default function Transactions() {
         ))}
       </div>
       <hr className="border-0.5 mb-8 border-custom-grey-100" />
-      <TransactionsTable customTableData={customTableData.transactions} />
+      <TransactionsTable customTableData={TableData} />
     </div>
   );
 }

@@ -1,5 +1,5 @@
 import React from "react";
-import { StaffTable, customTableData, Card, CardData } from "../Index";
+import { StaffTable, TableData, Card, CardData } from "../Index";
 
 export default function Staff() {
   const cardData = CardData();
@@ -35,7 +35,7 @@ export default function Staff() {
         ))}
       </div>
       <hr className="border-0.5 mb-8 border-custom-grey-100" />
-      <StaffTable customTableData={customTableData.staff} />
+      <StaffTable customTableData={TableData} />
     </div>
   );
 }
