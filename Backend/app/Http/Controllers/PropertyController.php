@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Property;
 use Illuminate\Http\Request;
 use App\Service\PropertyService;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 use App\Http\Resources\ShowPropertyResource;
 use App\Http\Resources\StorePropertyResource;
@@ -345,6 +346,74 @@ class PropertyController extends Controller
         return response()->json([
             "status" => "error",
             "message" => "An error occured",
+        ], 401);
+    }
+
+
+    /**
+     * Delete Property
+     * @OA\Delete (
+     *     path="/api/property/{property}",
+     *     tags={"Property"},
+     *     summary="Delete a property",
+     *     description="This allow staff admin to delete property",
+     *     operationId="deleteProperty",
+     *     security={{"api_key":{}}},
+     *     @OA\Parameter(
+     *         in="path",
+     *         name="property",
+     *         required=true,
+     *         @OA\Schema(type="integer")
+     *     ),
+     
+     *     @OA\Response(
+     *         response=200,
+     *         description="Property deleted successfully",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="status", type="string", example="success"),
+     *             @OA\Property(property="message", type="string", example="Property deleted successfully"),
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response="401",
+     *         description="You dont Have Permission",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="status", type="string", example="error"),
+     *             @OA\Property(property="message", type="string", example="You dont Have Permission"),
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response="402",
+     *         description="An error occured",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="status", type="string", example="error"),
+     *             @OA\Property(property="message", type="string", example="An error occured"),
+     *         )
+     *     ),
+     * )
+     */
+
+    public function destroy(Property $property)
+    {
+
+        if (Auth::user()->role_id == 1) {
+
+            if ($property->delete()) {
+                return response()->json([
+                    "status" => "success",
+                    "message" => "Property deleted successfully",
+                ], 200);
+            }
+
+            return response()->json([
+                "status" => "error",
+                "message" => "An error occured",
+            ], 402);
+        }
+
+        return response()->json([
+            "status" => "error",
+            "message" => "You dont Have Permission",
         ], 401);
     }
 }
