@@ -1,6 +1,6 @@
 import { Route, Routes } from "react-router-dom";
 import ProjectLayout from "./Components/ProjectLayout/ProjectLayout";
-import LoginPage from "./Components/LoginPage/LoginPage";
+import LoginPage from "./Pages/LoginPage";
 
 function App() {
   return (
