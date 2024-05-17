@@ -28,6 +28,11 @@ class Property extends Model
         'active',
     ];
 
+    public function demandNotices()
+    {
+        return $this->hasMany(DemandNotice::class);
+    }
+
 
     protected $primaryKey = 'pid';
 }

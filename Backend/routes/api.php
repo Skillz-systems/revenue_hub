@@ -3,6 +3,7 @@
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\PropertyController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\DemandNoticeController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -16,6 +17,7 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
+Route::resource('demand-notices', DemandNoticeController::class);
 
 
 // Staff login route
@@ -28,4 +30,6 @@ Route::middleware('auth:sanctum')->group(function () {
 
     Route::apiResource('/staff', UserController::class);
     Route::apiResource('/property', PropertyController::class);
+
+
 });
