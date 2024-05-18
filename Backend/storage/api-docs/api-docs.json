@@ -278,6 +278,125 @@
             }
         },
         "/api/property": {
+            "get": {
+                "tags": [
+                    "Property"
+                ],
+                "summary": "Get all properties",
+                "description": "Show list of all properties",
+                "operationId": "getProperties",
+                "responses": {
+                    "200": {
+                        "description": "List of all properties",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "properties": {
+                                                    "pid": {
+                                                        "type": "integer",
+                                                        "example": "12354654"
+                                                    },
+                                                    "prop_addr": {
+                                                        "type": "string",
+                                                        "example": "21 akidewa house 4"
+                                                    },
+                                                    "street_name": {
+                                                        "type": "string",
+                                                        "example": "4553532"
+                                                    },
+                                                    "asset_no": {
+                                                        "type": "string",
+                                                        "example": "566664565646"
+                                                    },
+                                                    "cadastral_zone": {
+                                                        "type": "string",
+                                                        "example": "2"
+                                                    },
+                                                    "prop_type": {
+                                                        "type": "string",
+                                                        "example": "residential"
+                                                    },
+                                                    "prop_use": {
+                                                        "type": "string",
+                                                        "example": "school"
+                                                    },
+                                                    "rating_dist": {
+                                                        "type": "string",
+                                                        "example": "oko"
+                                                    },
+                                                    "annual_value": {
+                                                        "type": "string",
+                                                        "example": "233165498"
+                                                    },
+                                                    "rate_payable": {
+                                                        "type": "string",
+                                                        "example": "89789"
+                                                    },
+                                                    "arrears": {
+                                                        "type": "string",
+                                                        "example": "54654656"
+                                                    },
+                                                    "penalty": {
+                                                        "type": "string",
+                                                        "example": "5546546"
+                                                    },
+                                                    "grand_total": {
+                                                        "type": "string",
+                                                        "example": "56456"
+                                                    },
+                                                    "category": {
+                                                        "type": "string",
+                                                        "example": "school"
+                                                    },
+                                                    "group": {
+                                                        "type": "string",
+                                                        "example": "commercial"
+                                                    },
+                                                    "active": {
+                                                        "type": "string",
+                                                        "example": "active"
+                                                    }
+                                                },
+                                                "type": "object"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "string",
+                                            "example": "error"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "No property found"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "api_key": []
+                    }
+                ]
+            },
             "post": {
                 "tags": [
                     "Property"
