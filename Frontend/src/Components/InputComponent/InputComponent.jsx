@@ -10,6 +10,7 @@ export default function InputComponent({
   placeholder,
   required,
   inputStyle,
+  readOnly,
   iconStyle,
   onIconClick,
   inputIcon,
@@ -25,8 +26,11 @@ export default function InputComponent({
         placeholder={placeholder}
         required={required}
         className={inputStyle}
+        readOnly={readOnly}
       />
-      <span className={iconStyle} onClick={onIconClick}>{inputIcon}</span>
+      <span className={iconStyle} onClick={onIconClick}>
+        {inputIcon}
+      </span>
     </div>
   );
 }

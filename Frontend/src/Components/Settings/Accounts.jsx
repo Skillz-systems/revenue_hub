@@ -1,12 +1,84 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { BiSolidEditAlt } from "react-icons/bi";
 import { GiJusticeStar } from "react-icons/gi";
 import { IoPersonCircle } from "react-icons/io5";
-import { MdLocationPin } from "react-icons/md";
+import { MdCancel, MdLocationPin } from "react-icons/md";
+import { InputComponent, SelectComponent } from "../Index";
+import { cadestralZones } from "../DemandInvoiceTable/newTableData";
 
 export default function Accounts({ currentUserData }) {
+  const [editStaff, setEditStaff] = useState(false);
+  const [displaySave, setDisplaySave] = useState(false);
+  const [formData, setFormData] = useState({
+    staffId: currentUserData.staffId,
+    firstName: currentUserData.firstName,
+    lastName: currentUserData.lastName,
+    middleName: currentUserData.middleName,
+    email: currentUserData.email,
+    phoneNumber: currentUserData.phoneNumber,
+    designation: currentUserData.designation,
+    staffZone: currentUserData.staffZone,
+  });
+
+  useEffect(() => {
+    setFormData({
+      staffId: currentUserData.staffId,
+      firstName: currentUserData.firstName,
+      lastName: currentUserData.lastName,
+      middleName: currentUserData.middleName,
+      email: currentUserData.email,
+      phoneNumber: currentUserData.phoneNumber,
+      designation: currentUserData.designation,
+      staffZone: currentUserData.staffZone,
+    });
+  }, [editStaff]);
+
+  const handleInputChange = (event) => {
+    const { name, value } = event.target;
+    setFormData((prevState) => ({
+      ...prevState,
+      [name]: value,
+    }));
+    // Check if any form data has changed
+    if (currentUserData[name] !== value) {
+      setDisplaySave(true);
+    } else {
+      setDisplaySave(false);
+    }
+  };
+
+  const handleCancelEdit = () => {
+    alert("Cancel changes without saving?");
+    setFormData({
+      staffId: currentUserData.staffId,
+      firstName: currentUserData.firstName,
+      lastName: currentUserData.lastName,
+      middleName: currentUserData.middleName,
+      email: currentUserData.email,
+      phoneNumber: currentUserData.phoneNumber,
+      designation: currentUserData.designation,
+      staffZone: currentUserData.staffZone,
+    });
+    setEditStaff(false);
+    setDisplaySave(false);
+  };
+
+  const handleFormSubmit = (event) => {
+    event.preventDefault();
+    if (displaySave) {
+      console.log("FORM DATA:", formData);
+      setDisplaySave(false);
+      setEditStaff(false);
+    } else {
+      return;
+    }
+  };
+
   return (
-    <div className="relative flex-col items-center justify-center w-8/12 bg-white rounded">
+    <form
+      onSubmit={handleFormSubmit}
+      className="relative flex-col items-center justify-center w-8/12 bg-white rounded"
+    >
       <img
         src={"/lightCheckeredBackgroundPattern.png"}
         alt="Checkered Background"
@@ -15,7 +87,7 @@ export default function Accounts({ currentUserData }) {
       <div className="absolute z-10 flex-col w-full p-4 space-y-3 border-0.6 border-custom-color-one rounded">
         <div
           className="flex items-start justify-between"
-          style={{ height: "10vh" }}
+          style={{ height: "7vh" }}
         >
           <div className="flex items-center gap-2">
             <h3 className="text-base font-bold text-color-text-two">
@@ -27,12 +99,37 @@ export default function Accounts({ currentUserData }) {
           </div>
           {currentUserData.designation === "Admin" ? (
             <div className="flex items-center gap-2">
-              <span
-                className="flex items-center justify-center w-[24px] h-[24px] text-xs text-primary-color font-lexend font-medium px-0.5 border border-primary-color rounded hover:cursor-pointer"
-                onClick={() => alert("Edit Staff")}
-                title="Edit Staff"
-              >
-                <BiSolidEditAlt />
+              <span className="text-xs font-medium font-lexend hover:cursor-pointer">
+                {editStaff ? (
+                  <div className="flex items-center justify-center gap-2">
+                    <span
+                      className="flex items-center justify-center text-color-dark-red gap-1 border rounded border-color-dark-red h-[24px] px-1"
+                      title="Cancel Changes"
+                      onClick={() => handleCancelEdit()}
+                    >
+                      <MdCancel />
+                      Cancel Changes
+                    </span>
+                    {displaySave ? (
+                      <button
+                        type="submit"
+                        className="flex items-center justify-center bg-primary-color text-white h-[24px] px-2 rounded"
+                        title="Save Staff Details"
+                        disabled={!displaySave}
+                      >
+                        Save
+                      </button>
+                    ) : null}
+                  </div>
+                ) : (
+                  <span
+                    className="flex items-center justify-center text-primary-color border border-primary-color rounded w-[24px] h-[24px] px-0.5"
+                    title="Edit Staff"
+                    onClick={() => setEditStaff((prevState) => !prevState)}
+                  >
+                    <BiSolidEditAlt />
+                  </span>
+                )}
               </span>
             </div>
           ) : null}
@@ -47,28 +144,40 @@ export default function Accounts({ currentUserData }) {
             </div>
             {[
               {
-                name: "Staff ID",
-                value: currentUserData.staffId,
+                label: "Staff ID",
+                name: "staffId",
+                type: "text",
+                value: formData.staffId,
               },
               {
-                name: "First Name",
-                value: currentUserData.firstName,
+                label: "First Name",
+                name: "firstName",
+                type: "text",
+                value: formData.firstName,
               },
               {
-                name: "Last Name",
-                value: currentUserData.lastName,
+                label: "Last Name",
+                name: "lastName",
+                type: "text",
+                value: formData.lastName,
               },
               {
-                name: "Middle Name",
-                value: currentUserData.middleName,
+                label: "Middle Name",
+                name: "middleName",
+                type: "text",
+                value: formData.middleName,
               },
               {
-                name: "Email",
-                value: currentUserData.email,
+                label: "Email",
+                name: "email",
+                type: "email",
+                value: formData.email,
               },
               {
-                name: "Phone Number",
-                value: currentUserData.phoneNumber,
+                label: "Phone Number",
+                name: "phoneNumber",
+                type: "tel",
+                value: formData.phoneNumber,
               },
             ].map((item, index) => (
               <div
@@ -76,10 +185,25 @@ export default function Accounts({ currentUserData }) {
                 className="flex items-center justify-between font-lexend"
               >
                 <p className="px-1 py-0.5 text-darkblueberry rounded bg-lightblue text-xs">
-                  {item.name}
+                  {item.label}
                 </p>
-                <p className="flex w-[50%] justify-end text-xs font-medium text-color-text-black">
-                  <span>{item.value}</span>
+                <p className="flex w-[50%] justify-end">
+                  <InputComponent
+                    inputContainer={""}
+                    inputId={index}
+                    inputType={item.type}
+                    inputName={item.name}
+                    inputValue={item.value}
+                    handleInputChange={handleInputChange}
+                    placeholder={`Enter your ${item.label}`}
+                    required={true}
+                    inputStyle={`flex items-center justify-end text-xs font-medium text-darkerblueberry outline-none ${
+                      editStaff
+                        ? "px-2 py-1 text-left border-0.6 border-custom-color-one rounded"
+                        : "border-none text-right"
+                    } `}
+                    readOnly={!editStaff}
+                  />
                 </p>
               </div>
             ))}
@@ -90,32 +214,62 @@ export default function Accounts({ currentUserData }) {
             <GiJusticeStar />
             <p className="text-xs text-darkerblueberry">Designation</p>
           </div>
-          <span
-            className={`px-1 py-0.5 rounded-xl text-[10px] font-light text-darkerblueberry border-[0.4px] border-divider-grey
-          ${
-            currentUserData.designation === "Manager"
-              ? "bg-color-light-red"
-              : currentUserData.designation === "Officer"
-              ? "bg-color-light-yellow"
-              : currentUserData.designation === "Admin"
-              ? "bg-color-bright-green text-white"
-              : "bg-primary-color text-white"
-          }
-          `}
-          >
-            {currentUserData.designation.toUpperCase()}
-          </span>
+          {editStaff ? (
+            <SelectComponent
+              selectContainer=""
+              selectId="designation"
+              selectName="designation"
+              selectValue={formData.designation}
+              handleSelectChange={handleInputChange}
+              options={["Manager", "Officer", "Admin", "Enforcer"]}
+              selectStyle={
+                "flex items-center justify-end text-xs font-medium text-darkerblueberry outline-none px-2 py-1 text-left border-0.6 border-custom-color-one rounded"
+              }
+              readOnly={!editStaff}
+            />
+          ) : (
+            <span
+              className={`px-1 py-0.5 rounded-xl text-[10px] font-light text-darkerblueberry border-[0.4px] border-divider-grey
+                ${
+                  currentUserData.designation === "Manager"
+                    ? "bg-color-light-red"
+                    : currentUserData.designation === "Officer"
+                    ? "bg-color-light-yellow"
+                    : currentUserData.designation === "Admin"
+                    ? "bg-color-bright-green text-white"
+                    : "bg-primary-color text-white"
+                }
+                `}
+            >
+              {currentUserData.designation.toUpperCase()}
+            </span>
+          )}
         </div>
         <div className="flex items-center justify-between p-2 space-y-2 border-0.6 rounded bg-white border-custom-color-one font-lexend">
           <div className="flex items-center gap-1.5 text-primary-color">
             <MdLocationPin />
             <p className="text-xs text-darkerblueberry">Zone</p>
           </div>
-          <span className="px-2 py-0.5 rounded text-xs bg-custom-grey-100 text-darkerblueberry">
-            {currentUserData.staffZone.toUpperCase()}
-          </span>
+          {editStaff ? (
+            <SelectComponent
+              selectContainer=""
+              selectId="staffZone"
+              selectName="staffZone"
+              selectValue={formData.staffZone}
+              handleSelectChange={handleInputChange}
+              options={cadestralZones}
+              selectStyle={
+                "flex items-center justify-end text-xs font-medium text-darkerblueberry outline-none px-2 py-1 text-left border-0.6 border-custom-color-one rounded"
+              }
+              readOnly={!editStaff}
+            />
+          ) : (
+            <span className="px-2 py-0.5 rounded text-xs bg-custom-grey-100 text-darkerblueberry">
+              {currentUserData.staffZone.toUpperCase()}
+            </span>
+          )}
         </div>
       </div>
-    </div>
+    </form>
   );
 }

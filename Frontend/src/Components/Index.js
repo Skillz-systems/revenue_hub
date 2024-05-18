@@ -34,3 +34,5 @@ export { default as ViewStaffModal } from "./Staff/ViewStaffModal";
 export { default as Accounts } from "./Settings/Accounts";
 export { default as Password } from "./Settings/Password";
 export { accountInformation } from "./DemandInvoiceTable/newTableData";
+export { default as InputComponent } from "./InputComponent/InputComponent";
+export { default as SelectComponent } from "./InputComponent/SelectComponent";

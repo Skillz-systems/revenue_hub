@@ -1,6 +1,7 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import images from "../assets";
-import InputComponent from "./InputComponent";
+import { InputComponent } from "../Components/Index";
 import { GrFormViewHide, GrFormView } from "react-icons/gr";
 
 function LoginPage() {
@@ -9,6 +10,7 @@ function LoginPage() {
     email: "",
     password: "",
   });
+  const navigate = useNavigate();
 
   const handleInputChange = (event) => {
     const { name, value } = event.target;
@@ -21,10 +23,11 @@ function LoginPage() {
   const handleFormSubmit = (event) => {
     event.preventDefault();
     console.log("FORM DATA:", formData);
+    navigate("/");
   };
 
   return (
-    <div className="flex w-full h-screen p-16 pt-12 overflow-y-auto over item bg-gradient-to-r from-blue-300 via-purple-200 to-red-100 overscroll-contain scrollbar-thin scrollbar-thumb-color-text-two scrollbar-track-white">
+    <div className="flex w-full h-screen p-16 pt-12 overflow-y-auto bg-gradient-to-r from-blue-300 via-purple-200 to-red-100 overscroll-contain scrollbar-thin scrollbar-thumb-color-text-two scrollbar-track-white">
       <div className="flex items-center justify-center w-[60%]">
         <img src={images.Key} alt="Padlock" className="w-[300px]" />
       </div>

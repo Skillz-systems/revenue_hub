@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { TbCalendarDot } from "react-icons/tb";
 import { FaChevronDown } from "react-icons/fa";
 import { IoPersonCircle } from "react-icons/io5";
@@ -6,11 +7,12 @@ import { GrPowerShutdown } from "react-icons/gr";
 
 export default function TopNavigation({
   userName,
-  handleMenuClick,
+  handleViewProfile,
   parentStyle,
 }) {
   const [selectedYear, setSelectedYear] = useState(2024);
   const [menuState, setMenuState] = useState(false);
+  const navigate = useNavigate();
 
   const displayMenu = () => {
     setMenuState(!menuState);
@@ -78,8 +80,11 @@ export default function TopNavigation({
             <TbCalendarDot />
           </span>
         </div>
-        <span className="text-base relative text-color-text-two flex items-center p-2 border-0.6 border-custom-border rounded bg-inherit hover:cursor-pointer">
-          <span title="Menu" onClick={displayMenu}>
+        <span
+          className="text-base relative text-color-text-two flex items-center p-2 border-0.6 border-custom-border rounded bg-inherit hover:cursor-pointer"
+          onClick={displayMenu}
+        >
+          <span title="Menu">
             <FaChevronDown />
           </span>
           {menuState ? (
@@ -87,6 +92,7 @@ export default function TopNavigation({
               <p
                 className="flex items-center justify-between hover:cursor-pointer"
                 title="View Profile"
+                onClick={handleViewProfile}
               >
                 View Profile
                 <span className="text-base text-primary-color">
@@ -96,6 +102,7 @@ export default function TopNavigation({
               <p
                 className="flex items-center justify-between hover:cursor-pointer"
                 title="Logout"
+                onClick={() => navigate("/login")}
               >
                 Logout
                 <span className="text-base text-color-dark-red">

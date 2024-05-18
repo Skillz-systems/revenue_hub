@@ -126,7 +126,7 @@ export default function AddProperty({
                   fieldItem.inputType === "text" ? (
                     <input
                       key={fieldItem.id}
-                      type={fieldItem.inputName}
+                      type={fieldItem.inputType}
                       name={fieldItem.inputName}
                       value={formData[fieldItem.inputName] || ""}
                       className={`w-full text-xs font-lexend h-12 px-4 py-2 border-0.6 outline-none rounded ${

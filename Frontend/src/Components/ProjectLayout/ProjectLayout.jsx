@@ -2,6 +2,7 @@ import { useState } from "react";
 import MenuItemAlt from "../MenuItem/MenuItemAlt";
 import { GiHamburgerMenu } from "react-icons/gi";
 import { FiSearch } from "react-icons/fi";
+import { IoIosReturnLeft } from "react-icons/io";
 import {
   TopNavigation,
   SideBarMenu,
@@ -13,6 +14,7 @@ import {
   Accounts,
   Password,
   accountInformation,
+  Settings,
 } from "../Index";
 
 export default function ProjectLayout() {
@@ -160,6 +162,20 @@ export default function ProjectLayout() {
           >
             Change Password
           </div>
+          {accountsPasswordState ? (
+            <p
+              className="flex items-center gap-1 pt-2 text-[11px] text-color-dark-red hover:cursor-pointer"
+              onClick={() => {
+                setAccountsPasswordState("");
+                setActiveComponent(<Settings />);
+              }}
+            >
+              <span>
+                <IoIosReturnLeft />
+              </span>
+              Return to Dashboard
+            </p>
+          ) : null}
         </div>
       ) : null}
 
@@ -171,19 +187,26 @@ export default function ProjectLayout() {
         }`}
       >
         <TopNavigation
-          userName={"John"}
-          handleMenuClick={() => {
-            alert("Opened Menu Modal");
+          userName={accountInformation.firstName}
+          handleViewProfile={() => {
+            setActiveMenuItem("Settings Component");
+            setActiveComponent(null);
+            setAccountsPasswordState("Accounts");
           }}
         />
-        {activeComponent ? null : accountsPasswordState === "Accounts" ? (
+        {activeComponent ? (
+          activeComponent
+        ) : accountsPasswordState === "Accounts" ? (
           <div className="flex items-center justify-center">
             <Accounts currentUserData={accountInformation} />
           </div>
+        ) : accountsPasswordState === "Password" ? (
+          <div className="flex items-center justify-center ">
+            <Password />
+          </div>
         ) : (
-          <Password />
+          activeComponent
         )}
-        {activeComponent}
       </div>
 
       {displayAddPropertyModal || displayAddDemandModal ? (
