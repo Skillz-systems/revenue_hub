@@ -24,12 +24,13 @@ class PropertyController extends Controller
      *     security={{"api_key":{}}},
      *     @OA\Response(
      *         response=200,
-     *         description="List of all properties",
+     *         description="success",
      *         @OA\JsonContent(
      *             @OA\Property(property="data", type="array",
      *                  @OA\Items(
      *                     type="object",
      *                      @OA\Property(property="pid", type="integer", example="12354654"),
+     *                      @OA\Property(property="occupant", type="string", example="21 akidewa house 4"),
      *                      @OA\Property(property="prop_addr", type="string", example="21 akidewa house 4"),
      *                      @OA\Property(property="street_name", type="string", example="4553532"),
      *                      @OA\Property(property="asset_no", type="string", example="566664565646"),
@@ -39,8 +40,6 @@ class PropertyController extends Controller
      *                      @OA\Property(property="rating_dist", type="string", example="oko"),
      *                      @OA\Property(property="annual_value", type="string", example="233165498"),
      *                      @OA\Property(property="rate_payable", type="string", example="89789"),
-     *                      @OA\Property(property="arrears", type="string", example="54654656"),
-     *                      @OA\Property(property="penalty", type="string", example="5546546"),
      *                      @OA\Property(property="grand_total", type="string", example="56456"),
      *                      @OA\Property(property="category", type="string", example="school"),
      *                      @OA\Property(property="group", type="string", example="commercial"),
@@ -65,7 +64,7 @@ class PropertyController extends Controller
         $properties = Property::all();
 
         if ($properties) {
-            return ShowPropertyResource::collection($properties);
+            return showPropertyResource::collection($properties);
         }
 
         return response()->json([
