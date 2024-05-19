@@ -8,7 +8,7 @@ const Staff: React.FC = () => {
 
   return (
     <div className="flex-col space-y-8">
-      <div className="grid grid-cols-3 gap-x-4 gap-y-8">
+      <div className="grid grid-cols-2 gap-x-3 gap-y-3 md:grid-cols-3 md:gap-x-4 md:gap-y-8">
         {cardData.map((card) => (
           <Card
             id={card.id}
@@ -16,9 +16,9 @@ const Staff: React.FC = () => {
             description={card.description}
             name={card.name}
             value={card.value}
-            containerStyle={`flex-col items-start p-4 space-y-8 border-0.6 w-full border-custom-color-one shadow rounded
+            containerStyle={`flex flex-col items-start p-2 space-y-4 lg:p-4 lg:space-y-8 border-0.6 w-full border-custom-color-one shadow rounded
                 ${card.id === 1 && "bg-custom-grey-200"}`}
-            iconStyle={`flex items-center justify-center w-10 h-10 p-2 text-2xl rounded 
+            iconStyle={`flex items-center justify-center w-6 lg:w-10 h-6 lg:h-10 lg:p-2 text-base lg:text-2xl rounded 
                 ${[1, 2, 3].includes(card.id) &&
               "bg-custom-blue-200 text-primary-color"
               }
@@ -27,10 +27,10 @@ const Staff: React.FC = () => {
               "bg-color-light-yellow text-color-bright-orange"
               }
               `}
-            descriptionStyle={"text-xs text-color-text-two font-lexend"}
-            nameStyle={"text-sm font-semibold text-color-text-one font-lexend"}
-            currencyStyle={"text-2xl text-color-bright-green"}
-            valueStyle={"text-3xl"}
+            descriptionStyle={"text-[10px] lg:text-xs text-color-text-two font-lexend"}
+            nameStyle={"text-xs lg:text-sm font-medium lg:font-semibold text-color-text-one font-lexend"}
+            currencyStyle={"text-sm lg:text-2xl text-color-bright-green"}
+            valueStyle={"text-lg lg:text-3xl"}
           />
         ))}
       </div>

@@ -54,7 +54,7 @@ const ProjectLayout: React.FC = () => {
   return (
     <div className={`flex relative justify-between h-screen bg-custom-blue-100 lg:p-4 lg:pb-0 `}>
       <div
-        className={`flex-col pb-6 overflow-y-auto overscroll-contain scrollbar-thin scrollbar-thumb-color-text-two scrollbar-track-white ${transitionSection ? "pt-1 w-14" : "w-[19%]"
+        className={`hidden lg:flex lg:flex-col pb-6 overflow-y-auto overscroll-contain scrollbar-thin scrollbar-thumb-color-text-two scrollbar-track-white ${transitionSection ? "pt-1 w-14" : "w-[19%]"
           } ${activeMenuItem === "Settings Component" && !displaySideBarMenu
             ? "pt-1 w-14"
             : activeMenuItem === "Settings Component"
@@ -168,7 +168,7 @@ const ProjectLayout: React.FC = () => {
       ) : null}
 
       <div
-        className={`flex-col items-center justify-center p-4 pt-1 space-y-8 bg-white border-0.6 border-b-0 rounded-b-none border-custom-border rounded overflow-auto overscroll-contain scrollbar-thin scrollbar-thumb-color-text-two scrollbar-track-white ${transitionSection ? "w-full transition-all ease-in-out duration-500" : "w-[81%]"
+        className={`flex-col items-center justify-center p-4 pt-1 space-y-8 bg-white border-0.6 border-b-0 rounded-b-none border-custom-border rounded overflow-auto overscroll-contain scrollbar-thin scrollbar-thumb-color-text-two scrollbar-track-white ${transitionSection ? "w-full transition-all ease-in-out duration-500" : "w-full lg:w-[81%]"
           }`}
       >
         <TopNavigation

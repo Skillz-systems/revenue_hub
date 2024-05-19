@@ -31,8 +31,8 @@ const Card: React.FC<CardProps> = ({
 }) => {
   return (
     <div key={id} className={containerStyle}>
-      <div className="flex items-center gap-2">
-        <div className="flex items-start space-x-3">
+      <div className="flex items-center gap-2 h-[50%]">
+        <div className="flex items-center justify-center lg:items-start space-x-1.5 lg:space-x-3">
           <span className={iconStyle}>{icon}</span>
           <div className="flex-col items-start">
             <p className={descriptionStyle}>{description}</p>
@@ -40,13 +40,15 @@ const Card: React.FC<CardProps> = ({
           </div>
         </div>
       </div>
-      <div className="flex items-center gap-2">
-        {id === 1 && currencyStyle ? (
-          <span className={currencyStyle}>
-            <TbCurrencyNaira />
-          </span>
-        ) : null}
-        <p className={valueStyle}>{formatNumberWithCommas(value)}</p>
+      <div className="flex items-end h-[50%]">
+        <div className="flex items-center justify-center gap-1 lg:gap-2">
+          {id === 1 && currencyStyle ? (
+            <span className={currencyStyle}>
+              <TbCurrencyNaira />
+            </span>
+          ) : null}
+          <p className={valueStyle}>{formatNumberWithCommas(value)}</p>
+        </div>
       </div>
     </div>
   );

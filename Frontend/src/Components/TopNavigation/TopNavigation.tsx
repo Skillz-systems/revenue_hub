@@ -4,6 +4,7 @@ import { TbCalendarDot } from "react-icons/tb";
 import { FaChevronDown } from "react-icons/fa";
 import { IoPersonCircle } from "react-icons/io5";
 import { GrPowerShutdown } from "react-icons/gr";
+import { GiHamburgerMenu } from "react-icons/gi";
 
 interface TopNavigationProps {
   userName: string;
@@ -69,7 +70,10 @@ const TopNavigation: React.FC<TopNavigationProps> = ({
           {getCurrentDate()}
         </p>
       </div>
-      <div className="flex w-auto gap-4">
+      <div className="flex text-3xl lg:hidden">
+        <GiHamburgerMenu/>
+      </div>
+      <div className="hidden w-auto gap-4 lg:flex">
         <div className="relative flex">
           <select
             className="w-24 p-2 font-lexend appearance-none outline-none bg-custom-blue-100 border-0.6 border-custom-border shadow leading-tight rounded overflow-y-auto overscroll-contain scrollbar-thin scrollbar-thumb-color-text-two scrollbar-track-white"
