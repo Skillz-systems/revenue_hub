@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Property;
 use Illuminate\Http\Request;
 use App\Service\PropertyService;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 use App\Http\Resources\ShowPropertyResource;
 use App\Http\Resources\StorePropertyResource;
@@ -23,12 +24,13 @@ class PropertyController extends Controller
      *     security={{"api_key":{}}},
      *     @OA\Response(
      *         response=200,
-     *         description="List of all properties",
+     *         description="success",
      *         @OA\JsonContent(
      *             @OA\Property(property="data", type="array",
      *                  @OA\Items(
      *                     type="object",
      *                      @OA\Property(property="pid", type="integer", example="12354654"),
+     *                      @OA\Property(property="occupant", type="string", example="21 akidewa house 4"),
      *                      @OA\Property(property="prop_addr", type="string", example="21 akidewa house 4"),
      *                      @OA\Property(property="street_name", type="string", example="4553532"),
      *                      @OA\Property(property="asset_no", type="string", example="566664565646"),
@@ -38,8 +40,6 @@ class PropertyController extends Controller
      *                      @OA\Property(property="rating_dist", type="string", example="oko"),
      *                      @OA\Property(property="annual_value", type="string", example="233165498"),
      *                      @OA\Property(property="rate_payable", type="string", example="89789"),
-     *                      @OA\Property(property="arrears", type="string", example="54654656"),
-     *                      @OA\Property(property="penalty", type="string", example="5546546"),
      *                      @OA\Property(property="grand_total", type="string", example="56456"),
      *                      @OA\Property(property="category", type="string", example="school"),
      *                      @OA\Property(property="group", type="string", example="commercial"),
@@ -64,7 +64,7 @@ class PropertyController extends Controller
         $properties = Property::all();
 
         if ($properties) {
-            return ShowPropertyResource::collection($properties);
+            return showPropertyResource::collection($properties);
         }
 
         return response()->json([
@@ -130,14 +130,6 @@ class PropertyController extends Controller
      *                          type="integer"
      *                      ),
      *                      @OA\Property(
-     *                          property="arrears",
-     *                          type="integer"
-     *                      ),
-     *                      @OA\Property(
-     *                          property="penalty",
-     *                          type="integer"
-     *                      ),
-     *                      @OA\Property(
      *                          property="grand_total",
      *                          type="integer"
      *                      ),
@@ -165,8 +157,6 @@ class PropertyController extends Controller
      *                     "rating_dist":"string",
      *                     "annual_value":"integer",
      *                     "rate_payable":"integer",
-     *                     "arrears":"integer",
-     *                     "penalty":"integer",
      *                     "grand_total":"integer",
      *                     "category":"string",
      *                     "group":"string",
@@ -192,8 +182,6 @@ class PropertyController extends Controller
      *                  @OA\Property(property="rating_dist", type="string", example="oko"),
      *                  @OA\Property(property="annual_value", type="string", example="233165498"),
      *                  @OA\Property(property="rate_payable", type="string", example="89789"),
-     *                  @OA\Property(property="arrears", type="string", example="54654656"),
-     *                  @OA\Property(property="penalty", type="string", example="5546546"),
      *                  @OA\Property(property="grand_total", type="string", example="56456"),
      *                  @OA\Property(property="category", type="string", example="school"),
      *                  @OA\Property(property="group", type="string", example="commercial"),
@@ -232,6 +220,7 @@ class PropertyController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'pid' => ['required', 'integer', 'max:255', 'unique:properties'],
+            'occupant' => ['required', 'string', 'max:255'],
             'prop_addr' => ['required', 'string', 'max:255'],
             'street_name' => ['required', 'string', 'max:255'],
             'asset_no' => ['required', 'string', 'max:255'],
@@ -241,8 +230,8 @@ class PropertyController extends Controller
             'rating_dist' => ['required', 'string', 'max:255'],
             'annual_value' => ['required', 'integer', 'max:255'],
             'rate_payable' => ['required', 'integer', 'max:255'],
-            'arrears' => ['required', 'integer', 'max:255'],
-            'penalty' => ['required', 'integer', 'max:255'],
+            //'arrears' => ['required', 'integer', 'max:255'],
+            //'penalty' => ['required', 'integer', 'max:255'],
             'grand_total' => ['required', 'integer', 'max:255'],
             'category' => ['required', 'string', 'max:255'],
             'group' => ['required', 'string', 'max:255'],
@@ -272,7 +261,7 @@ class PropertyController extends Controller
 
 
     /**
-     * Add new property details.
+     * Update property details.
          /**
      * @OA\PUT(
      *     path="/api/property/{property}",
@@ -302,8 +291,6 @@ class PropertyController extends Controller
      *                      @OA\Property( property="rating_dist", type="string"),
      *                      @OA\Property( property="annual_value", type="string"),
      *                      @OA\Property( property="rate_payable", type="integer" ),
-     *                      @OA\Property( property="arrears", type="integer" ),
-     *                      @OA\Property( property="penalty", type="integer" ),
      *                      @OA\Property( property="grand_total", type="integer" ),
      *                      @OA\Property( property="category", type="string" ),
      *                      @OA\Property( property="group", type="string" ),
@@ -319,8 +306,6 @@ class PropertyController extends Controller
      *                     "rating_dist":"string",
      *                     "annual_value":"integer",
      *                     "rate_payable":"integer",
-     *                     "arrears":"integer",
-     *                     "penalty":"integer",
      *                     "grand_total":"integer",
      *                     "category":"string",
      *                     "group":"string",
@@ -346,8 +331,6 @@ class PropertyController extends Controller
      *                  @OA\Property(property="rating_dist", type="string", example="oko"),
      *                  @OA\Property(property="annual_value", type="string", example="233165498"),
      *                  @OA\Property(property="rate_payable", type="string", example="89789"),
-     *                  @OA\Property(property="arrears", type="string", example="54654656"),
-     *                  @OA\Property(property="penalty", type="string", example="5546546"),
      *                  @OA\Property(property="grand_total", type="string", example="56456"),
      *                  @OA\Property(property="category", type="string", example="school"),
      *                  @OA\Property(property="group", type="string", example="commercial"),
@@ -384,6 +367,7 @@ class PropertyController extends Controller
     {
 
         $validator = Validator::make($request->all(), [
+            'occupant' => ['required', 'string', 'max:255'],
             'prop_addr' => ['required', 'string', 'max:255'],
             'street_name' => ['required', 'string', 'max:255'],
             'asset_no' => ['required', 'string', 'max:255'],
@@ -393,8 +377,8 @@ class PropertyController extends Controller
             'rating_dist' => ['required', 'string', 'max:255'],
             'annual_value' => ['required', 'integer'],
             'rate_payable' => ['required', 'integer'],
-            'arrears' => ['required', 'integer'],
-            'penalty' => ['required', 'integer'],
+            //'arrears' => ['required', 'integer'],
+            //'penalty' => ['required', 'integer'],
             'grand_total' => ['required', 'integer'],
             'category' => ['required', 'string', 'max:255'],
             'group' => ['required', 'string', 'max:255'],
@@ -410,12 +394,12 @@ class PropertyController extends Controller
             ], 400);
         }
 
-        $addProperty = (new PropertyService)->updateProperty($request, $property);
-        if ($addProperty) {
+        $updateProperty = (new PropertyService)->updateProperty($request, $property);
+        if ($updateProperty) {
             return response()->json([
                 "status" => "success",
                 "message" => "Property Updated Successfully",
-                "data" =>  new ShowPropertyResource($addProperty)
+                "data" =>  new ShowPropertyResource($updateProperty)
             ], 200);
         }
 
@@ -451,31 +435,45 @@ class PropertyController extends Controller
      *         )
      *     ),
      *     @OA\Response(
-     *         response="404",
-     *         description="Not found",
+     *         response="401",
+     *         description="You dont Have Permission",
      *         @OA\JsonContent(
      *             @OA\Property(property="status", type="string", example="error"),
-     *             @OA\Property(property="message", type="string", example="Property not found"),
+     *             @OA\Property(property="message", type="string", example="You dont Have Permission"),
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response="402",
+     *         description="An error occured",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="status", type="string", example="error"),
+     *             @OA\Property(property="message", type="string", example="An error occured"),
      *         )
      *     ),
      * )
      */
 
-    public function destroy($property)
+    public function destroy(Property $property)
     {
-        $deleteProperty = Property::where('pid', $property)->first();
-        if ($deleteProperty) {
-            $deleteProperty->delete();
-            return response()->json([
-                "status" => "success",
-                "message" => "Property deleted successfully",
-            ], 200);
-        }
 
+        if (Auth::user()->role_id == 1) {
+
+            if ($property->delete()) {
+                return response()->json([
+                    "status" => "success",
+                    "message" => "Property deleted successfully",
+                ], 200);
+            }
+
+            return response()->json([
+                "status" => "error",
+                "message" => "An error occured",
+            ], 402);
+        }
 
         return response()->json([
             "status" => "error",
-            "message" => "Property not found",
-        ], 404);
+            "message" => "You dont Have Permission",
+        ], 401);
     }
 }
