@@ -131,7 +131,7 @@ export default function TransactionsTable({ customTableData }) {
           {transactionInformation.propertyDetails.address}
         </span>
         <span
-          className={`flex flex-wrap text-center items-center px-2 py-1 justify-center rounded-xl width-12-percent font-light font-lexend text-color-text-black text-10px border-0.6 border-custom-grey-100
+          className={`flex flex-wrap text-center items-center px-2 py-1 justify-center rounded-xl w-[12%] font-light font-lexend text-color-text-black text-[10px] border-0.6 border-custom-grey-100
             ${
               transactionInformation.transactionType === "Mobile Transfer"
                 ? "bg-color-light-red"
@@ -140,15 +140,15 @@ export default function TransactionsTable({ customTableData }) {
         >
           {transactionInformation.transactionType.toUpperCase()}
         </span>
-        <span className="flex flex-wrap items-center justify-center text-sm width-12-percent text-color-text-black font-chonburi">
+        <span className="flex flex-wrap items-center justify-center text-sm w-[12%] text-color-text-black font-chonburi">
           {formatNumberWithCommas(
             transactionInformation.propertyDetails.ratePayable
           )}
         </span>
-        <span className="flex flex-wrap items-center justify-center w-1/12 text-color-text-black font-lexend text-10px">
+        <span className="flex flex-wrap items-center justify-center w-1/12 text-color-text-black font-lexend text-[10px]">
           {transactionInformation.transactionDate}
         </span>
-        <span className="flex flex-wrap items-center justify-center gap-1 width-12-percent">
+        <span className="flex flex-wrap items-center justify-center gap-1 w-[12%]">
           <span className="border-0.6 relative border-custom-grey-100 text-custom-grey-300 px-2 py-2.5 rounded text-base hover:cursor-pointer">
             <span
               title="Edit Transaction"
@@ -267,10 +267,10 @@ export default function TransactionsTable({ customTableData }) {
               (column) => (
                 <div
                   key={column.id}
-                  className={`flex items-center gap-1 w-1/12 text-color-text-two text-10px font-lexend
+                  className={`flex items-center gap-1 w-1/12 text-color-text-two text-[10px] font-lexend
                 ${[1, 3].includes(column.id) && "w-2/12"}
                 ${[2].includes(column.id) && "w-20"}
-                ${[4, 5, 7].includes(column.id) && "width-12-percent"}
+                ${[4, 5, 7].includes(column.id) && "w-[12%]"}
                 ${column.id === 6 && "w-1/12"}
                 ${[5, 6, 7].includes(column.id) && "justify-center"}
                 `}

@@ -27,7 +27,7 @@ export default function PropertiesTable({
             {personalIdentificationNumber}
           </span>
           <span
-            className={`rounded-md px-2 py-0.5 font-light font-lexend text-color-text-black text-10px border-0.6 border-custom-grey-100
+            className={`rounded-md px-2 py-0.5 font-light font-lexend text-color-text-black text-[10px] border-0.6 border-custom-grey-100
             ${
               propertyUse === "Commercial"
                 ? "bg-color-light-red"
