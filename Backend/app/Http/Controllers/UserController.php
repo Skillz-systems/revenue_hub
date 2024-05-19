@@ -6,6 +6,7 @@ use App\Models\User;
 use App\Mail\RegisterMail;
 use Illuminate\Http\Request;
 use App\Service\StaffService;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
 use App\Http\Requests\StoreUserRequest;
 use App\Http\Resources\ShowUserResource;
@@ -227,10 +228,67 @@ class UserController extends Controller
     }
 
     /**
-     * Remove the specified resource from storage.
+     * Delete Staff
+     * @OA\Delete (
+     *     path="/api/staff/{staff}",
+     *     tags={"Staff"},
+     *     summary="Delete a staff",
+     *     description="This allow staff admin to delete staff",
+     *     operationId="deleteStaff",
+     *     security={{"api_key":{}}},
+     *     @OA\Parameter(
+     *         in="path",
+     *         name="staff",
+     *         required=true,
+     *         @OA\Schema(type="integer")
+     *     ),
+     
+     *     @OA\Response(
+     *         response=200,
+     *         description="Staff deleted successfully",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="status", type="string", example="success"),
+     *             @OA\Property(property="message", type="string", example="Staff deleted successfully"),
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response="401",
+     *         description="You dont Have Permission",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="status", type="string", example="error"),
+     *             @OA\Property(property="message", type="string", example="You dont Have Permission"),
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response="402",
+     *         description="An error occured",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="status", type="string", example="error"),
+     *             @OA\Property(property="message", type="string", example="An error occured"),
+     *         )
+     *     ),
+     * )
      */
     public function destroy(User $user)
     {
-        //
+        if (Auth::user()->role_id == 1) {
+
+            if ($user->delete()) {
+                return response()->json([
+                    "status" => "success",
+                    "message" => "Staff deleted successfully",
+                ], 200);
+            }
+
+            return response()->json([
+                "status" => "error",
+                "message" => "An error occured",
+            ], 402);
+        }
+
+        return response()->json([
+            "status" => "error",
+            "message" => "You dont Have Permission",
+        ], 401);
     }
 }

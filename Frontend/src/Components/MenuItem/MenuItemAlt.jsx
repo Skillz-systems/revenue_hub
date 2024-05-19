@@ -1,12 +1,15 @@
+
 export default function MenuItemAlt({
+  menuId,
   menuIcon,
   menuIconTwo,
   menuName,
-  isActive,
   setComponent,
+  isActive
 }) {
   return (
     <div
+      key={menuId}
       className={`flex items-center justify-center transition ease-in-out  hover:cursor-pointer hover:translate-x-1`}
       title={menuName}
       onClick={setComponent}
