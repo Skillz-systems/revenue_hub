@@ -940,6 +940,54 @@
             }
         },
         "/api/staff": {
+            "get": {
+                "tags": [
+                    "Staff"
+                ],
+                "summary": "Get all staffs",
+                "description": "Show list of all staffs",
+                "operationId": "getStaffs",
+                "responses": {
+                    "200": {
+                        "description": "List of all staffs",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/StoreUserResource"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "string",
+                                            "example": "error"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "No User found"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "api_key": []
+                    }
+                ]
+            },
             "post": {
                 "tags": [
                     "Staff"
@@ -1322,6 +1370,33 @@
         }
     },
     "components": {
+        "schemas": {
+            "ShowPropertyResource": {
+                "title": "Show Property Resource",
+                "description": "Show Property Resource",
+                "type": "object"
+            },
+            "ShowUserResource": {
+                "title": "Show Staff Resource",
+                "description": "Show Staff Resource",
+                "type": "object"
+            },
+            "StorePropertyResource": {
+                "title": "Store Property Resource",
+                "description": "Store Property Resource",
+                "type": "object"
+            },
+            "StoreUserResource": {
+                "title": "Store Staff Resource",
+                "description": "Store Staff Resource",
+                "type": "object"
+            },
+            "User": {
+                "title": "Staff Model",
+                "description": "Staff model",
+                "type": "object"
+            }
+        },
         "securitySchemes": {
             "api_key": {
                 "type": "apiKey",

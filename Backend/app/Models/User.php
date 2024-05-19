@@ -8,6 +8,20 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
+use OpenApi\Annotations as OA;
+
+
+/**
+ * Class User.
+ *
+ *
+ * @OA\Schema(
+ *     schema="User",
+ *     type="object",
+ *     title="Staff Model",
+ *     description="Staff model",
+ * )
+ */
 
 class User extends Authenticatable
 {

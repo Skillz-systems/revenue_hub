@@ -17,6 +17,50 @@ class UserController extends Controller
 {
 
     /**
+     * List all Users
+     * @OA\GET (
+     *     path="/api/staff",
+     *     tags={"Staff"},
+     *     summary="Get all staffs",
+     *     description="Show list of all staffs",
+     *     operationId="getStaffs",
+     *     security={{"api_key":{}}},
+     *     @OA\Response(
+     *         response=200,
+     *         description="List of all staffs",
+     *         @OA\JsonContent(
+     *             type="array",
+     *             @OA\Items(ref="#/components/schemas/StoreUserResource")
+     *         ),
+     *     ),
+     *     @OA\Response(
+     *         response="404",
+     *         description="Not found",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="status", type="string", example="error"),
+     *             @OA\Property(property="message", type="string", example="No User found"),
+     *         )
+     *     ),
+     * )
+     */
+    public function index()
+    {
+        $user = User::all();
+
+        if ($user) {
+            return response()->json([
+                "status" => "success",
+                "data" => StoreUserResource::collection($user),
+            ], 200);
+        }
+
+        return response()->json([
+            "status" => "error",
+            "message" => "No Staff found",
+        ], 404);
+    }
+
+    /**
      * @OA\Post(
      *     path="/api/staff",
      *     tags={"Staff"},
