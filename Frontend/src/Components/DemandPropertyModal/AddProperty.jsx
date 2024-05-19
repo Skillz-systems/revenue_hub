@@ -30,7 +30,6 @@ export default function AddProperty({
       (field) => !formData[field.inputName]
     );
 
-    // console.log("empty fields", emptyFields);
     if (emptyFields.length > 0) {
       // Alert if any required fields are empty
       alert("Please fill in all required fields.");
@@ -45,16 +44,7 @@ export default function AddProperty({
       setErrorState(sectionWithError.id);
       setErrorField(firstEmptyField.inputName);
     } else {
-      const formPayload = {
-        section: data.section.map((section) => ({
-          name: section.name,
-          fieldData: section.fieldData.map((field) => {
-            const { inputName } = field;
-            return { [inputName]: formData[inputName] || "" };
-          }),
-        })),
-      };
-      console.log("FormData", formPayload);
+      console.log("FormData", formData);
       alert("Form submitted successfully!");
     }
   };
@@ -70,7 +60,7 @@ export default function AddProperty({
     <form
       className={`flex-col relative bg-white rounded overflow-y-auto overscroll-contain scrollbar-thin scrollbar-thumb-color-text-two scrollbar-track-white ${
         propertyModalTransition
-          ? "w-7/12 transition-all ease-in-out duration-500"
+          ? "w-6/12 transition-all ease-in-out duration-500"
           : "w-32"
       }`}
       style={{ height: "95vh" }}
@@ -109,8 +99,8 @@ export default function AddProperty({
             </button>
           </div>
         </div>
-        <div className="flex-col pt-10 space-y-4" style={{ height: "90vh" }}>
-          <div className="flex items-center justify-between w-5/12 gap-2 p-0.5 border-0.6 border-custom-color-one rounded">
+        <div className="flex-col pt-10 space-y-4">
+          <div className="flex items-center justify-between w-6/12 gap-2 p-0.5 border-0.6 border-custom-color-one rounded">
             {data.section.map((item) => (
               <button
                 key={item.id}

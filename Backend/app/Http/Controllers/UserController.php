@@ -6,6 +6,7 @@ use App\Models\User;
 use App\Mail\RegisterMail;
 use Illuminate\Http\Request;
 use App\Service\StaffService;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
 use App\Http\Requests\StoreUserRequest;
 use App\Http\Resources\ShowUserResource;
@@ -292,30 +293,43 @@ class UserController extends Controller
      *         )
      *     ),
      *     @OA\Response(
-     *         response="404",
-     *         description="Not found",
+     *         response="401",
+     *         description="You dont Have Permission",
      *         @OA\JsonContent(
      *             @OA\Property(property="status", type="string", example="error"),
-     *             @OA\Property(property="message", type="string", example="Staff not found"),
+     *             @OA\Property(property="message", type="string", example="You dont Have Permission"),
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response="402",
+     *         description="An error occured",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="status", type="string", example="error"),
+     *             @OA\Property(property="message", type="string", example="An error occured"),
      *         )
      *     ),
      * )
      */
-    public function destroy($user)
+    public function destroy(User $user)
     {
-        $deleteStaff = User::where('id', $user)->first();
-        if ($deleteStaff) {
-            $deleteStaff->delete();
-            return response()->json([
-                "status" => "success",
-                "message" => "Staff deleted successfully",
-            ], 200);
-        }
+        if (Auth::user()->role_id == 1) {
 
+            if ($user->delete()) {
+                return response()->json([
+                    "status" => "success",
+                    "message" => "Staff deleted successfully",
+                ], 200);
+            }
+
+            return response()->json([
+                "status" => "error",
+                "message" => "An error occured",
+            ], 402);
+        }
 
         return response()->json([
             "status" => "error",
-            "message" => "Staff not found",
-        ], 404);
+            "message" => "You dont Have Permission",
+        ], 401);
     }
 }
