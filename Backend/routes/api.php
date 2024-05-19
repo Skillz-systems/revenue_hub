@@ -2,6 +2,7 @@
 
 use App\Models\User;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\PropertyController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
@@ -27,7 +28,7 @@ Route::post('auth/store-password/', [AuthController::class, 'storePassword']);
 
 Route::middleware('auth:sanctum')->group(function () {
 
+    Route::get('/payment', [PaymentController::class, 'index']);
     Route::apiResource('/staff', UserController::class);
     Route::apiResource('/property', PropertyController::class);
 });
-

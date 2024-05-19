@@ -11,6 +11,7 @@ class Payment extends Model
     protected $fillable =
     [
         "tx_ref",
+        "flw_ref",
         "demand_notice_id",
         "actual_amount",
         "charged_amount",
@@ -19,4 +20,9 @@ class Payment extends Model
         "status",
         "webhook_string",
     ];
+
+    public function demandNotice()
+    {
+        return $this->hasOne(DemandNotice::class, "id", "demand_notice_id");
+    }
 }

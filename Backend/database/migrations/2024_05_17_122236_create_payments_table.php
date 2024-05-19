@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('payments', function (Blueprint $table) {
             $table->id();
             $table->string("tx_ref")->comment("Transaction reference created when creating account number");
+            $table->string("flw_ref")->comment("The flw_ref is a unique payment identifier which we can use to represent transaction pin");
             $table->string("demand_notice_id")->comment("Demand notice is like an invoice, so this helps us know what invoice has the payment");
             $table->string("actual_amount")->comment("The actual amount expected to be paid by the occupier");
             $table->string("charged_amount")->comment("This is amount that was charged on the actual amount from payment vendor");

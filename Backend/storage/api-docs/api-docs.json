@@ -277,6 +277,62 @@
                 }
             }
         },
+        "api/forgot-password": {
+            "post": {
+                "tags": [
+                    "Authentication"
+                ],
+                "summary": "Send reset password link",
+                "description": "This endpoint allows users to request a password reset link by providing their email address.",
+                "operationId": "312a34fcbd1c30045c653e47d2ec4e0f",
+                "parameters": [
+                    {
+                        "name": "email",
+                        "in": "query",
+                        "description": "User's email address",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "format": "email"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "We have emailed your password reset link",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "description": "Message indicating the status of the reset password link sent.",
+                                            "type": "string"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "description": "Error message indicating validation failure.",
+                                            "type": "string"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/api/property": {
             "post": {
                 "tags": [
@@ -322,12 +378,6 @@
                                             "rate_payable": {
                                                 "type": "integer"
                                             },
-                                            "arrears": {
-                                                "type": "integer"
-                                            },
-                                            "penalty": {
-                                                "type": "integer"
-                                            },
                                             "grand_total": {
                                                 "type": "integer"
                                             },
@@ -356,8 +406,6 @@
                                     "rating_dist": "string",
                                     "annual_value": "integer",
                                     "rate_payable": "integer",
-                                    "arrears": "integer",
-                                    "penalty": "integer",
                                     "grand_total": "integer",
                                     "category": "string",
                                     "group": "string",
@@ -423,14 +471,6 @@
                                                 "rate_payable": {
                                                     "type": "string",
                                                     "example": "89789"
-                                                },
-                                                "arrears": {
-                                                    "type": "string",
-                                                    "example": "54654656"
-                                                },
-                                                "penalty": {
-                                                    "type": "string",
-                                                    "example": "5546546"
                                                 },
                                                 "grand_total": {
                                                     "type": "string",
@@ -570,12 +610,6 @@
                                             "rate_payable": {
                                                 "type": "integer"
                                             },
-                                            "arrears": {
-                                                "type": "integer"
-                                            },
-                                            "penalty": {
-                                                "type": "integer"
-                                            },
                                             "grand_total": {
                                                 "type": "integer"
                                             },
@@ -603,8 +637,6 @@
                                     "rating_dist": "string",
                                     "annual_value": "integer",
                                     "rate_payable": "integer",
-                                    "arrears": "integer",
-                                    "penalty": "integer",
                                     "grand_total": "integer",
                                     "category": "string",
                                     "group": "string",
@@ -670,14 +702,6 @@
                                                 "rate_payable": {
                                                     "type": "string",
                                                     "example": "89789"
-                                                },
-                                                "arrears": {
-                                                    "type": "string",
-                                                    "example": "54654656"
-                                                },
-                                                "penalty": {
-                                                    "type": "string",
-                                                    "example": "5546546"
                                                 },
                                                 "grand_total": {
                                                     "type": "string",
@@ -792,8 +816,8 @@
                             }
                         }
                     },
-                    "404": {
-                        "description": "Not found",
+                    "401": {
+                        "description": "You dont Have Permission",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -804,7 +828,27 @@
                                         },
                                         "message": {
                                             "type": "string",
-                                            "example": "Property not found"
+                                            "example": "You dont Have Permission"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "402": {
+                        "description": "An error occured",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "string",
+                                            "example": "error"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "An error occured"
                                         }
                                     },
                                     "type": "object"
@@ -962,7 +1006,7 @@
                     "Staff"
                 ],
                 "summary": "Update Staff Details",
-                "description": "This allow staff member to update there details",
+                "description": "This allow staff member to update their details",
                 "operationId": "updateStaff",
                 "parameters": [
                     {
