@@ -159,6 +159,14 @@ class UserController extends Controller
      *         ),
      *     ),
      *     @OA\Response(
+     *         response="401",
+     *         description="You dont Have Permission",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="status", type="string", example="error"),
+     *             @OA\Property(property="message", type="string", example="You dont Have Permission"),
+     *         )
+     *     ),
+     *     @OA\Response(
      *         response="404",
      *         description="Not found",
      *         @OA\JsonContent(
@@ -168,21 +176,28 @@ class UserController extends Controller
      *     ),
      * )
      */
-    public function show($user)
+    public function show(User $staff)
     {
-        $getUser = User::find($user);
 
-        if ($getUser) {
+        if (Auth::user()->role_id == 1) {
+
+            if ($staff) {
+                return response()->json([
+                    "status" => "success",
+                    "data" =>  ShowUserResource::make($staff)
+                ], 200);
+            }
+
             return response()->json([
-                "status" => "success",
-                "data" =>  ShowUserResource::make($getUser)
-            ], 200);
+                "status" => "error",
+                "message" => "No Staff Found",
+            ], 404);
         }
 
         return response()->json([
             "status" => "error",
-            "message" => "No Staff Found",
-        ], 404);
+            "message" => "You dont Have Permission",
+        ], 401);
     }
 
 
