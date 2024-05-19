@@ -310,14 +310,13 @@ class PropertyController extends Controller
      *     ),
      * )
      */
-    public function show($property)
+    public function show(Property $property)
     {
-        $getProperty = Property::find($property);
 
-        if ($getProperty) {
+        if ($property) {
             return response()->json([
                 "status" => "success",
-                "data" =>  ShowPropertyResource::make($getProperty)
+                "data" =>  ShowPropertyResource::make($property)
             ], 200);
         }
 
@@ -392,25 +391,6 @@ class PropertyController extends Controller
      *             type="array",
      *             @OA\Items(ref="#/components/schemas/ShowPropertyResource")
      *         ),
-     *             @OA\Property(property="status", type="string", example="success"),
-     *             @OA\Property(property="message", type="string", example="Property Updated Successfully"),
-     *             @OA\Property(property="data", type="object",
-     *                  @OA\Property(property="pid", type="string", example="12354654"),
-     *                  @OA\Property(property="prop_addr", type="string", example="21 akidewa house 4"),
-     *                  @OA\Property(property="street_name", type="string", example="4553532"),
-     *                  @OA\Property(property="asset_no", type="string", example="566664565646"),
-     *                  @OA\Property(property="cadastral_zone", type="string", example="2"),
-     *                  @OA\Property(property="prop_type", type="string", example="residential"),
-     *                  @OA\Property(property="prop_use", type="string", example="school"),
-     *                  @OA\Property(property="rating_dist", type="string", example="oko"),
-     *                  @OA\Property(property="annual_value", type="string", example="233165498"),
-     *                  @OA\Property(property="rate_payable", type="string", example="89789"),
-     *                  @OA\Property(property="grand_total", type="string", example="56456"),
-     *                  @OA\Property(property="category", type="string", example="school"),
-     *                  @OA\Property(property="group", type="string", example="commercial"),
-     *                  @OA\Property(property="active", type="string", example="active"),
-     *             ),
-     *        ),
      *     ),
      *     @OA\Response(
      *         response="400",
