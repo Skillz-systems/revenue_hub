@@ -45,4 +45,32 @@ class PaymentTest extends TestCase
         ]);
         //dd($response);
     }
+    public function test_to_fetch_single_payments(): void
+    {
+        $property = Property::factory()->create();
+        //DemandNotice::factory()->count(1)->make(["property_id" => (Property::factory()->create())->id])->create())->id
+        $demandNotice = DemandNotice::factory()->create([
+            "property_id" => $property->id
+        ]);
+
+        Payment::factory(50)->create(['demand_notice_id' => $demandNotice->id]);
+        $response = $this->actingAsTestUser()->getJson("/api/payment/view/1");
+        $response->assertStatus(200)->assertJsonStructure([
+            "status",
+            'data' => [
+                "tx_ref",
+                "pin",
+                "demand_notice" => [
+                    "id", "amount",
+                    "property" => ["pid"]
+                ],
+                "actual_amount",
+                "charged_amount",
+                "app_fee",
+                "merchant_fee",
+                "status",
+
+            ]
+        ]);
+    }
 }

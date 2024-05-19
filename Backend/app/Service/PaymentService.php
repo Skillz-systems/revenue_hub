@@ -33,15 +33,22 @@ class PaymentService
         return $payment->delete();
     }
 
-    public function createAccountNumber($demandNoticeId)
+    public function createAccountNumber($propertyId)
     {
+        //revenapi.com/payment/generate-acccount/id
+
+        $getProperty = (new PropertyService())->getProperty($propertyId);
         $service = new VirtualAccount();
+
+        // email would be property number with revenuhub prefix
+        // amount would be demand nonice amount 
+        //randum tx_ref using timestamp
+        //ensure that link would only be created as new if there is no matching records, else an update of account details would be done 
 
         $payload = [
             "email" => "kennyio@gmail.com",
             "amount" => 100,
-            "expires" => "2678400",
-            "tx_ref" => "tx_ref_aabbcc",
+            "tx_ref" => "tx_ref_aabbcceree",
             "bvn" => env("BVN"),
         ];
 
@@ -49,7 +56,7 @@ class PaymentService
         return $response;
     }
 
-    private function model()
+    public function model()
     {
         return new Payment();
     }

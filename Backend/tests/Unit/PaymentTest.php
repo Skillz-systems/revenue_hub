@@ -88,7 +88,11 @@ class PaymentTest extends TestCase
 
     public function test_to_see_if_a_new_account_number_can_be_generated_for_a_demand_notice()
     {
-        //$generateAccount = (new PaymentService())->createAccountNumber(1);
-        //dd($generateAccount);
+        $generateAccount = (new PaymentService())->createAccountNumber(1);
+        $accounttoArray = $generateAccount->toArray();
+        $this->assertIsArray($accounttoArray);
+        $this->assertArrayHasKey('status', $accounttoArray);
+        $this->assertArrayHasKey('data', $accounttoArray);
+        $this->assertArrayHasKey('flw_ref', $accounttoArray["data"]);
     }
 }

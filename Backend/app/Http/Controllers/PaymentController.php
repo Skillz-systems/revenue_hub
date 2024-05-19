@@ -24,4 +24,15 @@ class PaymentController extends Controller
         ]);
         return $payments;
     }
+
+    public function view($id)
+    {
+        $service = $this->paymentService;
+        $getPayment = $service->viewPayment($id);
+        $payments = new PaymentResource($getPayment);
+        $payments->additional([
+            'status' => 'success' // or any other status you want to append
+        ]);
+        return $payments;
+    }
 }

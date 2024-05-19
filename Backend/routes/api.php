@@ -29,6 +29,7 @@ Route::post('auth/store-password/', [AuthController::class, 'storePassword']);
 Route::middleware('auth:sanctum')->group(function () {
 
     Route::get('/payment', [PaymentController::class, 'index']);
+    Route::get('/payment/view/{id}', [PaymentController::class, 'view']);
     Route::apiResource('/staff', UserController::class);
     Route::apiResource('/property', PropertyController::class);
 });

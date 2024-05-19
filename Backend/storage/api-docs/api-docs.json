@@ -343,7 +343,7 @@
                 "operationId": "getProperties",
                 "responses": {
                     "200": {
-                        "description": "List of all properties",
+                        "description": "success",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -355,6 +355,10 @@
                                                     "pid": {
                                                         "type": "integer",
                                                         "example": "12354654"
+                                                    },
+                                                    "occupant": {
+                                                        "type": "string",
+                                                        "example": "21 akidewa house 4"
                                                     },
                                                     "prop_addr": {
                                                         "type": "string",
@@ -391,14 +395,6 @@
                                                     "rate_payable": {
                                                         "type": "string",
                                                         "example": "89789"
-                                                    },
-                                                    "arrears": {
-                                                        "type": "string",
-                                                        "example": "54654656"
-                                                    },
-                                                    "penalty": {
-                                                        "type": "string",
-                                                        "example": "5546546"
                                                     },
                                                     "grand_total": {
                                                         "type": "string",
@@ -1336,8 +1332,8 @@
                             }
                         }
                     },
-                    "404": {
-                        "description": "Not found",
+                    "401": {
+                        "description": "You dont Have Permission",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -1348,7 +1344,27 @@
                                         },
                                         "message": {
                                             "type": "string",
-                                            "example": "Staff not found"
+                                            "example": "You dont Have Permission"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "402": {
+                        "description": "An error occured",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "string",
+                                            "example": "error"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "An error occured"
                                         }
                                     },
                                     "type": "object"
