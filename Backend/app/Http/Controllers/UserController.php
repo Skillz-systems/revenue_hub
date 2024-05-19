@@ -48,7 +48,10 @@ class UserController extends Controller
         $user = User::all();
 
         if ($user) {
-            return StoreUserResource::collection($user);
+            return response()->json([
+                "status" => "success",
+                "data" => StoreUserResource::collection($user),
+            ], 200);
         }
 
         return response()->json([
