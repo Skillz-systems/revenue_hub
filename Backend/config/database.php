@@ -62,6 +62,11 @@ return [
                 PDO::MYSQL_ATTR_SSL_CA => env('MYSQL_ATTR_SSL_CA'),
             ]) : [],
         ],
+        'sqlite_testing' => [
+            'driver'   => 'sqlite',
+            'url'      => env('DATABASE_URL'),
+            'database' => ":memory:",
+        ],
 
         'pgsql' => [
             'driver' => 'pgsql',
