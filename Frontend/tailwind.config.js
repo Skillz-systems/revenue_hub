@@ -42,6 +42,12 @@ export default {
         "light-red": "#FFF7FA",
         "neon-green": "#C2F6AE",
         "light-neon-green": "#F7FFF2",
+        "dark-green": "#094E2F",
+        "document-grey": "#5E6974",
+        "document-bg-grey": "#F3F4F7",
+        "metal": "#303646",
+        "faint-grey": "#959595",
+        "custom-teal": "#17517E",
       },
       borderWidth: {
         1.5: "1.5px",
