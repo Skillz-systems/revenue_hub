@@ -56,40 +56,13 @@ class PropertyService
         $data =  array_slice($file, 1);
 
         // split the data into new csv files after 5000 datas
-        $parts = array_chunk($data, 5000);
+        $parts = array_chunk($data, 3000);
 
         // loop through the files and add them into pending-files folder using the current dateTime as the name
         foreach ($parts as $index => $part) {
             $fileName = resource_path('pending-files/' . date('y-m-d-H-i-s') . $index . '.csv');
             file_put_contents($fileName, $part);
         }
-
-        return true;
-    }
-
-
-
-    public function importToDb()
-    {
-        // get all files in the folder
-        $path = resource_path('pending-files/*.csv');
-
-        $files = glob($path);
-
-        // get one file at a time and process it
-        foreach ($files as $file) {
-            //ProcessCsvUpload::dispatch($file);
-
-            dump("Processing files" . $file);
-            $data = array_map('str_getcsv', file($file));
-
-            foreach ($data as $row) {
-                // add to database
-
-                dump($row[0]);
-            }
-        }
-
 
         return true;
     }

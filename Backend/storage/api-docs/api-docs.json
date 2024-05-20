@@ -287,85 +287,14 @@
                 "operationId": "getProperties",
                 "responses": {
                     "200": {
-                        "description": "List of all properties",
+                        "description": "success",
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "properties": {
-                                        "data": {
-                                            "type": "array",
-                                            "items": {
-                                                "properties": {
-                                                    "pid": {
-                                                        "type": "integer",
-                                                        "example": "12354654"
-                                                    },
-                                                    "prop_addr": {
-                                                        "type": "string",
-                                                        "example": "21 akidewa house 4"
-                                                    },
-                                                    "street_name": {
-                                                        "type": "string",
-                                                        "example": "4553532"
-                                                    },
-                                                    "asset_no": {
-                                                        "type": "string",
-                                                        "example": "566664565646"
-                                                    },
-                                                    "cadastral_zone": {
-                                                        "type": "string",
-                                                        "example": "2"
-                                                    },
-                                                    "prop_type": {
-                                                        "type": "string",
-                                                        "example": "residential"
-                                                    },
-                                                    "prop_use": {
-                                                        "type": "string",
-                                                        "example": "school"
-                                                    },
-                                                    "rating_dist": {
-                                                        "type": "string",
-                                                        "example": "oko"
-                                                    },
-                                                    "annual_value": {
-                                                        "type": "string",
-                                                        "example": "233165498"
-                                                    },
-                                                    "rate_payable": {
-                                                        "type": "string",
-                                                        "example": "89789"
-                                                    },
-                                                    "arrears": {
-                                                        "type": "string",
-                                                        "example": "54654656"
-                                                    },
-                                                    "penalty": {
-                                                        "type": "string",
-                                                        "example": "5546546"
-                                                    },
-                                                    "grand_total": {
-                                                        "type": "string",
-                                                        "example": "56456"
-                                                    },
-                                                    "category": {
-                                                        "type": "string",
-                                                        "example": "school"
-                                                    },
-                                                    "group": {
-                                                        "type": "string",
-                                                        "example": "commercial"
-                                                    },
-                                                    "active": {
-                                                        "type": "string",
-                                                        "example": "active"
-                                                    }
-                                                },
-                                                "type": "object"
-                                            }
-                                        }
-                                    },
-                                    "type": "object"
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/ShowPropertyResource"
+                                    }
                                 }
                             }
                         }
@@ -414,6 +343,9 @@
                                             "pid": {
                                                 "type": "integer"
                                             },
+                                            "occupant": {
+                                                "type": "string"
+                                            },
                                             "prop_addr": {
                                                 "type": "string"
                                             },
@@ -441,12 +373,6 @@
                                             "rate_payable": {
                                                 "type": "integer"
                                             },
-                                            "arrears": {
-                                                "type": "integer"
-                                            },
-                                            "penalty": {
-                                                "type": "integer"
-                                            },
                                             "grand_total": {
                                                 "type": "integer"
                                             },
@@ -466,6 +392,7 @@
                                 "type": "object",
                                 "example": {
                                     "pid": "integer",
+                                    "occupant": "string",
                                     "prop_addr": "string",
                                     "street_name": "string",
                                     "asset_no": "string",
@@ -475,8 +402,6 @@
                                     "rating_dist": "string",
                                     "annual_value": "integer",
                                     "rate_payable": "integer",
-                                    "arrears": "integer",
-                                    "penalty": "integer",
                                     "grand_total": "integer",
                                     "category": "string",
                                     "group": "string",
@@ -634,6 +559,9 @@
                                 "properties": {
                                     "": {
                                         "properties": {
+                                            "occupant": {
+                                                "type": "string"
+                                            },
                                             "prop_addr": {
                                                 "type": "string"
                                             },
@@ -661,12 +589,6 @@
                                             "rate_payable": {
                                                 "type": "integer"
                                             },
-                                            "arrears": {
-                                                "type": "integer"
-                                            },
-                                            "penalty": {
-                                                "type": "integer"
-                                            },
                                             "grand_total": {
                                                 "type": "integer"
                                             },
@@ -685,6 +607,7 @@
                                 },
                                 "type": "object",
                                 "example": {
+                                    "occupant": "string",
                                     "prop_addr": "string",
                                     "street_name": "string",
                                     "asset_no": "string",
@@ -694,8 +617,6 @@
                                     "rating_dist": "string",
                                     "annual_value": "integer",
                                     "rate_payable": "integer",
-                                    "arrears": "integer",
-                                    "penalty": "integer",
                                     "grand_total": "integer",
                                     "category": "string",
                                     "group": "string",
@@ -807,8 +728,8 @@
                             }
                         }
                     },
-                    "404": {
-                        "description": "Not found",
+                    "401": {
+                        "description": "You dont Have Permission",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -819,7 +740,27 @@
                                         },
                                         "message": {
                                             "type": "string",
-                                            "example": "Property not found"
+                                            "example": "You dont Have Permission"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "402": {
+                        "description": "An error occured",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "string",
+                                            "example": "error"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "An error occured"
                                         }
                                     },
                                     "type": "object"
@@ -907,6 +848,26 @@
                         }
                     },
                     "401": {
+                        "description": "You dont Have Permission",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "string",
+                                            "example": "error"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "You dont Have Permission"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "402": {
                         "description": "An error occured",
                         "content": {
                             "application/json": {
@@ -1150,6 +1111,26 @@
                             }
                         }
                     },
+                    "401": {
+                        "description": "You dont Have Permission",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "string",
+                                            "example": "error"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "You dont Have Permission"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
                     "404": {
                         "description": "Not found",
                         "content": {
@@ -1182,7 +1163,7 @@
                     "Staff"
                 ],
                 "summary": "Update Staff Details",
-                "description": "This allow staff member to update there details",
+                "description": "This allow staff member to update their details",
                 "operationId": "updateStaff",
                 "parameters": [
                     {
@@ -1393,8 +1374,8 @@
                             }
                         }
                     },
-                    "404": {
-                        "description": "Not found",
+                    "401": {
+                        "description": "You dont Have Permission",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -1405,7 +1386,27 @@
                                         },
                                         "message": {
                                             "type": "string",
-                                            "example": "Staff not found"
+                                            "example": "You dont Have Permission"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "402": {
+                        "description": "An error occured",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "string",
+                                            "example": "error"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "An error occured"
                                         }
                                     },
                                     "type": "object"

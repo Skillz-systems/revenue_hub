@@ -10,6 +10,9 @@ import {
   AddProperty,
   AddDemand,
   Overview,
+  Accounts,
+  Password,
+  accountInformation,
 } from "../Index";
 
 export default function ProjectLayout() {
@@ -21,10 +24,12 @@ export default function ProjectLayout() {
   const [displayAddPropertyModal, setDisplayAddPropertyModal] = useState(false);
   const [displayAddDemandModal, setDisplayAddDemandModal] = useState(false);
   const [propertyModalTransition, setPropertyModalTransition] = useState(false);
+  const [accountsPasswordState, setAccountsPasswordState] = useState("");
   const menuItems = MenuItemData();
 
   const handleMenuItemClick = (component) => {
     setActiveMenuItem(component);
+    setAccountsPasswordState("");
   };
 
   const hideSideBar = () => {
@@ -128,16 +133,30 @@ export default function ProjectLayout() {
       {activeMenuItem === "Settings Component" ? (
         <div className="flex-col px-4 space-y-2 w-[200px] text-color-text-on font-lexend border-l-0.5 border-divider-grey">
           <div
-            className="p-2 text-xs rounded border-0.6 border-custom-color-two hover:bg-primary-color hover:text-white hover:cursor-pointer"
+            className={`p-2 text-xs rounded border-0.6 border-custom-color-two hover:bg-primary-color hover:text-white hover:cursor-pointer
+            ${
+              accountsPasswordState === "Accounts" &&
+              "bg-primary-color text-white"
+            }`}
             title="Your account information"
-            onClick={() => alert("Account Page")}
+            onClick={() => {
+              setActiveComponent(null);
+              setAccountsPasswordState("Accounts");
+            }}
           >
             Your Account
           </div>
           <div
-            className="p-2 text-xs rounded border-0.6 border-custom-color-two hover:bg-primary-color hover:text-white hover:cursor-pointer"
+            className={`p-2 text-xs rounded border-0.6 border-custom-color-two hover:bg-primary-color hover:text-white hover:cursor-pointer
+            ${
+              accountsPasswordState === "Password" &&
+              "bg-primary-color text-white"
+            }`}
             title="Change your password"
-            onClick={() => alert("Password Page")}
+            onClick={() => {
+              setActiveComponent(null);
+              setAccountsPasswordState("Password");
+            }}
           >
             Change Password
           </div>
@@ -157,42 +176,44 @@ export default function ProjectLayout() {
             alert("Opened Menu Modal");
           }}
         />
+        {activeComponent ? null : accountsPasswordState === "Accounts" ? (
+          <div className="flex items-center justify-center">
+            <Accounts currentUserData={accountInformation} />
+          </div>
+        ) : (
+          <Password />
+        )}
         {activeComponent}
       </div>
 
-      {displayAddPropertyModal ? (
+      {displayAddPropertyModal || displayAddDemandModal ? (
         <DemandPropertyModal
           modalStyle={
             "absolute top-0 left-0 z-20 flex items-start justify-end w-full h-screen p-4 overflow-hidden bg-black bg-opacity-40"
           }
         >
-          <AddProperty
-            hideAddPropertyModal={() => {
-              setDisplayAddPropertyModal(false);
-              setTimeout(() => {
-                setPropertyModalTransition(false);
-              }, 300);
-            }}
-            propertyModalTransition={propertyModalTransition}
-          />
-        </DemandPropertyModal>
-      ) : null}
-
-      {displayAddDemandModal ? (
-        <DemandPropertyModal
-          modalStyle={
-            "absolute top-0 left-0 z-20 flex items-start justify-end w-full h-screen p-4 overflow-hidden bg-black bg-opacity-40"
-          }
-        >
-          <AddDemand
-            hideAddDemandModal={() => {
-              setDisplayAddDemandModal(false);
-              setTimeout(() => {
-                setPropertyModalTransition(false);
-              }, 300);
-            }}
-            propertyModalTransition={propertyModalTransition}
-          />
+          {displayAddPropertyModal && (
+            <AddProperty
+              hideAddPropertyModal={() => {
+                setDisplayAddPropertyModal(false);
+                setTimeout(() => {
+                  setPropertyModalTransition(false);
+                }, 300);
+              }}
+              propertyModalTransition={propertyModalTransition}
+            />
+          )}
+          {displayAddDemandModal && (
+            <AddDemand
+              hideAddDemandModal={() => {
+                setDisplayAddDemandModal(false);
+                setTimeout(() => {
+                  setPropertyModalTransition(false);
+                }, 300);
+              }}
+              propertyModalTransition={propertyModalTransition}
+            />
+          )}
         </DemandPropertyModal>
       ) : null}
     </div>
