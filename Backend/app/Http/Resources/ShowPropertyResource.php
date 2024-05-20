@@ -14,6 +14,24 @@ use Illuminate\Http\Resources\Json\JsonResource;
  *     type="object",
  *     title="Show Property Resource",
  *     description="Show Property Resource",
+ *     example={
+ *         "pid": 3176683,
+ *         "prop_addr": "540 Kaci Extensions Suite 724 Francoborough, MS 22188",
+ *         "street_name": "46329 McDermott Courts Apt. 058",
+ *         "asset_no": "AMC/B14/TR/9",
+ *         "cadastral_zone": "30769-6233",
+ *         "prop_type": "SPLITTED",
+ *         "prop_use": "COMMERCIAL",
+ *         "rating_dist": "APO",
+ *         "annual_value": 200000,
+ *         "rate_payable": 45000,
+ *         "arrears": 25000,
+ *         "penalty": 45000,
+ *         "grand_total": 4500000,
+ *         "category": "RESIDENTIAL",
+ *         "group": "AMAC2",
+ *         "active": "ACTIVE"
+ *     }
  * )
  */
 class ShowPropertyResource extends JsonResource

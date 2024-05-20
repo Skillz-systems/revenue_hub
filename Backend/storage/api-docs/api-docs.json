@@ -492,96 +492,10 @@
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "properties": {
-                                        "status": {
-                                            "type": "string",
-                                            "example": "success"
-                                        },
-                                        "message": {
-                                            "type": "string",
-                                            "example": "Property added successfully"
-                                        },
-                                        "data": {
-                                            "properties": {
-                                                "pid": {
-                                                    "type": "string",
-                                                    "example": "12354654"
-                                                },
-                                                "prop_addr": {
-                                                    "type": "string",
-                                                    "example": "21 akidewa house 4"
-                                                },
-                                                "street_name": {
-                                                    "type": "string",
-                                                    "example": "4553532"
-                                                },
-                                                "asset_no": {
-                                                    "type": "string",
-                                                    "example": "566664565646"
-                                                },
-                                                "cadastral_zone": {
-                                                    "type": "string",
-                                                    "example": "2"
-                                                },
-                                                "prop_type": {
-                                                    "type": "string",
-                                                    "example": "residential"
-                                                },
-                                                "prop_use": {
-                                                    "type": "string",
-                                                    "example": "school"
-                                                },
-                                                "rating_dist": {
-                                                    "type": "string",
-                                                    "example": "oko"
-                                                },
-                                                "annual_value": {
-                                                    "type": "string",
-                                                    "example": "233165498"
-                                                },
-                                                "rate_payable": {
-                                                    "type": "string",
-                                                    "example": "89789"
-                                                },
-                                                "arrears": {
-                                                    "type": "string",
-                                                    "example": "54654656"
-                                                },
-                                                "penalty": {
-                                                    "type": "string",
-                                                    "example": "5546546"
-                                                },
-                                                "grand_total": {
-                                                    "type": "string",
-                                                    "example": "56456"
-                                                },
-                                                "category": {
-                                                    "type": "string",
-                                                    "example": "school"
-                                                },
-                                                "group": {
-                                                    "type": "string",
-                                                    "example": "commercial"
-                                                },
-                                                "active": {
-                                                    "type": "string",
-                                                    "example": "active"
-                                                },
-                                                "created_at": {
-                                                    "type": "string",
-                                                    "format": "date-time",
-                                                    "example": "2024-05-06T11:54:58.000000Z"
-                                                },
-                                                "updated_at": {
-                                                    "type": "string",
-                                                    "format": "date-time",
-                                                    "example": "2024-05-06T11:54:58.000000Z"
-                                                }
-                                            },
-                                            "type": "object"
-                                        }
-                                    },
-                                    "type": "object"
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/StorePropertyResource"
+                                    }
                                 }
                             }
                         }
@@ -638,6 +552,64 @@
             }
         },
         "/api/property/{property}": {
+            "get": {
+                "tags": [
+                    "Property"
+                ],
+                "summary": "Get a property",
+                "description": "Show details of a property",
+                "operationId": "getProperty",
+                "parameters": [
+                    {
+                        "name": "property",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Show details of a property",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/ShowPropertyResource"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "string",
+                                            "example": "error"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "No Property found"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "api_key": []
+                    }
+                ]
+            },
             "put": {
                 "tags": [
                     "Property"
@@ -739,86 +711,10 @@
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "properties": {
-                                        "status": {
-                                            "type": "string",
-                                            "example": "success"
-                                        },
-                                        "message": {
-                                            "type": "string",
-                                            "example": "Property Updated Successfully"
-                                        },
-                                        "data": {
-                                            "properties": {
-                                                "pid": {
-                                                    "type": "string",
-                                                    "example": "12354654"
-                                                },
-                                                "prop_addr": {
-                                                    "type": "string",
-                                                    "example": "21 akidewa house 4"
-                                                },
-                                                "street_name": {
-                                                    "type": "string",
-                                                    "example": "4553532"
-                                                },
-                                                "asset_no": {
-                                                    "type": "string",
-                                                    "example": "566664565646"
-                                                },
-                                                "cadastral_zone": {
-                                                    "type": "string",
-                                                    "example": "2"
-                                                },
-                                                "prop_type": {
-                                                    "type": "string",
-                                                    "example": "residential"
-                                                },
-                                                "prop_use": {
-                                                    "type": "string",
-                                                    "example": "school"
-                                                },
-                                                "rating_dist": {
-                                                    "type": "string",
-                                                    "example": "oko"
-                                                },
-                                                "annual_value": {
-                                                    "type": "string",
-                                                    "example": "233165498"
-                                                },
-                                                "rate_payable": {
-                                                    "type": "string",
-                                                    "example": "89789"
-                                                },
-                                                "arrears": {
-                                                    "type": "string",
-                                                    "example": "54654656"
-                                                },
-                                                "penalty": {
-                                                    "type": "string",
-                                                    "example": "5546546"
-                                                },
-                                                "grand_total": {
-                                                    "type": "string",
-                                                    "example": "56456"
-                                                },
-                                                "category": {
-                                                    "type": "string",
-                                                    "example": "school"
-                                                },
-                                                "group": {
-                                                    "type": "string",
-                                                    "example": "commercial"
-                                                },
-                                                "active": {
-                                                    "type": "string",
-                                                    "example": "active"
-                                                }
-                                            },
-                                            "type": "object"
-                                        }
-                                    },
-                                    "type": "object"
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/ShowPropertyResource"
+                                    }
                                 }
                             }
                         }
@@ -1432,7 +1328,25 @@
             "ShowPropertyResource": {
                 "title": "Show Property Resource",
                 "description": "Show Property Resource",
-                "type": "object"
+                "type": "object",
+                "example": {
+                    "pid": 3176683,
+                    "prop_addr": "540 Kaci Extensions Suite 724 Francoborough, MS 22188",
+                    "street_name": "46329 McDermott Courts Apt. 058",
+                    "asset_no": "AMC/B14/TR/9",
+                    "cadastral_zone": "30769-6233",
+                    "prop_type": "SPLITTED",
+                    "prop_use": "COMMERCIAL",
+                    "rating_dist": "APO",
+                    "annual_value": 200000,
+                    "rate_payable": 45000,
+                    "arrears": 25000,
+                    "penalty": 45000,
+                    "grand_total": 4500000,
+                    "category": "RESIDENTIAL",
+                    "group": "AMAC2",
+                    "active": "ACTIVE"
+                }
             },
             "ShowUserResource": {
                 "title": "Show Staff Resource",
@@ -1442,7 +1356,27 @@
             "StorePropertyResource": {
                 "title": "Store Property Resource",
                 "description": "Store Property Resource",
-                "type": "object"
+                "type": "object",
+                "example": {
+                    "pid": 3176683,
+                    "prop_addr": "540 Kaci Extensions Suite 724 Francoborough, MS 22188",
+                    "street_name": "46329 McDermott Courts Apt. 058",
+                    "asset_no": "AMC/B14/TR/9",
+                    "cadastral_zone": "30769-6233",
+                    "prop_type": "SPLITTED",
+                    "prop_use": "COMMERCIAL",
+                    "rating_dist": "APO",
+                    "annual_value": 200000,
+                    "rate_payable": 45000,
+                    "arrears": 25000,
+                    "penalty": 45000,
+                    "grand_total": 4500000,
+                    "category": "RESIDENTIAL",
+                    "group": "AMAC2",
+                    "active": "ACTIVE",
+                    "created_at": "2024-05-06T11:54:58.000000Z",
+                    "updated_at": "2024-05-06T11:54:58.000000Z"
+                }
             },
             "StoreUserResource": {
                 "title": "Store Staff Resource",

@@ -89,6 +89,22 @@ class PropertyController extends Controller
      *             @OA\Schema(
      *                 @OA\Property(
      *                      type="object",
+     *                      @OA\Property( property="pid", type="integer" ),
+     *                      @OA\Property( property="prop_addr", type="string" ),
+     *                      @OA\Property( property="street_name", type="string" ),
+     *                      @OA\Property( property="asset_no", type="string" ),
+     *                      @OA\Property( property="cadastral_zone", type="string" ),
+     *                      @OA\Property( property="prop_type", type="string" ),
+     *                      @OA\Property( property="prop_use", type="string" ),
+     *                      @OA\Property( property="rating_dist", type="string" ),
+     *                      @OA\Property( property="annual_value", type="string" ),
+     *                      @OA\Property( property="rate_payable", type="integer" ),
+     *                      @OA\Property( property="arrears", type="integer" ),
+     *                      @OA\Property( property="penalty", type="integer" ),
+     *                      @OA\Property( property="grand_total", type="integer" ),
+     *                      @OA\Property( property="category", type="string" ),
+     *                      @OA\Property( property="group", type="string" ),
+     *                      @OA\Property( property="active", type="string" ),
      *                      @OA\Property(
      *                          property="pid",
      *                          type="integer"
@@ -169,6 +185,9 @@ class PropertyController extends Controller
      *         response="200",
      *         description="Property added successfully",
      *         @OA\JsonContent(
+     *             type="array",
+     *             @OA\Items(ref="#/components/schemas/StorePropertyResource")
+     *         ),
      *             @OA\Property(property="status", type="string", example="success"),
      *             @OA\Property(property="message", type="string", example="Property added successfully"),
      *             @OA\Property(property="data", type="object",
@@ -258,6 +277,57 @@ class PropertyController extends Controller
         ], 401);
     }
 
+    /**
+     * Show  Property
+     * @OA\GET (
+     *     path="/api/property/{property}",
+     *     tags={"Property"},
+     *     summary="Get a property",
+     *     description="Show details of a property",
+     *     operationId="getProperty",
+     *     security={{"api_key":{}}},
+     *     @OA\Parameter(
+     *         in="path",
+     *         name="property",
+     *         required=true,
+     *         @OA\Schema(type="integer")
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Show details of a property",
+     *         @OA\JsonContent(
+     *             type="array",
+     *             @OA\Items(ref="#/components/schemas/ShowPropertyResource")
+     *         ),
+     *     ),
+     *     @OA\Response(
+     *         response="404",
+     *         description="Not found",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="status", type="string", example="error"),
+     *             @OA\Property(property="message", type="string", example="No Property found"),
+     *         )
+     *     ),
+     * )
+     */
+    public function show(Property $property)
+    {
+
+        if ($property) {
+            return response()->json([
+                "status" => "success",
+                "data" =>  ShowPropertyResource::make($property)
+            ], 200);
+        }
+
+        return response()->json([
+            "status" => "error",
+            "message" => "No Property Found",
+        ], 404);
+    }
+
+    /**
+     * Update property details.
 
 
     /**
@@ -318,25 +388,9 @@ class PropertyController extends Controller
      *         response="200",
      *         description="Property Updated Successfully",
      *         @OA\JsonContent(
-     *             @OA\Property(property="status", type="string", example="success"),
-     *             @OA\Property(property="message", type="string", example="Property Updated Successfully"),
-     *             @OA\Property(property="data", type="object",
-     *                  @OA\Property(property="pid", type="string", example="12354654"),
-     *                  @OA\Property(property="prop_addr", type="string", example="21 akidewa house 4"),
-     *                  @OA\Property(property="street_name", type="string", example="4553532"),
-     *                  @OA\Property(property="asset_no", type="string", example="566664565646"),
-     *                  @OA\Property(property="cadastral_zone", type="string", example="2"),
-     *                  @OA\Property(property="prop_type", type="string", example="residential"),
-     *                  @OA\Property(property="prop_use", type="string", example="school"),
-     *                  @OA\Property(property="rating_dist", type="string", example="oko"),
-     *                  @OA\Property(property="annual_value", type="string", example="233165498"),
-     *                  @OA\Property(property="rate_payable", type="string", example="89789"),
-     *                  @OA\Property(property="grand_total", type="string", example="56456"),
-     *                  @OA\Property(property="category", type="string", example="school"),
-     *                  @OA\Property(property="group", type="string", example="commercial"),
-     *                  @OA\Property(property="active", type="string", example="active"),
-     *             ),
-     *        ),
+     *             type="array",
+     *             @OA\Items(ref="#/components/schemas/ShowPropertyResource")
+     *         ),
      *     ),
      *     @OA\Response(
      *         response="400",
@@ -425,7 +479,6 @@ class PropertyController extends Controller
      *         required=true,
      *         @OA\Schema(type="integer")
      *     ),
-     
      *     @OA\Response(
      *         response=200,
      *         description="Property deleted successfully",
