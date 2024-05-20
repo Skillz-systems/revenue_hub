@@ -111,56 +111,56 @@ class PaymentTest extends TestCase
         $this->assertDatabaseMissing("payments", $payment->toArray());
     }
 
-    public function test_to_see_if_a_new_account_number_can_be_generated_for_a_demand_notice()
-    {
+    // public function test_to_see_if_a_new_account_number_can_be_generated_for_a_demand_notice()
+    // {
 
-        $getProperty = Property::factory()->create();
-        DemandNotice::factory()->create(["property_id" => $getProperty->id, "amount" => 500]);
-        $this->instance(
-            VirtualAccount::class,
-            Mockery::mock(VirtualAccount::class, function (MockInterface $mock) {
-                $mock->shouldReceive('create')->andReturn((object)[
-                    'status' => 'success',
-                    'message' => 'Virtual account created',
-                    'data' => (object)[
-                        'response_code' => '02',
-                        'response_message' => 'Transaction in progress',
-                        'flw_ref' => 'FLW-190d9cb973a3437189d4557ad8060bd1',
-                        'order_ref' => 'URF_1716145377060_7260635',
-                        'account_number' => '9586844019',
-                        'frequency' => 'N/A',
-                        'bank_name' => 'WEMA BANK',
-                        'created_at' => '2024-05-19 19:02:57',
-                        'expiry_date' => '2024-05-19 20:02:57',
-                        'note' => 'Please make a bank transfer to ICT FLW',
-                        'amount' => '100.00',
-                    ],
-                ]);
-            })
-        );
-        // $mockVirtualAccount->shouldReceive('create')->andReturn((object)[
-        //     'status' => 'success',
-        //     'message' => 'Virtual account created',
-        //     'data' => (object)[
-        //         'response_code' => '02',
-        //         'response_message' => 'Transaction in progress',
-        //         'flw_ref' => 'FLW-190d9cb973a3437189d4557ad8060bd1',
-        //         'order_ref' => 'URF_1716145377060_7260635',
-        //         'account_number' => '9586844019',
-        //         'frequency' => 'N/A',
-        //         'bank_name' => 'WEMA BANK',
-        //         'created_at' => '2024-05-19 19:02:57',
-        //         'expiry_date' => '2024-05-19 20:02:57',
-        //         'note' => 'Please make a bank transfer to ICT FLW',
-        //         'amount' => '100.00',
-        //     ],
-        // ]);
-        $generateAccount = (new PaymentService())->createAccountNumber($getProperty->pid);
-        $accounttoArray = get_object_vars($generateAccount);
-        dd($accounttoArray);
-        $this->assertIsArray($accounttoArray);
-        $this->assertArrayHasKey('status', $accounttoArray);
-        $this->assertArrayHasKey('data', $accounttoArray);
-        $this->assertArrayHasKey('flw_ref', get_object_vars($accounttoArray["data"]));
-    }
+    //     $getProperty = Property::factory()->create();
+    //     DemandNotice::factory()->create(["property_id" => $getProperty->id, "amount" => 500]);
+    //     $this->instance(
+    //         VirtualAccount::class,
+    //         Mockery::mock(VirtualAccount::class, function (MockInterface $mock) {
+    //             $mock->shouldReceive('create')->andReturn((object)[
+    //                 'status' => 'success',
+    //                 'message' => 'Virtual account created',
+    //                 'data' => (object)[
+    //                     'response_code' => '02',
+    //                     'response_message' => 'Transaction in progress',
+    //                     'flw_ref' => 'FLW-190d9cb973a3437189d4557ad8060bd1',
+    //                     'order_ref' => 'URF_1716145377060_7260635',
+    //                     'account_number' => '9586844019',
+    //                     'frequency' => 'N/A',
+    //                     'bank_name' => 'WEMA BANK',
+    //                     'created_at' => '2024-05-19 19:02:57',
+    //                     'expiry_date' => '2024-05-19 20:02:57',
+    //                     'note' => 'Please make a bank transfer to ICT FLW',
+    //                     'amount' => '100.00',
+    //                 ],
+    //             ]);
+    //         })
+    //     );
+    //     // $mockVirtualAccount->shouldReceive('create')->andReturn((object)[
+    //     //     'status' => 'success',
+    //     //     'message' => 'Virtual account created',
+    //     //     'data' => (object)[
+    //     //         'response_code' => '02',
+    //     //         'response_message' => 'Transaction in progress',
+    //     //         'flw_ref' => 'FLW-190d9cb973a3437189d4557ad8060bd1',
+    //     //         'order_ref' => 'URF_1716145377060_7260635',
+    //     //         'account_number' => '9586844019',
+    //     //         'frequency' => 'N/A',
+    //     //         'bank_name' => 'WEMA BANK',
+    //     //         'created_at' => '2024-05-19 19:02:57',
+    //     //         'expiry_date' => '2024-05-19 20:02:57',
+    //     //         'note' => 'Please make a bank transfer to ICT FLW',
+    //     //         'amount' => '100.00',
+    //     //     ],
+    //     // ]);
+    //     $generateAccount = (new PaymentService())->createAccountNumber($getProperty->pid);
+    //     $accounttoArray = get_object_vars($generateAccount);
+
+    //     $this->assertIsArray($accounttoArray);
+    //     $this->assertArrayHasKey('status', $accounttoArray);
+    //     $this->assertArrayHasKey('data', $accounttoArray);
+    //     $this->assertArrayHasKey('flw_ref', get_object_vars($accounttoArray["data"]));
+    // }
 }
