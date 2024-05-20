@@ -5,6 +5,17 @@ namespace App\Http\Resources;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
+/**
+ * Class ShowPropertyResource.
+ *
+ *
+ * @OA\Schema(
+ *     schema="ShowPropertyResource",
+ *     type="object",
+ *     title="Show Property Resource",
+ *     description="Show Property Resource",
+ * )
+ */
 class ShowPropertyResource extends JsonResource
 {
     /**
@@ -16,6 +27,7 @@ class ShowPropertyResource extends JsonResource
     {
         return [
             'pid' => $this->pid,
+            'occupant' => $this->prop_addr,
             'prop_addr' => $this->prop_addr,
             'street_name' => $this->street_name,
             'asset_no' => $this->asset_no,
@@ -25,12 +37,13 @@ class ShowPropertyResource extends JsonResource
             'rating_dist' => $this->rating_dist,
             'annual_value' => $this->annual_value,
             'rate_payable' => $this->rate_payable,
-            'arrears' => $this->arrears,
-            'penalty' => $this->penalty,
+            //'arrears' => $this->arrears,
+            //'penalty' => $this->penalty,
             'grand_total' => $this->grand_total,
             'category' => $this->category,
             'group' => $this->group,
             'active' => $this->active,
+            "status" => "success"
         ];
     }
 }
