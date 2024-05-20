@@ -8,6 +8,7 @@ import { BsCalendar2EventFill } from "react-icons/bs";
 import { formatNumberWithCommas } from "../../Utils/client";
 import { HiOutlineDotsHorizontal } from "react-icons/hi";
 import { FaPeopleRoof } from "react-icons/fa6";
+import { DemandPropertyModal, DemandInvoiceDocument } from "../Index";
 
 interface InvoiceData {
   dateCreated: string;
@@ -53,6 +54,8 @@ const ViewPropertyModal: React.FC<ViewPropertyModalProps> = ({
   const [activateState, setActiveState] = useState<number>(0);
   const [daysUntilDue, setDaysUntilDue] = useState<number | null>(null);
   const [editModal, setEditModal] = useState<boolean>(false);
+  const [demandInvoiceDocument, setDemandInvoiceDocument] = useState<boolean>(false);
+
   const generateDueDate = (): string => {
     // Split the date string into day, month, and year
     const [day, month, year] =
@@ -98,8 +101,8 @@ const ViewPropertyModal: React.FC<ViewPropertyModalProps> = ({
     <>
       <div
         className={`flex-col relative bg-white rounded overflow-y-auto overscroll-contain scrollbar-thin scrollbar-thumb-color-text-two scrollbar-track-white ${propertyModalTransition
-            ? "w-6/12 transition-all ease-in-out duration-500"
-            : "w-32"
+          ? "w-6/12 transition-all ease-in-out duration-500"
+          : "w-32"
           }`}
         style={{ height: "95vh" }}
       >
@@ -169,8 +172,8 @@ const ViewPropertyModal: React.FC<ViewPropertyModalProps> = ({
                   <button
                     key={index}
                     className={`flex gap-2 text-xs text-color-text-two font-lexend px-2 py-1 ${activateState === index
-                        ? "text-white font-medium bg-primary-color rounded"
-                        : ""
+                      ? "text-white font-medium bg-primary-color rounded"
+                      : ""
                       }`}
                     type="button"
                     onClick={() => {
@@ -334,8 +337,8 @@ const ViewPropertyModal: React.FC<ViewPropertyModalProps> = ({
                       </p>
                       <p
                         className={`flex w-[50%] justify-end text-xs font-medium ${index === 3
-                            ? "text-color-bright-red"
-                            : "text-color-text-black"
+                          ? "text-color-bright-red"
+                          : "text-color-text-black"
                           }`}
                       >
                         {index === 3 ? `(${item.value})` : item.value}
@@ -501,7 +504,7 @@ const ViewPropertyModal: React.FC<ViewPropertyModalProps> = ({
                         <p
                           className="hover:cursor-pointer"
                           title="View Demand Notice"
-                          onClick={() => alert("Demand Notice")}
+                          onClick={() => setDemandInvoiceDocument(true)}
                         >
                           View Demand Notice
                         </p>
@@ -538,6 +541,24 @@ const ViewPropertyModal: React.FC<ViewPropertyModalProps> = ({
           </div>
         </div>
       </div>
+      {demandInvoiceDocument ? (
+        <DemandPropertyModal
+          modalStyle={
+            "absolute top-0 left-0 z-[30] flex items-start justify-end w-full h-screen p-4 overflow-hidden bg-black bg-opacity-60"
+          }
+        >
+          <DemandInvoiceDocument
+            hideDemandInvoiceModal={() => {
+              setDemandInvoiceDocument(false);
+              // setTimeout(() => {
+              //   setPropertyModalTransition(false);
+              // }, 300);
+            }}
+            // propertyModalTransition={propertyModalTransition}
+            customTableData={customTableData}
+          />
+        </DemandPropertyModal>
+      ) : null}
     </>
   );
 }

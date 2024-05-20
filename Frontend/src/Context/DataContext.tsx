@@ -1,6 +1,23 @@
 import React, { createContext, useContext, ReactNode } from "react"
-import { staticInformation, propertyInformation, demandNoticeInformation, transactionInformation, staffInformation, cardInformation, accountInformation } from "../Data/appData";
-import { StaticInformation, PropertyInformationType, TransactionInformationType, StaffInformationType, CardInformation, StaffRecord } from "../Data/types";
+import {
+    staticInformation,
+    propertyInformation,
+    demandNoticeInformation,
+    transactionInformation,
+    staffInformation,
+    cardInformation,
+    accountInformation,
+    demandInvoiceData
+} from "../Data/appData";
+import {
+    StaticInformation,
+    PropertyInformationType,
+    TransactionInformationType,
+    StaffInformationType,
+    CardInformation,
+    StaffRecord,
+    DemandInvoiceDataType
+} from "../Data/types";
 
 interface DataContextType {
     staticInformation: StaticInformation;
@@ -10,6 +27,7 @@ interface DataContextType {
     staffInformation: StaffInformationType;
     cardInformation: CardInformation;
     accountInformation: StaffRecord;
+    demandInvoiceData: DemandInvoiceDataType,
 }
 
 const DataContext = createContext<DataContextType | undefined>(undefined);
@@ -28,6 +46,7 @@ export const DataProvider: React.FC<DataProviderProps> = ({ children }) => {
             staffInformation,
             cardInformation,
             accountInformation,
+            demandInvoiceData,
         }}>
             {children}
         </DataContext.Provider>

@@ -96,3 +96,18 @@ export interface CardInformation {
     overallDemandNoticeValue: number;
     transactionInformationValue: number;
 }
+
+export interface InvoiceProperty {
+    label: string;
+    value: string | number;
+    isTotal?: boolean;
+}
+
+export interface DemandInvoiceDataType {
+    Occupant: string;
+    PropertyIdentificationNumber: string;
+    QrCodePayment: string;
+    propertyData: InvoiceProperty[];
+    billInfoData: InvoiceProperty[];
+    billDetailsData: InvoiceProperty[];
+}

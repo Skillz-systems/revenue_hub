@@ -9,6 +9,7 @@ import {
   Pagination,
   DemandPropertyModal,
   ViewPropertyModal,
+  DemandInvoiceDocument,
 } from "../Index";
 import {
   formatNumberWithCommas,
@@ -30,12 +31,17 @@ const DemandInvoiceTable = ({
   const [currentPage, setCurrentPage] = useState<number>(0);
   const [propertiesPerPage, setPropertiesPerPage] = useState<number>(12);
   const [currentStyle, setCurrentStyle] = useState<number | undefined>(undefined);
+  const [demandInvoiceDocument, setDemandInvoiceDocument] = useState<any>(null);
 
   const handleViewPropertyModal = (propertyData: any) => {
     setViewPropertyModal(propertyData);
     setTimeout(() => {
       setPropertyModalTransition(true);
     }, 250);
+  };
+
+  const handleViewDemandInvoiceModal = (propertyData: any) => {
+    setDemandInvoiceDocument(propertyData);
   };
 
   // PAGINATION LOGIC
@@ -200,7 +206,9 @@ const DemandInvoiceTable = ({
             </span>
             {editModal === record.id && (
               <span className="absolute space-y-2 top-0 z-10 flex-col w-40 p-4 text-xs bg-white rounded shadow-md -left-44 border-0.6 border-custom-grey-100 text-color-text-black font-lexend">
-                <p className="hover:cursor-pointer" title="View Demand Notice">
+                <p className="hover:cursor-pointer" title="View Demand Notice"
+                  onClick={() => handleViewDemandInvoiceModal(record)}
+                >
                   View Demand Notice
                 </p>
                 <p
@@ -429,6 +437,24 @@ const DemandInvoiceTable = ({
             }}
             propertyModalTransition={propertyModalTransition}
             customTableData={viewPropertyModal}
+          />
+        </DemandPropertyModal>
+      ) : null}
+      {demandInvoiceDocument ? (
+        <DemandPropertyModal
+          modalStyle={
+            "absolute top-0 left-0 z-[30] flex items-start justify-end w-full h-screen p-4 overflow-hidden bg-black bg-opacity-60"
+          }
+        >
+          <DemandInvoiceDocument
+            hideDemandInvoiceModal={() => {
+              setDemandInvoiceDocument(false);
+              // setTimeout(() => {
+              //   setPropertyModalTransition(false);
+              // }, 300);
+            }}
+            // propertyModalTransition={propertyModalTransition}
+            customTableData={demandInvoiceDocument}
           />
         </DemandPropertyModal>
       ) : null}

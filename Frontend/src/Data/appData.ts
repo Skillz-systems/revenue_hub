@@ -400,6 +400,54 @@ const staticInformation = {
         ],
     },
 }
+
+
+interface InvoiceProperty {
+    label: string;
+    value: string | number;
+    isTotal?: boolean;
+}
+
+interface DemandInvoiceDataType {
+    Occupant: string;
+    PropertyIdentificationNumber: string;
+    QrCodePayment: string;
+    propertyData: InvoiceProperty[];
+    billInfoData: InvoiceProperty[];
+    billDetailsData: InvoiceProperty[];
+}
+
+const demandInvoiceData: DemandInvoiceDataType = {
+    Occupant: "THE OCCUPIER/213996",
+    PropertyIdentificationNumber: "PID-215996/2024-04-16 16:49",
+    QrCodePayment: "3191313-0482402470",
+    propertyData: [
+        { label: "Name of Occupier", value: "THE OCCUPIER/213996" },
+        { label: "Assessment No", value: "AM/B12/TTR/2016/0400" },
+        {
+            label: "Property Address",
+            value: "No 3 obyokoli Avenue unizik temp, site Awka.",
+        },
+        { label: "Cadestral Zone", value: "B12 - DUBOYI" },
+        { label: "Use of Property", value: "RESIDENTIAL" },
+        { label: "Rating District", value: "DUBOYI" },
+    ],
+    billInfoData: [
+        { label: "Bill Ref", value: "2024/215996" },
+        { label: "Agency Code", value: 2000300 },
+        { label: "Revenue Code", value: 1002 },
+        { label: "Rate Year", value: 2024 },
+    ],
+    billDetailsData: [
+        { label: "Annual Value", value: 2670000 },
+        { label: "Rate Payable", value: 105800 },
+        { label: "Arrears Year", value: 106800 },
+        { label: "Penalty (10%)", value: 10680 },
+        { label: "Grand Total", value: 224280, isTotal: true },
+    ],
+};
+
+
 export { PropertyInformationType, TransactionInformationType, StaffInformationType };
 export {
     staticInformation,
@@ -409,4 +457,5 @@ export {
     staffInformation,
     cardInformation,
     accountInformation,
+    demandInvoiceData,
 }

@@ -12,6 +12,7 @@ export { default as AddProperty } from "./DemandPropertyModal/AddProperty";
 export { default as AddDemand } from "./DemandPropertyModal/AddDemand";
 export { default as DemandInvoiceTable } from "./DemandNotice/DemandInvoiceTable";
 export { default as DemandNotice } from "./DemandNotice/DemandNotice";
+export { default as DemandInvoiceDocument } from "./DemandNotice/DemandInvoiceDocument";
 export { default as TableSearchInput } from "./DemandNotice/TableSearchInput";
 export { default as Transactions } from "./Transactions/Transactions";
 export { default as TransactionsTable } from "./Transactions/TransactionsTable";
