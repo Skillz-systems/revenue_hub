@@ -30,6 +30,7 @@ Route::middleware('auth:sanctum')->group(function () {
 
     Route::get('/payment', [PaymentController::class, 'index']);
     Route::get('/payment/view/{id}', [PaymentController::class, 'view']);
+    Route::get('/payment/generate-account/{id}', [PaymentController::class, 'generateAccount']);
     Route::apiResource('/staff', UserController::class);
     Route::apiResource('/property', PropertyController::class);
 });

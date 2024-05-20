@@ -3,6 +3,7 @@
 namespace App\Service;
 
 use App\Http\Resources\StoreUserResource;
+use App\Models\demandNoticeAccount;
 use App\Models\Payment;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
@@ -38,22 +39,50 @@ class PaymentService
         //revenapi.com/payment/generate-acccount/id
 
         $getProperty = (new PropertyService())->getProperty($propertyId);
+        $getDemandNotice = $getProperty->demandNotices()->latest()->first();
         $service = new VirtualAccount();
 
-        // email would be property number with revenuhub prefix
-        // amount would be demand nonice amount 
-        //randum tx_ref using timestamp
         //ensure that link would only be created as new if there is no matching records, else an update of account details would be done 
-
+        $email = $getProperty->pid . "@revenuhub.ng";
+        $tx_ref = $getProperty->pid . "_" . time();
+        $amount = $getDemandNotice->amount;
         $payload = [
-            "email" => "kennyio@gmail.com",
-            "amount" => 100,
-            "tx_ref" => "tx_ref_aabbcceree",
+            "email" => $email,
+            "amount" => $amount,
+            "tx_ref" => $tx_ref,
             "bvn" => env("BVN"),
         ];
-
         $response = $service->create($payload);
-        return $response;
+        // link account to demand notice 
+        if ($response) {
+            // check if record exist 
+
+            $checkAccount = demandNoticeAccount::where(["demand_notice_id" => $getDemandNotice->id])->first();
+            if ($checkAccount) {
+                $accountNumberCreated = $checkAccount->update([
+                    "account_number" => $response->data->account_number,
+                    "account_name" => $response->data->note,
+                    "account_bank_name" => $response->data->bank_name,
+                ]);
+            } else {
+                $accountNumberCreated = demandNoticeAccount::create([
+                    "demand_notice_id" => $getDemandNotice->id,
+                    "tx_ref" => $tx_ref,
+                    "account_number" => $response->data->account_number,
+                    "account_name" => $response->data->note,
+                    "account_bank_name" => $response->data->bank_name,
+                    "account_email" => $email,
+                    "amount" => $amount,
+                ]);
+            }
+        } else {
+            return false;
+        }
+
+        if ($accountNumberCreated) {
+            return $response;
+        }
+        return false;
     }
 
     public function model()

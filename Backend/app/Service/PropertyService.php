@@ -44,4 +44,9 @@ class PropertyService
 
         return false;
     }
+
+    public function getProperty($id)
+    {
+        return Property::where(["pid" => $id])->first();
+    }
 }

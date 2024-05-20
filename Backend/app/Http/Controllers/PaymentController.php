@@ -35,4 +35,10 @@ class PaymentController extends Controller
         ]);
         return $payments;
     }
+
+    public function generateAccount($id)
+    {
+        $generateAccount = $this->paymentService->createAccountNumber($id);
+        return response()->json(["status" => "success", "data" => $generateAccount], 200);
+    }
 }
