@@ -31,4 +31,9 @@ class Property extends Model
 
 
     public const PENALTY = 10;
+
+    public function demandNotices()
+    {
+        return $this->hasMany(DemandNotice::class);
+    }
 }

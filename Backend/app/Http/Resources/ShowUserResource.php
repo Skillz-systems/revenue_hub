@@ -5,6 +5,17 @@ namespace App\Http\Resources;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
+/**
+ * Class ShowUserResource.
+ *
+ *
+ * @OA\Schema(
+ *     schema="ShowUserResource",
+ *     type="object",
+ *     title="Show Staff Resource",
+ *     description="Show Staff Resource",
+ * )
+ */
 class ShowUserResource extends JsonResource
 {
     /**
@@ -15,18 +26,14 @@ class ShowUserResource extends JsonResource
     public function toArray(Request $request): array
     {
         return [
-            "status" => "success",
-            "message" => "Update Successfully",
-            "user" => [
-                'id' => $this->id,
-                'name' => $this->name,
-                'email' => $this->email,
-                'phone' => $this->phone,
-                'zone' => $this->zone,
-                'role' => [
-                    'id' => $this->role->id,
-                    'name' => $this->role->name,
-                ],
+            'id' => $this->id,
+            'name' => $this->name,
+            'email' => $this->email,
+            'phone' => $this->phone,
+            'zone' => $this->zone,
+            'role' => [
+                'id' => $this->role->id,
+                'name' => $this->role->name,
             ],
         ];
     }
