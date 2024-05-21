@@ -124,7 +124,7 @@ jobs:
       - run:
           name: ssh and effect migration  
           command: |
-             ssh -p 7822 -t skillz@185.160.67.60 "cd revenuehub/api && php artisan migrate"
+             ssh -p 7822 -t skillz@185.160.67.60 "cd revenuehub/api && php artisan migrate && php artisan l5-swagger:generate"
 workflows:
   version: 2
   revenue_hub_deploy:

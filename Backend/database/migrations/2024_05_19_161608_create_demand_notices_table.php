@@ -13,8 +13,11 @@ return new class extends Migration
     {
         Schema::create('demand_notices', function (Blueprint $table) {
             $table->id();
-            $table->string("property_id")->comment("the property of he demand notice ");
+            $table->integer("property_id")->comment("the property of he demand notice ");
+            $table->string("arrears_amount")->default(0)->comment("the arrears amount if any");
             $table->string("amount")->comment("the final amount to be payed ");
+            $table->string("penalty")->default(0)->comment("the penalty amount to be payed if any ");
+            $table->integer("status")->default(0)->comment("the status of the demand notice ");
             $table->timestamps();
         });
     }

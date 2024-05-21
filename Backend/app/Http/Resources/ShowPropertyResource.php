@@ -44,6 +44,7 @@ class ShowPropertyResource extends JsonResource
     public function toArray(Request $request): array
     {
         return [
+            'id' => $this->id,
             'pid' => $this->pid,
             'occupant' => $this->prop_addr,
             'prop_addr' => $this->prop_addr,

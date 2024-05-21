@@ -46,6 +46,7 @@ class StorePropertyResource extends JsonResource
     public function toArray(Request $request): array
     {
         return [
+            'id' => $this->id,
             'status' => "success",
             'message' => "Property added successfully",
             'pid' => $this->pid,
