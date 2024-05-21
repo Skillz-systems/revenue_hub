@@ -49,4 +49,9 @@ class PropertyService
     {
         return Property::where(["pid" => $id])->first();
     }
+
+    public function getPropertyById($id)
+    {
+        return Property::findOrFail($id);
+    }
 }

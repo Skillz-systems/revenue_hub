@@ -8,9 +8,13 @@ use Illuminate\Database\Eloquent\Model;
 class DemandNotice extends Model
 {
     use HasFactory;
+    public const PENDING = 0;
     protected $fillable = [
         "property_id",
-        "amount"
+        "amount",
+        "arrears_amount",
+        "penalty",
+        "status",
     ];
 
     public function property()

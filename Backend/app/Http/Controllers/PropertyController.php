@@ -75,7 +75,6 @@ class PropertyController extends Controller
 
     /**
      * Add new property details.
-         /**
      * @OA\POST(
      *     path="/api/property",
      *     tags={"Property"},
@@ -105,62 +104,7 @@ class PropertyController extends Controller
      *                      @OA\Property( property="category", type="string" ),
      *                      @OA\Property( property="group", type="string" ),
      *                      @OA\Property( property="active", type="string" ),
-     *                      @OA\Property(
-     *                          property="pid",
-     *                          type="integer"
-     *                      ),
-     *                      @OA\Property(
-     *                          property="prop_addr",
-     *                          type="string"
-     *                      ),
-     *                      @OA\Property(
-     *                          property="street_name",
-     *                          type="string"
-     *                      ),
-     *                      @OA\Property(
-     *                          property="asset_no",
-     *                          type="string"
-     *                      ),
-     *                      @OA\Property(
-     *                          property="cadastral_zone",
-     *                          type="string"
-     *                      ),
-     *                      @OA\Property(
-     *                          property="prop_type",
-     *                          type="string"
-     *                      ),
-     *                      @OA\Property(
-     *                          property="prop_use",
-     *                          type="string"
-     *                      ),
-     *                      @OA\Property(
-     *                          property="rating_dist",
-     *                          type="string"
-     *                      ),
-     *                      @OA\Property(
-     *                          property="annual_value",
-     *                          type="string"
-     *                      ),
-     *                      @OA\Property(
-     *                          property="rate_payable",
-     *                          type="integer"
-     *                      ),
-     *                      @OA\Property(
-     *                          property="grand_total",
-     *                          type="integer"
-     *                      ),
-     *                      @OA\Property(
-     *                          property="category",
-     *                          type="string"
-     *                      ),
-     *                      @OA\Property(
-     *                          property="group",
-     *                          type="string"
-     *                      ),
-     *                      @OA\Property(
-     *                          property="active",
-     *                          type="string"
-     *                      ),
+     *                     
      *                 ),
      *                 example={
      *                     "pid":"integer",
