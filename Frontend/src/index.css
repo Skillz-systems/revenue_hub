@@ -29,6 +29,14 @@
   font-family: "Mulish", sans-serif;
 }
 
+.font-work-sans {
+  font-family: "Work Sans", sans-serif;
+}
+
+.font-red-hat {
+  font-family: "Red Hat Display", sans-serif;
+}
+
 .ellipsis {
   overflow: hidden;
   white-space: nowrap;
