@@ -62,6 +62,7 @@ class ShowPropertyResource extends JsonResource
             'category' => $this->category,
             'group' => $this->group,
             'active' => $this->active,
+            'demand_notice' => DemandNoticeResource::collection($this->demandNotices),
             "status" => "success"
         ];
     }

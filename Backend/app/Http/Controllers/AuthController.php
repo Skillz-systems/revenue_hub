@@ -52,7 +52,7 @@ class AuthController extends Controller
      *                 @OA\Property(property="updated_at", type="string", format="date-time", example="2024-05-01T20:44:43.000000Z"),
      *             ),
      *             @OA\Property(property="token", type="string", example="1|57653vtZoT9EW2iRBHShQyALGaeZ3PtrtPhUN6Arlpgc4fe5fe8"),
-     )
+     *         )
      *     ),
      *     @OA\Response(
      *         response="400",
