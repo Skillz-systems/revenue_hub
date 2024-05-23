@@ -16,6 +16,13 @@ use Illuminate\Http\Resources\Json\JsonResource;
  *         description="The ID of the demand notice"
  *     ),
  *     @OA\Property(
+ *         property="payments",
+ *         type="array",
+ *         description="all the payments associated with the demand notice",
+ *         @OA\Items(ref="#/components/schemas/DemandNoticePaymentResource")
+ *     ),
+ * 
+ *     @OA\Property(
  *         property="amount",
  *         type="string",
  *         description="The amount of the demand notice"
@@ -64,6 +71,7 @@ class DemandNoticeResource extends JsonResource
             "penalty" => $this->penalty,
             "status" => $this->status,
             "property" => new ShowPropertyResource($this->property),
+            "payments" => DemandNoticePaymentResource::collection($this->payments),
             "date_created" => $this->created_at,
         ];
     }
