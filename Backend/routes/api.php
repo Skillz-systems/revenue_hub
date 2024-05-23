@@ -6,6 +6,7 @@ use App\Http\Controllers\DemandNoticeController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\PropertyController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\DashboardController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -39,5 +40,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/payment/view/{id}', [PaymentController::class, 'view']);
     Route::apiResource('/staff', UserController::class);
     Route::apiResource('/property', PropertyController::class);
+
+    Route::get('/dashboard', [DashboardController::class, 'getDashboardData']);
 });
 Route::get('/payment/generate-account/{id}', [PaymentController::class, 'generateAccount']);
