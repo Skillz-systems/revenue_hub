@@ -97,12 +97,56 @@ use Illuminate\Http\Resources\Json\JsonResource;
  *         property="demand_notice",
  *         type="array",
  *         description="Demand notices",
- *         @OA\Items(ref="#/components/schemas/DemandNoticeResource")
+ *         @OA\Items(ref="#/components/schemas/PropertyDemandNoticeResource")
  *     ),
  *     @OA\Property(
  *         property="status",
  *         type="string",
  *         description="Status"
+ *     )
+ * )
+ */
+
+/**
+ * @OA\Schema(
+ *     title="PropertyDemandNoticeResource",
+ *     description="Resource representing a demand notice",
+ *     @OA\Property(
+ *         property="id",
+ *         type="integer",
+ *         description="The ID of the demand notice"
+ *     ),
+ *    
+ * 
+ *     @OA\Property(
+ *         property="amount",
+ *         type="string",
+ *         description="The amount of the demand notice"
+ *     ),
+ *     @OA\Property(
+ *         property="arrears_amount",
+ *         type="string",
+ *         description="The arrears amount of the demand notice"
+ *     ),
+ *     @OA\Property(
+ *         property="penalty",
+ *         type="string",
+ *         description="The penalty of the demand notice"
+ *     ),
+ *     @OA\Property(
+ *         property="status",
+ *         type="integer",
+ *         description="The status of the demand notice"
+ *     ),
+ *     @OA\Property(
+ *         property="property",
+ *         ref="#/components/schemas/ShowPropertyResource"
+ *     ),
+ *     @OA\Property(
+ *         property="date_created",
+ *         type="string",
+ *         format="date-time",
+ *         description="The date when the demand notice was created"
  *     )
  * )
  */

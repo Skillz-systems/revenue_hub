@@ -2138,6 +2138,41 @@
     },
     "components": {
         "schemas": {
+            "DemandNoticePaymentResource": {
+                "title": "DemandNoticePaymentResource",
+                "description": "The payment resource",
+                "properties": {
+                    "tx_ref": {
+                        "description": "The transaction reference",
+                        "type": "string"
+                    },
+                    "pin": {
+                        "description": "The Flutterwave reference",
+                        "type": "string"
+                    },
+                    "actual_amount": {
+                        "description": "The actual amount",
+                        "type": "number"
+                    },
+                    "charged_amount": {
+                        "description": "The charged amount",
+                        "type": "number"
+                    },
+                    "app_fee": {
+                        "description": "The application fee",
+                        "type": "number"
+                    },
+                    "merchant_fee": {
+                        "description": "The merchant fee",
+                        "type": "number"
+                    },
+                    "status": {
+                        "description": "The payment status",
+                        "type": "string"
+                    }
+                },
+                "type": "object"
+            },
             "DemandNoticeResource": {
                 "title": "DemandNoticeResource",
                 "description": "Resource representing a demand notice",
@@ -2145,6 +2180,13 @@
                     "id": {
                         "description": "The ID of the demand notice",
                         "type": "integer"
+                    },
+                    "payments": {
+                        "description": "all the payments associated with the demand notice",
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/DemandNoticePaymentResource"
+                        }
                     },
                     "amount": {
                         "description": "The amount of the demand notice",
@@ -2175,133 +2217,73 @@
             },
             "PaymentResource": {
                 "title": "PaymentResource",
-                "description": "Payment resource",
+                "description": "The payment resource",
                 "properties": {
                     "tx_ref": {
-                        "description": "Transaction reference",
+                        "description": "The transaction reference",
                         "type": "string"
                     },
                     "pin": {
-                        "description": "Flutterwave reference",
+                        "description": "The Flutterwave reference",
                         "type": "string"
                     },
                     "demand_notice": {
-                        "description": "Demand notice resource",
-                        "properties": {
-                            "": {
-                                "$ref": "#/components/schemas/DemandNoticeResource"
-                            }
-                        },
-                        "type": "object"
+                        "$ref": "#/components/schemas/DemandNoticeResource"
                     },
                     "actual_amount": {
-                        "description": "Actual amount",
-                        "type": "number",
-                        "format": "float"
+                        "description": "The actual amount",
+                        "type": "number"
                     },
                     "charged_amount": {
-                        "description": "Charged amount",
-                        "type": "number",
-                        "format": "float"
+                        "description": "The charged amount",
+                        "type": "number"
                     },
                     "app_fee": {
-                        "description": "Application fee",
-                        "type": "number",
-                        "format": "float"
+                        "description": "The application fee",
+                        "type": "number"
                     },
                     "merchant_fee": {
-                        "description": "Merchant fee",
-                        "type": "number",
-                        "format": "float"
+                        "description": "The merchant fee",
+                        "type": "number"
                     },
                     "status": {
-                        "description": "Payment status",
+                        "description": "The payment status",
                         "type": "string"
                     }
                 },
                 "type": "object"
             },
             "ShowPropertyResource": {
-                "title": "ShowPropertyResource",
-                "description": "Show property resource",
+                "title": "PropertyDemandNoticeResource",
+                "description": "Resource representing a demand notice",
                 "properties": {
                     "id": {
-                        "description": "Property ID",
+                        "description": "The ID of the demand notice",
                         "type": "integer"
                     },
-                    "pid": {
-                        "description": "Property PID",
+                    "amount": {
+                        "description": "The amount of the demand notice",
                         "type": "string"
                     },
-                    "occupant": {
-                        "description": "Property occupant",
+                    "arrears_amount": {
+                        "description": "The arrears amount of the demand notice",
                         "type": "string"
                     },
-                    "prop_addr": {
-                        "description": "Property address",
+                    "penalty": {
+                        "description": "The penalty of the demand notice",
                         "type": "string"
-                    },
-                    "street_name": {
-                        "description": "Street name",
-                        "type": "string"
-                    },
-                    "asset_no": {
-                        "description": "Asset number",
-                        "type": "string"
-                    },
-                    "cadastral_zone": {
-                        "description": "Cadastral zone",
-                        "type": "string"
-                    },
-                    "prop_type": {
-                        "description": "Property type",
-                        "type": "string"
-                    },
-                    "prop_use": {
-                        "description": "Property use",
-                        "type": "string"
-                    },
-                    "rating_dist": {
-                        "description": "Rating district",
-                        "type": "string"
-                    },
-                    "annual_value": {
-                        "description": "Annual value",
-                        "type": "number",
-                        "format": "float"
-                    },
-                    "rate_payable": {
-                        "description": "Rate payable",
-                        "type": "number",
-                        "format": "float"
-                    },
-                    "grand_total": {
-                        "description": "Grand total",
-                        "type": "number",
-                        "format": "float"
-                    },
-                    "category": {
-                        "description": "Category",
-                        "type": "string"
-                    },
-                    "group": {
-                        "description": "Group",
-                        "type": "string"
-                    },
-                    "active": {
-                        "description": "Active status",
-                        "type": "boolean"
-                    },
-                    "demand_notice": {
-                        "description": "Demand notices",
-                        "type": "array",
-                        "items": {
-                            "$ref": "#/components/schemas/DemandNoticeResource"
-                        }
                     },
                     "status": {
-                        "description": "Status",
-                        "type": "string"
+                        "description": "The status of the demand notice",
+                        "type": "integer"
+                    },
+                    "property": {
+                        "$ref": "#/components/schemas/ShowPropertyResource"
+                    },
+                    "date_created": {
+                        "description": "The date when the demand notice was created",
+                        "type": "string",
+                        "format": "date-time"
                     }
                 },
                 "type": "object"

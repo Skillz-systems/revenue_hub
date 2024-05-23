@@ -21,4 +21,8 @@ class DemandNotice extends Model
     {
         return $this->hasOne(Property::class, "id", "property_id");
     }
+    public function payments()
+    {
+        return $this->hasMany(Payment::class, "id", "demand_notice_id");
+    }
 }
