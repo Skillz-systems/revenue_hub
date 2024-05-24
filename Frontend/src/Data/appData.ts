@@ -1,3 +1,14 @@
+// import useSWR from "swr"
+
+
+// // Fetch accountInformation
+// const fetcherAccountData = (url: string) => fetch(url).then((res) => res.json());
+
+// const { data, error } = useSWR('https://api.revenuehub.skillzserver.com/api/staff/1', fetcherAccountData);
+
+// if (error) () => console.log("Failed to load");
+// if (!data) () => console.log("loading")
+
 const cadestralZones = [
     "Apo",
     "Asokoro",
@@ -147,14 +158,14 @@ interface PropertyRecord {
     ratingDistrict: string;
     group: string;
     occupationStatus: string;
-    occupantInfo: [{
+    occupantInfo: {
         id: number;
         firstName: string;
         lastName: string;
         phoneNumber: string;
         email: string;
         maritalStatus: string;
-    }];
+    }[];
     demandInvoiceData: {
         id: number;
         demandNoticeNumber: string;
@@ -209,7 +220,7 @@ const generatePropertyRecord = (): PropertyRecord => {
         ]
     };
 }
-const propertyInformation: PropertyInformationType = Array.from({ length: 500 }, generatePropertyRecord);
+const propertyInformation: PropertyInformationType = Array.from({ length: 50 }, generatePropertyRecord);
 const filteredPropertiesWithDemandNotice = propertyInformation.filter(property => property.paymentStatus !== "Ungenerated");
 const propertiesWithPaidPaymentStatus: PropertyInformationType = filteredPropertiesWithDemandNotice.filter(property => property.paymentStatus === "Paid");
 const demandNoticeInformation = filteredPropertiesWithDemandNotice;
@@ -307,6 +318,7 @@ const generateStaffRecord = () => {
 const staffInformation: StaffInformationType = Array.from({ length: 30 }, generateStaffRecord);
 
 const accountInformation: StaffRecord = generateStaffRecord();
+
 
 const cardInformation = {
     totalRegisteredProperties: propertyInformation.length,
