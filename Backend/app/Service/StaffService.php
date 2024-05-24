@@ -31,7 +31,6 @@ class StaffService
         return $user;
     }
 
-
     /**
      *@param mixed $request
      */
@@ -84,5 +83,42 @@ class StaffService
         }
 
         return false;
+    }
+
+    public function deleteStaff($user)
+    {
+        if (AUth::user()->id == $user->id) {
+            $user->delete();
+            return true;
+        }
+        return false;
+    }
+
+    public function viewStaff($user)
+    {
+        if (AUth::user()->id == $user->id) {
+            return $user;
+        }
+        return false;
+    }
+
+    public function viewAllStaff()
+    {
+        return User::where('role_id', '>', 0)->get();
+    }
+
+    public function getAllStaffByRole($role)
+    {
+        return User::where('role_id', $role)->get();
+    }
+
+    public function getTotalNumberOfStaff()
+    {
+        return User::where('role_id', '>', 0)->count();
+    }
+
+    public function getTotalNumberOfStaffsByRole($role)
+    {
+        return User::where('role_id', $role)->count();
     }
 }

@@ -54,4 +54,19 @@ class PropertyService
     {
         return Property::findOrFail($id);
     }
+
+    public function getTotalNumberOfProperties()
+    {
+        return Property::count();
+    }
+
+    public function searchProperty($request)
+    {
+        return Property::where('pid', $request->pid)->first();
+    }
+
+    public function getAllProperties()
+    {
+        return Property::all();
+    }
 }

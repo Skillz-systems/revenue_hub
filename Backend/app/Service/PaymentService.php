@@ -85,6 +85,11 @@ class PaymentService
         return false;
     }
 
+    public function totalNumberOfPaymentByYear($data)
+    {
+        return $this->model()->whereYear('created_at', $data)->count();
+    }
+
     public function model()
     {
         return new Payment();
