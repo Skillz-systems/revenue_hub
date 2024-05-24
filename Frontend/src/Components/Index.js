@@ -34,4 +34,5 @@ export { default as Password } from "./Settings/Password";
 export { default as InputComponent } from "./InputComponent/InputComponent";
 export { default as SelectComponent } from "./InputComponent/SelectComponent";
 export { useAppData } from "../Context/DataContext";
+export { default as userData } from "../Data/userData";
 export * from "../Data/types.ts";

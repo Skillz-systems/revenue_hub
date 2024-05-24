@@ -15,11 +15,6 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
 
     useEffect(() => {
         console.log("Protected Route Token:", token);
-        if (token) {
-            console.log("isAuthenticatedUser:", true)
-        } else {
-            console.log("isAuthenticatedUser:", false)
-        }
     }, [token]);
 
     return children; // Render children if user is authenticated

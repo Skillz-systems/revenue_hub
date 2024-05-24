@@ -12,8 +12,8 @@ function LoginPage(): JSX.Element {
   const [isLoading, setIsLoading] = useState(false);
   const [errorState, setErrorState] = useState<string | null>(null);
   const [formData, setFormData] = useState({
-    email: "",
-    password: "",
+    email: "admin@revenuehub.com",
+    password: "12345678",
   });
   const navigate = useNavigate()
 
@@ -51,6 +51,7 @@ function LoginPage(): JSX.Element {
       if (response.status === 200) {
         console.log(response.data)
         Cookies.set("userToken", response.data.data.token, { expires: 7 }); // Token expires in 7 days
+        Cookies.set("userData", JSON.stringify(response.data.data), { expires: 7 }); // Token expires in 7 days
         navigate("/")
       } else if (response.status === 400) {
         console.log(response.data)

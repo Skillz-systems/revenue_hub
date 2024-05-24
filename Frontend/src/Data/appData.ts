@@ -1,4 +1,3 @@
-// import useSWR from "swr"
 
 
 // // Fetch accountInformation
@@ -8,6 +7,7 @@
 
 // if (error) () => console.log("Failed to load");
 // if (!data) () => console.log("loading")
+
 
 const cadestralZones = [
     "Apo",
@@ -298,6 +298,8 @@ interface StaffRecord {
     designation: string;
     staffZone: string;
 }
+
+
 
 const generateStaffRecord = () => {
     return {

@@ -9,8 +9,23 @@ import {
   DemandPropertyModal,
   AddNewStaffModal,
   ViewStaffModal,
+  userData,
 } from "../Index";
-import { filterRecordsByKeyAndValue, ScrollToTop } from "../../Utils/client";
+import { filterStaffRecordsByRoleName, ScrollToTop } from "../../Utils/client";
+
+interface StaffRecord {
+  id: number;
+  name: string;
+  email: string;
+  phone: string;
+  zone: string;
+  role: {
+    id: number;
+    name: string;
+  };
+  created_at: string;
+  updated_at: string;
+}
 
 export default function StaffTable({ staticInformation, staffInformation }) {
   const [displaySearchIcon, setDisplaySearchIcon] = useState(true);
@@ -21,6 +36,7 @@ export default function StaffTable({ staticInformation, staffInformation }) {
   const [newStaffModal, setNewStaffModal] = useState(false);
   const [viewStaffModal, setViewStaffModal] = useState<any>(null);
   const [propertyModalTransition, setPropertyModalTransition] = useState(false);
+  const { deleteStaffById } = userData();
 
   // PAGINATION LOGIC
   const [currentPage, setCurrentPage] = useState(0);
@@ -40,7 +56,10 @@ export default function StaffTable({ staticInformation, staffInformation }) {
     ScrollToTop("top-container");
   };
 
-  const currentProperties = (data: any[]) => {
+  const currentProperties = (data: StaffRecord[] | null | undefined) => {
+    if (!data) {
+      return [];
+    }
     return data.slice(offset, offset + propertiesPerPage);
   };
 
@@ -81,17 +100,15 @@ export default function StaffTable({ staticInformation, staffInformation }) {
       ? currentProperties(staffInformation)
       : activeMenu === 2
         ? currentProperties(
-          filterRecordsByKeyAndValue(
+          filterStaffRecordsByRoleName(
             staffInformation,
-            "designation",
-            "Manager"
+            "Manager" || "MD"
           )
         )
         : activeMenu === 3
           ? currentProperties(
-            filterRecordsByKeyAndValue(
+            filterStaffRecordsByRoleName(
               staffInformation,
-              "designation",
               "Officer"
             )
           )
@@ -121,29 +138,29 @@ export default function StaffTable({ staticInformation, staffInformation }) {
         className="flex items-center justify-between gap-1 text-xs"
       >
         <span className="flex flex-wrap items-center justify-center h-10 px-2 py-1 text-sm font-medium rounded w-[12%] text-color-text-three bg-custom-blue-400">
-          {staffInformation.staffId}
+          {staffInformation.id}
         </span>
         <span className="flex flex-wrap items-center w-40 text-sm font-bold rounded font-lexend text-color-text-black">
-          {staffInformation.fullName}
+          {staffInformation.name}
         </span>
         <span className="flex flex-wrap items-center w-2/12 text-xs font-lexend text-color-text-black">
           {staffInformation.email}
         </span>
         <span className="flex flex-wrap items-center justify-center w-2/12 text-xs font-lexend text-color-text-black">
-          {staffInformation.phoneNumber}
+          {staffInformation.phone}
         </span>
         <span
           className={`flex flex-wrap text-center items-center px-2 py-1 justify-center rounded-xl w-1/12 font-light font-lexend text-color-text-black text-[10px] border-0.6 border-custom-grey-100
-            ${staffInformation.designation === "Manager"
+            ${staffInformation.role.id === 1
               ? "bg-color-light-red"
-              : staffInformation.designation === "Officer"
+              : staffInformation.role.id === 4
                 ? "bg-color-light-yellow"
-                : staffInformation.designation === "Admin"
+                : staffInformation.role.id === 2
                   ? "bg-color-bright-green text-white"
                   : "bg-primary-color text-white"
             }`}
         >
-          {staffInformation.designation.toUpperCase()}
+          {staffInformation.role.name.toUpperCase()}
         </span>
         <span className="flex flex-wrap items-center justify-center w-1/12 gap-1">
           <span className="border-0.6 relative border-custom-grey-100 text-custom-grey-300 px-2 py-2.5 rounded text-base hover:cursor-pointer">
@@ -168,7 +185,11 @@ export default function StaffTable({ staticInformation, staffInformation }) {
                 >
                   View Staff Details
                 </p>
-                <p className="hover:cursor-pointer" title="Remove Staff">
+                <p 
+                  className="hover:cursor-pointer"
+                  title="Remove Staff"
+                  onClick={() => deleteStaffById(staffInformation.id)}
+                >
                   Remove Staff
                 </p>
               </span>
@@ -187,14 +208,12 @@ export default function StaffTable({ staticInformation, staffInformation }) {
           ? 0
           : staffInformation.length
       : activeMenu === 2
-        ? filterRecordsByKeyAndValue(
+        ? filterStaffRecordsByRoleName(
           staffInformation,
-          "designation",
-          "Manager"
+          "MD"
         ).length
-        : filterRecordsByKeyAndValue(
+        : filterStaffRecordsByRoleName(
           staffInformation,
-          "designation",
           "Officer"
         ).length;
   }
@@ -233,20 +252,19 @@ export default function StaffTable({ staticInformation, staffInformation }) {
                     {menu.id === 1
                       ? filteredResults.length > 0
                         ? filteredResults.length
-                        : filteredResults < 1 && query != ""
+                        : filteredResults < 1 && query !== ""
                           ? 0
-                          : staffInformation.length
+                          : staffInformation ? staffInformation.length : 0
                       : menu.id === 2
-                        ? filterRecordsByKeyAndValue(
+                        ? filterStaffRecordsByRoleName(
                           staffInformation,
-                          "designation",
-                          "Manager"
+                          "Manager" || "MD"
                         ).length
-                        : filterRecordsByKeyAndValue(
+                        : filterStaffRecordsByRoleName(
                           staffInformation,
-                          "designation",
                           "Officer"
                         ).length}
+
                   </span>
                 </div>
               )
@@ -303,12 +321,12 @@ export default function StaffTable({ staticInformation, staffInformation }) {
               <div
                 key={column.id}
                 className={`flex items-center gap-1 w-1/12 text-color-text-two text-[10px] font-lexend
-            ${column.id === 1 && "w-[12%]"}
-            ${column.id === 2 && "w-40"}
-            ${[3, 4].includes(column.id) && "w-2/12"}
-            ${column.id === 4 && "justify-center"}
-            ${[5, 6].includes(column.id) && "w-1/12 justify-center"}
-            `}
+                ${column.id === 1 && "w-[12%]"}
+                ${column.id === 2 && "w-40"}
+                ${[3, 4].includes(column.id) && "w-2/12"}
+                ${column.id === 4 && "justify-center"}
+                ${[5, 6].includes(column.id) && "w-1/12 justify-center"}
+                `}
               >
                 <GoDotFill />
                 <span className="flex items-center justify-center gap-1">

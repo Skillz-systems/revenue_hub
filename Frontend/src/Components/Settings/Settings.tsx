@@ -1,9 +1,10 @@
 import React from "react";
-import { StaffTable, useAppData, Card, CardData } from "../Index";
+import { StaffTable, useAppData, Card, CardData, userData } from "../Index";
 
 export default function Settings() {
   const cardData = CardData();
-  const { staticInformation, staffInformation } = useAppData();
+  const { staticInformation } = useAppData();
+  const { staffInformation } = userData()
 
   return (
     <div className="flex-col space-y-8">
@@ -34,10 +35,14 @@ export default function Settings() {
         ))}
       </div>
       <hr className="border-0.5 mb-8 border-custom-grey-100" />
-      <StaffTable
-        staticInformation={staticInformation}
-        staffInformation={staffInformation}
-      />
+      {staffInformation ? (
+        <StaffTable
+          staticInformation={staticInformation}
+          staffInformation={staffInformation}
+        />
+      ) : (
+        <div>Loading...</div>
+      )}
     </div>
   );
 }

@@ -1,5 +1,7 @@
-import React, { useState, useEffect, ChangeEvent, FormEvent } from "react";
+import React, { useState, ChangeEvent, FormEvent } from "react";
 import { data } from "./staffInputData";
+import axios from "axios";
+import Cookies from "js-cookie";
 
 interface FieldData {
   id: number;
@@ -24,6 +26,7 @@ const AddNewStaffModal: React.FC<AddNewStaffModalProps> = ({
   propertyModalTransition,
 }) => {
   const [formData, setFormData] = useState<FormData>({});
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const handleChange = (event: ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = event.target;
@@ -33,12 +36,27 @@ const AddNewStaffModal: React.FC<AddNewStaffModalProps> = ({
     }));
   };
 
-  const handleFormSubmit = (event: FormEvent<HTMLFormElement>) => {
+  // Function to map staff designation to role ID
+  const mapDesignationToRoleId = (designation: string): number | null => {
+    switch (designation) {
+      case "Manager":
+        return 1;
+      case "Admin":
+        return 2;
+      case "Enforcer":
+        return 3;
+      case "Officer":
+        return 4;
+      default:
+        return null;
+    }
+  };
+
+  const handleFormSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
     // Check if all required fields are filled
     const requiredFields = data.filter((field) => field.required);
-
     const emptyFields = requiredFields.filter(
       (field) => !formData[field.inputName]
     );
@@ -46,14 +64,61 @@ const AddNewStaffModal: React.FC<AddNewStaffModalProps> = ({
     if (emptyFields.length > 0) {
       // Alert if any required fields are empty
       alert("Please fill in all required fields.");
-
-
     } else {
-      console.log("FormData", formData);
-      alert("Form submitted successfully!");
+      setIsLoading(true)
+      try {
+        // Get selected staff designation and map it to role ID
+        const selectedDesignation = formData.staffDesignation;
+        const selectedRoleId = mapDesignationToRoleId(selectedDesignation);
+
+        if (selectedRoleId === null) {
+          throw new Error("Invalid staff designation");
+        }
+
+        // Prepare the request data
+        const requestData = {
+          name: `${formData.staffFirstName} ${formData.staffMiddleName} ${formData.staffLastName}`,
+          email: formData.staffEmail,
+          phone: formData.staffPhoneNumber,
+          zone: formData.staffZone,
+          role_id: selectedRoleId,
+        };
+
+        console.log("requestData", requestData);
+
+        // Get the bearer token from cookies
+        const token = Cookies.get("userToken");
+
+        // Make the POST request
+        const response = await axios.post(
+          "https://api.revenuehub.skillzserver.com/api/staff",
+          requestData,
+          {
+            headers: {
+              Authorization: `Token ${token}`,
+            },
+          }
+        );
+
+        if (response.status === 200) {
+          console.log("Success:", response.data);
+          alert("Form submitted successfully!");
+        } else {
+          console.error("Unexpected status code:", response.status);
+          alert("Unexpected status code. Please try again.");
+        }
+      } catch (error) {
+        if (error.response && error.response.status === 401) {
+          console.error("Unauthorized:", error.response.data);
+          alert("Unauthorized. Please login again.");
+        } else {
+          console.error("Error submitting form:", error);
+          alert("An error occurred while submitting the form.");
+        }
+      }
+      setIsLoading(false)
     }
   };
-
 
   return (
     <form
@@ -63,8 +128,8 @@ const AddNewStaffModal: React.FC<AddNewStaffModalProps> = ({
         }`}
       style={{ height: "95vh" }}
       onSubmit={handleFormSubmit}
-      method="post"
-      autoComplete="off"
+    // method="post"
+    // autoComplete="off"
     >
       <img
         src={"/lightCheckeredBackgroundPattern.png"}
@@ -93,7 +158,7 @@ const AddNewStaffModal: React.FC<AddNewStaffModalProps> = ({
               title="Save Changes"
               type="submit"
             >
-              Save Changes
+              {isLoading ? "Submitting..." : "Save Changes"}
             </button>
           </div>
         </div>
