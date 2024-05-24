@@ -10,7 +10,7 @@ use Illuminate\Http\Resources\Json\JsonResource;
  *
  *
  * @OA\Schema(
- *     schema="StorePropertyResource",
+ *     schema="PropertyResource",
  *     type="object",
  *     title="Store Property Resource",
  *     description="Store Property Resource",
@@ -36,7 +36,7 @@ use Illuminate\Http\Resources\Json\JsonResource;
  *     }
  * )
  */
-class StorePropertyResource extends JsonResource
+class PropertyResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -45,10 +45,9 @@ class StorePropertyResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
+        $context = $this->additional['context'] ?? 'default';
         return [
             'id' => $this->id,
-            'status' => "success",
-            'message' => "Property added successfully",
             'pid' => $this->pid,
             'occupant' => $this->prop_addr,
             'prop_addr' => $this->prop_addr,
@@ -60,14 +59,16 @@ class StorePropertyResource extends JsonResource
             'rating_dist' => $this->rating_dist,
             'annual_value' => $this->annual_value,
             'rate_payable' => $this->rate_payable,
-            //'arrears' => $this->arrears,
-            //'penalty' => $this->penalty,
             'grand_total' => $this->grand_total,
             'category' => $this->category,
             'group' => $this->group,
             'active' => $this->active,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
+            $this->mergeWhen($context == 'default', [
+                'demand_notice' => DemandNoticeResource::collection($this->demandNotices),
+            ]),
+
         ];
     }
 }
