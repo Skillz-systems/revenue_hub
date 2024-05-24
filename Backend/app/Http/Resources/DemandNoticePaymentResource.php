@@ -5,9 +5,11 @@ namespace App\Http\Resources;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
+
+
 /**
  * @OA\Schema(
- *     title="PaymentResource",
+ *     title="DemandNoticePaymentResource",
  *     description="The payment resource",
  *     @OA\Property(
  *         property="tx_ref",
@@ -20,12 +22,6 @@ use Illuminate\Http\Resources\Json\JsonResource;
  *         description="The Flutterwave reference"
  *     ),
  * 
- *     @OA\Property(
- *         property="demand_notice",
- *         
- *         ref="#/components/schemas/DemandNoticeResource",
- *         description="The demand notice resource",
- *     ),
  *     @OA\Property(
  *         property="actual_amount",
  *         type="number",
@@ -53,11 +49,15 @@ use Illuminate\Http\Resources\Json\JsonResource;
  *     )
  * )
  */
-class PaymentResource extends JsonResource
+class DemandNoticePaymentResource extends JsonResource
 {
+
+
+
     /**
      * Transform the resource into an array.
      *
+     * @param Request $request
      * @return array<string, mixed>
      */
     public function toArray(Request $request): array
@@ -65,7 +65,6 @@ class PaymentResource extends JsonResource
         return [
             "tx_ref" => $this->tx_ref,
             "pin" => $this->flw_ref,
-            "demand_notice" => new DemandNoticeResource($this->demandNotice),
             "actual_amount" => $this->actual_amount,
             "charged_amount" => $this->charged_amount,
             "app_fee" => $this->app_fee,

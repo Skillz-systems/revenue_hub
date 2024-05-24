@@ -1158,108 +1158,40 @@
                 }
             }
         },
-        "/api/property": {
+        "/api/properties": {
             "get": {
                 "tags": [
                     "Property"
                 ],
                 "summary": "Get all properties",
-                "description": "Show list of all properties",
-                "operationId": "getProperties",
+                "operationId": "ae50890d9da51a5cfe01cd2151d4077a",
                 "responses": {
                     "200": {
-                        "description": "success",
+                        "description": "Successful operation",
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "properties": {
-                                        "data": {
-                                            "type": "array",
-                                            "items": {
-                                                "properties": {
-                                                    "pid": {
-                                                        "type": "integer",
-                                                        "example": "12354654"
-                                                    },
-                                                    "occupant": {
-                                                        "type": "string",
-                                                        "example": "21 akidewa house 4"
-                                                    },
-                                                    "prop_addr": {
-                                                        "type": "string",
-                                                        "example": "21 akidewa house 4"
-                                                    },
-                                                    "street_name": {
-                                                        "type": "string",
-                                                        "example": "4553532"
-                                                    },
-                                                    "asset_no": {
-                                                        "type": "string",
-                                                        "example": "566664565646"
-                                                    },
-                                                    "cadastral_zone": {
-                                                        "type": "string",
-                                                        "example": "2"
-                                                    },
-                                                    "prop_type": {
-                                                        "type": "string",
-                                                        "example": "residential"
-                                                    },
-                                                    "prop_use": {
-                                                        "type": "string",
-                                                        "example": "school"
-                                                    },
-                                                    "rating_dist": {
-                                                        "type": "string",
-                                                        "example": "oko"
-                                                    },
-                                                    "annual_value": {
-                                                        "type": "string",
-                                                        "example": "233165498"
-                                                    },
-                                                    "rate_payable": {
-                                                        "type": "string",
-                                                        "example": "89789"
-                                                    },
-                                                    "grand_total": {
-                                                        "type": "string",
-                                                        "example": "56456"
-                                                    },
-                                                    "category": {
-                                                        "type": "string",
-                                                        "example": "school"
-                                                    },
-                                                    "group": {
-                                                        "type": "string",
-                                                        "example": "commercial"
-                                                    },
-                                                    "active": {
-                                                        "type": "string",
-                                                        "example": "active"
-                                                    }
-                                                },
-                                                "type": "object"
-                                            }
-                                        }
-                                    },
-                                    "type": "object"
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/ShowPropertyResource"
+                                    }
                                 }
                             }
                         }
                     },
                     "404": {
-                        "description": "Not found",
+                        "description": "No properties found",
                         "content": {
                             "application/json": {
                                 "schema": {
                                     "properties": {
                                         "status": {
-                                            "type": "string",
-                                            "example": "error"
+                                            "description": "Status",
+                                            "type": "string"
                                         },
                                         "message": {
-                                            "type": "string",
-                                            "example": "No property found"
+                                            "description": "Message",
+                                            "type": "string"
                                         }
                                     },
                                     "type": "object"
@@ -1267,13 +1199,10 @@
                             }
                         }
                     }
-                },
-                "security": [
-                    {
-                        "api_key": []
-                    }
-                ]
-            },
+                }
+            }
+        },
+        "/api/property": {
             "post": {
                 "tags": [
                     "Property"
@@ -2209,8 +2138,123 @@
     },
     "components": {
         "schemas": {
+            "DemandNoticePaymentResource": {
+                "title": "DemandNoticePaymentResource",
+                "description": "The payment resource",
+                "properties": {
+                    "tx_ref": {
+                        "description": "The transaction reference",
+                        "type": "string"
+                    },
+                    "pin": {
+                        "description": "The Flutterwave reference",
+                        "type": "string"
+                    },
+                    "actual_amount": {
+                        "description": "The actual amount",
+                        "type": "number"
+                    },
+                    "charged_amount": {
+                        "description": "The charged amount",
+                        "type": "number"
+                    },
+                    "app_fee": {
+                        "description": "The application fee",
+                        "type": "number"
+                    },
+                    "merchant_fee": {
+                        "description": "The merchant fee",
+                        "type": "number"
+                    },
+                    "status": {
+                        "description": "The payment status",
+                        "type": "string"
+                    }
+                },
+                "type": "object"
+            },
             "DemandNoticeResource": {
                 "title": "DemandNoticeResource",
+                "description": "Resource representing a demand notice",
+                "properties": {
+                    "id": {
+                        "description": "The ID of the demand notice",
+                        "type": "integer"
+                    },
+                    "payments": {
+                        "description": "all the payments associated with the demand notice",
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/DemandNoticePaymentResource"
+                        }
+                    },
+                    "amount": {
+                        "description": "The amount of the demand notice",
+                        "type": "string"
+                    },
+                    "arrears_amount": {
+                        "description": "The arrears amount of the demand notice",
+                        "type": "string"
+                    },
+                    "penalty": {
+                        "description": "The penalty of the demand notice",
+                        "type": "string"
+                    },
+                    "status": {
+                        "description": "The status of the demand notice",
+                        "type": "integer"
+                    },
+                    "property": {
+                        "$ref": "#/components/schemas/ShowPropertyResource"
+                    },
+                    "date_created": {
+                        "description": "The date when the demand notice was created",
+                        "type": "string",
+                        "format": "date-time"
+                    }
+                },
+                "type": "object"
+            },
+            "PaymentResource": {
+                "title": "PaymentResource",
+                "description": "The payment resource",
+                "properties": {
+                    "tx_ref": {
+                        "description": "The transaction reference",
+                        "type": "string"
+                    },
+                    "pin": {
+                        "description": "The Flutterwave reference",
+                        "type": "string"
+                    },
+                    "demand_notice": {
+                        "$ref": "#/components/schemas/DemandNoticeResource"
+                    },
+                    "actual_amount": {
+                        "description": "The actual amount",
+                        "type": "number"
+                    },
+                    "charged_amount": {
+                        "description": "The charged amount",
+                        "type": "number"
+                    },
+                    "app_fee": {
+                        "description": "The application fee",
+                        "type": "number"
+                    },
+                    "merchant_fee": {
+                        "description": "The merchant fee",
+                        "type": "number"
+                    },
+                    "status": {
+                        "description": "The payment status",
+                        "type": "string"
+                    }
+                },
+                "type": "object"
+            },
+            "ShowPropertyResource": {
+                "title": "PropertyDemandNoticeResource",
                 "description": "Resource representing a demand notice",
                 "properties": {
                     "id": {
@@ -2243,77 +2287,6 @@
                     }
                 },
                 "type": "object"
-            },
-            "PaymentResource": {
-                "title": "PaymentResource",
-                "description": "Payment resource",
-                "properties": {
-                    "tx_ref": {
-                        "description": "Transaction reference",
-                        "type": "string"
-                    },
-                    "pin": {
-                        "description": "Flutterwave reference",
-                        "type": "string"
-                    },
-                    "demand_notice": {
-                        "description": "Demand notice resource",
-                        "properties": {
-                            "": {
-                                "$ref": "#/components/schemas/DemandNoticeResource"
-                            }
-                        },
-                        "type": "object"
-                    },
-                    "actual_amount": {
-                        "description": "Actual amount",
-                        "type": "number",
-                        "format": "float"
-                    },
-                    "charged_amount": {
-                        "description": "Charged amount",
-                        "type": "number",
-                        "format": "float"
-                    },
-                    "app_fee": {
-                        "description": "Application fee",
-                        "type": "number",
-                        "format": "float"
-                    },
-                    "merchant_fee": {
-                        "description": "Merchant fee",
-                        "type": "number",
-                        "format": "float"
-                    },
-                    "status": {
-                        "description": "Payment status",
-                        "type": "string"
-                    }
-                },
-                "type": "object"
-            },
-            "ShowPropertyResource": {
-                "title": "Show Property Resource",
-                "description": "Show Property Resource",
-                "type": "object",
-                "example": {
-                    "pid": 3176683,
-                    "prop_addr": "540 Kaci Extensions Suite 724 Francoborough, MS 22188",
-                    "street_name": "46329 McDermott Courts Apt. 058",
-                    "asset_no": "AMC/B14/TR/9",
-                    "cadastral_zone": "30769-6233",
-                    "prop_type": "SPLITTED",
-                    "prop_use": "COMMERCIAL",
-                    "rating_dist": "APO",
-                    "annual_value": 200000,
-                    "rate_payable": 45000,
-                    "arrears": 25000,
-                    "penalty": 45000,
-                    "grand_total": 4500000,
-                    "category": "RESIDENTIAL",
-                    "group": "AMAC2",
-                    "active": "ACTIVE"
-                }
             },
             "ShowUserResource": {
                 "title": "Show Staff Resource",
