@@ -15,7 +15,6 @@ class AuthService
             return false;
         }
 
-
         $user = User::where('email', $request->email)->first();
         return $user;
     }

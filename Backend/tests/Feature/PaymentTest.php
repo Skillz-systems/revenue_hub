@@ -82,6 +82,7 @@ class PaymentTest extends TestCase
 
         Payment::factory(50)->create(['demand_notice_id' => $demandNotice->id]);
         $response = $this->actingAsTestUser()->getJson("/api/payment/view/1");
+
         $response->assertStatus(200)->assertJsonStructure([
             "status",
             'data' => [

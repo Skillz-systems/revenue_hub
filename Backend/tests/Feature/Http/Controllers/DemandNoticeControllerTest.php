@@ -19,7 +19,7 @@ class DemandNoticeControllerTest extends TestCase
         $demandNotice = DemandNotice::factory()->create([
             "property_id" => $property->id
         ]);
-        $response = $this->actingAsTestUser()->getJson("/api/demand-notice");
+        $response = $this->actingAsTestUser()->getJson("api/demand-notice");
         $response->assertStatus(200)->assertJsonStructure([
             "status",
             'data' => [
@@ -65,6 +65,7 @@ class DemandNoticeControllerTest extends TestCase
             ]
         ]);
     }
+
     public function test_to_see_if_a_new_demand_notice_can_be_created(): void
     {
         $property = Property::factory()->create();
