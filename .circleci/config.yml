@@ -114,7 +114,7 @@ jobs:
       - run:
           name: find and replace in document
           command: |
-            sed -i -e 's:/public/index.php:/index.php:g' Backend/public/index.php && sed -i -e 's:/../vendor/autoload.php:/vendor/autoload.php:g' Backend/public/index.php && sed -i -e 's:DB_DATABASE=forge:DB_DATABASE=skillz_revenuehub:g' Backend/.env && sed -i -e 's:DB_USERNAME=forge:DB_USERNAME=skillz_revenuehub:g' Backend/.env  && sed -i -e 's:/../bootstrap/app.php:/bootstrap/app.php:g' Backend/public/index.php && sed -i -e 's:DB_PASSWORD=forge:DB_PASSWORD="Ubuxa##99":g' Backend/.env
+            sed -i -e 's:/public/index.php:/index.php:g' Backend/public/index.php && sed -i -e 's:/../vendor/autoload.php:/vendor/autoload.php:g' Backend/public/index.php && sed -i -e 's:DB_DATABASE=forge:DB_DATABASE=skillz_revenuehub:g' Backend/.env && sed -i -e 's:DB_USERNAME=forge:DB_USERNAME=skillz_revenuehub:g' Backend/.env  && sed -i -e 's:/../bootstrap/app.php:/bootstrap/app.php:g' Backend/public/index.php && sed -i -e 's:DB_PASSWORD=forge:DB_PASSWORD="Ubuxa##99":g' Backend/.env && sed -i -e 's:APP_URL=http://localhost:APP_URL=${APP_URL}:g' Backend/.env
 
       
       - run:
