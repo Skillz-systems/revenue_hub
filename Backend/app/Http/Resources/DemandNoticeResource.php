@@ -44,7 +44,7 @@ use Illuminate\Http\Resources\Json\JsonResource;
  *     ),
  *     @OA\Property(
  *         property="property",
- *         ref="#/components/schemas/ShowPropertyResource"
+ *         ref="#/components/schemas/PropertyResource"
  *     ),
  *     @OA\Property(
  *         property="date_created",
@@ -70,7 +70,7 @@ class DemandNoticeResource extends JsonResource
             "arrears_amount" => $this->arrears_amount,
             "penalty" => $this->penalty,
             "status" => $this->status,
-            "property" => new ShowPropertyResource($this->property),
+            "property" => new PropertyResource($this->property),
             "payments" => DemandNoticePaymentResource::collection($this->payments),
             "date_created" => $this->created_at,
         ];

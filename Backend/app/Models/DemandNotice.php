@@ -9,6 +9,7 @@ class DemandNotice extends Model
 {
     use HasFactory;
     public const PENDING = 0;
+    public const PAID = 1;
     protected $fillable = [
         "property_id",
         "amount",
