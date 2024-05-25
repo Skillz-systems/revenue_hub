@@ -174,7 +174,7 @@ class PropertyController extends Controller
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'pid' => ['required', 'integer', 'max:255', 'unique:properties'],
+            'pid' => ['required', 'integer', 'unique:properties'],
             'occupant' => ['required', 'string', 'max:255'],
             'prop_addr' => ['required', 'string', 'max:255'],
             'street_name' => ['required', 'string', 'max:255'],
@@ -183,12 +183,12 @@ class PropertyController extends Controller
             'prop_type' => ['required', 'string', 'max:255'],
             'prop_use' => ['required', 'string', 'max:255'],
             'rating_dist' => ['required', 'string', 'max:255'],
-            'annual_value' => ['required', 'integer', 'max:255'],
-            'rate_payable' => ['required', 'integer', 'max:255'],
+            'annual_value' => ['required', 'integer'],
+            'rate_payable' => ['required', 'integer'],
             //'arrears' => ['required', 'integer', 'max:255'],
             //'penalty' => ['required', 'integer', 'max:255'],
-            'grand_total' => ['required', 'integer', 'max:255'],
-            'category' => ['required', 'string', 'max:255'],
+            'grand_total' => ['required', 'integer'],
+            'category' => ['required', 'string'],
             'group' => ['required', 'string', 'max:255'],
             'active' => ['required', 'string', 'max:255'],
         ]);
