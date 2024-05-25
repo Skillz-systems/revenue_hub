@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { data } from "./inputFieldData";
+import axios from "axios";
+import Cookies from "js-cookie";
 
 interface AddPropertyProps {
   hideAddPropertyModal: () => void;
@@ -13,7 +15,8 @@ const AddProperty: React.FC<AddPropertyProps> = ({
   const [activateState, setActiveState] = useState<number>(1);
   const [errorState, setErrorState] = useState<number | undefined>();
   const [errorField, setErrorField] = useState<string | undefined>(undefined);
-  const [formData, setFormData] = useState<Record<string, string | undefined>>({});
+  const [formData, setFormData] = useState<any>({});
+  const [isLoading, setIsLoading] = useState<boolean>(false)
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = event.target;
@@ -23,7 +26,7 @@ const AddProperty: React.FC<AddPropertyProps> = ({
     }));
   };
 
-  const handleFormSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+  const handleFormSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
     // Check if all required fields are filled
@@ -49,8 +52,60 @@ const AddProperty: React.FC<AddPropertyProps> = ({
       setErrorState(sectionWithError?.id);
       setErrorField(firstEmptyField.inputName);
     } else {
-      console.log("FormData", formData);
-      alert("Form submitted successfully!");
+      setIsLoading(true)
+      try {
+        const requestData = {
+          pid: formData.propertyIdentificationNumber,
+          prop_addr: formData.propertyAddress,
+          street_name: formData.streetName,
+          asset_no: formData.assetNumber,
+          cadastral_zone: formData.cadestralZone,
+          prop_type: formData.propertyType,
+          prop_use: formData.propertyUse,
+          rating_dist: formData.ratingDistrict,
+          annual_value: formData.annualValue,
+          rate_payable: formData.ratePayable,
+          grand_total: formData.grandTotal,
+          category: formData.category,
+          group: formData.group,
+          active: "Active",
+          occupant: `${formData.occupantsFirstName} ${formData.occupantsLastName}`,
+        }
+
+        console.log("requestData", requestData);
+
+        // Get the bearer token from cookies
+        const token = Cookies.get("userToken");
+
+        // Make the POST request
+        const response = await axios.post(
+          "https://api.revenuehub.skillzserver.com/api/property",
+          requestData,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+
+        if (response.status === 200 || 201) {
+          console.log("Success:", response.data);
+          alert("Form submitted successfully!");
+        } else {
+          console.error("Unexpected status code:", response.status);
+          alert("Unexpected status code. Please try again.");
+        }
+
+      } catch (error) {
+        if (error.response && error.response.status === 401) {
+          console.error("Unauthorized:", error.response.data);
+          alert("Unauthorized. Please login again.");
+        } else {
+          console.error("Error submitting form:", error);
+          alert("An error occurred while submitting the form.");
+        }
+      }
+      setIsLoading(false)
     }
   };
 
@@ -70,7 +125,7 @@ const AddProperty: React.FC<AddPropertyProps> = ({
       style={{ height: "95vh" }}
       onSubmit={handleFormSubmit}
       method="post"
-      autoComplete="off"
+    // autoComplete="off"
     >
       <img
         src={"/lightCheckeredBackgroundPattern.png"}
@@ -99,7 +154,7 @@ const AddProperty: React.FC<AddPropertyProps> = ({
               title="Save Changes"
               type="submit"
             >
-              Save Changes
+              {isLoading ? "Submitting..." : "Save Changes"}
             </button>
           </div>
         </div>
