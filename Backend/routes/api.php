@@ -29,13 +29,13 @@ Route::post('auth/store-password/', [AuthController::class, 'storePassword']);
 
 Route::middleware('auth:sanctum')->group(function () {
 
-    Route::get('/demand-notice', [DemandNoticeController::class, 'index']);
+    Route::post('/demand-notice', [DemandNoticeController::class, 'index']);
     Route::post('/demand-notice/create', [DemandNoticeController::class, 'store']);
     Route::get('/demand-notice/view/{demandNotice}', [DemandNoticeController::class, 'show']);
     Route::put('/demand-notice/update/{demandNotice}', [DemandNoticeController::class, 'update']);
     Route::delete('/demand-notice/delete/{demandNotice}', [DemandNoticeController::class, 'destroy']);
 
-    Route::get('/payment', [PaymentController::class, 'index']);
+    Route::post('/payment', [PaymentController::class, 'index']);
     Route::get('/payment/view/{id}', [PaymentController::class, 'view']);
     Route::apiResource('/staff', UserController::class);
     Route::apiResource('/property', PropertyController::class);

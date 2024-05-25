@@ -23,6 +23,6 @@ class Payment extends Model
 
     public function demandNotice()
     {
-        return $this->belongsTo(DemandNotice::class, "id", "demand_notice_id");
+        return $this->belongsTo(DemandNotice::class, "demand_notice_id", "id");
     }
 }

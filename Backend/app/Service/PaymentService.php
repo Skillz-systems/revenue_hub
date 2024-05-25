@@ -11,9 +11,9 @@ use Flutterwave\Service\VirtualAccount;
 
 class PaymentService
 {
-    public function allPayment()
+    public function allPayment($date)
     {
-        return $this->model()->paginate(10);
+        return $this->model()->whereYear('created_at', $date)->paginate(10);
     }
     public function viewPayment($id)
     {

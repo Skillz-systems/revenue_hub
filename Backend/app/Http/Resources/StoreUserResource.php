@@ -32,10 +32,7 @@ class StoreUserResource extends JsonResource
             'email' => $this->email,
             'phone' => $this->phone,
             'zone' => $this->zone,
-            'role' => [
-                'id' => $this->role->id,
-                'name' => $this->role->name,
-            ],
+            'role' => $this->role,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at
         ];

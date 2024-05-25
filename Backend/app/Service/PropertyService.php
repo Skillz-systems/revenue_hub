@@ -3,6 +3,7 @@
 namespace App\Service;
 
 use App\Models\Property;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 
 class PropertyService
 {
@@ -52,7 +53,12 @@ class PropertyService
 
     public function getPropertyById($id)
     {
-        return Property::findOrFail($id);
+        try {
+            return Property::findOrFail($id);;
+        } catch (ModelNotFoundException) {
+
+            return false;
+        }
     }
 
     public function getTotalNumberOfProperties()

@@ -162,8 +162,33 @@ class AuthController extends Controller
 
     public function storePassword(Request $request)
     {
-        $savePassword = (new StaffService)->strorePassword($request);
 
-        return $savePassword;
+        $validator = Validator::make($request->all(), [
+            'password' => 'required|string|confirmed|min:8',
+            'user' => 'required',
+            'token' => 'required'
+        ]);
+
+
+        if ($validator->fails()) {
+            return response()->json([
+                'status' => 'error',
+                'message' => "All fields are required ",
+                "data" => $validator->errors()
+            ], 403);
+        }
+
+        $savePassword = (new StaffService)->storePassword($request);
+
+        if ($savePassword) {
+            return response()->json([
+                'status' => 'success',
+                'message' => 'Password Created successful'
+            ], 200);
+        }
+        return response()->json([
+            'status' => 'error',
+            'message' => 'Something went wrong'
+        ],  400);
     }
 }
