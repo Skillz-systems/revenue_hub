@@ -1,3 +1,5 @@
+import { staticInformation } from "../../Data/appData"
+
 interface Option {
   id: number;
   name: string;
@@ -5,7 +7,6 @@ interface Option {
 
 interface FieldData {
   id: number;
-  parentKey: string;
   inputName: string;
   placeholder: string;
   inputType: string;
@@ -46,60 +47,56 @@ const data: Data = {
       fieldData: [
         {
           id: 1,
-          parentKey: "1",
-          inputName: "cadestralZone",
-          placeholder: "Cadestral Zone",
-          inputType: "select",
-          options: [
-            { id: 1, name: "Abaji" },
-            { id: 2, name: "Abuja Municipal Area Council (AMAC)" },
-            { id: 3, name: "Bwari" },
-            { id: 4, name: "Gwagwalada" },
-            { id: 5, name: "Kuje" },
-            { id: 6, name: "Kwali" },
-          ],
+          inputName: "propertyIdentificationNumber",
+          placeholder: "Property Identification Number",
+          inputType: "text",
           required: true,
         },
         {
           id: 2,
-          parentKey: "1",
-          inputName: "assetNumber",
-          placeholder: "Asset Number",
-          inputType: "text",
-          required: false,
+          inputName: "cadestralZone",
+          placeholder: "Cadestral Zone",
+          inputType: "select",
+          options: staticInformation.cadestralZones.map((zone, index) => ({
+            id: index + 1,
+            name: zone
+          })),
+          required: true,
         },
         {
           id: 3,
-          parentKey: "1",
-          inputName: "streetName",
-          placeholder: "Street Name",
+          inputName: "assetNumber",
+          placeholder: "Asset Number",
           inputType: "text",
-          required: false,
+          required: true,
         },
         {
           id: 4,
-          parentKey: "1",
-          inputName: "propertyAddress",
-          placeholder: "Property Address",
+          inputName: "streetName",
+          placeholder: "Street Name",
           inputType: "text",
-          required: false,
+          required: true,
         },
         {
           id: 5,
-          parentKey: "1",
-          inputName: "ratingDistrict",
-          placeholder: "Rating District",
-          inputType: "select",
-          options: [
-            { id: 1, name: "Rating One" },
-            { id: 2, name: "Rating Two" },
-            { id: 3, name: "Rating Three" },
-          ],
-          required: false,
+          inputName: "propertyAddress",
+          placeholder: "Property Address",
+          inputType: "text",
+          required: true,
         },
         {
           id: 6,
-          parentKey: "1",
+          inputName: "ratingDistrict",
+          placeholder: "Rating District",
+          inputType: "select",
+          options: staticInformation.cadestralZones.map((zone, index) => ({
+            id: index + 1,
+            name: zone
+          })),
+          required: true,
+        },
+        {
+          id: 7,
           inputName: "category",
           placeholder: "Category",
           inputType: "select",
@@ -108,11 +105,10 @@ const data: Data = {
             { id: 2, name: "Category Two" },
             { id: 3, name: "Category Three" },
           ],
-          required: false,
+          required: true,
         },
         {
-          id: 7,
-          parentKey: "1",
+          id: 8,
           inputName: "propertyType",
           placeholder: "Property Type",
           inputType: "select",
@@ -121,47 +117,45 @@ const data: Data = {
             { id: 2, name: "Property Type Two" },
             { id: 3, name: "Property Type Three" },
           ],
-          required: false,
+          required: true,
         },
         {
-          id: 8,
-          parentKey: "1",
+          id: 9,
           inputName: "group",
           placeholder: "Group",
           inputType: "select",
           options: [
-            { id: 1, name: "Group One" },
-            { id: 2, name: "Group Two" },
-            { id: 3, name: "Group Three" },
-          ],
-          required: false,
-        },
-        {
-          id: 9,
-          parentKey: "1",
-          inputName: "propertyUse",
-          placeholder: "Property Use",
-          inputType: "select",
-          options: [
-            { id: 1, name: "Property Use One" },
-            { id: 2, name: "Property Use Two" },
-            { id: 3, name: "Property Use Three" },
+            { id: 1, name: "AMAC 1" },
+            { id: 2, name: "AMAC 2" },
+            { id: 3, name: "AMAC 3" },
           ],
           required: false,
         },
         {
           id: 10,
-          parentKey: "1",
-          inputName: "occupationStatus",
-          placeholder: "Occupation Status",
+          inputName: "propertyUse",
+          placeholder: "Property Use",
           inputType: "select",
           options: [
-            { id: 1, name: "Occupation Status One" },
-            { id: 2, name: "Occupation Status Two" },
-            { id: 3, name: "Occupation Status Three" },
+            { id: 1, name: "Residential" },
+            { id: 2, name: "Commercial" },
+            { id: 3, name: "School" },
           ],
-          required: false,
+          required: true,
         },
+        // {
+        //   id: 10,
+        //   parentKey: "1",
+        //   inputName: "occupationStatus",
+        //   placeholder: "Occupation Status",
+        //   inputType: "select",
+        //   options: [
+        //     { id: 1, name: "Occupation Status One" },
+        //     { id: 2, name: "Occupation Status Two" },
+        //     { id: 3, name: "Occupation Status Three" },
+        //   ],
+        //   required: false,
+        // },
       ],
     },
     {
@@ -170,7 +164,6 @@ const data: Data = {
       fieldData: [
         {
           id: 1,
-          parentKey: "2",
           inputName: "annualValue",
           placeholder: "Annual Value",
           inputType: "text",
@@ -178,15 +171,13 @@ const data: Data = {
         },
         {
           id: 2,
-          parentKey: "2",
           inputName: "ratePayable",
           placeholder: "Rate Payable",
           inputType: "text",
-          required: false,
+          required: true,
         },
         {
           id: 3,
-          parentKey: "2",
           inputName: "arrears",
           placeholder: "Arrears",
           inputType: "text",
@@ -194,7 +185,6 @@ const data: Data = {
         },
         {
           id: 4,
-          parentKey: "2",
           inputName: "penalty",
           placeholder: "Penalty",
           inputType: "text",
@@ -202,11 +192,10 @@ const data: Data = {
         },
         {
           id: 5,
-          parentKey: "2",
           inputName: "grandTotal",
           placeholder: "Grand Total",
           inputType: "text",
-          required: false,
+          required: true,
         },
       ],
     },
@@ -216,23 +205,20 @@ const data: Data = {
       fieldData: [
         {
           id: 1,
-          parentKey: "3",
           inputName: "occupantsFirstName",
           placeholder: "Occupants First Name",
           inputType: "text",
-          required: false,
+          required: true,
         },
         {
           id: 2,
-          parentKey: "3",
           inputName: "occupantsLastName",
           placeholder: "Occupants Last Name",
           inputType: "text",
-          required: false,
+          required: true,
         },
         {
           id: 3,
-          parentKey: "3",
           inputName: "occupantsPhoneNumber",
           placeholder: "Occupants Phone Number",
           inputType: "text",
@@ -240,19 +226,17 @@ const data: Data = {
         },
         {
           id: 4,
-          parentKey: "3",
           inputName: "occupantsEmail",
           placeholder: "Occupants Email",
           inputType: "email",
-          required: true,
+          required: false,
         },
         {
           id: 5,
-          parentKey: "3",
           inputName: "occupantsMaritalStatus",
           placeholder: "Occupants Marital Status",
           inputType: "text",
-          required: true,
+          required: false,
         },
       ],
     },
