@@ -36,7 +36,8 @@ class DemandNoticeTest extends TestCase
     public function test_to_see_if_all_demand_notice_can_be_fetched(): void
     {
         DemandNotice::factory()->create();
-        $getAllDemandNotice = (new DemandNoticeService())->allDemandNotice();
+        $currentYear = date("Y");
+        $getAllDemandNotice = (new DemandNoticeService())->allDemandNotice($currentYear);
         $this->assertEquals(1, count($getAllDemandNotice));
     }
 

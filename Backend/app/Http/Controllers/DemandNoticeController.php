@@ -100,10 +100,14 @@ class DemandNoticeController extends Controller
      *     security={{"bearerAuth":{}}}
      * )
      */
-    public function index()
+    public function index(Request $request)
     {
+        $defaultDate = date("Y");
+        if ($request->date_filter) {
+            $defaultDate = $request->date_filter;
+        }
         $service = $this->demandNoticeService;
-        $getPaginatedDemandNotice = $service->allDemandNotice();
+        $getPaginatedDemandNotice = $service->allDemandNotice($defaultDate);
         $demandNotice = DemandNoticeResource::collection($getPaginatedDemandNotice);
         $demandNotice->additional([
             'status' => 'success' // or any other status you want to append

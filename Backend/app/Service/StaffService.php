@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 use App\Http\Resources\StoreUserResource;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Facades\Validator;
 
 class StaffService
@@ -66,8 +67,14 @@ class StaffService
 
     public function viewStaff($user)
     {
-        return User::findOrFail($user->id);
+        try {
+            return  User::findOrFail($user);
+        } catch (ModelNotFoundException) {
+
+            return false;
+        }
     }
+
 
     public function viewAllStaff()
     {

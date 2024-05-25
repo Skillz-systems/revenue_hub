@@ -191,13 +191,13 @@ class UserController extends Controller
      *     ),
      * )
      */
-    public function show(User $staff)
+    public function show($staff)
     {
 
         if (Auth::user()->role_id == User::ROLE_ADMIN) {
-
-            if ($staff) {
-                return (new StoreUserResource($staff))->additional([
+            $specificStaff = $this->staffService->viewStaff($staff);
+            if ($specificStaff) {
+                return (new StoreUserResource($specificStaff))->additional([
                     "status" => "success",
                 ]);
             }
@@ -211,7 +211,7 @@ class UserController extends Controller
         return response()->json([
             "status" => "error",
             "message" => "You dont Have Permission",
-        ], 401);
+        ], 403);
     }
 
 
@@ -311,11 +311,11 @@ class UserController extends Controller
      *
      */
 
-    public function update(Request $request, User $staff)
+    public function update(Request $request, $staff)
     {
         $validator = Validator::make($request->all(), [
             'name' => ['sometimes', 'string', 'max:255'],
-            'email' => ['sometimes', 'string'],
+            'email' => ['sometimes', 'string', "email"],
             'phone' => ['sometimes', 'string', 'min:11'],
             'role_id' => ['sometimes', 'string', 'max:255'],
             'zone' => ['sometimes', 'string', 'max:255'],
@@ -334,7 +334,7 @@ class UserController extends Controller
             unset($request['role_id']);
             unset($request['zone']);
         }
-        if (Auth::user()->role_id === User::ROLE_ADMIN || Auth::user()->id === $staff->id) {
+        if (Auth::user()->role_id === User::ROLE_ADMIN || Auth::user()->id == $staff) {
             $update = (new StaffService)->updateStaff($request, $staff);
             if ($update) {
                 return response()->json([
@@ -343,6 +343,7 @@ class UserController extends Controller
                 ], 200);
             }
         }
+
 
         return response()->json([
             "status" => "error",
