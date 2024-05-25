@@ -20,6 +20,7 @@ const fetcher = async (url: string, token: any) => {
 const userData = () => {
     const [accountInformation, setAccountInformation] = useState<any>(null);
     const [staffInformation, setStaffInformation] = useState<any>(null);
+    const [allPropertyInformation, setAllPropertyInformation] = useState<any>(null);
 
     // Safely get and parse userData from cookies
     const userData = Cookies.get('userData');
@@ -49,7 +50,6 @@ const userData = () => {
 
     useEffect(() => {
         if (staff) {
-            console.log("USER DATA:", staff)
             setAccountInformation(staff.data);
         } if (allStaff) {
             setStaffInformation(allStaff.data)
@@ -86,9 +86,13 @@ const userData = () => {
         }
     };
 
+    const totalStaff = staffInformation?.length;
+
     return {
         accountInformation,
+        allPropertyInformation,
         staffInformation,
+        totalStaff,
         deleteStaffById,
     };
 };

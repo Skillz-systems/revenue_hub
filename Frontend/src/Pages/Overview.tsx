@@ -1,10 +1,8 @@
 import React from "react";
-import { TransactionsTable, useAppData, Card, CardData } from "../Index";
+import { Card, CardData } from "../Components/Index";
 
-const Transactions: React.FC = () => {
+const Overview: React.FC = () => {
   const cardData = CardData();
-  const { staticInformation, transactionInformation } = useAppData();
-
   return (
     <div className="flex-col space-y-8">
       <div className="grid grid-cols-2 gap-x-3 gap-y-3 md:grid-cols-3 md:gap-x-4 md:gap-y-8">
@@ -34,12 +32,8 @@ const Transactions: React.FC = () => {
         ))}
       </div>
       <hr className="border-0.5 mb-8 border-custom-grey-100" />
-      <TransactionsTable
-        staticInformation={staticInformation}
-        transactionInformation={transactionInformation}
-      />
     </div>
   );
-};
+}
 
-export default Transactions;
+export default Overview;

@@ -1,5 +1,5 @@
 import React from "react";
-import { StaffTable, useAppData, Card, CardData, userData } from "../Index";
+import { StaffTable, useAppData, Card, CardData, userData } from "../Components/Index";
 
 const Staff: React.FC = () => {
   const cardData = CardData();

@@ -1,3 +1,6 @@
+import axios from 'axios';
+import Cookies from 'js-cookie';
+
 export function formatNumberWithCommas(number: number | string): string {
   // Convert the number to a string
   const numStr = String(number);
@@ -63,3 +66,32 @@ export const mapDesignationToRoleId = (designation: string): number | null => {
       return null;
   }
 };
+
+
+export const fetcher = async (url: string, token: any) => {
+  try {
+    const response = await axios.get(url, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    return response.data;
+  } catch (error) {
+    throw new Error('Failed to fetch data');
+  }
+};
+
+export const useTokens = () => {
+  // Safely get and parse userData from cookies
+  const userData = Cookies.get('userData');
+  
+  try {
+    const parsedData = userData ? JSON.parse(userData) : null;
+    // Safely access token
+    return { token: parsedData?.token, userId: parsedData?.user?.id }
+  } catch (error) {
+    console.error('Error parsing userData cookie:', error);
+    return { token: undefined, userId: undefined }
+  }
+}

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Card, CardData } from "../Index";
+import { Card, CardData } from "../Components/Index";
 import {
   BarChart,
   Bar,
