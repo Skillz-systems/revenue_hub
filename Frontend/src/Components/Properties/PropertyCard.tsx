@@ -41,9 +41,9 @@ const PropertiesTable: React.FC<PropertiesTableProps> = ({
           <span
             className={`rounded-md px-2 py-0.5 font-light font-lexend text-color-text-black text-[10px] border-0.6 border-custom-grey-100
             ${
-              propertyUse === "Commercial"
+              propertyUse === "COMMERCIAL"
                 ? "bg-color-light-red"
-                : propertyUse === "Residential"
+                : propertyUse === "RESIDENTIAL"
                 ? "bg-color-light-yellow"
                 : "bg-custom-blue-200"
             }

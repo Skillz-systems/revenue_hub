@@ -1,14 +1,18 @@
 import React from "react";
-import { StaffTable, useAppData, Card, CardData } from "../Index";
+import {
+  DemandInvoiceTable,
+  Card,
+  CardData,
+  useAppData,
+} from "../Components/Index";
 
-
-const Staff: React.FC = () => {
+export const DemandNotice: React.FC = () => {
   const cardData = CardData();
-  const { staticInformation, staffInformation } = useAppData();
+  const { staticInformation, demandNoticeInformation } = useAppData();
 
   return (
     <div className="flex-col space-y-8">
-      <div className="grid grid-cols-2 gap-x-3 gap-y-3 md:grid-cols-3 md:gap-x-4 md:gap-y-8">
+     <div className="grid grid-cols-2 gap-x-3 gap-y-3 md:grid-cols-3 md:gap-x-4 md:gap-y-8">
         {cardData.map((card) => (
           <Card
             id={card.id}
@@ -35,12 +39,9 @@ const Staff: React.FC = () => {
         ))}
       </div>
       <hr className="border-0.5 mb-8 border-custom-grey-100" />
-      <StaffTable
-        staticInformation={staticInformation}
-        staffInformation={staffInformation}
-      />
+      <DemandInvoiceTable staticInformation={staticInformation} demandNoticeInformation={demandNoticeInformation} />
     </div>
   );
-};
+}
 
-export default Staff;
+export default DemandNotice;
