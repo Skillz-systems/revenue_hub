@@ -55,17 +55,17 @@ const AddProperty: React.FC<AddPropertyProps> = ({
       setIsLoading(true)
       try {
         const requestData = {
-          pid: parseInt(formData.propertyIdentificationNumber),
+          pid: formData.propertyIdentificationNumber,
           prop_addr: formData.propertyAddress,
           street_name: formData.streetName,
-          asset_no: parseInt(formData.assetNumber),
+          asset_no: formData.assetNumber,
           cadastral_zone: formData.cadestralZone,
           prop_type: formData.propertyType,
           prop_use: formData.propertyUse,
           rating_dist: formData.ratingDistrict,
-          annual_value: parseFloat(formData.annualValue),
-          rate_payable: parseFloat(formData.ratePayable),
-          grand_total: parseFloat(formData.grandTotal),
+          annual_value: formData.annualValue,
+          rate_payable: formData.ratePayable,
+          grand_total: formData.grandTotal,
           category: formData.category,
           group: formData.group,
           active: "Active",
@@ -88,7 +88,7 @@ const AddProperty: React.FC<AddPropertyProps> = ({
           }
         );
 
-        if (response.status === 200) {
+        if (response.status === 200 || 201) {
           console.log("Success:", response.data);
           alert("Form submitted successfully!");
         } else {
