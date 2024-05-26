@@ -45,6 +45,14 @@ class PropertyResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
+        $latestDemandNotice = $this->demandNotices()->latest()->first();
+        $demandNoticeStatus = "Ungenerated";
+        if (!empty($latestDemandNotice)) {
+            if (date('Y', strtotime($latestDemandNotice->created_at)) == date("Y")) {
+                $demandNoticeStatus = $latestDemandNotice->status == 1 ? "Paid" : "Unpaid";
+            }
+        }
+
         $context = $this->additional['context'] ?? 'default';
         return [
             'id' => $this->id,
@@ -68,6 +76,7 @@ class PropertyResource extends JsonResource
             $this->mergeWhen($context == 'default', [
                 'demand_notice' => DemandNoticeResource::collection($this->demandNotices),
             ]),
+            "demand_notice_status" => $demandNoticeStatus,
 
         ];
     }
