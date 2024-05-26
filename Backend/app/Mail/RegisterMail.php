@@ -10,6 +10,8 @@ use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
 
+use function Laravel\Prompts\password;
+
 class RegisterMail extends Mailable
 {
     use Queueable, SerializesModels;
@@ -25,7 +27,7 @@ class RegisterMail extends Mailable
         //
 
         $this->user = $user;
-        $this->url = config('app.url') . ':8000/auth/create-password/' . $this->user->id . '/' . $this->user->remember_token;
+        $this->url = env('APP_URL') . '/auth/create-password?' . $this->user->id . '/' . $this->user->remember_token;
     }
 
     /**

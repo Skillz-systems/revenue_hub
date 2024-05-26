@@ -9,77 +9,48 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 use App\Http\Resources\StoreUserResource;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Facades\Validator;
 
 class StaffService
 {
     public function RegisterStaff($request)
     {
-        // validate staff inputs
-        $request->validated($request->all());
-
-        // save the staff data
-        $user = User::create([
-            'name' => $request->name,
-            'email' => $request->email,
-            'phone' => $request->phone,
-            'zone' => $request->zone,
-            'role_id' => $request->role_id,
-            'remember_token' => Str::random(25),
-        ]);
-
+        $request->all()['remember_token'] = Str::random(60);
+        $user = User::create($request->all());
         return $user;
     }
 
     /**
      *@param mixed $request
      */
-    public function strorePassword($request)
+    public function storePassword($request)
     {
-        // validet the data
-        $request->validate(
-            [
-                'password' => 'required|string|confirmed|min:8'
-            ]
-        );
-
         // get the user using the id and remember)_token
-        $user = User::where('id', $request->query('user'))->where('remember_token', $request->query('token'))->first();
+        $user = User::where(['id' => $request->user, 'remember_token' => $request->token])->first();
 
         // checking if the user and token exit 
         if ($user) {
-            $user->update([
+            $createPassword = $user->update([
                 'password' => Hash::make($request->password),
                 'remember_token' => null,
                 'email_verified_at' => now(),
             ]);
-            return response()->json([
-                'status' => 'success',
-                'message' => 'Password Created successful'
-            ], 200);
-        } else {
-            return response()->json([
-                'status' => 'error',
-                'message' => 'Invalid Password Token'
-            ], 401);
+            if ($createPassword) {
+                return $createPassword;
+            }
         }
-
-        //return true;
+        return false;
     }
 
 
     function updateStaff($request, $user)
     {
-        if (AUth::user()->id == $user->id) {
-            $updateDetail = User::find($user->id);
-            $updateDetail->update([
-                'name' => $request->name,
-                'email' => $request->email,
-                'phone' => $request->phone,
-                'zone' => $request->zone
-            ]);
+        $updateDetail = $this->viewStaff($user);
+        $updateStaff = $updateDetail->update($request->all());
 
-            return $updateDetail;
+        if ($updateStaff) {
+            return $updateStaff;
         }
 
         return false;
@@ -87,24 +58,27 @@ class StaffService
 
     public function deleteStaff($user)
     {
-        if (AUth::user()->id == $user->id) {
-            $user->delete();
-            return true;
-        }
+        if ($deleteUser = $user->delete()) {
+            return $deleteUser;
+        };
+
         return false;
     }
 
     public function viewStaff($user)
     {
-        if (AUth::user()->id == $user->id) {
-            return $user;
+        try {
+            return  User::findOrFail($user);
+        } catch (ModelNotFoundException) {
+
+            return false;
         }
-        return false;
     }
+
 
     public function viewAllStaff()
     {
-        return User::where('role_id', '>', 0)->get();
+        return User::all();
     }
 
     public function getAllStaffByRole($role)

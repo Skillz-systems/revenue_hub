@@ -1,18 +1,14 @@
 import React from "react";
-import {
-  DemandInvoiceTable,
-  Card,
-  CardData,
-  useAppData,
-} from "../Index";
+import { StaffTable, useAppData, Card, CardData, userData } from "../Components/Index";
 
-export const DemandNotice: React.FC = () => {
+export default function Settings() {
   const cardData = CardData();
-  const { staticInformation, demandNoticeInformation } = useAppData();
+  const { staticInformation } = useAppData();
+  const { staffInformation } = userData()
 
   return (
     <div className="flex-col space-y-8">
-     <div className="grid grid-cols-2 gap-x-3 gap-y-3 md:grid-cols-3 md:gap-x-4 md:gap-y-8">
+      <div className="grid grid-cols-2 gap-x-3 gap-y-3 md:grid-cols-3 md:gap-x-4 md:gap-y-8">
         {cardData.map((card) => (
           <Card
             id={card.id}
@@ -39,9 +35,14 @@ export const DemandNotice: React.FC = () => {
         ))}
       </div>
       <hr className="border-0.5 mb-8 border-custom-grey-100" />
-      <DemandInvoiceTable staticInformation={staticInformation} demandNoticeInformation={demandNoticeInformation} />
+      {staffInformation ? (
+        <StaffTable
+          staticInformation={staticInformation}
+          staffInformation={staffInformation}
+        />
+      ) : (
+        <div>Loading...</div>
+      )}
     </div>
   );
 }
-
-export default DemandNotice;

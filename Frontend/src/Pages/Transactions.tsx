@@ -1,10 +1,9 @@
 import React from "react";
-import { StaffTable, useAppData, Card, CardData } from "../Index";
+import { TransactionsTable, useAppData, Card, CardData } from "../Components/Index";
 
-
-const Staff: React.FC = () => {
+const Transactions: React.FC = () => {
   const cardData = CardData();
-  const { staticInformation, staffInformation } = useAppData();
+  const { staticInformation, transactionInformation } = useAppData();
 
   return (
     <div className="flex-col space-y-8">
@@ -35,12 +34,12 @@ const Staff: React.FC = () => {
         ))}
       </div>
       <hr className="border-0.5 mb-8 border-custom-grey-100" />
-      <StaffTable
+      <TransactionsTable
         staticInformation={staticInformation}
-        staffInformation={staffInformation}
+        transactionInformation={transactionInformation}
       />
     </div>
   );
 };
 
-export default Staff;
+export default Transactions;

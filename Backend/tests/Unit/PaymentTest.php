@@ -54,8 +54,9 @@ class PaymentTest extends TestCase
 
     public function test_to_see_if_all_payment_can_be_fetched(): void
     {
+        $defaultDate = date("Y");
         Payment::factory(50)->create();
-        $getAllPayment = (new PaymentService())->allPayment();
+        $getAllPayment = (new PaymentService())->allPayment($defaultDate);
         $this->assertEquals(10, count($getAllPayment));
     }
 

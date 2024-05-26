@@ -16,6 +16,11 @@ use Illuminate\Support\Facades\Validator;
 class UserController extends Controller
 {
 
+    private $staffService;
+    public function __construct(StaffService $staffService)
+    {
+        $this->staffService = $staffService;
+    }
     /**
      * List all Users
      * @OA\GET (
@@ -45,13 +50,12 @@ class UserController extends Controller
      */
     public function index()
     {
-        $user = User::all();
+        $user = $this->staffService->viewAllStaff();
 
         if ($user) {
-            return response()->json([
+            return StoreUserResource::collection($user)->additional([
                 "status" => "success",
-                "data" => StoreUserResource::collection($user),
-            ], 200);
+            ]);
         }
 
         return response()->json([
@@ -111,26 +115,37 @@ class UserController extends Controller
      */
     public function store(StoreUserRequest $request)
     {
-        //
+        $validator = Validator::make($request->all(), [
+            'name' => ['required', 'string', 'max:255'],
+            'email' => ['required', 'string'],
+            'phone' => ['required', 'string', 'min:11'],
+            'role_id' => ['required', 'integer'],
+            'zone' => ['required', 'string', 'max:255'],
+        ]);
+
+
+        if ($validator->fails()) {
+            return response()->json([
+                'status' => 'error',
+                'message' => "All fields are required ",
+                "data" => $validator->errors()
+            ], 400);
+        }
 
         $register = (new StaffService)->RegisterStaff($request);
-
         if ($register) {
             //send mail to the staff
             Mail::to($request->email)->send(new RegisterMail($register));
 
-            return response()->json([
+            return (new StoreUserResource($register))->additional([
                 "status" => "success",
                 "message" => "Register Successfully",
-                "user" => StoreUserResource::make($register),
-                "token" => $register->createToken("API TOKEN")->plainTextToken
-            ], 200);
+            ]);
         }
         return response()->json([
             "status" => "success",
             "message" => "Register Successfully",
-            "user" => StoreUserResource::make($register),
-        ], 200);
+        ], 400);
     }
 
 
@@ -176,16 +191,15 @@ class UserController extends Controller
      *     ),
      * )
      */
-    public function show(User $staff)
+    public function show($staff)
     {
 
-        if (Auth::user()->role_id == 1) {
-
-            if ($staff) {
-                return response()->json([
+        if (Auth::user()->role_id == User::ROLE_ADMIN) {
+            $specificStaff = $this->staffService->viewStaff($staff);
+            if ($specificStaff) {
+                return (new StoreUserResource($specificStaff))->additional([
                     "status" => "success",
-                    "data" =>  ShowUserResource::make($staff)
-                ], 200);
+                ]);
             }
 
             return response()->json([
@@ -197,14 +211,12 @@ class UserController extends Controller
         return response()->json([
             "status" => "error",
             "message" => "You dont Have Permission",
-        ], 401);
+        ], 403);
     }
 
 
 
     /**
-     * Update the staff details.
-         /**
      * @OA\PUT(
      *     path="/api/staff/{staff}",
      *     tags={"Staff"},
@@ -299,15 +311,14 @@ class UserController extends Controller
      *
      */
 
-    public function update(Request $request, User $staff)
+    public function update(Request $request, $staff)
     {
-
-
         $validator = Validator::make($request->all(), [
-            'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string'],
-            'phone' => ['required', 'string', 'min:11'],
-            'zone' => ['required', 'string', 'max:255'],
+            'name' => ['sometimes', 'string', 'max:255'],
+            'email' => ['sometimes', 'string', "email"],
+            'phone' => ['sometimes', 'string', 'min:11'],
+            'role_id' => ['sometimes', 'string', 'max:255'],
+            'zone' => ['sometimes', 'string', 'max:255'],
         ]);
 
 
@@ -319,14 +330,20 @@ class UserController extends Controller
             ], 400);
         }
 
-        $update = (new StaffService)->updateStaff($request, $staff);
-        if ($update) {
-            return response()->json([
-                'status' => 'error',
-                'message' => "All fields are required ",
-                "data" => new ShowUserResource($update)
-            ], 200);
+        if (Auth::user()->role_id !== User::ROLE_ADMIN) {
+            unset($request['role_id']);
+            unset($request['zone']);
         }
+        if (Auth::user()->role_id === User::ROLE_ADMIN || Auth::user()->id == $staff) {
+            $update = (new StaffService)->updateStaff($request, $staff);
+            if ($update) {
+                return response()->json([
+                    'status' => 'success',
+                    'message' => "Update Successfully",
+                ], 200);
+            }
+        }
+
 
         return response()->json([
             "status" => "error",
@@ -335,7 +352,6 @@ class UserController extends Controller
     }
 
     /**
-     * Delete Staff
      * @OA\Delete (
      *     path="/api/staff/{staff}",
      *     tags={"Staff"},
@@ -378,9 +394,9 @@ class UserController extends Controller
      */
     public function destroy(User $user)
     {
-        if (Auth::user()->role_id == 1) {
+        if (Auth::user()->role_id == User::ROLE_ADMIN) {
 
-            if ($user->delete()) {
+            if ($this->staffService->deleteStaff($user)) {
                 return response()->json([
                     "status" => "success",
                     "message" => "Staff deleted successfully",
@@ -389,7 +405,7 @@ class UserController extends Controller
 
             return response()->json([
                 "status" => "error",
-                "message" => "An error occured",
+                "message" => "An error occurred",
             ], 402);
         }
 

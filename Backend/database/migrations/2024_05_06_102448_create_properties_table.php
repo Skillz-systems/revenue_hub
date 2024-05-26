@@ -24,8 +24,6 @@ return new class extends Migration
             $table->string('rating_dist');
             $table->string('annual_value');
             $table->string('rate_payable');
-            //$table->string('arrears');
-            //$table->string('penalty');
             $table->string('grand_total');
             $table->string('category')->nullable();
             $table->string('group');

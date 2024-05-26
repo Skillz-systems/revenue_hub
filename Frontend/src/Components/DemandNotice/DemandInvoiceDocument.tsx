@@ -9,38 +9,28 @@ import { formatNumberWithCommas } from "../../Utils/client"
 import html2canvas from "html2canvas";
 import jsPDF from "jspdf";
 import { DemandInvoiceDataType } from "../Index";
+import { PropertyData } from "../Properties/ViewPropertyModal";
 
 interface SectionProps {
   title: string;
   data: { label: string; width?: string }[];
 }
 
-const DemandInvoiceDocument = ({ customTableData, hideDemandInvoiceModal }: { customTableData: any, hideDemandInvoiceModal: any }) => {
-  const grandTotal = formatNumberWithCommas(
-    customTableData.annualValue +
-    customTableData.ratePayable +
-    customTableData.demandInvoiceData[
-      customTableData.demandInvoiceData.length - 1
-    ].arrears -
-    customTableData.demandInvoiceData[
-      customTableData.demandInvoiceData.length - 1
-    ].penalty
-  );
-
+const DemandInvoiceDocument = ({ customTableData, hideDemandInvoiceModal }: { customTableData: PropertyData, hideDemandInvoiceModal: () => any }) => {
   const demandInvoiceData: DemandInvoiceDataType = {
-    Occupant: `THE OCCUPIER/${customTableData.personalIdentificationNumber}`,
-    PropertyIdentificationNumber: `PID-${customTableData.personalIdentificationNumber}`,
+    Occupant: `THE OCCUPIER/${customTableData.pid}`,
+    PropertyIdentificationNumber: `PID-${customTableData.pid}`,
     QrCodePayment: "3191313-0482402470",
     propertyData: [
-      { label: "Name of Occupier", value: `${customTableData.occupantInfo[0].firstName} ${customTableData.occupantInfo[0].lastName}` },
+      { label: "Name of Occupier", value: `${customTableData.occupant}` },
       { label: "Assessment No", value: "AM/B12/TTR/2016/0400" },
       {
         label: "Property Address",
-        value: customTableData.propertyAddress,
+        value: customTableData.prop_addr,
       },
-      { label: "Cadestral Zone", value: customTableData.cadestralZone },
-      { label: "Use of Property", value: customTableData.propertyUse },
-      { label: "Rating District", value: customTableData.ratingDistrict },
+      { label: "Cadestral Zone", value: customTableData.cadastral_zone },
+      { label: "Use of Property", value: customTableData.prop_use },
+      { label: "Rating District", value: customTableData.rating_dist },
     ],
     billInfoData: [
       { label: "Bill Ref", value: "2024/215996" },
@@ -49,11 +39,11 @@ const DemandInvoiceDocument = ({ customTableData, hideDemandInvoiceModal }: { cu
       { label: "Rate Year", value: 2024 },
     ],
     billDetailsData: [
-      { label: "Annual Value", value: customTableData.annualValue },
-      { label: "Rate Payable", value: customTableData.ratePayable },
-      { label: "Arrears Year", value: customTableData.demandInvoiceData[customTableData.demandInvoiceData.length - 1].arrears },
-      { label: "Penalty (10%)", value: customTableData.demandInvoiceData[customTableData.demandInvoiceData.length - 1].penalty },
-      { label: "Grand Total", value: grandTotal, isTotal: true },
+      { label: "Annual Value", value: customTableData.annual_value },
+      { label: "Rate Payable", value: customTableData.rate_payable },
+      { label: "Arrears Year", value: customTableData.arrears || 10000},
+      { label: "Penalty (10%)", value: customTableData.penalty || 1000 },
+      { label: "Grand Total", value: customTableData.grand_total, isTotal: true },
     ],
   };
 

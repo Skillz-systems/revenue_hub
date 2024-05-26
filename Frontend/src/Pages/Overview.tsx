@@ -1,10 +1,8 @@
 import React from "react";
-import { StaffTable, useAppData, Card, CardData } from "../Index";
+import { Card, CardData } from "../Components/Index";
 
-export default function Settings() {
+const Overview: React.FC = () => {
   const cardData = CardData();
-  const { staticInformation, staffInformation } = useAppData();
-
   return (
     <div className="flex-col space-y-8">
       <div className="grid grid-cols-2 gap-x-3 gap-y-3 md:grid-cols-3 md:gap-x-4 md:gap-y-8">
@@ -34,10 +32,8 @@ export default function Settings() {
         ))}
       </div>
       <hr className="border-0.5 mb-8 border-custom-grey-100" />
-      <StaffTable
-        staticInformation={staticInformation}
-        staffInformation={staffInformation}
-      />
     </div>
   );
 }
+
+export default Overview;
