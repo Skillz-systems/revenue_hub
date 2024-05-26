@@ -23,6 +23,7 @@ import {
   Properties,
   Statistics,
   useAppData,
+  userData,
 } from "../Index";
 
 interface CardInformation {
@@ -42,7 +43,8 @@ interface MenuItem {
 }
 
 const MenuItemData = () => {
-  const { cardInformation, staffInformation } = useAppData();
+  const { cardInformation } = useAppData();
+  const { totalStaff } = userData();
 
   const menuItems: MenuItem[] = [
     {
@@ -95,7 +97,7 @@ const MenuItemData = () => {
       menuIcon: <BsPeople />,
       menuIconTwo: <BsPeopleFill />,
       menuName: "Staff",
-      menuItemCount: staffInformation.length,
+      menuItemCount: totalStaff,
       componentName: "Staff Component",
       component: <Staff />,
     },

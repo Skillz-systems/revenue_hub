@@ -72,10 +72,14 @@ class PaymentController extends Controller
      *     security={{"bearerAuth":{}}}
      * )
      */
-    public function index()
+    public function index(Request $request)
     {
+        $defaultDate = date("Y");
+        if ($request->date_filter) {
+            $defaultDate = $request->date_filter;
+        }
         $service = $this->paymentService;
-        $getPaginatedPayments = $service->allPayment();
+        $getPaginatedPayments = $service->allPayment($defaultDate);
         $payments = PaymentResource::collection($getPaginatedPayments);
         $payments->additional([
             'status' => 'success' // or any other status you want to append

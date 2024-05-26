@@ -1,8 +1,38 @@
-import React from "react";
-import { Card, CardData } from "../Index";
+import React, { useState, useEffect } from "react";
+import {
+  DemandInvoiceTable,
+  Card,
+  CardData,
+  useAppData,
+} from "../Components/Index";
+import { fetcher, useTokens } from "../Utils/client";
+import useSWR from 'swr';
 
-const Overview: React.FC = () => {
+export const DemandNotice: React.FC = () => {
+  const { token } = useTokens();
   const cardData = CardData();
+  const [demandNoticeInformation, setDemandNoticeInformation] = useState<boolean>(false)
+  const { staticInformation } = useAppData();
+
+  const { data, error } = useSWR(
+    token ? "https://api.revenuehub.skillzserver.com/api/demand-notice" : null, // Only fetch if token exists
+    (url) => fetcher(url, token)
+  );
+
+  console.log("Demand Notices:", demandNoticeInformation)
+
+  useEffect(() => {
+    if (data) {
+      setDemandNoticeInformation(data.data);
+    }
+  }, [data]);
+
+  useEffect(() => {
+    if (error) {
+      console.error("Error fetching Demand Notices Data:", error)
+    }
+  }, [data])
+
   return (
     <div className="flex-col space-y-8">
       <div className="grid grid-cols-2 gap-x-3 gap-y-3 md:grid-cols-3 md:gap-x-4 md:gap-y-8">
@@ -32,8 +62,13 @@ const Overview: React.FC = () => {
         ))}
       </div>
       <hr className="border-0.5 mb-8 border-custom-grey-100" />
+      {demandNoticeInformation ? (
+        <DemandInvoiceTable
+          staticInformation={staticInformation}
+          demandNoticeInformation={demandNoticeInformation} />
+      ) : (<div>Loading...</div>)}
     </div>
   );
 }
 
-export default Overview;
+export default DemandNotice;

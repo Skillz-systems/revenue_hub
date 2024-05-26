@@ -8,9 +8,9 @@ use App\Models\Property;
 
 class DemandNoticeService
 {
-    public function allDemandNotice()
+    public function allDemandNotice($date)
     {
-        return $this->model()->paginate(10);
+        return $this->model()->whereYear('created_at', $date)->paginate(10);
     }
     public function viewDemandNotice($id)
     {
@@ -54,6 +54,36 @@ class DemandNoticeService
         $demandNotice = $this->viewDemandNotice($id);
         return $demandNotice->delete();
     }
+
+    public function demandNoticeYearAmountSum($date)
+    {
+        return $this->model()->whereYear('created_at', $date)->sum('amount');
+    }
+
+    public function totalPaidDemandNoticeByYear($date)
+    {
+        return $this->model()->whereYear('created_at', $date)->where('status', DemandNotice::PAID)->count();
+    }
+    public function totalPendingDemandNoticeByYear($date)
+    {
+        return $this->model()->whereYear('created_at', $date)->where('status', DemandNotice::PENDING)->count();
+    }
+
+    public function getAllPaidDemandNoticeByYear($date)
+    {
+        return $this->model()->whereYear('created_at', $date)->where('status', DemandNotice::PAID)->paginate(10);
+    }
+
+    public function getAllPendingDemandNoticeByYearPaginated($date)
+    {
+        return $this->model()->whereYear('created_at', $date)->where('status', DemandNotice::PENDING)->paginate(10);
+    }
+    public function totalGeneratedDemandNoticeByYear($date)
+    {
+        return $this->model()->whereYear('created_at', $date)->count();
+    }
+
+
 
     public function model()
     {

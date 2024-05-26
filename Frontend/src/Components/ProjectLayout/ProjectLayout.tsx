@@ -13,8 +13,8 @@ import {
   Overview,
   Accounts,
   Password,
-  useAppData,
   Settings,
+  userData,
 } from "../Index";
 
 const ProjectLayout: React.FC = () => {
@@ -28,7 +28,7 @@ const ProjectLayout: React.FC = () => {
   const [propertyModalTransition, setPropertyModalTransition] = useState<boolean>(false);
   const [accountsPasswordState, setAccountsPasswordState] = useState<string>("");
   const menuItems = MenuItemData();
-  const { accountInformation } = useAppData();
+  const { accountInformation } = userData();
 
   const handleMenuItemClick = (component: string) => {
     setActiveMenuItem(component);
@@ -173,7 +173,7 @@ const ProjectLayout: React.FC = () => {
       >
         <TopNavigation
           parentStyle={""}
-          userName={accountInformation.firstName}
+          userName={accountInformation?.name}
           handleViewProfile={() => {
             setActiveMenuItem("Settings Component");
             setActiveComponent(null);

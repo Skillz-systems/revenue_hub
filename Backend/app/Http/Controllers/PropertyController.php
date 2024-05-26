@@ -7,13 +7,16 @@ use Illuminate\Http\Request;
 use App\Service\PropertyService;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
-use App\Http\Resources\ShowPropertyResource;
-use App\Http\Resources\StorePropertyResource;
+use App\Http\Resources\PropertyResource;
+use App\Models\User;
 
 class PropertyController extends Controller
 {
-
-
+    private $propertyService;
+    public function __construct(PropertyService $propertyService)
+    {
+        $this->propertyService = $propertyService;
+    }
     /**
      * @OA\Get(
      *     path="/api/properties",
@@ -24,7 +27,7 @@ class PropertyController extends Controller
      *         description="Successful operation",
      *         @OA\JsonContent(
      *             type="array",
-     *             @OA\Items(ref="#/components/schemas/ShowPropertyResource")
+     *             @OA\Items(ref="#/components/schemas/PropertyResource")
      *         )
      *     ),
      *     @OA\Response(
@@ -51,7 +54,12 @@ class PropertyController extends Controller
         $properties = Property::all();
 
         if ($properties) {
-            return showPropertyResource::collection($properties);
+
+            $returnProperty = PropertyResource::collection($properties);
+            $returnProperty->additional([
+                'status' => 'success', // or any other status you want to append
+            ]);
+            return  $returnProperty;
         }
 
         return response()->json([
@@ -117,7 +125,7 @@ class PropertyController extends Controller
      *         description="Property added successfully",
      *         @OA\JsonContent(
      *             type="array",
-     *             @OA\Items(ref="#/components/schemas/StorePropertyResource")
+     *             @OA\Items(ref="#/components/schemas/PropertyResource")
      *         ),
      *             @OA\Property(property="status", type="string", example="success"),
      *             @OA\Property(property="message", type="string", example="Property added successfully"),
@@ -169,7 +177,7 @@ class PropertyController extends Controller
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'pid' => ['required', 'integer', 'max:255', 'unique:properties'],
+            'pid' => ['required', 'integer', 'unique:properties'],
             'occupant' => ['required', 'string', 'max:255'],
             'prop_addr' => ['required', 'string', 'max:255'],
             'street_name' => ['required', 'string', 'max:255'],
@@ -178,11 +186,9 @@ class PropertyController extends Controller
             'prop_type' => ['required', 'string', 'max:255'],
             'prop_use' => ['required', 'string', 'max:255'],
             'rating_dist' => ['required', 'string', 'max:255'],
-            'annual_value' => ['required', 'integer', 'max:255'],
-            'rate_payable' => ['required', 'integer', 'max:255'],
-            //'arrears' => ['required', 'integer', 'max:255'],
-            //'penalty' => ['required', 'integer', 'max:255'],
-            'grand_total' => ['required', 'integer', 'max:255'],
+            'annual_value' => ['required', 'string'],
+            'rate_payable' => ['required', 'string'],
+            'grand_total' => ['required', 'string'],
             'category' => ['required', 'string', 'max:255'],
             'group' => ['required', 'string', 'max:255'],
             'active' => ['required', 'string', 'max:255'],
@@ -199,7 +205,12 @@ class PropertyController extends Controller
 
         $addProperty = (new PropertyService)->storeProperty($request);
         if ($addProperty) {
-            return new StorePropertyResource($addProperty);
+            $returnProperty = new PropertyResource($addProperty);
+            $returnProperty->additional([
+                'status' => 'success', // or any other status you want to append
+                'context' => 'store'
+            ]);
+            return  $returnProperty;
         }
 
         return response()->json([
@@ -228,7 +239,7 @@ class PropertyController extends Controller
      *         description="Show details of a property",
      *         @OA\JsonContent(
      *             type="array",
-     *             @OA\Items(ref="#/components/schemas/ShowPropertyResource")
+     *             @OA\Items(ref="#/components/schemas/PropertyResource")
      *         ),
      *     ),
      *     @OA\Response(
@@ -241,14 +252,15 @@ class PropertyController extends Controller
      *     ),
      * )
      */
-    public function show(Property $property)
+    public function show($property)
     {
-
-        if ($property) {
-            return response()->json([
-                "status" => "success",
-                "data" =>  ShowPropertyResource::make($property)
-            ], 200);
+        $getProperty = $this->propertyService->getPropertyById($property);
+        if ($getProperty) {
+            $returnProperty = new PropertyResource($getProperty);
+            $returnProperty->additional([
+                'status' => 'success', // or any other status you want to append
+            ]);
+            return  $returnProperty;
         }
 
         return response()->json([
@@ -258,12 +270,6 @@ class PropertyController extends Controller
     }
 
     /**
-     * Update property details.
-
-
-    /**
-     * Update property details.
-         /**
      * @OA\PUT(
      *     path="/api/property/{property}",
      *     tags={"Property"},
@@ -320,7 +326,7 @@ class PropertyController extends Controller
      *         description="Property Updated Successfully",
      *         @OA\JsonContent(
      *             type="array",
-     *             @OA\Items(ref="#/components/schemas/ShowPropertyResource")
+     *             @OA\Items(ref="#/components/schemas/PropertyResource")
      *         ),
      *     ),
      *     @OA\Response(
@@ -352,22 +358,22 @@ class PropertyController extends Controller
     {
 
         $validator = Validator::make($request->all(), [
-            'occupant' => ['required', 'string', 'max:255'],
-            'prop_addr' => ['required', 'string', 'max:255'],
-            'street_name' => ['required', 'string', 'max:255'],
-            'asset_no' => ['required', 'string', 'max:255'],
-            'cadastral_zone' => ['required', 'string', 'max:255'],
-            'prop_type' => ['required', 'string', 'max:255'],
-            'prop_use' => ['required', 'string', 'max:255'],
-            'rating_dist' => ['required', 'string', 'max:255'],
-            'annual_value' => ['required', 'integer'],
-            'rate_payable' => ['required', 'integer'],
+            'occupant' => ['sometimes', 'string', 'max:255'],
+            'prop_addr' => ['sometimes', 'string', 'max:255'],
+            'street_name' => ['sometimes', 'string', 'max:255'],
+            'asset_no' => ['sometimes', 'string', 'max:255'],
+            'cadastral_zone' => ['sometimes', 'string', 'max:255'],
+            'prop_type' => ['sometimes', 'string', 'max:255'],
+            'prop_use' => ['sometimes', 'string', 'max:255'],
+            'rating_dist' => ['sometimes', 'string', 'max:255'],
+            'annual_value' => ['sometimes', 'string'],
+            'rate_payable' => ['sometimes', 'string'],
             //'arrears' => ['required', 'integer'],
             //'penalty' => ['required', 'integer'],
-            'grand_total' => ['required', 'integer'],
-            'category' => ['required', 'string', 'max:255'],
-            'group' => ['required', 'string', 'max:255'],
-            'active' => ['required', 'string', 'max:255'],
+            'grand_total' => ['sometimes', 'string'],
+            'category' => ['sometimes', 'string', 'max:255'],
+            'group' => ['sometimes', 'string', 'max:255'],
+            'active' => ['sometimes', 'string', 'max:255'],
         ]);
 
 
@@ -383,8 +389,7 @@ class PropertyController extends Controller
         if ($updateProperty) {
             return response()->json([
                 "status" => "success",
-                "message" => "Property Updated Successfully",
-                "data" =>  new ShowPropertyResource($updateProperty)
+                "message" => "Updated property successfully",
             ], 200);
         }
 
@@ -440,7 +445,7 @@ class PropertyController extends Controller
     public function destroy(Property $property)
     {
 
-        if (Auth::user()->role_id == 1) {
+        if (Auth::user()->role_id == User::ROLE_ADMIN) {
 
             if ($property->delete()) {
                 return response()->json([

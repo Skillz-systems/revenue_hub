@@ -44,7 +44,7 @@ use Illuminate\Http\Resources\Json\JsonResource;
  *     ),
  *     @OA\Property(
  *         property="property",
- *         ref="#/components/schemas/ShowPropertyResource"
+ *         ref="#/components/schemas/PropertyResource"
  *     ),
  *     @OA\Property(
  *         property="date_created",
@@ -64,13 +64,17 @@ class DemandNoticeResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
+        $property = new PropertyResource($this->property);
+        $property->additional([
+            'context' => 'without_demand_notice' // or any other status you want to append
+        ]);
         return [
             "id" => $this->id,
             "amount" => $this->amount,
             "arrears_amount" => $this->arrears_amount,
             "penalty" => $this->penalty,
             "status" => $this->status,
-            "property" => new ShowPropertyResource($this->property),
+            "property" => $property,
             "payments" => DemandNoticePaymentResource::collection($this->payments),
             "date_created" => $this->created_at,
         ];
