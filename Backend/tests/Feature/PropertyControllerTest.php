@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Models\DemandNotice;
 use App\Models\Property;
 use App\Models\User;
 use App\Service\PropertyService;
@@ -12,12 +13,13 @@ use Tests\TestCase;
 class PropertyControllerTest extends TestCase
 {
     use RefreshDatabase;
-    /**
-     * A basic feature test example.
-     */
-    public function it_returns_properties_successfully()
+
+    public function test_it_returns_properties_successfully()
     {
         // Arrange: Create some properties
+        DemandNotice::factory()->create(["property_id" => 1,]);
+
+        DemandNotice::factory()->create(["property_id" => 3, "status" => 1]);
         Property::factory()->count(3)->create();
 
         // Act: Call the index route
@@ -32,14 +34,14 @@ class PropertyControllerTest extends TestCase
                 'data' => [
                     '*' => [
                         'id',
-                        'name',
+                        'pid',
                     ],
                 ],
             ]);
     }
 
-    /** @test */
-    public function it_returns_no_properties_found_when_no_properties_exist()
+
+    public function test_it_returns_no_properties_found_when_no_properties_exist()
     {
         // Act: Call the index route
         $response = $this->actingAsTestUser()->getJson('/api/property');
@@ -52,7 +54,7 @@ class PropertyControllerTest extends TestCase
             ]);
     }
 
-    public function it_stores_a_new_property_successfully()
+    public function test_it_stores_a_new_property_successfully()
     {
         // Arrange: Prepare valid property data
         $data = [
@@ -65,9 +67,9 @@ class PropertyControllerTest extends TestCase
             'prop_type' => 'Residential',
             'prop_use' => 'Residential',
             'rating_dist' => 'District 1',
-            'annual_value' => 10000,
-            'rate_payable' => 1000,
-            'grand_total' => 11000,
+            'annual_value' => "10000",
+            'rate_payable' => "1000",
+            'grand_total' => "11000",
             'category' => 'Category 1',
             'group' => 'Group 1',
             'active' => 'Yes',
@@ -86,8 +88,8 @@ class PropertyControllerTest extends TestCase
         $this->assertDatabaseHas('properties', ['pid' => 1, 'occupant' => 'John Doe']);
     }
 
-    /** @test */
-    public function it_returns_validation_error_when_required_fields_are_missing()
+
+    public function test_it_returns_validation_error_when_required_fields_are_missing()
     {
         // Act: Call the store route with incomplete data
         $response = $this->actingAsTestUser()->postJson('/api/property', []);
@@ -100,8 +102,8 @@ class PropertyControllerTest extends TestCase
             ]);
     }
 
-    /** @test */
-    public function it_returns_error_when_pid_is_not_unique()
+
+    public function test_it_returns_error_when_pid_is_not_unique()
     {
         // Arrange: Create a property with a specific pid
         Property::factory()->create(['pid' => 1]);
@@ -138,7 +140,7 @@ class PropertyControllerTest extends TestCase
         $this->assertDatabaseMissing('properties', ['occupant' => 'Jane Doe']);
     }
 
-    public function it_shows_a_property_successfully()
+    public function test_it_shows_a_property_successfully()
     {
         // Arrange: Create a property
         $property = Property::factory()->create();
@@ -158,7 +160,7 @@ class PropertyControllerTest extends TestCase
     }
 
     /** @test */
-    public function it_returns_error_if_property_not_found()
+    public function test_it_returns_error_if_property_not_found()
     {
         // Act: Call the show route with a non-existent property ID
         $response = $this->actingAsTestUser()->getJson('/api/property/999');
@@ -171,7 +173,7 @@ class PropertyControllerTest extends TestCase
             ]);
     }
 
-    public function testSuccessfulUpdate()
+    public function test_testSuccessfulUpdate()
     {
         $property = Property::factory()->create();
         // Assuming $property is a property instance
@@ -198,7 +200,7 @@ class PropertyControllerTest extends TestCase
             ]);
     }
 
-    public function testFailedUpdateWithInvalidData()
+    public function test_testFailedUpdateWithInvalidData()
     {
         $property = Property::factory()->create();
         // Assuming $property is a property instance
@@ -247,7 +249,7 @@ class PropertyControllerTest extends TestCase
     //         ]);
     // }
 
-    public function admin_can_delete_a_property()
+    public function test_admin_can_delete_a_property()
     {
         $admin = User::factory()->create(['role_id' => User::ROLE_ADMIN]);
         $staff = User::factory()->create();
@@ -265,8 +267,8 @@ class PropertyControllerTest extends TestCase
         $this->assertDatabaseMissing('properties', ['id' => $property->id]);
     }
 
-    /** @test */
-    public function non_admin_cannot_delete_a_property()
+
+    public function test_non_admin_cannot_delete_a_property()
     {
         $user = User::factory()->create(['role_id' => User::ROLE_ENFORCERS]);
         $staff = User::factory()->create();

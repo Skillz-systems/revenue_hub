@@ -1608,6 +1608,89 @@
                 ]
             }
         },
+        "/api/statistic/all-yearly-data": {
+            "post": {
+                "tags": [
+                    "statistics"
+                ],
+                "summary": "Retrieve all yearly statistical  data",
+                "description": "Returns various statistics and totals for a specific year, including total payments, demand notices, properties, and users.",
+                "operationId": "2d5125fb174949f725c2a491d4d5ecea",
+                "parameters": [
+                    {
+                        "name": "date_filter",
+                        "in": "query",
+                        "description": "Optional. The year for which to retrieve data. Defaults to the current year if not provided.",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "total_payments": {
+                                                    "type": "integer",
+                                                    "example": 10
+                                                },
+                                                "total_demand_notices": {
+                                                    "type": "integer",
+                                                    "example": 20
+                                                },
+                                                "total_paid_demand_notices": {
+                                                    "type": "integer",
+                                                    "example": 15
+                                                },
+                                                "total_pending_demand_notices": {
+                                                    "type": "integer",
+                                                    "example": 5
+                                                },
+                                                "total_demand_notices_amount": {
+                                                    "type": "number",
+                                                    "example": 5000.5
+                                                },
+                                                "total_properties": {
+                                                    "type": "integer",
+                                                    "example": 100
+                                                },
+                                                "total_users": {
+                                                    "type": "integer",
+                                                    "example": 50
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized: Missing or invalid token"
+                    },
+                    "500": {
+                        "description": "Internal server error"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
         "/api/staff": {
             "get": {
                 "tags": [
