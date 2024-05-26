@@ -5,6 +5,16 @@ namespace App\Http\Resources;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
+/**
+ *
+ * @OA\Schema(
+ *     schema="LoginResource",
+ *     type="object",
+ *     title="Login Staff Resource",
+ *     description="Login Staff Resource",
+ * )
+ */
+
 class LoginResource extends JsonResource
 {
     /**

@@ -6,8 +6,6 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 /**
- * Class StorePropertyResource.
- *
  *
  * @OA\Schema(
  *     schema="PropertyResource",
@@ -16,6 +14,7 @@ use Illuminate\Http\Resources\Json\JsonResource;
  *     description="Store Property Resource",
  *     example={
  *         "pid": 3176683,
+ *         "occupant": "THE OCCUPIER",
  *         "prop_addr": "540 Kaci Extensions Suite 724 Francoborough, MS 22188",
  *         "street_name": "46329 McDermott Courts Apt. 058",
  *         "asset_no": "AMC/B14/TR/9",
@@ -25,8 +24,6 @@ use Illuminate\Http\Resources\Json\JsonResource;
  *         "rating_dist": "APO",
  *         "annual_value": 200000,
  *         "rate_payable": 45000,
- *         "arrears": 25000,
- *         "penalty": 45000,
  *         "grand_total": 4500000,
  *         "category": "RESIDENTIAL",
  *         "group": "AMAC2",

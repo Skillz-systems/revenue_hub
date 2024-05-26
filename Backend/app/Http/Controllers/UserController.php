@@ -22,7 +22,6 @@ class UserController extends Controller
         $this->staffService = $staffService;
     }
     /**
-     * List all Users
      * @OA\GET (
      *     path="/api/staff",
      *     tags={"Staff"},
@@ -42,8 +41,9 @@ class UserController extends Controller
      *         response="404",
      *         description="Not found",
      *         @OA\JsonContent(
+     *             type="object",
      *             @OA\Property(property="status", type="string", example="error"),
-     *             @OA\Property(property="message", type="string", example="No User found"),
+     *             @OA\Property(property="message", type="string", example="No staff found"),
      *         )
      *     ),
      * )
@@ -76,15 +76,15 @@ class UserController extends Controller
      *          description="Input staff details to register",
      *          @OA\JsonContent(),
      *          @OA\MediaType(
-     *          mediaType="multipart/form-data",
+     *              mediaType="multipart/form-data",
      *          @OA\Schema(
-     *          type="object",
-     *          required={"name","email", "phone", "zone", "role_id"},
-     *          @OA\Property(property="name", description="Staff Fullname", example="Revenue Hub", type="text"),
-     *          @OA\Property(property="email", description="Staff Email", type="text", example=""),
-     *          @OA\Property(property="phone", description="Staff Phone", type="text", example=""),
-     *          @OA\Property(property="zone", description="Staff Zone", type="text", example=""),
-     *          @OA\Property(property="role_id", description="Staff Roles", type="integer", example=""),
+     *              type="object",
+     *              required={"name","email", "phone", "zone", "role_id"},
+     *              @OA\Property(property="name", description="Staff Fullname", example="Revenue Hub", type="text"),
+     *              @OA\Property(property="email", description="Staff Email", type="text", example=""),
+     *              @OA\Property(property="phone", description="Staff Phone", type="text", example=""),
+     *              @OA\Property(property="zone", description="Staff Zone", type="text", example=""),
+     *              @OA\Property(property="role_id", description="Staff Roles", type="string", enum={"2", "3", "4"}),
      *          ),
      *         ),
      *     ),
@@ -92,25 +92,28 @@ class UserController extends Controller
      *         response="200",
      *         description="Registeration Successful",
      *         @OA\JsonContent(
-     *             @OA\Property(property="status", type="string", example="success"),
-     *             @OA\Property(property="message", type="string", example="Register Successfully"),
-     *             @OA\Property(property="user", type="object",
-     *                 @OA\Property(property="id", type="integer", example=9),
-     *                 @OA\Property(property="name", type="string", example="abc example2.com"),
-     *                 @OA\Property(property="email", type="string", example="abc@example2.com"),
-     *                 @OA\Property(property="phone", type="string", example="65728338352"),
-     *                 @OA\Property(property="zone", type="string", example="nigeria"),
-     *                 @OA\Property(property="role", type="object",
-     *                     @OA\Property(property="id", type="integer", example=2),
-     *                     @OA\Property(property="name", type="string", example="Admin"),
-     *                 ),
-     *                 @OA\Property(property="created_at", type="string", format="date-time", example="2024-05-01T20:44:43.000000Z"),
-     *                 @OA\Property(property="updated_at", type="string", format="date-time", example="2024-05-01T20:44:43.000000Z"),
-     *             ),
-     *             @OA\Property(property="token", type="string", example="1|57653vtZoT9EW2iRBHShQyALGaeZ3PtrtPhUN6Arlpgc4fe5fe8"),
-     *        ),
+     *             type="array",
+     *             @OA\Items(ref="#/components/schemas/StoreUserResource")
+     *         ),
      *     ),
-     *
+     *      @OA\Response(
+     *         response="400",
+     *         description="All fields are required",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="status", type="string", example="error"),
+     *             @OA\Property(property="message", type="string", example="All fields are required"),
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response="402",
+     *         description="An error occurred",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="status", type="string", example="error"),
+     *             @OA\Property(property="message", type="string", example="An error occurred"),
+     *         )
+     *     ),
      * )
      */
     public function store(StoreUserRequest $request)
@@ -143,15 +146,14 @@ class UserController extends Controller
             ]);
         }
         return response()->json([
-            "status" => "success",
-            "message" => "Register Successfully",
-        ], 400);
+            "status" => "error",
+            "message" => "An error occurred",
+        ], 402);
     }
 
 
 
     /**
-     * Show  User
      * @OA\GET (
      *     path="/api/staff/{staff}",
      *     tags={"Staff"},
@@ -174,9 +176,10 @@ class UserController extends Controller
      *         ),
      *     ),
      *     @OA\Response(
-     *         response="401",
+     *         response="403",
      *         description="You dont Have Permission",
      *         @OA\JsonContent(
+     *             type="object",
      *             @OA\Property(property="status", type="string", example="error"),
      *             @OA\Property(property="message", type="string", example="You dont Have Permission"),
      *         )
@@ -185,6 +188,7 @@ class UserController extends Controller
      *         response="404",
      *         description="Not found",
      *         @OA\JsonContent(
+     *             type="object",
      *             @OA\Property(property="status", type="string", example="error"),
      *             @OA\Property(property="message", type="string", example="No Staff found"),
      *         )
@@ -252,12 +256,18 @@ class UserController extends Controller
      *                          property="zone",
      *                          type="string"
      *                      ),
-     *                 ),
+     *                      @OA\Property(
+     *                          property="role_id", 
+     *                          description="Staff Roles", 
+     *                          type="string", 
+     *                          enum={"2", "3", "4"}),
+     *                      ),
      *                 example={
      *                     "name":"example name",
      *                     "email":"example email",
      *                     "phone":"example phone",
-     *                     "zone":"example zone"
+     *                     "zone":"example zone",
+     *                     "role_id":"example role"
      *                }
      *             )
      *         )
@@ -266,48 +276,31 @@ class UserController extends Controller
      *         response="200",
      *         description="Update Successful",
      *         @OA\JsonContent(
+     *             type="object",
      *             @OA\Property(property="status", type="string", example="success"),
      *             @OA\Property(property="message", type="string", example="Update Successfully"),
-     *             @OA\Property(property="user", type="object",
-     *                 @OA\Property(property="id", type="integer", example=9),
-     *                 @OA\Property(property="name", type="string", example="abc kel"),
-     *                 @OA\Property(property="email", type="string", example="abc@example2.com"),
-     *                 @OA\Property(property="phone", type="string", example="65728338352"),
-     *                 @OA\Property(property="zone", type="string", example="nigeria"),
-     *                 @OA\Property(property="role", type="object",
-     *                     @OA\Property(property="id", type="integer", example=2),
-     *                     @OA\Property(property="name", type="string", example="Admin"),
-     *                 ),
-     *             ),
      *        ),
      *     ),
      *     @OA\Response(
      *         response="400",
      *         description="All Fields are Required",
      *         @OA\JsonContent(
+     *             type="object",
      *             @OA\Property(property="status", type="string", example="error"),
      *             @OA\Property(property="message", type="string", example="All Fields are required"),
-     *             @OA\Property(property="data", type="object",
-     *                  @OA\Property(property="name", type="string", example="name is required"),
-     *                  @OA\Property(property="email", type="string", example="email is required"),
-     *                  @OA\Property(property="phone", type="string", example="phone is required"),
-     *                  @OA\Property(property="zone", type="string", example="zone is required"),
-     *             ),
      *         )
      *     ),
      *     @OA\Response(
      *         response="401",
      *         description="Credential error",
      *         @OA\JsonContent(
+     *             type="object",
      *             @OA\Property(property="status", type="string", example="error"),
      *             @OA\Property(property="message", type="string", example="Credential error: You are not authorize"),
      *         )
      *     ),
      *
      * )
-     *
-     *
-     *
      *
      */
 
@@ -370,6 +363,7 @@ class UserController extends Controller
      *         response=200,
      *         description="Staff deleted successfully",
      *         @OA\JsonContent(
+     *             type="object",
      *             @OA\Property(property="status", type="string", example="success"),
      *             @OA\Property(property="message", type="string", example="Staff deleted successfully"),
      *         )
@@ -378,6 +372,7 @@ class UserController extends Controller
      *         response="401",
      *         description="You dont Have Permission",
      *         @OA\JsonContent(
+     *             type="object",
      *             @OA\Property(property="status", type="string", example="error"),
      *             @OA\Property(property="message", type="string", example="You dont Have Permission"),
      *         )
@@ -386,6 +381,7 @@ class UserController extends Controller
      *         response="402",
      *         description="An error occured",
      *         @OA\JsonContent(
+     *             type="object",
      *             @OA\Property(property="status", type="string", example="error"),
      *             @OA\Property(property="message", type="string", example="An error occured"),
      *         )

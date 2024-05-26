@@ -19,7 +19,7 @@ class PropertyController extends Controller
     }
     /**
      * @OA\Get(
-     *     path="/api/properties",
+     *     path="/api/property",
      *     summary="Get all properties",
      *     tags={"Property"},
      *     @OA\Response(
@@ -69,7 +69,6 @@ class PropertyController extends Controller
     }
 
     /**
-     * Add new property details.
      * @OA\POST(
      *     path="/api/property",
      *     tags={"Property"},
@@ -84,6 +83,7 @@ class PropertyController extends Controller
      *                 @OA\Property(
      *                      type="object",
      *                      @OA\Property( property="pid", type="integer" ),
+     *                      @OA\Property( property="occupant", type="string" ),
      *                      @OA\Property( property="prop_addr", type="string" ),
      *                      @OA\Property( property="street_name", type="string" ),
      *                      @OA\Property( property="asset_no", type="string" ),
@@ -92,10 +92,8 @@ class PropertyController extends Controller
      *                      @OA\Property( property="prop_use", type="string" ),
      *                      @OA\Property( property="rating_dist", type="string" ),
      *                      @OA\Property( property="annual_value", type="string" ),
-     *                      @OA\Property( property="rate_payable", type="integer" ),
-     *                      @OA\Property( property="arrears", type="integer" ),
-     *                      @OA\Property( property="penalty", type="integer" ),
-     *                      @OA\Property( property="grand_total", type="integer" ),
+     *                      @OA\Property( property="rate_payable", type="string" ),
+     *                      @OA\Property( property="grand_total", type="string" ),
      *                      @OA\Property( property="category", type="string" ),
      *                      @OA\Property( property="group", type="string" ),
      *                      @OA\Property( property="active", type="string" ),
@@ -103,6 +101,7 @@ class PropertyController extends Controller
      *                 ),
      *                 example={
      *                     "pid":"integer",
+     *                     "occupant":"string",
      *                     "prop_addr":"string",
      *                     "street_name":"string",
      *                     "asset_no":"string",
@@ -110,9 +109,9 @@ class PropertyController extends Controller
      *                     "prop_type":"string",
      *                     "prop_use":"string",
      *                     "rating_dist":"string",
-     *                     "annual_value":"integer",
-     *                     "rate_payable":"integer",
-     *                     "grand_total":"integer",
+     *                     "annual_value":"string",
+     *                     "rate_payable":"string",
+     *                     "grand_total":"string",
      *                     "category":"string",
      *                     "group":"string",
      *                     "active":"string"
@@ -126,43 +125,22 @@ class PropertyController extends Controller
      *         @OA\JsonContent(
      *             type="array",
      *             @OA\Items(ref="#/components/schemas/PropertyResource")
-     *         ),
-     *             @OA\Property(property="status", type="string", example="success"),
-     *             @OA\Property(property="message", type="string", example="Property added successfully"),
-     *             @OA\Property(property="data", type="object",
-     *                  @OA\Property(property="pid", type="string", example="12354654"),
-     *                  @OA\Property(property="prop_addr", type="string", example="21 akidewa house 4"),
-     *                  @OA\Property(property="street_name", type="string", example="4553532"),
-     *                  @OA\Property(property="asset_no", type="string", example="566664565646"),
-     *                  @OA\Property(property="cadastral_zone", type="string", example="2"),
-     *                  @OA\Property(property="prop_type", type="string", example="residential"),
-     *                  @OA\Property(property="prop_use", type="string", example="school"),
-     *                  @OA\Property(property="rating_dist", type="string", example="oko"),
-     *                  @OA\Property(property="annual_value", type="string", example="233165498"),
-     *                  @OA\Property(property="rate_payable", type="string", example="89789"),
-     *                  @OA\Property(property="grand_total", type="string", example="56456"),
-     *                  @OA\Property(property="category", type="string", example="school"),
-     *                  @OA\Property(property="group", type="string", example="commercial"),
-     *                  @OA\Property(property="active", type="string", example="active"),
-     *                  @OA\Property(property="created_at", type="string", format="date-time", example="2024-05-06T11:54:58.000000Z"),
-     *                  @OA\Property(property="updated_at", type="string", format="date-time", example="2024-05-06T11:54:58.000000Z"),
-     *             ),
      *        ),
      *     ),
      *     @OA\Response(
      *         response="400",
      *         description="All Fields are Required",
      *         @OA\JsonContent(
+     *             type="object",
      *             @OA\Property(property="status", type="string", example="error"),
      *             @OA\Property(property="message", type="string", example="All Fields are required"),
-     *             @OA\Property(property="data", type="object",
-     *             ),
      *         )
      *     ),
      *     @OA\Response(
      *         response="401",
      *         description="An error occured",
      *         @OA\JsonContent(
+     *             type="object",
      *             @OA\Property(property="status", type="string", example="error"),
      *             @OA\Property(property="message", type="string", example="An error occured"),
      *         )
@@ -220,7 +198,6 @@ class PropertyController extends Controller
     }
 
     /**
-     * Show  Property
      * @OA\GET (
      *     path="/api/property/{property}",
      *     tags={"Property"},
@@ -246,6 +223,7 @@ class PropertyController extends Controller
      *         response="404",
      *         description="Not found",
      *         @OA\JsonContent(
+     *             type="object",
      *             @OA\Property(property="status", type="string", example="error"),
      *             @OA\Property(property="message", type="string", example="No Property found"),
      *         )
@@ -289,6 +267,7 @@ class PropertyController extends Controller
      *             @OA\Schema(
      *                 @OA\Property(
      *                      type="object",
+     *                      @OA\Property( property="occupant", type="string"),
      *                      @OA\Property( property="prop_addr", type="string"),
      *                      @OA\Property( property="street_name",type="string"),
      *                      @OA\Property( property="asset_no",type="string"),
@@ -297,8 +276,8 @@ class PropertyController extends Controller
      *                      @OA\Property( property="prop_use", type="string"),
      *                      @OA\Property( property="rating_dist", type="string"),
      *                      @OA\Property( property="annual_value", type="string"),
-     *                      @OA\Property( property="rate_payable", type="integer" ),
-     *                      @OA\Property( property="grand_total", type="integer" ),
+     *                      @OA\Property( property="rate_payable", type="string" ),
+     *                      @OA\Property( property="grand_total", type="string" ),
      *                      @OA\Property( property="category", type="string" ),
      *                      @OA\Property( property="group", type="string" ),
      *                      @OA\Property( property="active", type="string"),
@@ -333,25 +312,22 @@ class PropertyController extends Controller
      *         response="400",
      *         description="All Fields are Required",
      *         @OA\JsonContent(
+     *             type="object",
      *             @OA\Property(property="status", type="string", example="error"),
      *             @OA\Property(property="message", type="string", example="All Fields are required"),
-     *             @OA\Property(property="data", type="object",
-     *             ),
      *         )
      *     ),
      *     @OA\Response(
      *         response="401",
      *         description="An error occured",
      *         @OA\JsonContent(
+     *             type="object",
      *             @OA\Property(property="status", type="string", example="error"),
      *             @OA\Property(property="message", type="string", example="An error occured"),
      *         )
      *     ),
      *
      * )
-     *
-     *
-     *
      *
      */
     public function update(Request $request, Property $property)
@@ -401,7 +377,6 @@ class PropertyController extends Controller
 
 
     /**
-     * Delete Property
      * @OA\Delete (
      *     path="/api/property/{property}",
      *     tags={"Property"},
@@ -419,6 +394,7 @@ class PropertyController extends Controller
      *         response=200,
      *         description="Property deleted successfully",
      *         @OA\JsonContent(
+     *             type="object",
      *             @OA\Property(property="status", type="string", example="success"),
      *             @OA\Property(property="message", type="string", example="Property deleted successfully"),
      *         )
@@ -427,6 +403,7 @@ class PropertyController extends Controller
      *         response="401",
      *         description="You dont Have Permission",
      *         @OA\JsonContent(
+     *             type="object",
      *             @OA\Property(property="status", type="string", example="error"),
      *             @OA\Property(property="message", type="string", example="You dont Have Permission"),
      *         )
@@ -435,6 +412,7 @@ class PropertyController extends Controller
      *         response="402",
      *         description="An error occured",
      *         @OA\JsonContent(
+     *             type="object",
      *             @OA\Property(property="status", type="string", example="error"),
      *             @OA\Property(property="message", type="string", example="An error occured"),
      *         )

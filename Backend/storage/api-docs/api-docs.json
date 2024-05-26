@@ -58,65 +58,10 @@
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "properties": {
-                                        "status": {
-                                            "type": "string",
-                                            "example": "success"
-                                        },
-                                        "message": {
-                                            "type": "string",
-                                            "example": "Register Successfully"
-                                        },
-                                        "user": {
-                                            "properties": {
-                                                "id": {
-                                                    "type": "integer",
-                                                    "example": 9
-                                                },
-                                                "email": {
-                                                    "type": "string",
-                                                    "example": "abc@example2.com"
-                                                },
-                                                "phone": {
-                                                    "type": "string",
-                                                    "example": "65728338352"
-                                                },
-                                                "zone": {
-                                                    "type": "string",
-                                                    "example": "nigeria"
-                                                },
-                                                "role": {
-                                                    "properties": {
-                                                        "id": {
-                                                            "type": "integer",
-                                                            "example": 2
-                                                        },
-                                                        "name": {
-                                                            "type": "string",
-                                                            "example": "Admin"
-                                                        }
-                                                    },
-                                                    "type": "object"
-                                                },
-                                                "created_at": {
-                                                    "type": "string",
-                                                    "format": "date-time",
-                                                    "example": "2024-05-01T20:44:43.000000Z"
-                                                },
-                                                "updated_at": {
-                                                    "type": "string",
-                                                    "format": "date-time",
-                                                    "example": "2024-05-01T20:44:43.000000Z"
-                                                }
-                                            },
-                                            "type": "object"
-                                        },
-                                        "token": {
-                                            "type": "string",
-                                            "example": "1|57653vtZoT9EW2iRBHShQyALGaeZ3PtrtPhUN6Arlpgc4fe5fe8"
-                                        }
-                                    },
-                                    "type": "object"
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/LoginResource"
+                                    }
                                 }
                             }
                         }
@@ -134,19 +79,6 @@
                                         "message": {
                                             "type": "string",
                                             "example": "ensure that all required filed are properly filled"
-                                        },
-                                        "data": {
-                                            "properties": {
-                                                "email": {
-                                                    "type": "string",
-                                                    "example": "email is required"
-                                                },
-                                                "password": {
-                                                    "type": "string",
-                                                    "example": "password is required"
-                                                }
-                                            },
-                                            "type": "object"
                                         }
                                     },
                                     "type": "object"
@@ -177,7 +109,7 @@
                 }
             }
         },
-        "/api/auth/store-password/?user&?token": {
+        "/api/auth/store-password": {
             "post": {
                 "tags": [
                     "Authentication"
@@ -185,26 +117,6 @@
                 "summary": "Staff Create Password",
                 "description": "This allow the staff to create new password to  login to there account",
                 "operationId": "createStaffPassword",
-                "parameters": [
-                    {
-                        "name": "user",
-                        "in": "query",
-                        "description": "staff id",
-                        "required": false,
-                        "schema": {
-                            "type": "text"
-                        }
-                    },
-                    {
-                        "name": "token",
-                        "in": "query",
-                        "description": "staff password token send to the email",
-                        "required": false,
-                        "schema": {
-                            "type": "text"
-                        }
-                    }
-                ],
                 "requestBody": {
                     "content": {
                         "multipart/form-data": {
@@ -214,6 +126,16 @@
                                     "password_confirmation"
                                 ],
                                 "properties": {
+                                    "user": {
+                                        "description": "the staff id",
+                                        "type": "string",
+                                        "example": "1"
+                                    },
+                                    "token": {
+                                        "description": "token sent in the mail",
+                                        "type": "string",
+                                        "example": "djhsdjgjJHjhjffH"
+                                    },
                                     "password": {
                                         "description": "Enter new password",
                                         "type": "password",
@@ -1158,13 +1080,13 @@
                 }
             }
         },
-        "/api/properties": {
+        "/api/property": {
             "get": {
                 "tags": [
                     "Property"
                 ],
                 "summary": "Get all properties",
-                "operationId": "ae50890d9da51a5cfe01cd2151d4077a",
+                "operationId": "673e4f505d2feda35deb1c326e67f146",
                 "responses": {
                     "200": {
                         "description": "Successful operation",
@@ -1200,9 +1122,7 @@
                         }
                     }
                 }
-            }
-        },
-        "/api/property": {
+            },
             "post": {
                 "tags": [
                     "Property"
@@ -1219,6 +1139,9 @@
                                         "properties": {
                                             "pid": {
                                                 "type": "integer"
+                                            },
+                                            "occupant": {
+                                                "type": "string"
                                             },
                                             "prop_addr": {
                                                 "type": "string"
@@ -1245,16 +1168,10 @@
                                                 "type": "string"
                                             },
                                             "rate_payable": {
-                                                "type": "integer"
-                                            },
-                                            "arrears": {
-                                                "type": "integer"
-                                            },
-                                            "penalty": {
-                                                "type": "integer"
+                                                "type": "string"
                                             },
                                             "grand_total": {
-                                                "type": "integer"
+                                                "type": "string"
                                             },
                                             "category": {
                                                 "type": "string"
@@ -1272,6 +1189,7 @@
                                 "type": "object",
                                 "example": {
                                     "pid": "integer",
+                                    "occupant": "string",
                                     "prop_addr": "string",
                                     "street_name": "string",
                                     "asset_no": "string",
@@ -1279,9 +1197,9 @@
                                     "prop_type": "string",
                                     "prop_use": "string",
                                     "rating_dist": "string",
-                                    "annual_value": "integer",
-                                    "rate_payable": "integer",
-                                    "grand_total": "integer",
+                                    "annual_value": "string",
+                                    "rate_payable": "string",
+                                    "grand_total": "string",
                                     "category": "string",
                                     "group": "string",
                                     "active": "string"
@@ -1300,6 +1218,46 @@
                                     "items": {
                                         "$ref": "#/components/schemas/PropertyResource"
                                     }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "All Fields are Required",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "string",
+                                            "example": "error"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "All Fields are required"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "An error occured",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "string",
+                                            "example": "error"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "An error occured"
+                                        }
+                                    },
+                                    "type": "object"
                                 }
                             }
                         }
@@ -1395,6 +1353,9 @@
                                 "properties": {
                                     "": {
                                         "properties": {
+                                            "occupant": {
+                                                "type": "string"
+                                            },
                                             "prop_addr": {
                                                 "type": "string"
                                             },
@@ -1420,10 +1381,10 @@
                                                 "type": "string"
                                             },
                                             "rate_payable": {
-                                                "type": "integer"
+                                                "type": "string"
                                             },
                                             "grand_total": {
-                                                "type": "integer"
+                                                "type": "string"
                                             },
                                             "category": {
                                                 "type": "string"
@@ -1485,9 +1446,6 @@
                                         "message": {
                                             "type": "string",
                                             "example": "All Fields are required"
-                                        },
-                                        "data": {
-                                            "type": "object"
                                         }
                                     },
                                     "type": "object"
@@ -1642,7 +1600,7 @@
                                         },
                                         "message": {
                                             "type": "string",
-                                            "example": "No User found"
+                                            "example": "No staff found"
                                         }
                                     },
                                     "type": "object"
@@ -1699,8 +1657,12 @@
                                     },
                                     "role_id": {
                                         "description": "Staff Roles",
-                                        "type": "integer",
-                                        "example": ""
+                                        "type": "string",
+                                        "enum": [
+                                            "2",
+                                            "3",
+                                            "4"
+                                        ]
                                     }
                                 },
                                 "type": "object"
@@ -1717,66 +1679,47 @@
                         "content": {
                             "application/json": {
                                 "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/StoreUserResource"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "All fields are required",
+                        "content": {
+                            "application/json": {
+                                "schema": {
                                     "properties": {
                                         "status": {
                                             "type": "string",
-                                            "example": "success"
+                                            "example": "error"
                                         },
                                         "message": {
                                             "type": "string",
-                                            "example": "Register Successfully"
-                                        },
-                                        "user": {
-                                            "properties": {
-                                                "id": {
-                                                    "type": "integer",
-                                                    "example": 9
-                                                },
-                                                "name": {
-                                                    "type": "string",
-                                                    "example": "abc example2.com"
-                                                },
-                                                "email": {
-                                                    "type": "string",
-                                                    "example": "abc@example2.com"
-                                                },
-                                                "phone": {
-                                                    "type": "string",
-                                                    "example": "65728338352"
-                                                },
-                                                "zone": {
-                                                    "type": "string",
-                                                    "example": "nigeria"
-                                                },
-                                                "role": {
-                                                    "properties": {
-                                                        "id": {
-                                                            "type": "integer",
-                                                            "example": 2
-                                                        },
-                                                        "name": {
-                                                            "type": "string",
-                                                            "example": "Admin"
-                                                        }
-                                                    },
-                                                    "type": "object"
-                                                },
-                                                "created_at": {
-                                                    "type": "string",
-                                                    "format": "date-time",
-                                                    "example": "2024-05-01T20:44:43.000000Z"
-                                                },
-                                                "updated_at": {
-                                                    "type": "string",
-                                                    "format": "date-time",
-                                                    "example": "2024-05-01T20:44:43.000000Z"
-                                                }
-                                            },
-                                            "type": "object"
-                                        },
-                                        "token": {
+                                            "example": "All fields are required"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "402": {
+                        "description": "An error occurred",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
                                             "type": "string",
-                                            "example": "1|57653vtZoT9EW2iRBHShQyALGaeZ3PtrtPhUN6Arlpgc4fe5fe8"
+                                            "example": "error"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "An error occurred"
                                         }
                                     },
                                     "type": "object"
@@ -1824,7 +1767,7 @@
                             }
                         }
                     },
-                    "401": {
+                    "403": {
                         "description": "You dont Have Permission",
                         "content": {
                             "application/json": {
@@ -1906,6 +1849,15 @@
                                             },
                                             "zone": {
                                                 "type": "string"
+                                            },
+                                            "role_id": {
+                                                "description": "Staff Roles",
+                                                "type": "string",
+                                                "enum": [
+                                                    "2",
+                                                    "3",
+                                                    "4"
+                                                ]
                                             }
                                         },
                                         "type": "object"
@@ -1916,7 +1868,8 @@
                                     "name": "example name",
                                     "email": "example email",
                                     "phone": "example phone",
-                                    "zone": "example zone"
+                                    "zone": "example zone",
+                                    "role_id": "example role"
                                 }
                             }
                         }
@@ -1936,44 +1889,6 @@
                                         "message": {
                                             "type": "string",
                                             "example": "Update Successfully"
-                                        },
-                                        "user": {
-                                            "properties": {
-                                                "id": {
-                                                    "type": "integer",
-                                                    "example": 9
-                                                },
-                                                "name": {
-                                                    "type": "string",
-                                                    "example": "abc kel"
-                                                },
-                                                "email": {
-                                                    "type": "string",
-                                                    "example": "abc@example2.com"
-                                                },
-                                                "phone": {
-                                                    "type": "string",
-                                                    "example": "65728338352"
-                                                },
-                                                "zone": {
-                                                    "type": "string",
-                                                    "example": "nigeria"
-                                                },
-                                                "role": {
-                                                    "properties": {
-                                                        "id": {
-                                                            "type": "integer",
-                                                            "example": 2
-                                                        },
-                                                        "name": {
-                                                            "type": "string",
-                                                            "example": "Admin"
-                                                        }
-                                                    },
-                                                    "type": "object"
-                                                }
-                                            },
-                                            "type": "object"
                                         }
                                     },
                                     "type": "object"
@@ -1994,27 +1909,6 @@
                                         "message": {
                                             "type": "string",
                                             "example": "All Fields are required"
-                                        },
-                                        "data": {
-                                            "properties": {
-                                                "name": {
-                                                    "type": "string",
-                                                    "example": "name is required"
-                                                },
-                                                "email": {
-                                                    "type": "string",
-                                                    "example": "email is required"
-                                                },
-                                                "phone": {
-                                                    "type": "string",
-                                                    "example": "phone is required"
-                                                },
-                                                "zone": {
-                                                    "type": "string",
-                                                    "example": "zone is required"
-                                                }
-                                            },
-                                            "type": "object"
                                         }
                                     },
                                     "type": "object"
@@ -2215,6 +2109,11 @@
                 },
                 "type": "object"
             },
+            "LoginResource": {
+                "title": "Login Staff Resource",
+                "description": "Login Staff Resource",
+                "type": "object"
+            },
             "PaymentResource": {
                 "title": "PaymentResource",
                 "description": "The payment resource",
@@ -2259,6 +2158,7 @@
                 "type": "object",
                 "example": {
                     "pid": 3176683,
+                    "occupant": "THE OCCUPIER",
                     "prop_addr": "540 Kaci Extensions Suite 724 Francoborough, MS 22188",
                     "street_name": "46329 McDermott Courts Apt. 058",
                     "asset_no": "AMC/B14/TR/9",
@@ -2268,8 +2168,6 @@
                     "rating_dist": "APO",
                     "annual_value": 200000,
                     "rate_payable": 45000,
-                    "arrears": 25000,
-                    "penalty": 45000,
                     "grand_total": 4500000,
                     "category": "RESIDENTIAL",
                     "group": "AMAC2",
@@ -2292,51 +2190,6 @@
                 "title": "Staff Model",
                 "description": "Staff model",
                 "type": "object"
-            }
-        },
-        "responses": {
-            "400": {
-                "description": "All Fields are Required",
-                "content": {
-                    "application/json": {
-                        "schema": {
-                            "properties": {
-                                "status": {
-                                    "type": "string",
-                                    "example": "error"
-                                },
-                                "message": {
-                                    "type": "string",
-                                    "example": "All Fields are required"
-                                },
-                                "data": {
-                                    "type": "object"
-                                }
-                            },
-                            "type": "object"
-                        }
-                    }
-                }
-            },
-            "401": {
-                "description": "An error occured",
-                "content": {
-                    "application/json": {
-                        "schema": {
-                            "properties": {
-                                "status": {
-                                    "type": "string",
-                                    "example": "error"
-                                },
-                                "message": {
-                                    "type": "string",
-                                    "example": "An error occured"
-                                }
-                            },
-                            "type": "object"
-                        }
-                    }
-                }
             }
         },
         "securitySchemes": {
