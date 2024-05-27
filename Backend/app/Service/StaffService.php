@@ -58,10 +58,10 @@ class StaffService
 
     public function deleteStaff($user)
     {
-        if ($deleteUser = $user->delete()) {
-            return $deleteUser;
-        };
-
+        $getStaff = $this->viewStaff($user);
+        if ($getStaff) {
+            return $getStaff->delete();
+        }
         return false;
     }
 

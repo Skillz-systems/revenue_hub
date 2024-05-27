@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Mail\ForgotPasswordMail;
 use Mockery;
 use Tests\TestCase;
 use App\Models\Role;
@@ -447,6 +448,64 @@ class StaffControllerTest extends TestCase
             'token' => $token,
         ]);
 
+        $response->assertStatus(400)
+            ->assertJson([
+                'status' => 'error',
+                'message' => 'Something went wrong',
+            ]);
+    }
+
+    public function test_forgot_password_email_sent_successfully()
+    {
+        // Disable actual email sending during the test
+        Mail::fake();
+
+        // Arrange: Create a test user
+        $user = User::factory()->create([
+            'email' => 'test@example.com',
+        ]);
+
+        // Act: Make a POST request to the forgot password endpoint
+        $response = $this->postJson('/api/auth/forgot-password', [
+            'email' => 'test@example.com',
+        ]);
+
+        // Assert: Check the response
+        $response->assertStatus(200)
+            ->assertJson([
+                'status' => 'success',
+                'message' => 'Password Reset Email Sent Successfully',
+            ]);
+
+        // Assert: Verify that an email was sent to the correct user
+        Mail::assertSent(ForgotPasswordMail::class, function ($mail) use ($user) {
+            return $mail->hasTo($user->email);
+        });
+    }
+
+    public function test_forgot_password_with_invalid_email()
+    {
+        // Act: Make a POST request to the forgot password endpoint with an invalid email
+        $response = $this->postJson('/api/auth/forgot-password', [
+            'email' => 'invalid-email',
+        ]);
+
+        // Assert: Check the response
+        $response->assertStatus(400)
+            ->assertJson([
+                'status' => 'error',
+                'message' => 'All fields are required ',
+            ]);
+    }
+
+    public function test_forgot_password_with_nonexistent_email()
+    {
+        // Act: Make a POST request to the forgot password endpoint with a nonexistent email
+        $response = $this->postJson('/api/auth/forgot-password', [
+            'email' => 'nonexistent@example.com',
+        ]);
+
+        // Assert: Check the response
         $response->assertStatus(400)
             ->assertJson([
                 'status' => 'error',

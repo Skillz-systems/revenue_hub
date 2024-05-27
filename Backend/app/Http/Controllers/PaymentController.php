@@ -15,10 +15,17 @@ class PaymentController extends Controller
     }
 
     /**
-     * @OA\Get(
+     * @OA\Post(
      *     path="/payment",
      *     summary="Get a list of payments",
      *     tags={"Payment"},
+     *      @OA\Parameter(
+     *         name="date_filter",
+     *         in="query",
+     *         description="Optional. The year for which to retrieve data. Defaults to the current year if not provided.",
+     *         required=false,
+     *         @OA\Schema(type="string")
+     *     ),
      *     @OA\Response(
      *         response=200,
      *         description="Successful operation",
@@ -172,13 +179,59 @@ class PaymentController extends Controller
      *                 type="string",
      *                 example="success"
      *             ),
+     * 
      *             @OA\Property(
      *                 property="data",
      *                 type="object",
      *                 @OA\Property(
-     *                     property="account_number",
+     *                     property="response_message",
      *                     type="string",
-     *                     example="1234567890"
+     *                     example="Transaction in progress"
+     *                 ),
+     *                 @OA\Property(
+     *                     property="response_code",
+     *                     type="string",
+     *                     example="02"
+     *                 ),
+     *                 @OA\Property(
+     *                     property="flw_ref",
+     *                     type="string",
+     *                     example="GPCY5711171682908639919735"
+     *                 ),
+     *                 @OA\Property(
+     *                     property="order_ref",
+     *                     type="string",
+     *                     example="URF_1716829079964_1906235"
+     *                 ),
+     *                 @OA\Property(
+     *                     property="frequency",
+     *                     type="string",
+     *                     example="NA"
+     *                 ),
+     *                 @OA\Property(
+     *                     property="bank_name",
+     *                     type="string",
+     *                     example="Sterling Bank"
+     *                 ),
+     *                 @OA\Property(
+     *                     property="created_at",
+     *                     type="string",
+     *                     example="2024-05-27 17:58:06"
+     *                 ),
+     *                 @OA\Property(
+     *                     property="expiry_date",
+     *                     type="string",
+     *                     example="2024-05-27 18:58:06"
+     *                 ),
+     *                 @OA\Property(
+     *                     property="note",
+     *                     type="string",
+     *                     example="Please make a bank transfer to ICT FLW"
+     *                 ),
+     *                 @OA\Property(
+     *                     property="amount",
+     *                     type="string",
+     *                     example="48625.00"
      *                 )
      *             )
      *         )
