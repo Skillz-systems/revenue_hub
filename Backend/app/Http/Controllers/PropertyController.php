@@ -18,8 +18,8 @@ class PropertyController extends Controller
         $this->propertyService = $propertyService;
     }
     /**
-     * @OA\Get(
-     *     path="/api/properties",
+     * @OA\Post(
+     *     path="/api/property",
      *     summary="Get all properties",
      *     tags={"Property"},
      *     @OA\Response(
@@ -71,7 +71,7 @@ class PropertyController extends Controller
     /**
      * Add new property details.
      * @OA\POST(
-     *     path="/api/property",
+     *     path="/api/property/create",
      *     tags={"Property"},
      *     summary="Add New Property Details",
      *     description="This allow staff admin to add new property details",

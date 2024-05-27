@@ -392,7 +392,7 @@ class UserController extends Controller
      *     ),
      * )
      */
-    public function destroy(User $user)
+    public function destroy($user)
     {
         if (Auth::user()->role_id == User::ROLE_ADMIN) {
 
