@@ -19,10 +19,18 @@ export function formatNumberWithCommas(number: number | string): string {
   return formattedNumber;
 }
 
+export const formatDate = (dateString: string): string => {
+  const date = new Date(dateString);
+  const month = (date.getMonth() + 1).toString().padStart(2, '0');
+  const day = date.getDate().toString().padStart(2, '0');
+  const year = date.getFullYear();
+
+  return `${month}/${day}/${year}`;
+};
+
 export function filterRecordsByKeyAndValue<T>(recordsArray: T[], key: keyof T, value: T[keyof T]): T[] {
   return recordsArray.filter((record) => record[key] === value);
 }
-
 
 interface StaffRecord {
   id: number;
@@ -85,7 +93,7 @@ export const fetcher = async (url: string, token: any) => {
 export const useTokens = () => {
   // Safely get and parse userData from cookies
   const userData = Cookies.get('userData');
-  
+
   try {
     const parsedData = userData ? JSON.parse(userData) : null;
     // Safely access token
