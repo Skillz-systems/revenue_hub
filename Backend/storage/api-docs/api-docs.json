@@ -1,0 +1,2434 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "REVENUE HUB",
+        "description": "Below is the API endpoint for the Revenue Hub",
+        "contact": {
+            "email": "darius@matulionis.lt"
+        },
+        "license": {
+            "name": "Apache 2.0",
+            "url": "https://www.apache.org/licenses/LICENSE-2.0.html"
+        },
+        "version": "1.0.0",
+        "x-logo": {
+            "url": "https://via.placeholder.com/190x90.png?text=L5-Swagger"
+        }
+    },
+    "paths": {
+        "/api/auth/login": {
+            "post": {
+                "tags": [
+                    "Authentication"
+                ],
+                "summary": "Staff Login",
+                "description": "This allow the staff to login to there account.",
+                "operationId": "loginStaff",
+                "requestBody": {
+                    "content": {
+                        "multipart/form-data": {
+                            "schema": {
+                                "required": [
+                                    "email",
+                                    "password"
+                                ],
+                                "properties": {
+                                    "email": {
+                                        "description": "Enter staff email",
+                                        "type": "text",
+                                        "example": "admin@revenuehub.com"
+                                    },
+                                    "password": {
+                                        "description": "Enter staff password",
+                                        "type": "password",
+                                        "example": "12345678"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        },
+                        "application/json": {
+                            "schema": {}
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Login Successful",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "string",
+                                            "example": "success"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Register Successfully"
+                                        },
+                                        "user": {
+                                            "properties": {
+                                                "id": {
+                                                    "type": "integer",
+                                                    "example": 9
+                                                },
+                                                "email": {
+                                                    "type": "string",
+                                                    "example": "abc@example2.com"
+                                                },
+                                                "phone": {
+                                                    "type": "string",
+                                                    "example": "65728338352"
+                                                },
+                                                "zone": {
+                                                    "type": "string",
+                                                    "example": "nigeria"
+                                                },
+                                                "role": {
+                                                    "properties": {
+                                                        "id": {
+                                                            "type": "integer",
+                                                            "example": 2
+                                                        },
+                                                        "name": {
+                                                            "type": "string",
+                                                            "example": "Admin"
+                                                        }
+                                                    },
+                                                    "type": "object"
+                                                },
+                                                "created_at": {
+                                                    "type": "string",
+                                                    "format": "date-time",
+                                                    "example": "2024-05-01T20:44:43.000000Z"
+                                                },
+                                                "updated_at": {
+                                                    "type": "string",
+                                                    "format": "date-time",
+                                                    "example": "2024-05-01T20:44:43.000000Z"
+                                                }
+                                            },
+                                            "type": "object"
+                                        },
+                                        "token": {
+                                            "type": "string",
+                                            "example": "1|57653vtZoT9EW2iRBHShQyALGaeZ3PtrtPhUN6Arlpgc4fe5fe8"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "All Fields are Required",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "string",
+                                            "example": "error"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "ensure that all required filed are properly filled"
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "email": {
+                                                    "type": "string",
+                                                    "example": "email is required"
+                                                },
+                                                "password": {
+                                                    "type": "string",
+                                                    "example": "password is required"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Credential not match",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "string",
+                                            "example": "error"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Credential not match"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/auth/store-password/?user&?token": {
+            "post": {
+                "tags": [
+                    "Authentication"
+                ],
+                "summary": "Staff Create Password",
+                "description": "This allow the staff to create new password to  login to there account",
+                "operationId": "createStaffPassword",
+                "parameters": [
+                    {
+                        "name": "user",
+                        "in": "query",
+                        "description": "staff id",
+                        "required": false,
+                        "schema": {
+                            "type": "text"
+                        }
+                    },
+                    {
+                        "name": "token",
+                        "in": "query",
+                        "description": "staff password token send to the email",
+                        "required": false,
+                        "schema": {
+                            "type": "text"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "multipart/form-data": {
+                            "schema": {
+                                "required": [
+                                    "password",
+                                    "password_confirmation"
+                                ],
+                                "properties": {
+                                    "password": {
+                                        "description": "Enter new password",
+                                        "type": "password",
+                                        "example": "12345678"
+                                    },
+                                    "password_confirmation": {
+                                        "description": "Confirm password",
+                                        "type": "password",
+                                        "example": "12345678"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        },
+                        "application/json": {
+                            "schema": {}
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Password Created Successfull",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "string",
+                                            "example": "success"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Password Created Successfull"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Invalid Token",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "string",
+                                            "example": "error"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Invalid Password Token"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/demand-notice": {
+            "get": {
+                "tags": [
+                    "Demand Notice"
+                ],
+                "summary": "Get paginated list of demand notices",
+                "operationId": "3a39f9ad7ed404235e4419cafecc4a2a",
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "headers": {
+                            "X-Pagination-Total-Count": {
+                                "description": "Total count of demand notices",
+                                "schema": {
+                                    "type": "integer"
+                                }
+                            },
+                            "X-Pagination-Page-Count": {
+                                "description": "Total count of pages",
+                                "schema": {
+                                    "type": "integer"
+                                }
+                            },
+                            "X-Pagination-Per-Page": {
+                                "description": "Demand notices per page",
+                                "schema": {
+                                    "type": "integer"
+                                }
+                            },
+                            "X-Pagination-Current-Page": {
+                                "description": "Current page number",
+                                "schema": {
+                                    "type": "integer"
+                                }
+                            },
+                            "X-Pagination-Next-Page": {
+                                "description": "Next page number",
+                                "schema": {
+                                    "type": "integer"
+                                }
+                            },
+                            "X-Pagination-Prev-Page": {
+                                "description": "Previous page number",
+                                "schema": {
+                                    "type": "integer"
+                                }
+                            },
+                            "X-Pagination-From": {
+                                "description": "Starting item number of the current page (starts at 1)",
+                                "schema": {
+                                    "type": "integer"
+                                }
+                            },
+                            "X-Pagination-To": {
+                                "description": "Ending item number of the current page",
+                                "schema": {
+                                    "type": "integer"
+                                }
+                            },
+                            "X-Pagination-Last-Page": {
+                                "description": "Last page number",
+                                "schema": {
+                                    "type": "integer"
+                                }
+                            }
+                        },
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/DemandNoticeResource"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Unauthenticated."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "This action is unauthorized."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/demand-notice/create": {
+            "post": {
+                "tags": [
+                    "Demand Notice"
+                ],
+                "summary": "Create a new demand notice",
+                "operationId": "b1395ff45578aad070c11a5930fbac71",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "property_id": {
+                                        "description": "ID of the property associated with the demand notice",
+                                        "type": "integer",
+                                        "example": "1"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/DemandNoticeResource"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "string",
+                                            "example": "error"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Property ID is missing"
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "property_id": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "type": "string"
+                                                    }
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Unauthenticated."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "This action is unauthorized."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/demand-notice/view/{demandNoticeId}": {
+            "get": {
+                "tags": [
+                    "Demand Notice"
+                ],
+                "summary": "Get a specific demand notice",
+                "operationId": "c91913bb0584070e612e5bb441168f29",
+                "parameters": [
+                    {
+                        "name": "demandNoticeId",
+                        "in": "path",
+                        "description": "ID of the demand notice to retrieve",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/DemandNoticeResource"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Unauthenticated."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "This action is unauthorized."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Demand notice not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Demand notice not found"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/demand-notice/update/{demandNoticeId}": {
+            "put": {
+                "tags": [
+                    "Demand Notice"
+                ],
+                "summary": "Update a specific demand notice",
+                "operationId": "b4a311e38fe34d0477c4792481ffed41",
+                "parameters": [
+                    {
+                        "name": "demandNoticeId",
+                        "in": "path",
+                        "description": "ID of the demand notice to update",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "property_id": {
+                                        "description": "ID of the property associated with the demand notice",
+                                        "type": "integer",
+                                        "example": "1"
+                                    },
+                                    "amount": {
+                                        "description": "Amount of the demand notice",
+                                        "type": "string",
+                                        "example": "100.00"
+                                    },
+                                    "arrears_amount": {
+                                        "description": "Arrears amount of the demand notice",
+                                        "type": "string",
+                                        "example": "50.00"
+                                    },
+                                    "penalty": {
+                                        "description": "Penalty of the demand notice",
+                                        "type": "string",
+                                        "example": "10.00"
+                                    },
+                                    "status": {
+                                        "description": "Status of the demand notice",
+                                        "type": "integer",
+                                        "example": "1"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "string",
+                                            "example": "success"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Data has been updated"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "string",
+                                            "example": "error"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Something went wrong"
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "property_id": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "type": "string"
+                                                    }
+                                                },
+                                                "amount": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "type": "string"
+                                                    }
+                                                },
+                                                "arrears_amount": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "type": "string"
+                                                    }
+                                                },
+                                                "penalty": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "type": "string"
+                                                    }
+                                                },
+                                                "status": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "type": "string"
+                                                    }
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/demand-notice/delete/{demandNoticeId}": {
+            "delete": {
+                "tags": [
+                    "Demand Notice"
+                ],
+                "summary": "Delete a specific demand notice",
+                "operationId": "2493d2c8b46d7e1a71d393472082fe8b",
+                "parameters": [
+                    {
+                        "name": "demandNoticeId",
+                        "in": "path",
+                        "description": "ID of the demand notice to delete",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "string",
+                                            "example": "success"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "string",
+                                            "example": "error"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Something went wrong"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Unauthenticated."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "This action is unauthorized."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Demand notice not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Demand notice not found"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "api/forgot-password": {
+            "post": {
+                "tags": [
+                    "Authentication"
+                ],
+                "summary": "Send reset password link",
+                "description": "This endpoint allows users to request a password reset link by providing their email address.",
+                "operationId": "312a34fcbd1c30045c653e47d2ec4e0f",
+                "parameters": [
+                    {
+                        "name": "email",
+                        "in": "query",
+                        "description": "User's email address",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "format": "email"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "We have emailed your password reset link",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "description": "Message indicating the status of the reset password link sent.",
+                                            "type": "string"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "description": "Error message indicating validation failure.",
+                                            "type": "string"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/payment": {
+            "get": {
+                "tags": [
+                    "Payment"
+                ],
+                "summary": "Get a list of payments",
+                "operationId": "f9856de4275291351dd4bdf4799455e7",
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "headers": {
+                            "X-Pagination-Current-Page": {
+                                "description": "Current page of the collection",
+                                "schema": {
+                                    "type": "integer"
+                                }
+                            },
+                            "X-Pagination-Per-Page": {
+                                "description": "Number of items per page",
+                                "schema": {
+                                    "type": "integer"
+                                }
+                            },
+                            "X-Pagination-Total": {
+                                "description": "Total number of items",
+                                "schema": {
+                                    "type": "integer"
+                                }
+                            },
+                            "X-Pagination-Last-Page": {
+                                "description": "Number of the last page",
+                                "schema": {
+                                    "type": "integer"
+                                }
+                            }
+                        },
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/PaymentResource"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Unauthenticated."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "This action is unauthorized."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/payment/view/{paymentId}": {
+            "get": {
+                "tags": [
+                    "Payment"
+                ],
+                "summary": "Get a specific payment",
+                "operationId": "b5324253dc295d8105c4a3f1190bf0a4",
+                "parameters": [
+                    {
+                        "name": "paymentId",
+                        "in": "path",
+                        "description": "ID of the payment to view",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/PaymentResource"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Unauthenticated."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "This action is unauthorized."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Payment not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Payment not found"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/payments/generate-account/{propertyPID}/": {
+            "get": {
+                "tags": [
+                    "Payment"
+                ],
+                "summary": "Generate an account number for a demand notice  ",
+                "operationId": "ad052bf4803fee5d18d8d6c975c95887",
+                "parameters": [
+                    {
+                        "name": "propertyPID",
+                        "in": "path",
+                        "description": "PID of the property to generate an account number for",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "string",
+                                            "example": "success"
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "account_number": {
+                                                    "type": "string",
+                                                    "example": "1234567890"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Unauthenticated."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "This action is unauthorized."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Payment not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Payment not found"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/properties": {
+            "get": {
+                "tags": [
+                    "Property"
+                ],
+                "summary": "Get all properties",
+                "operationId": "ae50890d9da51a5cfe01cd2151d4077a",
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/PropertyResource"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "No properties found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "description": "Status",
+                                            "type": "string"
+                                        },
+                                        "message": {
+                                            "description": "Message",
+                                            "type": "string"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/property": {
+            "post": {
+                "tags": [
+                    "Property"
+                ],
+                "summary": "Add New Property Details",
+                "description": "This allow staff admin to add new property details",
+                "operationId": "addProperty",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "": {
+                                        "properties": {
+                                            "pid": {
+                                                "type": "integer"
+                                            },
+                                            "prop_addr": {
+                                                "type": "string"
+                                            },
+                                            "street_name": {
+                                                "type": "string"
+                                            },
+                                            "asset_no": {
+                                                "type": "string"
+                                            },
+                                            "cadastral_zone": {
+                                                "type": "string"
+                                            },
+                                            "prop_type": {
+                                                "type": "string"
+                                            },
+                                            "prop_use": {
+                                                "type": "string"
+                                            },
+                                            "rating_dist": {
+                                                "type": "string"
+                                            },
+                                            "annual_value": {
+                                                "type": "string"
+                                            },
+                                            "rate_payable": {
+                                                "type": "integer"
+                                            },
+                                            "arrears": {
+                                                "type": "integer"
+                                            },
+                                            "penalty": {
+                                                "type": "integer"
+                                            },
+                                            "grand_total": {
+                                                "type": "integer"
+                                            },
+                                            "category": {
+                                                "type": "string"
+                                            },
+                                            "group": {
+                                                "type": "string"
+                                            },
+                                            "active": {
+                                                "type": "string"
+                                            }
+                                        },
+                                        "type": "object"
+                                    }
+                                },
+                                "type": "object",
+                                "example": {
+                                    "pid": "integer",
+                                    "prop_addr": "string",
+                                    "street_name": "string",
+                                    "asset_no": "string",
+                                    "cadastral_zone": "string",
+                                    "prop_type": "string",
+                                    "prop_use": "string",
+                                    "rating_dist": "string",
+                                    "annual_value": "integer",
+                                    "rate_payable": "integer",
+                                    "grand_total": "integer",
+                                    "category": "string",
+                                    "group": "string",
+                                    "active": "string"
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Property added successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/PropertyResource"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "api_key": []
+                    }
+                ]
+            }
+        },
+        "/api/property/{property}": {
+            "get": {
+                "tags": [
+                    "Property"
+                ],
+                "summary": "Get a property",
+                "description": "Show details of a property",
+                "operationId": "getProperty",
+                "parameters": [
+                    {
+                        "name": "property",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Show details of a property",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/PropertyResource"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "string",
+                                            "example": "error"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "No Property found"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "api_key": []
+                    }
+                ]
+            },
+            "put": {
+                "tags": [
+                    "Property"
+                ],
+                "summary": "Update Property Details",
+                "description": "This allow staff admin to update property details",
+                "operationId": "updateProperty",
+                "parameters": [
+                    {
+                        "name": "property",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "": {
+                                        "properties": {
+                                            "prop_addr": {
+                                                "type": "string"
+                                            },
+                                            "street_name": {
+                                                "type": "string"
+                                            },
+                                            "asset_no": {
+                                                "type": "string"
+                                            },
+                                            "cadastral_zone": {
+                                                "type": "string"
+                                            },
+                                            "prop_type": {
+                                                "type": "string"
+                                            },
+                                            "prop_use": {
+                                                "type": "string"
+                                            },
+                                            "rating_dist": {
+                                                "type": "string"
+                                            },
+                                            "annual_value": {
+                                                "type": "string"
+                                            },
+                                            "rate_payable": {
+                                                "type": "integer"
+                                            },
+                                            "grand_total": {
+                                                "type": "integer"
+                                            },
+                                            "category": {
+                                                "type": "string"
+                                            },
+                                            "group": {
+                                                "type": "string"
+                                            },
+                                            "active": {
+                                                "type": "string"
+                                            }
+                                        },
+                                        "type": "object"
+                                    }
+                                },
+                                "type": "object",
+                                "example": {
+                                    "prop_addr": "string",
+                                    "street_name": "string",
+                                    "asset_no": "string",
+                                    "cadastral_zone": "string",
+                                    "prop_type": "string",
+                                    "prop_use": "string",
+                                    "rating_dist": "string",
+                                    "annual_value": "integer",
+                                    "rate_payable": "integer",
+                                    "grand_total": "integer",
+                                    "category": "string",
+                                    "group": "string",
+                                    "active": "string"
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Property Updated Successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/PropertyResource"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "All Fields are Required",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "string",
+                                            "example": "error"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "All Fields are required"
+                                        },
+                                        "data": {
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "An error occured",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "string",
+                                            "example": "error"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "An error occured"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "api_key": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "Property"
+                ],
+                "summary": "Delete a property",
+                "description": "This allow staff admin to delete property",
+                "operationId": "deleteProperty",
+                "parameters": [
+                    {
+                        "name": "property",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Property deleted successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "string",
+                                            "example": "success"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Property deleted successfully"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "You dont Have Permission",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "string",
+                                            "example": "error"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "You dont Have Permission"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "402": {
+                        "description": "An error occured",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "string",
+                                            "example": "error"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "An error occured"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "api_key": []
+                    }
+                ]
+            }
+        },
+        "/api/statistic/all-yearly-data": {
+            "post": {
+                "tags": [
+                    "statistics"
+                ],
+                "summary": "Retrieve all yearly statistical  data",
+                "description": "Returns various statistics and totals for a specific year, including total payments, demand notices, properties, and users.",
+                "operationId": "2d5125fb174949f725c2a491d4d5ecea",
+                "parameters": [
+                    {
+                        "name": "date_filter",
+                        "in": "query",
+                        "description": "Optional. The year for which to retrieve data. Defaults to the current year if not provided.",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "total_payments": {
+                                                    "type": "integer",
+                                                    "example": 10
+                                                },
+                                                "total_demand_notices": {
+                                                    "type": "integer",
+                                                    "example": 20
+                                                },
+                                                "total_paid_demand_notices": {
+                                                    "type": "integer",
+                                                    "example": 15
+                                                },
+                                                "total_pending_demand_notices": {
+                                                    "type": "integer",
+                                                    "example": 5
+                                                },
+                                                "total_demand_notices_amount": {
+                                                    "type": "number",
+                                                    "example": 5000.5
+                                                },
+                                                "total_properties": {
+                                                    "type": "integer",
+                                                    "example": 100
+                                                },
+                                                "total_users": {
+                                                    "type": "integer",
+                                                    "example": 50
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized: Missing or invalid token"
+                    },
+                    "500": {
+                        "description": "Internal server error"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/staff": {
+            "get": {
+                "tags": [
+                    "Staff"
+                ],
+                "summary": "Get all staffs",
+                "description": "Show list of all staffs",
+                "operationId": "getStaffs",
+                "responses": {
+                    "200": {
+                        "description": "List of all staffs",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/StoreUserResource"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "string",
+                                            "example": "error"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "No User found"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "api_key": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Staff"
+                ],
+                "summary": "Register New Staff",
+                "description": "This allow the MD to create new staff member",
+                "operationId": "registerStaff",
+                "requestBody": {
+                    "description": "Input staff details to register",
+                    "content": {
+                        "multipart/form-data": {
+                            "schema": {
+                                "required": [
+                                    "name",
+                                    "email",
+                                    "phone",
+                                    "zone",
+                                    "role_id"
+                                ],
+                                "properties": {
+                                    "name": {
+                                        "description": "Staff Fullname",
+                                        "type": "text",
+                                        "example": "Revenue Hub"
+                                    },
+                                    "email": {
+                                        "description": "Staff Email",
+                                        "type": "text",
+                                        "example": ""
+                                    },
+                                    "phone": {
+                                        "description": "Staff Phone",
+                                        "type": "text",
+                                        "example": ""
+                                    },
+                                    "zone": {
+                                        "description": "Staff Zone",
+                                        "type": "text",
+                                        "example": ""
+                                    },
+                                    "role_id": {
+                                        "description": "Staff Roles",
+                                        "type": "integer",
+                                        "example": ""
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        },
+                        "application/json": {
+                            "schema": {}
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Registeration Successful",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "string",
+                                            "example": "success"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Register Successfully"
+                                        },
+                                        "user": {
+                                            "properties": {
+                                                "id": {
+                                                    "type": "integer",
+                                                    "example": 9
+                                                },
+                                                "name": {
+                                                    "type": "string",
+                                                    "example": "abc example2.com"
+                                                },
+                                                "email": {
+                                                    "type": "string",
+                                                    "example": "abc@example2.com"
+                                                },
+                                                "phone": {
+                                                    "type": "string",
+                                                    "example": "65728338352"
+                                                },
+                                                "zone": {
+                                                    "type": "string",
+                                                    "example": "nigeria"
+                                                },
+                                                "role": {
+                                                    "properties": {
+                                                        "id": {
+                                                            "type": "integer",
+                                                            "example": 2
+                                                        },
+                                                        "name": {
+                                                            "type": "string",
+                                                            "example": "Admin"
+                                                        }
+                                                    },
+                                                    "type": "object"
+                                                },
+                                                "created_at": {
+                                                    "type": "string",
+                                                    "format": "date-time",
+                                                    "example": "2024-05-01T20:44:43.000000Z"
+                                                },
+                                                "updated_at": {
+                                                    "type": "string",
+                                                    "format": "date-time",
+                                                    "example": "2024-05-01T20:44:43.000000Z"
+                                                }
+                                            },
+                                            "type": "object"
+                                        },
+                                        "token": {
+                                            "type": "string",
+                                            "example": "1|57653vtZoT9EW2iRBHShQyALGaeZ3PtrtPhUN6Arlpgc4fe5fe8"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "api_key": []
+                    }
+                ]
+            }
+        },
+        "/api/staff/{staff}": {
+            "get": {
+                "tags": [
+                    "Staff"
+                ],
+                "summary": "Get a staff",
+                "description": "Show details of a staff",
+                "operationId": "getStaff",
+                "parameters": [
+                    {
+                        "name": "staff",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Show details of a staff",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/ShowUserResource"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "You dont Have Permission",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "string",
+                                            "example": "error"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "You dont Have Permission"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "string",
+                                            "example": "error"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "No Staff found"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "api_key": []
+                    }
+                ]
+            },
+            "put": {
+                "tags": [
+                    "Staff"
+                ],
+                "summary": "Update Staff Details",
+                "description": "This allow staff member to update their details",
+                "operationId": "updateStaff",
+                "parameters": [
+                    {
+                        "name": "staff",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "": {
+                                        "properties": {
+                                            "name": {
+                                                "type": "string"
+                                            },
+                                            "email": {
+                                                "type": "string"
+                                            },
+                                            "phone": {
+                                                "type": "string"
+                                            },
+                                            "zone": {
+                                                "type": "string"
+                                            }
+                                        },
+                                        "type": "object"
+                                    }
+                                },
+                                "type": "object",
+                                "example": {
+                                    "name": "example name",
+                                    "email": "example email",
+                                    "phone": "example phone",
+                                    "zone": "example zone"
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Update Successful",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "string",
+                                            "example": "success"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Update Successfully"
+                                        },
+                                        "user": {
+                                            "properties": {
+                                                "id": {
+                                                    "type": "integer",
+                                                    "example": 9
+                                                },
+                                                "name": {
+                                                    "type": "string",
+                                                    "example": "abc kel"
+                                                },
+                                                "email": {
+                                                    "type": "string",
+                                                    "example": "abc@example2.com"
+                                                },
+                                                "phone": {
+                                                    "type": "string",
+                                                    "example": "65728338352"
+                                                },
+                                                "zone": {
+                                                    "type": "string",
+                                                    "example": "nigeria"
+                                                },
+                                                "role": {
+                                                    "properties": {
+                                                        "id": {
+                                                            "type": "integer",
+                                                            "example": 2
+                                                        },
+                                                        "name": {
+                                                            "type": "string",
+                                                            "example": "Admin"
+                                                        }
+                                                    },
+                                                    "type": "object"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "All Fields are Required",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "string",
+                                            "example": "error"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "All Fields are required"
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "name": {
+                                                    "type": "string",
+                                                    "example": "name is required"
+                                                },
+                                                "email": {
+                                                    "type": "string",
+                                                    "example": "email is required"
+                                                },
+                                                "phone": {
+                                                    "type": "string",
+                                                    "example": "phone is required"
+                                                },
+                                                "zone": {
+                                                    "type": "string",
+                                                    "example": "zone is required"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Credential error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "string",
+                                            "example": "error"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Credential error: You are not authorize"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "api_key": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "Staff"
+                ],
+                "summary": "Delete a staff",
+                "description": "This allow staff admin to delete staff",
+                "operationId": "deleteStaff",
+                "parameters": [
+                    {
+                        "name": "staff",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Staff deleted successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "string",
+                                            "example": "success"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Staff deleted successfully"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "You dont Have Permission",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "string",
+                                            "example": "error"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "You dont Have Permission"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "402": {
+                        "description": "An error occured",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "string",
+                                            "example": "error"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "An error occured"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "api_key": []
+                    }
+                ]
+            }
+        }
+    },
+    "components": {
+        "schemas": {
+            "DemandNoticePaymentResource": {
+                "title": "DemandNoticePaymentResource",
+                "description": "The payment resource",
+                "properties": {
+                    "tx_ref": {
+                        "description": "The transaction reference",
+                        "type": "string"
+                    },
+                    "pin": {
+                        "description": "The Flutterwave reference",
+                        "type": "string"
+                    },
+                    "actual_amount": {
+                        "description": "The actual amount",
+                        "type": "number"
+                    },
+                    "charged_amount": {
+                        "description": "The charged amount",
+                        "type": "number"
+                    },
+                    "app_fee": {
+                        "description": "The application fee",
+                        "type": "number"
+                    },
+                    "merchant_fee": {
+                        "description": "The merchant fee",
+                        "type": "number"
+                    },
+                    "status": {
+                        "description": "The payment status",
+                        "type": "string"
+                    }
+                },
+                "type": "object"
+            },
+            "DemandNoticeResource": {
+                "title": "DemandNoticeResource",
+                "description": "Resource representing a demand notice",
+                "properties": {
+                    "id": {
+                        "description": "The ID of the demand notice",
+                        "type": "integer"
+                    },
+                    "payments": {
+                        "description": "all the payments associated with the demand notice",
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/DemandNoticePaymentResource"
+                        }
+                    },
+                    "amount": {
+                        "description": "The amount of the demand notice",
+                        "type": "string"
+                    },
+                    "arrears_amount": {
+                        "description": "The arrears amount of the demand notice",
+                        "type": "string"
+                    },
+                    "penalty": {
+                        "description": "The penalty of the demand notice",
+                        "type": "string"
+                    },
+                    "status": {
+                        "description": "The status of the demand notice",
+                        "type": "integer"
+                    },
+                    "property": {
+                        "$ref": "#/components/schemas/PropertyResource"
+                    },
+                    "date_created": {
+                        "description": "The date when the demand notice was created",
+                        "type": "string",
+                        "format": "date-time"
+                    }
+                },
+                "type": "object"
+            },
+            "PaymentResource": {
+                "title": "PaymentResource",
+                "description": "The payment resource",
+                "properties": {
+                    "tx_ref": {
+                        "description": "The transaction reference",
+                        "type": "string"
+                    },
+                    "pin": {
+                        "description": "The Flutterwave reference",
+                        "type": "string"
+                    },
+                    "demand_notice": {
+                        "$ref": "#/components/schemas/DemandNoticeResource"
+                    },
+                    "actual_amount": {
+                        "description": "The actual amount",
+                        "type": "number"
+                    },
+                    "charged_amount": {
+                        "description": "The charged amount",
+                        "type": "number"
+                    },
+                    "app_fee": {
+                        "description": "The application fee",
+                        "type": "number"
+                    },
+                    "merchant_fee": {
+                        "description": "The merchant fee",
+                        "type": "number"
+                    },
+                    "status": {
+                        "description": "The payment status",
+                        "type": "string"
+                    }
+                },
+                "type": "object"
+            },
+            "PropertyResource": {
+                "title": "Store Property Resource",
+                "description": "Store Property Resource",
+                "type": "object",
+                "example": {
+                    "pid": 3176683,
+                    "prop_addr": "540 Kaci Extensions Suite 724 Francoborough, MS 22188",
+                    "street_name": "46329 McDermott Courts Apt. 058",
+                    "asset_no": "AMC/B14/TR/9",
+                    "cadastral_zone": "30769-6233",
+                    "prop_type": "SPLITTED",
+                    "prop_use": "COMMERCIAL",
+                    "rating_dist": "APO",
+                    "annual_value": 200000,
+                    "rate_payable": 45000,
+                    "arrears": 25000,
+                    "penalty": 45000,
+                    "grand_total": 4500000,
+                    "category": "RESIDENTIAL",
+                    "group": "AMAC2",
+                    "active": "ACTIVE",
+                    "created_at": "2024-05-06T11:54:58.000000Z",
+                    "updated_at": "2024-05-06T11:54:58.000000Z"
+                }
+            },
+            "ShowUserResource": {
+                "title": "Show Staff Resource",
+                "description": "Show Staff Resource",
+                "type": "object"
+            },
+            "StoreUserResource": {
+                "title": "Store Staff Resource",
+                "description": "Store Staff Resource",
+                "type": "object"
+            },
+            "User": {
+                "title": "Staff Model",
+                "description": "Staff model",
+                "type": "object"
+            }
+        },
+        "responses": {
+            "400": {
+                "description": "All Fields are Required",
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "properties": {
+                                "status": {
+                                    "type": "string",
+                                    "example": "error"
+                                },
+                                "message": {
+                                    "type": "string",
+                                    "example": "All Fields are required"
+                                },
+                                "data": {
+                                    "type": "object"
+                                }
+                            },
+                            "type": "object"
+                        }
+                    }
+                }
+            },
+            "401": {
+                "description": "An error occured",
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "properties": {
+                                "status": {
+                                    "type": "string",
+                                    "example": "error"
+                                },
+                                "message": {
+                                    "type": "string",
+                                    "example": "An error occured"
+                                }
+                            },
+                            "type": "object"
+                        }
+                    }
+                }
+            }
+        },
+        "securitySchemes": {
+            "api_key": {
+                "type": "apiKey",
+                "description": "Enter token in format (Bearer token)",
+                "name": "Authorization",
+                "in": "header"
+            }
+        }
+    }
+}
