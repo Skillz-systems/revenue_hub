@@ -11,6 +11,8 @@ use App\Http\Resources\LoginResource;
 use App\Http\Requests\LoginUserRequest;
 use Illuminate\Support\Facades\Validator;
 use App\Http\Requests\StaffStorePasswordRequest;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\ForgotPasswordMail;
 
 class AuthController extends Controller
 {
@@ -103,8 +105,6 @@ class AuthController extends Controller
         ], 401);
     }
 
-
-
     /**
      *  Staff create new password
      *
@@ -184,6 +184,72 @@ class AuthController extends Controller
             return response()->json([
                 'status' => 'success',
                 'message' => 'Password Created successful'
+            ], 200);
+        }
+        return response()->json([
+            'status' => 'error',
+            'message' => 'Something went wrong'
+        ],  400);
+    }
+
+
+    /**
+     * @OA\Post(
+     *     path="/api/auth/forgot-password",
+     *     summary="Send a password reset email",
+     *     description="Sends a password reset email to the user with the provided email address.",
+     *     tags={"Authentication"},
+     *      @OA\Parameter(
+     *         name="email",
+     *         in="query",
+     *         description="User's email address",
+     *         required=true,
+     *         @OA\Schema(
+     *             type="string",
+     *             format="email"
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Password Reset Email Sent Successfully",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="status", type="string", example="success"),
+     *             @OA\Property(property="message", type="string", example="Password Reset Email Sent Successfully")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=400,
+     *         description="Validation Error or Something Went Wrong",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="status", type="string", example="error"),
+     *             @OA\Property(property="message", type="string", example="All fields are required or Something went wrong"),
+     *             
+     *         )
+     *     ),
+     *    
+     * )
+     */
+    public function forgotPassword(Request $request)
+    {
+
+        $validator = Validator::make($request->all(), [
+            'email' => ['required', 'string', "email"],
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'status' => 'error',
+                'message' => "All fields are required ",
+                "data" => $validator->errors()
+            ], 400);
+        }
+
+        $forgotPassword = (new AuthService)->forgotPassword($request);
+        if ($forgotPassword) {
+            Mail::to($request->email)->send(new ForgotPasswordMail($forgotPassword));
+            return response()->json([
+                'status' => 'success',
+                'message' => 'Password Reset Email Sent Successfully'
             ], 200);
         }
         return response()->json([

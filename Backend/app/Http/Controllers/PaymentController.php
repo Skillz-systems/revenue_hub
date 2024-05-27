@@ -15,10 +15,17 @@ class PaymentController extends Controller
     }
 
     /**
-     * @OA\Get(
+     * @OA\Post(
      *     path="/payment",
      *     summary="Get a list of payments",
      *     tags={"Payment"},
+     *      @OA\Parameter(
+     *         name="date_filter",
+     *         in="query",
+     *         description="Optional. The year for which to retrieve data. Defaults to the current year if not provided.",
+     *         required=false,
+     *         @OA\Schema(type="string")
+     *     ),
      *     @OA\Response(
      *         response=200,
      *         description="Successful operation",

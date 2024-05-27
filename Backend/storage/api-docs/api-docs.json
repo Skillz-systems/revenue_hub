@@ -277,13 +277,88 @@
                 }
             }
         },
+        "/api/auth/forgot-password": {
+            "post": {
+                "tags": [
+                    "Authentication"
+                ],
+                "summary": "Send a password reset email",
+                "description": "Sends a password reset email to the user with the provided email address.",
+                "operationId": "cff9b52a898f73f39d684747bd69c4e1",
+                "parameters": [
+                    {
+                        "name": "email",
+                        "in": "query",
+                        "description": "User's email address",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "format": "email"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Password Reset Email Sent Successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "string",
+                                            "example": "success"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Password Reset Email Sent Successfully"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Validation Error or Something Went Wrong",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "string",
+                                            "example": "error"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "All fields are required or Something went wrong"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/demand-notice": {
-            "get": {
+            "post": {
                 "tags": [
                     "Demand Notice"
                 ],
                 "summary": "Get paginated list of demand notices",
-                "operationId": "3a39f9ad7ed404235e4419cafecc4a2a",
+                "operationId": "f46958ad8462f5306e359bb221c49bde",
+                "parameters": [
+                    {
+                        "name": "date_filter",
+                        "in": "query",
+                        "description": "Optional. The year for which to retrieve data. Defaults to the current year if not provided.",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "Successful operation",
@@ -835,69 +910,24 @@
                 ]
             }
         },
-        "api/forgot-password": {
-            "post": {
-                "tags": [
-                    "Authentication"
-                ],
-                "summary": "Send reset password link",
-                "description": "This endpoint allows users to request a password reset link by providing their email address.",
-                "operationId": "312a34fcbd1c30045c653e47d2ec4e0f",
-                "parameters": [
-                    {
-                        "name": "email",
-                        "in": "query",
-                        "description": "User's email address",
-                        "required": true,
-                        "schema": {
-                            "type": "string",
-                            "format": "email"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "We have emailed your password reset link",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "status": {
-                                            "description": "Message indicating the status of the reset password link sent.",
-                                            "type": "string"
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
-                    },
-                    "422": {
-                        "description": "Validation error",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "message": {
-                                            "description": "Error message indicating validation failure.",
-                                            "type": "string"
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        },
         "/payment": {
-            "get": {
+            "post": {
                 "tags": [
                     "Payment"
                 ],
                 "summary": "Get a list of payments",
-                "operationId": "f9856de4275291351dd4bdf4799455e7",
+                "operationId": "a863ba1461fb836d1d0f91cd9ed80905",
+                "parameters": [
+                    {
+                        "name": "date_filter",
+                        "in": "query",
+                        "description": "Optional. The year for which to retrieve data. Defaults to the current year if not provided.",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "Successful operation",

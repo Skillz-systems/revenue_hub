@@ -27,6 +27,7 @@ Route::post('auth/login', [AuthController::class, 'login']);
 
 // staff store new password route
 Route::post('auth/store-password/', [AuthController::class, 'storePassword']);
+Route::post('auth/forgot-password/', [AuthController::class, 'forgotPassword']);
 
 Route::middleware('auth:sanctum')->group(function () {
 
