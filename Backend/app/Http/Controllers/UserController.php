@@ -119,7 +119,7 @@ class UserController extends Controller
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string'],
             'phone' => ['required', 'string', 'min:11'],
-            'role_id' => ['required', 'integer'],
+            'role_id' => ['required', 'string'],
             'zone' => ['required', 'string', 'max:255'],
         ]);
 
