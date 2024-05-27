@@ -3,7 +3,7 @@
 namespace App\Service;
 
 use App\Http\Resources\StoreUserResource;
-use App\Models\demandNoticeAccount;
+use App\Models\DemandNoticeAccount;
 use App\Models\Payment;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
@@ -57,7 +57,7 @@ class PaymentService
         if ($response) {
             // check if record exist 
 
-            $checkAccount = demandNoticeAccount::where(["demand_notice_id" => $getDemandNotice->id])->first();
+            $checkAccount = DemandNoticeAccount::where(["demand_notice_id" => $getDemandNotice->id])->first();
             if ($checkAccount) {
                 $accountNumberCreated = $checkAccount->update([
                     "account_number" => $response->data->account_number,
@@ -65,7 +65,7 @@ class PaymentService
                     "account_bank_name" => $response->data->bank_name,
                 ]);
             } else {
-                $accountNumberCreated = demandNoticeAccount::create([
+                $accountNumberCreated = DemandNoticeAccount::create([
                     "demand_notice_id" => $getDemandNotice->id,
                     "tx_ref" => $tx_ref,
                     "account_number" => $response->data->account_number,
