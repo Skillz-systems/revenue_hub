@@ -109,7 +109,7 @@ class AuthController extends Controller
      *  Staff create new password
      *
      * @OA\Post(
-     *     path="/api/auth/store-password/?user&?token",
+     *     path="/api/auth/store-password",
      *     tags={"Authentication"},
      *     summary="Staff Create Password",
      *     description="This allow the staff to create new password to  login to there account",
@@ -128,18 +128,20 @@ class AuthController extends Controller
      *         description="staff password token send to the email",
      *         @OA\Schema(type="text")
      *     ),   
-     *     @OA\RequestBody(
-     *          @OA\JsonContent(),
-     *          @OA\MediaType(
-     *          mediaType="multipart/form-data",
-     *          @OA\Schema(
-     *          type="object",
-     *          required={"password","password_confirmation"},
-     *          @OA\Property(property="password", description="Enter new password", type="password", example="12345678"),
-     *          @OA\Property(property="password_confirmation", description="Confirm password", type="password", example="12345678"),
-     *          ),
-     *         ),
-     *     ),
+     *     @OA\Parameter(
+     *         in="query",
+     *         name="password",
+     *         required=false,
+     *         description="Enter new password",
+     *         @OA\Schema(type="password")
+     *     ),   
+     *     @OA\Parameter(
+     *         in="query",
+     *         name="password_confirmation",
+     *         required=false,
+     *         description="Confirm password",
+     *         @OA\Schema(type="password")
+     *     ),   
      *     @OA\Response(
      *         response="200",
      *         description="Password Created Successfull",

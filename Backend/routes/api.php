@@ -41,6 +41,8 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/payment', [PaymentController::class, 'index']);
     Route::get('/payment/view/{id}', [PaymentController::class, 'view']);
     Route::apiResource('/staff', UserController::class);
+    Route::post('/property', [PropertyController::class, "index"]);
+    Route::post('/property/create', [PropertyController::class, "store"]);
     Route::apiResource('/property', PropertyController::class);
 });
 Route::get('/payment/generate-account/{id}', [PaymentController::class, 'generateAccount']);
