@@ -4,14 +4,17 @@ namespace App\Http\Controllers;
 
 use App\Http\Resources\PaymentResource;
 use App\Service\PaymentService;
+use App\Service\PropertyService;
 use Illuminate\Http\Request;
 
 class PaymentController extends Controller
 {
     protected $paymentService;
-    public function __construct(PaymentService $paymentService)
+    protected $propertyService;
+    public function __construct(PaymentService $paymentService, PropertyService $propertyService)
     {
         $this->paymentService = $paymentService;
+        $this->propertyService = $propertyService;
     }
 
     /**
@@ -275,6 +278,7 @@ class PaymentController extends Controller
     public function generateAccount($id)
     {
         $generateAccount = $this->paymentService->createAccountNumber($id);
-        return response()->json(["status" => "success", "data" => $generateAccount], 200);
+        $getProperty = $this->propertyService->getProperty($id);
+        return response()->json(["status" => "success", "data" => $generateAccount, "property" => $getProperty], 200);
     }
 }
