@@ -185,7 +185,7 @@ export default function StaffTable({ staticInformation, staffInformation }) {
                 >
                   View Staff Details
                 </p>
-                <p 
+                <p
                   className="hover:cursor-pointer"
                   title="Remove Staff"
                   onClick={() => deleteStaffById(staffInformation.id)}

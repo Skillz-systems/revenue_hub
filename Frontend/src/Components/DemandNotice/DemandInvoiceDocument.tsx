@@ -1,4 +1,5 @@
 import React, { useRef } from "react";
+import { Link } from "react-router-dom";
 import { TbCurrencyNaira } from "react-icons/tb";
 import { LiaDownloadSolid } from "react-icons/lia";
 import { TfiEmail } from "react-icons/tfi";
@@ -295,10 +296,9 @@ const DemandInvoiceDocument = ({ customTableData, demandInvoiceInfo, hideDemandI
                 <span>2.</span>
                 <p>
                   Internet Banking Transfer:{" "}
-                  <span className="text-color-dark-red">
-                    Abuja Municipal Area Council, FCMB Account. No.
-                    539240248278.
-                  </span>
+                  <a href="" target="_blank" className="underline text-color-dark-red">
+                    http://localhost:5173/invoice/{customTableData?.pid || demandInvoiceInfo?.property.pid}
+                  </a>
                 </p>
               </div>
               <p className="flex items-start justify-center gap-1 font-lexend text-[10px] text-document-grey leading-[12.5px]">

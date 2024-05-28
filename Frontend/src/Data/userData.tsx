@@ -81,7 +81,6 @@ const userData = () => {
         fetchStatistics();
     }, [])
 
-
     const deleteStaffById = async (staffId: number) => {
         try {
             const response = await axios.delete(`https://api.revenuehub.skillzserver.com/api/staff/${staffId}`, {
@@ -91,7 +90,7 @@ const userData = () => {
                 },
             });
 
-            if (response.status === 204) {
+            if (response.status === 200) {
                 // Remove the deleted staff from the state
                 setStaffInformation(prevStaff => prevStaff.filter(staff => staff.id !== staffId));
                 alert('Staff deleted successfully');

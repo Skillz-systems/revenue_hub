@@ -32,6 +32,7 @@ type PropertyData = {
   rating_dist: string;
   status: string;
   street_name: string;
+  demand_notice_status: string;
 };
 
 type PropertyArray = PropertyData[];
@@ -50,8 +51,6 @@ export default function Properties() {
     token ? "https://api.revenuehub.skillzserver.com/api/property" : null, // Only fetch if token exists
     (url) => fetcher(url, token)
   );
-
-  console.log("Properties:", propertyInformation)
 
   useEffect(() => {
     if (data) {
@@ -283,12 +282,12 @@ export default function Properties() {
                 filteredCombinedResults.length > 0 ? (
                   filteredCombinedResults.map((property) => (
                     <PropertyCard
-                      key={property.id}
+                      id={property.id}
                       personalIdentificationNumber={
                         property.pid
                       }
                       propertyUse={property.prop_use}
-                      paymentStatus={"Paid"}
+                      paymentStatus={property.demand_notice_status}
                       propertyAddress={property.prop_addr}
                       group={property.group}
                       cadestralZone={property.cadastral_zone}
@@ -306,12 +305,12 @@ export default function Properties() {
                 filteredDistrictResults.length > 0 ? (
                   filteredDistrictResults.map((property) => (
                     <PropertyCard
-                      key={property.id}
+                      id={property.id}
                       personalIdentificationNumber={
                         property.pid
                       }
                       propertyUse={property.prop_use}
-                      paymentStatus={"Paid"}
+                      paymentStatus={property.demand_notice_status}
                       propertyAddress={property.prop_addr}
                       group={property.group}
                       cadestralZone={property.cadastral_zone}
@@ -329,12 +328,12 @@ export default function Properties() {
                 filteredPropertyUseResults.length > 0 ? (
                   filteredPropertyUseResults.map((property) => (
                     <PropertyCard
-                      key={property.id}
+                      id={property.id}
                       personalIdentificationNumber={
                         property.pid
                       }
                       propertyUse={property.prop_use}
-                      paymentStatus={"Paid"}
+                      paymentStatus={property.demand_notice_status}
                       propertyAddress={property.prop_addr}
                       group={property.group}
                       cadestralZone={property.cadastral_zone}
@@ -351,12 +350,12 @@ export default function Properties() {
               ) : currentProperties.length > 0 ? (
                 currentProperties.map((property) => (
                   <PropertyCard
-                    key={property.id}
+                    id={property.id}
                     personalIdentificationNumber={
                       property.pid
                     }
                     propertyUse={property.prop_use}
-                    paymentStatus={"Paid"}
+                    paymentStatus={property.demand_notice_status}
                     propertyAddress={property.prop_addr}
                     group={property.group}
                     cadestralZone={property.cadastral_zone}

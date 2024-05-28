@@ -16,7 +16,9 @@ import {
   formatNumberWithCommas,
   formatDate,
   ScrollToTop,
+  useTokens,
 } from "../../Utils/client";
+import axios from "axios";
 
 const DemandInvoiceTable = ({
   staticInformation,
@@ -37,6 +39,36 @@ const DemandInvoiceTable = ({
   const [propertiesPerPage, setPropertiesPerPage] = useState<number>(12);
   const [currentStyle, setCurrentStyle] = useState<number | undefined>(undefined);
   const [demandInvoiceDocument, setDemandInvoiceDocument] = useState<any>(null);
+
+  const { token } = useTokens()
+
+  const deleteDemandNotice = async (id: number) => {
+    try {
+      const response = await axios.delete(
+        `https://api.revenuehub.skillzserver.com/api/demand-notice/delete/${id}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`, // Headers
+          },
+        }
+      );
+      if (response.status === 200) {
+        console.log("Succesfully removed demand notice from database:", response.data)
+        alert("Successfully removed demand notice")
+      } else {
+        console.error("Unexpected status code:", response.status);
+        alert("Unexpected status code")
+      }
+    } catch (error) {
+      if (error.response && error.response.status === 401) {
+        console.error("Unauthorized:", error.response.data);
+        alert("Unauthorized")
+      } else {
+        console.error("Internal Server Error:", error);
+        alert("Internal Server Error")
+      }
+    }
+  }
 
   const handleViewPropertyModal = (propertyData: any) => {
     setViewPropertyModal(propertyData);
@@ -190,6 +222,7 @@ const DemandInvoiceTable = ({
           <span
             className="border-0.6 border-custom-grey-100 text-custom-grey-300 px-2 py-2.5 rounded text-base hover:cursor-pointer"
             title="Delete Invoice"
+            onClick={()=> deleteDemandNotice(record.id)}
           >
             <RiDeleteBin5Fill />
           </span>
