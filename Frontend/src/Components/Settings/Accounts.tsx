@@ -5,6 +5,8 @@ import { IoPersonCircle } from "react-icons/io5";
 import { MdCancel, MdLocationPin } from "react-icons/md";
 import { InputComponent, SelectComponent } from "../Index";
 import { staticInformation } from "../../Data/appData"
+import axios from "axios";
+import { useTokens } from "../../Utils/client";
 
 type CurrentUserData = {
   id: string;
@@ -25,6 +27,7 @@ type AccountsProps = {
 export default function Accounts({ currentUserData }: AccountsProps) {
   const [editStaff, setEditStaff] = useState<boolean>(false);
   const [displaySave, setDisplaySave] = useState<boolean>(false);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   const [formData, setFormData] = useState<CurrentUserData>({
     id: currentUserData.id,
     name: currentUserData.name,
@@ -36,6 +39,7 @@ export default function Accounts({ currentUserData }: AccountsProps) {
     },
     zone: currentUserData.zone,
   });
+  const { token, userId } = useTokens();
 
   useEffect(() => {
     setFormData({
@@ -82,9 +86,49 @@ export default function Accounts({ currentUserData }: AccountsProps) {
     setDisplaySave(false);
   };
 
-  const handleFormSubmit = (event: FormEvent<HTMLFormElement>) => {
+  const handleFormSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     if (displaySave) {
+      // Prepare the request data
+      const requestData = {
+        name: formData.name,
+        email: formData.email,
+        phone: formData.phone,
+        role_id: formData.role.id.toString(),
+        zone: formData.zone,
+      };
+
+      console.log("requestData", requestData);
+      setIsLoading(true)
+
+      try {
+        const response = await axios.put(
+          `https://api.revenuehub.skillzserver.com/api/staff/${userId}`,
+          requestData,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+        if (response.status === 200) {
+          console.log("Success:", response.data);
+          alert("Form submitted successfully!");
+        } else {
+          console.error("Unexpected status code:", response.status);
+          alert("Unexpected status code. Please try again.");
+        }
+        setIsLoading(false)
+      } catch (error) {
+        if (error.response && error.response.status === 401) {
+          console.error("Unauthorized:", error.response.data);
+          alert("Unauthorized. Please login again.");
+        } else {
+          console.error("Error submitting form:", error);
+          alert("An error occurred while submitting the form.");
+        }
+      }
+      setIsLoading(false)
       console.log("FORM DATA:", formData);
       setDisplaySave(false);
       setEditStaff(false);
@@ -135,7 +179,7 @@ export default function Accounts({ currentUserData }: AccountsProps) {
                       title="Save Staff Details"
                       disabled={!displaySave}
                     >
-                      Save
+                      {isLoading ? "Submitting..." : "Save"}
                     </button>
                   ) : null}
                 </div>
@@ -162,13 +206,13 @@ export default function Accounts({ currentUserData }: AccountsProps) {
             {[
               {
                 label: "Staff ID",
-                name: "staffId",
+                name: "id",
                 type: "text",
                 value: formData.id,
               },
               {
                 label: "Full Name",
-                name: "fullName",
+                name: "name",
                 type: "text",
                 value: formData.name,
               },
@@ -180,7 +224,7 @@ export default function Accounts({ currentUserData }: AccountsProps) {
               },
               {
                 label: "Phone Number",
-                name: "phoneNumber",
+                name: "phone",
                 type: "tel",
                 value: formData.phone,
               },
@@ -192,7 +236,7 @@ export default function Accounts({ currentUserData }: AccountsProps) {
                 <p className="px-1 py-0.5 text-darkblueberry rounded bg-lightblue text-xs">
                   {item.label}
                 </p>
-                <p className="flex w-[50%] justify-end">
+                <div className="flex w-[50%] justify-end">
                   <InputComponent
                     inputContainer={""}
                     inputId={index}
@@ -209,7 +253,7 @@ export default function Accounts({ currentUserData }: AccountsProps) {
                     readOnly={!editStaff}
                     iconStyle=""
                   />
-                </p>
+                </div>
               </div>
             ))}
           </div>
@@ -257,8 +301,8 @@ export default function Accounts({ currentUserData }: AccountsProps) {
           {editStaff ? (
             <SelectComponent
               selectContainer=""
-              selectId="staffZone"
-              selectName="staffZone"
+              selectId="zone"
+              selectName="zone"
               selectValue={formData.zone}
               handleSelectChange={handleInputChange}
               options={staticInformation.cadestralZones}

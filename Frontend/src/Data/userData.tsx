@@ -2,25 +2,13 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import useSWR from 'swr';
 import Cookies from 'js-cookie';
-
-const fetcher = async (url: string, token: any) => {
-    try {
-        const response = await axios.get(url, {
-            headers: {
-                Authorization: `Bearer ${token}`,
-            },
-        });
-
-        return response.data;
-    } catch (error) {
-        throw new Error('Failed to fetch data');
-    }
-};
+import { fetcher } from "../Utils/client";
+import { StatisticsData } from './types';
 
 const userData = () => {
     const [accountInformation, setAccountInformation] = useState<any>(null);
     const [staffInformation, setStaffInformation] = useState<any>(null);
-    const [allPropertyInformation, setAllPropertyInformation] = useState<any>(null);
+    const [statistics, setStatistics] = useState<StatisticsData | null>(null);
 
     // Safely get and parse userData from cookies
     const userData = Cookies.get('userData');
@@ -48,6 +36,31 @@ const userData = () => {
         (url) => fetcher(url, token)
     );
 
+    const fetchStatistics = async (dateFilter = "") => {
+        try {
+            const response = await axios.post(
+                "https://api.revenuehub.skillzserver.com/api/statistic/all-yearly-data",
+                { date_filter: dateFilter }, // Data payload
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`, // Headers
+                    },
+                }
+            );
+            if (response.status === 200) {
+                setStatistics(response.data.data);
+            } else {
+                console.error("Unexpected status code:", response.status);
+            }
+        } catch (error) {
+            if (error.response && error.response.status === 401) {
+                console.error("Unauthorized:", error.response.data);
+            } else {
+                console.error("Error fetching statistics:", error);
+            }
+        }
+    }
+
     useEffect(() => {
         if (staff) {
             setAccountInformation(staff.data);
@@ -64,6 +77,10 @@ const userData = () => {
         }
     }, [staffError, allStaffError]);
 
+    useEffect(() => {
+        fetchStatistics();
+    }, [])
+
     const deleteStaffById = async (staffId: number) => {
         try {
             const response = await axios.delete(`https://api.revenuehub.skillzserver.com/api/staff/${staffId}`, {
@@ -73,7 +90,7 @@ const userData = () => {
                 },
             });
 
-            if (response.status === 204) {
+            if (response.status === 200) {
                 // Remove the deleted staff from the state
                 setStaffInformation(prevStaff => prevStaff.filter(staff => staff.id !== staffId));
                 alert('Staff deleted successfully');
@@ -86,13 +103,10 @@ const userData = () => {
         }
     };
 
-    const totalStaff = staffInformation?.length;
-
     return {
         accountInformation,
-        allPropertyInformation,
         staffInformation,
-        totalStaff,
+        statistics,
         deleteStaffById,
     };
 };

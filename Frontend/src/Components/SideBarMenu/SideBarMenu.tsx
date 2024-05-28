@@ -9,6 +9,7 @@ import {
   SearchInput,
   MenuItem,
   MenuItemData,
+  userData
 } from "../Index";
 
 interface SideBarMenuProps {
@@ -33,6 +34,7 @@ const SideBarMenu: React.FC<SideBarMenuProps> = ({
   const [displaySearchIcon, setDisplaySearchIcon] = useState<boolean>(true);
   const [borderState, setBorderState] = useState<boolean>(false);
   const menuItems = MenuItemData();
+  const { accountInformation } = userData();
 
   useEffect(() => {
     let timeout: any;
@@ -58,8 +60,8 @@ const SideBarMenu: React.FC<SideBarMenuProps> = ({
           profileName={"Revenuehub.ng"}
           profileIcon={<FaChevronLeft />}
           title={"Profile"}
-          designation={"Manager"}
-          location={"Wuse"}
+          designation={accountInformation?.role.name}
+          location={accountInformation?.zone}
           onHideSideBarMenu={hideSideBar}
         />
         <div className="flex-col space-y-3">

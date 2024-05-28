@@ -5,33 +5,42 @@ import {
   CardData,
   useAppData,
 } from "../Components/Index";
-import { fetcher, useTokens } from "../Utils/client";
-import useSWR from 'swr';
+import { useTokens } from "../Utils/client";
+import axios from "axios";
 
 export const DemandNotice: React.FC = () => {
   const { token } = useTokens();
   const cardData = CardData();
-  const [demandNoticeInformation, setDemandNoticeInformation] = useState<boolean>(false)
+  const [demandNoticeInformation, setDemandNoticeInformation] = useState<any>(null)
   const { staticInformation } = useAppData();
 
-  const { data, error } = useSWR(
-    token ? "https://api.revenuehub.skillzserver.com/api/demand-notice" : null, // Only fetch if token exists
-    (url) => fetcher(url, token)
-  );
-
-  console.log("Demand Notices:", demandNoticeInformation)
+  const fetchDemandNotices = async (dateFilter = "") => {
+    try {
+      const response = await axios.post("https://api.revenuehub.skillzserver.com/api/demand-notice",
+        { date_filter: dateFilter },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+      if (response.status === 200) {
+        console.log("Success:", response.data.data);
+        setDemandNoticeInformation(response.data.data);
+      } else {
+        console.error("Unexpected status code:", response.status);
+      }
+    } catch (error) {
+      if (error.response && error.response.status === 401) {
+        console.error("Unauthorized:", error.response.data);
+      } else {
+        console.error("Error submitting form:", error);
+      }
+    }
+  }
 
   useEffect(() => {
-    if (data) {
-      setDemandNoticeInformation(data.data);
-    }
-  }, [data]);
-
-  useEffect(() => {
-    if (error) {
-      console.error("Error fetching Demand Notices Data:", error)
-    }
-  }, [data])
+    fetchDemandNotices()
+  }, [])
 
   return (
     <div className="flex-col space-y-8">

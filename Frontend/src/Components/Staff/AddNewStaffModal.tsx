@@ -37,16 +37,16 @@ const AddNewStaffModal: React.FC<AddNewStaffModalProps> = ({
   };
 
   // Function to map staff designation to role ID
-  const mapDesignationToRoleId = (designation: string): number | null => {
+  const mapDesignationToRoleId = (designation: string): string | null => {
     switch (designation) {
       case "Manager":
-        return 1;
+        return "1";
       case "Admin":
-        return 2;
+        return "2";
       case "Enforcer":
-        return 3;
+        return "3";
       case "Officer":
-        return 4;
+        return "4";
       default:
         return null;
     }
@@ -77,7 +77,7 @@ const AddNewStaffModal: React.FC<AddNewStaffModalProps> = ({
 
         // Prepare the request data
         const requestData = {
-          name: `${formData.staffFirstName} ${formData.staffMiddleName} ${formData.staffLastName}`,
+          name: `${formData.staffFirstName} ${formData.staffMiddleName ? formData.staffMiddleName + " " : ""}${formData.staffLastName}`,
           email: formData.staffEmail,
           phone: formData.staffPhoneNumber,
           zone: formData.staffZone,
@@ -95,7 +95,7 @@ const AddNewStaffModal: React.FC<AddNewStaffModalProps> = ({
           requestData,
           {
             headers: {
-              Authorization: `Token ${token}`,
+              Authorization: `Bearer ${token}`,
             },
           }
         );
