@@ -77,7 +77,7 @@ const AddNewStaffModal: React.FC<AddNewStaffModalProps> = ({
 
         // Prepare the request data
         const requestData = {
-          name: `${formData.staffFirstName} ${formData.staffMiddleName} ${formData.staffLastName}`,
+          name: `${formData.staffFirstName} ${formData.staffMiddleName ? formData.staffMiddleName + " " : ""}${formData.staffLastName}`,
           email: formData.staffEmail,
           phone: formData.staffPhoneNumber,
           zone: formData.staffZone,

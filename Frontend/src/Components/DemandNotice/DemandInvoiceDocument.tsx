@@ -12,6 +12,7 @@ import jsPDF from "jspdf";
 import { DemandInvoiceDataType } from "../Index";
 import { PropertyData } from "../Properties/ViewPropertyModal";
 import { DemandNotice } from "../../Data/types";
+import '../../print.css';
 
 interface SectionProps {
   title: string;
@@ -146,8 +147,8 @@ const DemandInvoiceDocument = ({ customTableData, demandInvoiceInfo, hideDemandI
   };
 
   return (
-    <div className="flex flex-col items-center justify-center py-2 space-y-2 bg-white w-[50%] h-[95vh] rounded">
-      <div className="flex justify-end w-full px-4">
+    <div className="flex flex-col items-center justify-center py-2 space-y-2 bg-white w-[50%] h-[95vh] rounded print:w-[100%] print:h-[auto]">
+      <div className="flex justify-end w-full px-4 hide-on-print">
         <span className="flex items-center justify-center px-0.5 w-[24px] h-[24px] text-xs text-color-dark-red border border-color-dark-red rounded hover:cursor-pointer"
           title="Close Modal"
           onClick={hideDemandInvoiceModal}
@@ -156,7 +157,7 @@ const DemandInvoiceDocument = ({ customTableData, demandInvoiceInfo, hideDemandI
         </span>
       </div>
       {/* PDF START*/}
-      <div ref={pdfRef} className="bg-white print-section flex flex-col px-4 py-2 space-y-2 w-[100%] max-w-[595px] border border-custom-color-100 rounded overflow-y-auto overscroll-contain scrollbar-thin scrollbar-thumb-color-text-two scrollbar-track-white">
+      <div ref={pdfRef} className="bg-white print-section flex flex-col px-4 py-2 space-y-2 w-[100%] border border-custom-color-100 rounded overflow-y-auto overscroll-contain scrollbar-thin scrollbar-thumb-color-text-two scrollbar-track-white">
         {/* 1ST SECTION */}
         <div className="flex items-center justify-center w-full">
           <div className="flex items-start justify-start w-[18%] ">
@@ -288,26 +289,28 @@ const DemandInvoiceDocument = ({ customTableData, demandInvoiceInfo, hideDemandI
               <p className="font-lexend text-[10px] text-document-grey leading-[12.5px]">
                 Payment Options:
               </p>
-              <p className="flex items-start justify-center gap-1 font-lexend text-[10px] text-document-grey leading-[12.5px]">
-                <span>1.</span>
-                <span>AMAC Bank Draft.</span>
-              </p>
               <div className="flex items-start justify-center gap-1 font-lexend text-[10px] text-document-grey leading-[12.5px]">
-                <span>2.</span>
+                <span>1.</span>
                 <p>
                   Internet Banking Transfer:{" "}
-                  <a href="" target="_blank" className="underline text-color-dark-red">
-                    http://localhost:5173/invoice/{customTableData?.pid || demandInvoiceInfo?.property.pid}
-                  </a>
+                  <b>
+                    <a href={`/invoice/${customTableData?.pid || demandInvoiceInfo?.property.pid}`} target="_blank" className="underline text-color-dark-red">
+                      https://revenuehub.com/invoice/{customTableData?.pid || demandInvoiceInfo?.property.pid}
+                    </a>
+                  </b>
                 </p>
               </div>
               <p className="flex items-start justify-center gap-1 font-lexend text-[10px] text-document-grey leading-[12.5px]">
-                <span>3.</span>
+                <span>2.</span>
                 <span>
                   Pay by Scanning QRCode on the right hand (Locate QR Payment
                   on your mobile Banking App, (Choose NIBSS) and Scan QRCode
                   to Pay).
                 </span>
+              </p>
+              <p className="flex items-start justify-center gap-1 font-lexend text-[10px] text-document-grey leading-[12.5px]">
+                <span>3.</span>
+                <span>AMAC Bank Draft.</span>
               </p>
               <p className="flex items-start justify-center gap-1 font-lexend text-[10px] leading-[12.5px]">
                 <span className="text-document-grey">4.</span>
@@ -368,14 +371,14 @@ const DemandInvoiceDocument = ({ customTableData, demandInvoiceInfo, hideDemandI
       </div>
       {/* 7TH SECTION */}
       <div className="flex items-center justify-center gap-6 p-2 hide-on-print">
-        <span
+        {/* <span
           className="flex items-center justify-center w-[32px] text-primary-color text-xl bg-white border border-custom-color-one rounded h-[32px] hover:cursor-pointer"
           title="Download"
           onClick={() => { downloadEmailPrintPDF("download") }}
         >
           <LiaDownloadSolid />
-        </span>
-        <span
+        </span> */}
+        {/* <span
           className="flex px-4 py-2.5 gap-1 font-lexend text-xs text-color-text-one items-center justify-center bg-white border border-custom-color-one rounded h-[32px] hover:cursor-pointer"
           title="Share via email"
           onClick={() => { downloadEmailPrintPDF("email") }}
@@ -384,7 +387,7 @@ const DemandInvoiceDocument = ({ customTableData, demandInvoiceInfo, hideDemandI
             <TfiEmail />
           </span>
           Share via email
-        </span>
+        </span> */}
         <span
           className="flex px-4 py-2.5 gap-1 font-lexend text-xs text-white items-center justify-center bg-primary-color border border-custom-color-one rounded h-[32px] hover:cursor-pointer"
           title="Print"

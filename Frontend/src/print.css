@@ -1,0 +1,21 @@
+/* print.css */
+@media print {
+  html,
+  body {
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    overflow: visible;
+  }
+
+  .print-section {
+    width: 100%;
+    height: auto;
+    zoom: 1; /* Ensure 100% scaling */
+  }
+
+  .hide-on-print {
+    display: none;
+  }
+}

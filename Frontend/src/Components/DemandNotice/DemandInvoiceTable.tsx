@@ -222,7 +222,7 @@ const DemandInvoiceTable = ({
           <span
             className="border-0.6 border-custom-grey-100 text-custom-grey-300 px-2 py-2.5 rounded text-base hover:cursor-pointer"
             title="Delete Invoice"
-            onClick={()=> deleteDemandNotice(record.id)}
+            onClick={() => deleteDemandNotice(record.id)}
           >
             <RiDeleteBin5Fill />
           </span>
@@ -282,7 +282,6 @@ const DemandInvoiceTable = ({
             record.payments.some(payment => payment.status === "Expired")
           ).length;
   }
-
 
   return (
     <div>
@@ -461,16 +460,16 @@ const DemandInvoiceTable = ({
             "absolute top-0 left-0 z-[30] flex items-start justify-end w-full h-screen p-4 overflow-hidden bg-black bg-opacity-60"
           }
         >
-          <DemandInvoiceDocument
-            hideDemandInvoiceModal={() => {
-              setDemandInvoiceDocument(false);
-              // setTimeout(() => {
-              //   setPropertyModalTransition(false);
-              // }, 300);
-            }}
-            // propertyModalTransition={propertyModalTransition}
-            demandInvoiceInfo={demandInvoiceDocument}
-          />
+            <DemandInvoiceDocument
+              hideDemandInvoiceModal={() => {
+                setDemandInvoiceDocument(false);
+                // setTimeout(() => {
+                //   setPropertyModalTransition(false);
+                // }, 300);
+              }}
+              // propertyModalTransition={propertyModalTransition}
+              demandInvoiceInfo={demandInvoiceDocument}
+            />
         </DemandPropertyModal>
       ) : null}
     </div>
