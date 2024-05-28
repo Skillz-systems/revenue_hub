@@ -12,11 +12,14 @@ use App\Models\User;
 
 class PropertyController extends Controller
 {
-
-
+    private $propertyService;
+    public function __construct(PropertyService $propertyService)
+    {
+        $this->propertyService = $propertyService;
+    }
     /**
-     * @OA\Get(
-     *     path="/api/properties",
+     * @OA\Post(
+     *     path="/api/property",
      *     summary="Get all properties",
      *     tags={"Property"},
      *     @OA\Response(
@@ -68,7 +71,7 @@ class PropertyController extends Controller
     /**
      * Add new property details.
      * @OA\POST(
-     *     path="/api/property",
+     *     path="/api/property/create",
      *     tags={"Property"},
      *     summary="Add New Property Details",
      *     description="This allow staff admin to add new property details",
@@ -174,7 +177,7 @@ class PropertyController extends Controller
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'pid' => ['required', 'integer', 'max:255', 'unique:properties'],
+            'pid' => ['required', 'integer', 'unique:properties'],
             'occupant' => ['required', 'string', 'max:255'],
             'prop_addr' => ['required', 'string', 'max:255'],
             'street_name' => ['required', 'string', 'max:255'],
@@ -183,11 +186,9 @@ class PropertyController extends Controller
             'prop_type' => ['required', 'string', 'max:255'],
             'prop_use' => ['required', 'string', 'max:255'],
             'rating_dist' => ['required', 'string', 'max:255'],
-            'annual_value' => ['required', 'integer', 'max:255'],
-            'rate_payable' => ['required', 'integer', 'max:255'],
-            //'arrears' => ['required', 'integer', 'max:255'],
-            //'penalty' => ['required', 'integer', 'max:255'],
-            'grand_total' => ['required', 'integer', 'max:255'],
+            'annual_value' => ['required', 'string'],
+            'rate_payable' => ['required', 'string'],
+            'grand_total' => ['required', 'string'],
             'category' => ['required', 'string', 'max:255'],
             'group' => ['required', 'string', 'max:255'],
             'active' => ['required', 'string', 'max:255'],
@@ -251,11 +252,11 @@ class PropertyController extends Controller
      *     ),
      * )
      */
-    public function show(Property $property)
+    public function show($property)
     {
-
-        if ($property) {
-            $returnProperty = new PropertyResource($property);
+        $getProperty = $this->propertyService->getPropertyById($property);
+        if ($getProperty) {
+            $returnProperty = new PropertyResource($getProperty);
             $returnProperty->additional([
                 'status' => 'success', // or any other status you want to append
             ]);
@@ -365,11 +366,11 @@ class PropertyController extends Controller
             'prop_type' => ['sometimes', 'string', 'max:255'],
             'prop_use' => ['sometimes', 'string', 'max:255'],
             'rating_dist' => ['sometimes', 'string', 'max:255'],
-            'annual_value' => ['sometimes', 'integer'],
-            'rate_payable' => ['sometimes', 'integer'],
+            'annual_value' => ['sometimes', 'string'],
+            'rate_payable' => ['sometimes', 'string'],
             //'arrears' => ['required', 'integer'],
             //'penalty' => ['required', 'integer'],
-            'grand_total' => ['sometimes', 'integer'],
+            'grand_total' => ['sometimes', 'string'],
             'category' => ['sometimes', 'string', 'max:255'],
             'group' => ['sometimes', 'string', 'max:255'],
             'active' => ['sometimes', 'string', 'max:255'],

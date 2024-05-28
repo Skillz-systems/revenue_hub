@@ -18,10 +18,17 @@ class DemandNoticeController extends Controller
 
 
     /**
-     * @OA\Get(
+     * @OA\Post(
      *     path="/demand-notice",
      *     summary="Get paginated list of demand notices",
      *     tags={"Demand Notice"},
+     *      @OA\Parameter(
+     *         name="date_filter",
+     *         in="query",
+     *         description="Optional. The year for which to retrieve data. Defaults to the current year if not provided.",
+     *         required=false,
+     *         @OA\Schema(type="string")
+     *     ),
      *     @OA\Response(
      *         response=200,
      *         description="Successful operation",
@@ -100,10 +107,14 @@ class DemandNoticeController extends Controller
      *     security={{"bearerAuth":{}}}
      * )
      */
-    public function index()
+    public function index(Request $request)
     {
+        $defaultDate = date("Y");
+        if ($request->date_filter) {
+            $defaultDate = $request->date_filter;
+        }
         $service = $this->demandNoticeService;
-        $getPaginatedDemandNotice = $service->allDemandNotice();
+        $getPaginatedDemandNotice = $service->allDemandNotice($defaultDate);
         $demandNotice = DemandNoticeResource::collection($getPaginatedDemandNotice);
         $demandNotice->additional([
             'status' => 'success' // or any other status you want to append

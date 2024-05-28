@@ -45,13 +45,12 @@ class PaymentTest extends TestCase
     public function test_to_fetch_all_paginated_payments(): void
     {
         $property = Property::factory()->create();
-        //DemandNotice::factory()->count(1)->make(["property_id" => (Property::factory()->create())->id])->create())->id
         $demandNotice = DemandNotice::factory()->create([
             "property_id" => $property->id
         ]);
 
         Payment::factory(50)->create(['demand_notice_id' => $demandNotice->id]);
-        $response = $this->actingAsTestUser()->getJson("/api/payment");
+        $response = $this->actingAsTestUser()->postJson("/api/payment");
         $response->assertStatus(200)->assertJsonStructure([
             "status",
             'data' => [
@@ -82,6 +81,7 @@ class PaymentTest extends TestCase
 
         Payment::factory(50)->create(['demand_notice_id' => $demandNotice->id]);
         $response = $this->actingAsTestUser()->getJson("/api/payment/view/1");
+
         $response->assertStatus(200)->assertJsonStructure([
             "status",
             'data' => [

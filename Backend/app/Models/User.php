@@ -35,6 +35,7 @@ class User extends Authenticatable
      * @var array<int, string>
      */
     public const ROLE_ADMIN = 1;
+    public const ROLE_ENFORCERS = 2;
 
     protected $fillable = [
         'name',
@@ -68,7 +69,7 @@ class User extends Authenticatable
 
     public function role()
     {
-        return $this->belongsTo(Role::class);
+        return $this->hasOne(Role::class, "id", "role_id");
     }
 
     public function sendPasswordResetNotification($token)

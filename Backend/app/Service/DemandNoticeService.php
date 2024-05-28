@@ -8,9 +8,9 @@ use App\Models\Property;
 
 class DemandNoticeService
 {
-    public function allDemandNotice()
+    public function allDemandNotice($date)
     {
-        return $this->model()->paginate(10);
+        return $this->model()->whereYear('created_at', $date)->paginate(10);
     }
     public function viewDemandNotice($id)
     {

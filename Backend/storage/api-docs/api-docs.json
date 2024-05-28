@@ -177,7 +177,7 @@
                 }
             }
         },
-        "/api/auth/store-password/?user&?token": {
+        "/api/auth/store-password": {
             "post": {
                 "tags": [
                     "Authentication"
@@ -203,36 +203,26 @@
                         "schema": {
                             "type": "text"
                         }
-                    }
-                ],
-                "requestBody": {
-                    "content": {
-                        "multipart/form-data": {
-                            "schema": {
-                                "required": [
-                                    "password",
-                                    "password_confirmation"
-                                ],
-                                "properties": {
-                                    "password": {
-                                        "description": "Enter new password",
-                                        "type": "password",
-                                        "example": "12345678"
-                                    },
-                                    "password_confirmation": {
-                                        "description": "Confirm password",
-                                        "type": "password",
-                                        "example": "12345678"
-                                    }
-                                },
-                                "type": "object"
-                            }
-                        },
-                        "application/json": {
-                            "schema": {}
+                    },
+                    {
+                        "name": "password",
+                        "in": "query",
+                        "description": "Enter new password",
+                        "required": false,
+                        "schema": {
+                            "type": "password"
+                        }
+                    },
+                    {
+                        "name": "password_confirmation",
+                        "in": "query",
+                        "description": "Confirm password",
+                        "required": false,
+                        "schema": {
+                            "type": "password"
                         }
                     }
-                },
+                ],
                 "responses": {
                     "200": {
                         "description": "Password Created Successfull",
@@ -277,13 +267,88 @@
                 }
             }
         },
+        "/api/auth/forgot-password": {
+            "post": {
+                "tags": [
+                    "Authentication"
+                ],
+                "summary": "Send a password reset email",
+                "description": "Sends a password reset email to the user with the provided email address.",
+                "operationId": "cff9b52a898f73f39d684747bd69c4e1",
+                "parameters": [
+                    {
+                        "name": "email",
+                        "in": "query",
+                        "description": "User's email address",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "format": "email"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Password Reset Email Sent Successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "string",
+                                            "example": "success"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Password Reset Email Sent Successfully"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Validation Error or Something Went Wrong",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "string",
+                                            "example": "error"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "All fields are required or Something went wrong"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/demand-notice": {
-            "get": {
+            "post": {
                 "tags": [
                     "Demand Notice"
                 ],
                 "summary": "Get paginated list of demand notices",
-                "operationId": "3a39f9ad7ed404235e4419cafecc4a2a",
+                "operationId": "f46958ad8462f5306e359bb221c49bde",
+                "parameters": [
+                    {
+                        "name": "date_filter",
+                        "in": "query",
+                        "description": "Optional. The year for which to retrieve data. Defaults to the current year if not provided.",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "Successful operation",
@@ -835,69 +900,24 @@
                 ]
             }
         },
-        "api/forgot-password": {
-            "post": {
-                "tags": [
-                    "Authentication"
-                ],
-                "summary": "Send reset password link",
-                "description": "This endpoint allows users to request a password reset link by providing their email address.",
-                "operationId": "312a34fcbd1c30045c653e47d2ec4e0f",
-                "parameters": [
-                    {
-                        "name": "email",
-                        "in": "query",
-                        "description": "User's email address",
-                        "required": true,
-                        "schema": {
-                            "type": "string",
-                            "format": "email"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "We have emailed your password reset link",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "status": {
-                                            "description": "Message indicating the status of the reset password link sent.",
-                                            "type": "string"
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
-                    },
-                    "422": {
-                        "description": "Validation error",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "message": {
-                                            "description": "Error message indicating validation failure.",
-                                            "type": "string"
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        },
         "/payment": {
-            "get": {
+            "post": {
                 "tags": [
                     "Payment"
                 ],
                 "summary": "Get a list of payments",
-                "operationId": "f9856de4275291351dd4bdf4799455e7",
+                "operationId": "a863ba1461fb836d1d0f91cd9ed80905",
+                "parameters": [
+                    {
+                        "name": "date_filter",
+                        "in": "query",
+                        "description": "Optional. The year for which to retrieve data. Defaults to the current year if not provided.",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "Successful operation",
@@ -1094,9 +1114,45 @@
                                         },
                                         "data": {
                                             "properties": {
-                                                "account_number": {
+                                                "response_message": {
                                                     "type": "string",
-                                                    "example": "1234567890"
+                                                    "example": "Transaction in progress"
+                                                },
+                                                "response_code": {
+                                                    "type": "string",
+                                                    "example": "02"
+                                                },
+                                                "flw_ref": {
+                                                    "type": "string",
+                                                    "example": "GPCY5711171682908639919735"
+                                                },
+                                                "order_ref": {
+                                                    "type": "string",
+                                                    "example": "URF_1716829079964_1906235"
+                                                },
+                                                "frequency": {
+                                                    "type": "string",
+                                                    "example": "NA"
+                                                },
+                                                "bank_name": {
+                                                    "type": "string",
+                                                    "example": "Sterling Bank"
+                                                },
+                                                "created_at": {
+                                                    "type": "string",
+                                                    "example": "2024-05-27 17:58:06"
+                                                },
+                                                "expiry_date": {
+                                                    "type": "string",
+                                                    "example": "2024-05-27 18:58:06"
+                                                },
+                                                "note": {
+                                                    "type": "string",
+                                                    "example": "Please make a bank transfer to ICT FLW"
+                                                },
+                                                "amount": {
+                                                    "type": "string",
+                                                    "example": "48625.00"
                                                 }
                                             },
                                             "type": "object"
@@ -1158,13 +1214,13 @@
                 }
             }
         },
-        "/api/properties": {
-            "get": {
+        "/api/property": {
+            "post": {
                 "tags": [
                     "Property"
                 ],
                 "summary": "Get all properties",
-                "operationId": "ae50890d9da51a5cfe01cd2151d4077a",
+                "operationId": "eda93cd39cb8d8a5500d511b06d10b85",
                 "responses": {
                     "200": {
                         "description": "Successful operation",
@@ -1173,7 +1229,7 @@
                                 "schema": {
                                     "type": "array",
                                     "items": {
-                                        "$ref": "#/components/schemas/ShowPropertyResource"
+                                        "$ref": "#/components/schemas/PropertyResource"
                                     }
                                 }
                             }
@@ -1202,7 +1258,7 @@
                 }
             }
         },
-        "/api/property": {
+        "/api/property/create": {
             "post": {
                 "tags": [
                     "Property"
@@ -1298,7 +1354,7 @@
                                 "schema": {
                                     "type": "array",
                                     "items": {
-                                        "$ref": "#/components/schemas/StorePropertyResource"
+                                        "$ref": "#/components/schemas/PropertyResource"
                                     }
                                 }
                             }
@@ -1338,7 +1394,7 @@
                                 "schema": {
                                     "type": "array",
                                     "items": {
-                                        "$ref": "#/components/schemas/ShowPropertyResource"
+                                        "$ref": "#/components/schemas/PropertyResource"
                                     }
                                 }
                             }
@@ -1466,7 +1522,7 @@
                                 "schema": {
                                     "type": "array",
                                     "items": {
-                                        "$ref": "#/components/schemas/ShowPropertyResource"
+                                        "$ref": "#/components/schemas/PropertyResource"
                                     }
                                 }
                             }
@@ -1604,6 +1660,89 @@
                 "security": [
                     {
                         "api_key": []
+                    }
+                ]
+            }
+        },
+        "/api/statistic/all-yearly-data": {
+            "post": {
+                "tags": [
+                    "statistics"
+                ],
+                "summary": "Retrieve all yearly statistical  data",
+                "description": "Returns various statistics and totals for a specific year, including total payments, demand notices, properties, and users.",
+                "operationId": "2d5125fb174949f725c2a491d4d5ecea",
+                "parameters": [
+                    {
+                        "name": "date_filter",
+                        "in": "query",
+                        "description": "Optional. The year for which to retrieve data. Defaults to the current year if not provided.",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "total_payments": {
+                                                    "type": "integer",
+                                                    "example": 10
+                                                },
+                                                "total_demand_notices": {
+                                                    "type": "integer",
+                                                    "example": 20
+                                                },
+                                                "total_paid_demand_notices": {
+                                                    "type": "integer",
+                                                    "example": 15
+                                                },
+                                                "total_pending_demand_notices": {
+                                                    "type": "integer",
+                                                    "example": 5
+                                                },
+                                                "total_demand_notices_amount": {
+                                                    "type": "number",
+                                                    "example": 5000.5
+                                                },
+                                                "total_properties": {
+                                                    "type": "integer",
+                                                    "example": 100
+                                                },
+                                                "total_users": {
+                                                    "type": "integer",
+                                                    "example": 50
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized: Missing or invalid token"
+                    },
+                    "500": {
+                        "description": "Internal server error"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
                     }
                 ]
             }
@@ -2205,12 +2344,92 @@
                         "type": "integer"
                     },
                     "property": {
-                        "$ref": "#/components/schemas/ShowPropertyResource"
+                        "$ref": "#/components/schemas/PropertyResource"
                     },
                     "date_created": {
                         "description": "The date when the demand notice was created",
                         "type": "string",
                         "format": "date-time"
+                    }
+                },
+                "type": "object"
+            },
+            "LoginResource": {
+                "title": "Login Resource",
+                "description": "A resource representing a successful login response",
+                "properties": {
+                    "status": {
+                        "description": "The status of the login operation",
+                        "type": "string",
+                        "example": "success"
+                    },
+                    "message": {
+                        "description": "The success message",
+                        "type": "string",
+                        "example": "Login Successfully"
+                    },
+                    "user": {
+                        "properties": {
+                            "id": {
+                                "description": "The unique identifier of the user",
+                                "type": "integer",
+                                "example": 1
+                            },
+                            "name": {
+                                "description": "The name of the user",
+                                "type": "string",
+                                "example": "John Doe"
+                            },
+                            "email": {
+                                "description": "The email address of the user",
+                                "type": "string",
+                                "format": "email",
+                                "example": "user@example.com"
+                            },
+                            "phone": {
+                                "description": "The phone number of the user",
+                                "type": "string",
+                                "example": "+1234567890"
+                            },
+                            "zone": {
+                                "description": "The zone associated with the user",
+                                "type": "string",
+                                "example": "Zone A"
+                            },
+                            "role": {
+                                "properties": {
+                                    "id": {
+                                        "description": "The unique identifier of the role",
+                                        "type": "integer",
+                                        "example": 2
+                                    },
+                                    "name": {
+                                        "description": "The name of the role",
+                                        "type": "string",
+                                        "example": "Admin"
+                                    }
+                                },
+                                "type": "object"
+                            },
+                            "created_at": {
+                                "description": "The creation timestamp of the user",
+                                "type": "string",
+                                "format": "date-time",
+                                "example": "2023-01-01T12:00:00Z"
+                            },
+                            "updated_at": {
+                                "description": "The last update timestamp of the user",
+                                "type": "string",
+                                "format": "date-time",
+                                "example": "2023-01-02T12:00:00Z"
+                            }
+                        },
+                        "type": "object"
+                    },
+                    "token": {
+                        "description": "The JWT token for the authenticated user",
+                        "type": "string",
+                        "example": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9..."
                     }
                 },
                 "type": "object"
@@ -2253,37 +2472,116 @@
                 },
                 "type": "object"
             },
-            "ShowPropertyResource": {
-                "title": "PropertyDemandNoticeResource",
-                "description": "Resource representing a demand notice",
+            "PropertyResource": {
+                "title": "Property Resource",
+                "description": "A resource representing a property",
                 "properties": {
                     "id": {
-                        "description": "The ID of the demand notice",
-                        "type": "integer"
+                        "description": "The unique identifier of the property",
+                        "type": "integer",
+                        "example": 1
                     },
-                    "amount": {
-                        "description": "The amount of the demand notice",
-                        "type": "string"
-                    },
-                    "arrears_amount": {
-                        "description": "The arrears amount of the demand notice",
-                        "type": "string"
-                    },
-                    "penalty": {
-                        "description": "The penalty of the demand notice",
-                        "type": "string"
-                    },
-                    "status": {
-                        "description": "The status of the demand notice",
-                        "type": "integer"
-                    },
-                    "property": {
-                        "$ref": "#/components/schemas/ShowPropertyResource"
-                    },
-                    "date_created": {
-                        "description": "The date when the demand notice was created",
+                    "pid": {
+                        "description": "The property ID",
                         "type": "string",
-                        "format": "date-time"
+                        "example": "P12345"
+                    },
+                    "occupant": {
+                        "description": "The occupant of the property",
+                        "type": "string",
+                        "example": "John Doe"
+                    },
+                    "prop_addr": {
+                        "description": "The property address",
+                        "type": "string",
+                        "example": "123 Main St"
+                    },
+                    "street_name": {
+                        "description": "The street name",
+                        "type": "string",
+                        "example": "Main St"
+                    },
+                    "asset_no": {
+                        "description": "The asset number",
+                        "type": "string",
+                        "example": "A123"
+                    },
+                    "cadastral_zone": {
+                        "description": "The cadastral zone",
+                        "type": "string",
+                        "example": "Zone A"
+                    },
+                    "prop_type": {
+                        "description": "The type of the property",
+                        "type": "string",
+                        "example": "Residential"
+                    },
+                    "prop_use": {
+                        "description": "The usage of the property",
+                        "type": "string",
+                        "example": "Owner-Occupied"
+                    },
+                    "rating_dist": {
+                        "description": "The rating district",
+                        "type": "string",
+                        "example": "Dist 1"
+                    },
+                    "annual_value": {
+                        "description": "The annual value of the property",
+                        "type": "number",
+                        "format": "float",
+                        "example": 1200.5
+                    },
+                    "rate_payable": {
+                        "description": "The rate payable",
+                        "type": "number",
+                        "format": "float",
+                        "example": 300.75
+                    },
+                    "grand_total": {
+                        "description": "The grand total",
+                        "type": "number",
+                        "format": "float",
+                        "example": 1500.25
+                    },
+                    "category": {
+                        "description": "The category of the property",
+                        "type": "string",
+                        "example": "Category A"
+                    },
+                    "group": {
+                        "description": "The group of the property",
+                        "type": "string",
+                        "example": "Group 1"
+                    },
+                    "active": {
+                        "description": "The active status of the property",
+                        "type": "boolean",
+                        "example": true
+                    },
+                    "created_at": {
+                        "description": "The creation timestamp of the property",
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2023-01-01T12:00:00Z"
+                    },
+                    "updated_at": {
+                        "description": "The last update timestamp of the property",
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2023-01-02T12:00:00Z"
+                    },
+                    "demand_notice": {
+                        "description": "A collection of demand notices associated with the property",
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/DemandNoticeResource"
+                        }
+                    },
+                    "demand_notice_status": {
+                        "description": "The status of the latest demand notice",
+                        "type": "string",
+                        "example": "Paid"
                     }
                 },
                 "type": "object"
@@ -2292,31 +2590,6 @@
                 "title": "Show Staff Resource",
                 "description": "Show Staff Resource",
                 "type": "object"
-            },
-            "StorePropertyResource": {
-                "title": "Store Property Resource",
-                "description": "Store Property Resource",
-                "type": "object",
-                "example": {
-                    "pid": 3176683,
-                    "prop_addr": "540 Kaci Extensions Suite 724 Francoborough, MS 22188",
-                    "street_name": "46329 McDermott Courts Apt. 058",
-                    "asset_no": "AMC/B14/TR/9",
-                    "cadastral_zone": "30769-6233",
-                    "prop_type": "SPLITTED",
-                    "prop_use": "COMMERCIAL",
-                    "rating_dist": "APO",
-                    "annual_value": 200000,
-                    "rate_payable": 45000,
-                    "arrears": 25000,
-                    "penalty": 45000,
-                    "grand_total": 4500000,
-                    "category": "RESIDENTIAL",
-                    "group": "AMAC2",
-                    "active": "ACTIVE",
-                    "created_at": "2024-05-06T11:54:58.000000Z",
-                    "updated_at": "2024-05-06T11:54:58.000000Z"
-                }
             },
             "StoreUserResource": {
                 "title": "Store Staff Resource",

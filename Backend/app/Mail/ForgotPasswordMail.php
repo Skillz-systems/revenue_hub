@@ -12,7 +12,7 @@ use Illuminate\Queue\SerializesModels;
 
 use function Laravel\Prompts\password;
 
-class RegisterMail extends Mailable
+class ForgotPasswordMail extends Mailable
 {
     use Queueable, SerializesModels;
 
@@ -36,7 +36,7 @@ class RegisterMail extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: 'Register Mail',
+            subject: 'Forgot Password',
         );
     }
 
@@ -45,8 +45,9 @@ class RegisterMail extends Mailable
      */
     public function content(): Content
     {
+
         return new Content(
-            view: 'mail.welcome-mail',
+            view: 'mail.forgot-password-mail',
         );
     }
 
