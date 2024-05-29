@@ -11,16 +11,23 @@ import {
   ViewPropertyModal,
   DemandInvoiceDocument,
 } from "../Index";
+import { DemandNotice } from "../../Data/types";
 import {
   formatNumberWithCommas,
-  filterRecordsByKeyAndValue,
+  formatDate,
   ScrollToTop,
+  useTokens,
 } from "../../Utils/client";
+import axios from "axios";
 
 const DemandInvoiceTable = ({
   staticInformation,
   demandNoticeInformation,
-}) => {
+}:
+  {
+    staticInformation: any;
+    demandNoticeInformation: DemandNotice[]
+  }) => {
   const [displaySearchIcon, setDisplaySearchIcon] = useState<boolean>(true);
   const [activeMenu, setActiveMenu] = useState<number>(1);
   const [query, setQuery] = useState<string>("");
@@ -32,6 +39,36 @@ const DemandInvoiceTable = ({
   const [propertiesPerPage, setPropertiesPerPage] = useState<number>(12);
   const [currentStyle, setCurrentStyle] = useState<number | undefined>(undefined);
   const [demandInvoiceDocument, setDemandInvoiceDocument] = useState<any>(null);
+
+  const { token } = useTokens()
+
+  const deleteDemandNotice = async (id: number) => {
+    try {
+      const response = await axios.delete(
+        `https://api.revenuehub.skillzserver.com/api/demand-notice/delete/${id}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`, // Headers
+          },
+        }
+      );
+      if (response.status === 200) {
+        console.log("Succesfully removed demand notice from database:", response.data)
+        alert("Successfully removed demand notice")
+      } else {
+        console.error("Unexpected status code:", response.status);
+        alert("Unexpected status code")
+      }
+    } catch (error) {
+      if (error.response && error.response.status === 401) {
+        console.error("Unauthorized:", error.response.data);
+        alert("Unauthorized")
+      } else {
+        console.error("Internal Server Error:", error);
+        alert("Internal Server Error")
+      }
+    }
+  }
 
   const handleViewPropertyModal = (propertyData: any) => {
     setViewPropertyModal(propertyData);
@@ -59,7 +96,7 @@ const DemandInvoiceTable = ({
   };
 
   const currentProperties = (data: any) => {
-    return data.slice(offset, offset + propertiesPerPage);
+    return data?.slice(offset, offset + propertiesPerPage);
   };
 
   const paginationStyles = {
@@ -94,34 +131,28 @@ const DemandInvoiceTable = ({
     setQuery(event.target.value);
   };
 
-  const filteredRecords =
-    activeMenu === 1
-      ? currentProperties(demandNoticeInformation)
-      : activeMenu === 2
+  const filteredRecords = activeMenu === 1
+    ? currentProperties(demandNoticeInformation)
+    : activeMenu === 2
+      ? currentProperties(
+        demandNoticeInformation.filter(record =>
+          record.payments.some(payment => payment.status === "Paid")
+        )
+      )
+      : activeMenu === 3
         ? currentProperties(
-          filterRecordsByKeyAndValue(
-            demandNoticeInformation,
-            "paymentStatus",
-            "Paid"
+          demandNoticeInformation.filter(record =>
+            record.payments.some(payment => payment.status === "Unpaid")
           )
         )
-        : activeMenu === 3
+        : activeMenu === 4
           ? currentProperties(
-            filterRecordsByKeyAndValue(
-              demandNoticeInformation,
-              "paymentStatus",
-              "Unpaid"
+            demandNoticeInformation.filter(record =>
+              record.payments.some(payment => payment.status === "Expired")
             )
           )
-          : activeMenu === 4
-            ? currentProperties(
-              filterRecordsByKeyAndValue(
-                demandNoticeInformation,
-                "paymentStatus",
-                "Expired"
-              )
-            )
-            : [];
+          : [];
+
 
   const filteredResults = query
     ? demandNoticeInformation.filter((record) =>
@@ -138,61 +169,60 @@ const DemandInvoiceTable = ({
 
   const pageCount = Math.ceil(LengthByActiveMenu() / propertiesPerPage);
 
-  const recordField = (record: any) => {
+  const recordField = (record: DemandNotice) => {
+    const lastPaymentStatus = record.property.demand_notice_status;
+
     return (
       <div
         key={record.id}
         className="flex items-center justify-between gap-1 text-xs"
       >
         <span className="flex flex-wrap items-center justify-center w-24 h-10 px-2 py-1 text-sm font-medium rounded text-color-text-three bg-custom-blue-400">
-          {record.personalIdentificationNumber}
+          {record.property.pid}
         </span>
         <span className="flex flex-wrap items-center w-2/12 font-lexend text-color-text-black">
-          {record.propertyAddress}
+          {record.property.prop_addr}
         </span>
         <span className="flex flex-wrap items-center w-[5%] text-color-text-black font-lexend text-[10px]">
-          {
-            record.demandInvoiceData[
-              record.demandInvoiceData.length - 1
-            ].dateCreated
-          }
+          {formatDate(record.date_created)}
         </span>
         <span
           className={`flex flex-wrap items-center px-4 py-1 justify-center rounded-xl w-[12%] font-light font-lexend text-color-text-black text-[10px] border-0.6 border-custom-grey-100
-          ${record.propertyUse === "Commercial"
+          ${record.property.prop_use === "Commercial"
               ? "bg-color-light-red"
-              : record.propertyUse === "Residential"
+              : record.property.prop_use === "Residential"
                 ? "bg-color-light-yellow"
                 : "bg-custom-blue-200"
             }
           `}
         >
-          {record.propertyUse.toUpperCase()}
+          {record.property.prop_use.toUpperCase()}
         </span>
         <span className="flex flex-wrap items-center justify-center p-1 font-light rounded w-[12%] font-lexend text-custom-blue-500 bg-custom-blue-100 border-0.6 border-custom-grey-100">
-          {record.cadestralZone}
+          {record.property.cadastral_zone}
         </span>
         <span className="flex flex-wrap items-center justify-center text-sm w-[12%] text-color-text-black font-chonburi">
-          {formatNumberWithCommas(record.ratePayable)}
+          {formatNumberWithCommas(record.property.rate_payable)}
         </span>
         <div className="flex items-center justify-center w-[12%]">
           <span
             className={`flex flex-wrap items-center justify-center px-2 p-1 font-light text-white rounded font-lexend
-            ${record.paymentStatus === "Expired"
+            ${lastPaymentStatus === "Expired"
                 ? "bg-color-bright-red"
-                : record.paymentStatus === "Unpaid"
+                : lastPaymentStatus === "Unpaid"
                   ? "bg-color-bright-orange"
                   : "bg-color-bright-green"
               }
             `}
           >
-            {record.paymentStatus}
+            {lastPaymentStatus}
           </span>
         </div>
         <span className="flex flex-wrap items-center w-1/12 gap-1">
           <span
             className="border-0.6 border-custom-grey-100 text-custom-grey-300 px-2 py-2.5 rounded text-base hover:cursor-pointer"
             title="Delete Invoice"
+            onClick={() => deleteDemandNotice(record.id)}
           >
             <RiDeleteBin5Fill />
           </span>
@@ -218,11 +248,11 @@ const DemandInvoiceTable = ({
                 >
                   View Property
                 </p>
-                {record.paymentStatus === "Expired" ? (
+                {lastPaymentStatus === "Expired" ? (
                   <p className="hover:cursor-pointer" title="Generate Reminder">
                     Generate Reminder
                   </p>
-                ) : record.paymentStatus === "Unpaid" ? (
+                ) : lastPaymentStatus === "Unpaid" ? (
                   <p className="hover:cursor-pointer" title="View Reminder">
                     View Reminder
                   </p>
@@ -239,25 +269,17 @@ const DemandInvoiceTable = ({
     return activeMenu === 1
       ? filteredResults.length > 0
         ? filteredResults.length
-        : filteredResults < 1 && query != ""
-          ? 0
-          : demandNoticeInformation.length
+        : 0
       : activeMenu === 2
-        ? filterRecordsByKeyAndValue(
-          demandNoticeInformation,
-          "paymentStatus",
-          "Paid"
+        ? demandNoticeInformation.filter(record =>
+          record.payments.some(payment => payment.status === "Paid")
         ).length
         : activeMenu === 3
-          ? filterRecordsByKeyAndValue(
-            demandNoticeInformation,
-            "paymentStatus",
-            "Unpaid"
+          ? demandNoticeInformation.filter(record =>
+            record.payments.some(payment => payment.status === "Unpaid")
           ).length
-          : filterRecordsByKeyAndValue(
-            demandNoticeInformation,
-            "paymentStatus",
-            "Expired"
+          : demandNoticeInformation.filter(record =>
+            record.payments.some(payment => payment.status === "Expired")
           ).length;
   }
 
@@ -298,25 +320,17 @@ const DemandInvoiceTable = ({
                       {menu.id === 1
                         ? filteredResults.length > 0
                           ? filteredResults.length
-                          : filteredResults < 1 && query != ""
-                            ? 0
-                            : demandNoticeInformation.length
+                          : 0
                         : menu.id === 2
-                          ? filterRecordsByKeyAndValue(
-                            demandNoticeInformation,
-                            "paymentStatus",
-                            "Paid"
+                          ? demandNoticeInformation.filter(record =>
+                            record.payments.some(payment => payment.status === "Paid")
                           ).length
                           : menu.id === 3
-                            ? filterRecordsByKeyAndValue(
-                              demandNoticeInformation,
-                              "paymentStatus",
-                              "Unpaid"
+                            ? demandNoticeInformation.filter(record =>
+                              record.payments.some(payment => payment.status === "Unpaid")
                             ).length
-                            : filterRecordsByKeyAndValue(
-                              demandNoticeInformation,
-                              "paymentStatus",
-                              "Expired"
+                            : demandNoticeInformation.filter(record =>
+                              record.payments.some(payment => payment.status === "Expired")
                             ).length}
                     </span>
                   </div>
@@ -374,7 +388,7 @@ const DemandInvoiceTable = ({
           <div className="flex-col space-y-4">
             {query === "" ? (
               filteredRecords.length > 0 ? (
-                filteredRecords.map((record: any) => recordField(record))
+                filteredRecords.map((record: DemandNotice) => recordField(record))
               ) : (
                 <p className="text-sm font-medium font-lexend text-color-text-black">
                   No results found.
@@ -446,16 +460,16 @@ const DemandInvoiceTable = ({
             "absolute top-0 left-0 z-[30] flex items-start justify-end w-full h-screen p-4 overflow-hidden bg-black bg-opacity-60"
           }
         >
-          <DemandInvoiceDocument
-            hideDemandInvoiceModal={() => {
-              setDemandInvoiceDocument(false);
-              // setTimeout(() => {
-              //   setPropertyModalTransition(false);
-              // }, 300);
-            }}
-            // propertyModalTransition={propertyModalTransition}
-            customTableData={demandInvoiceDocument}
-          />
+            <DemandInvoiceDocument
+              hideDemandInvoiceModal={() => {
+                setDemandInvoiceDocument(false);
+                // setTimeout(() => {
+                //   setPropertyModalTransition(false);
+                // }, 300);
+              }}
+              // propertyModalTransition={propertyModalTransition}
+              demandInvoiceInfo={demandInvoiceDocument}
+            />
         </DemandPropertyModal>
       ) : null}
     </div>

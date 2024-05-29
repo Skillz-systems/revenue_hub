@@ -44,7 +44,7 @@ interface MenuItem {
 
 const MenuItemData = () => {
   const { cardInformation } = useAppData();
-  const { totalStaff } = userData();
+  const { statistics } = userData();
 
   const menuItems: MenuItem[] = [
     {
@@ -61,7 +61,7 @@ const MenuItemData = () => {
       menuIcon: <PiBuildings />,
       menuIconTwo: <PiBuildingsFill />,
       menuName: "Properties",
-      menuItemCount: cardInformation.totalRegisteredProperties,
+      menuItemCount: statistics?.total_properties,
       componentName: "Properties Component",
       component: <Properties />,
     },
@@ -70,7 +70,7 @@ const MenuItemData = () => {
       menuIcon: <PiListBulletsBold />,
       menuIconTwo: <PiListBulletsFill />,
       menuName: "Demand Notice",
-      menuItemCount: cardInformation.totalGeneratedDemandNotices,
+      menuItemCount: statistics?.total_demand_notices,
       componentName: "Demand Notice Component",
       component: <DemandNotice />,
     },
@@ -88,7 +88,7 @@ const MenuItemData = () => {
       menuIcon: <BsCreditCard2Front />,
       menuIconTwo: <BsCreditCard2FrontFill />,
       menuName: "Transactions",
-      menuItemCount: cardInformation.transactionInformationValue,
+      menuItemCount: statistics?.total_payments,
       componentName: "Transactions Component",
       component: <Transactions />,
     },
@@ -97,7 +97,7 @@ const MenuItemData = () => {
       menuIcon: <BsPeople />,
       menuIconTwo: <BsPeopleFill />,
       menuName: "Staff",
-      menuItemCount: totalStaff,
+      menuItemCount: statistics?.total_users,
       componentName: "Staff Component",
       component: <Staff />,
     },

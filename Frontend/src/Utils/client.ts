@@ -1,5 +1,26 @@
+import { useState, useEffect } from 'react';
 import axios from 'axios';
 import Cookies from 'js-cookie';
+
+// WRONG
+export const useOnlineStatus = () => {
+  const [isOnline, setIsOnline] = useState<boolean>(navigator.onLine);
+
+  useEffect(() => {
+    const handleOnline = () => setIsOnline(true);
+    const handleOffline = () => setIsOnline(false);
+
+    window.addEventListener('online', handleOnline);
+    window.addEventListener('offline', handleOffline);
+
+    return () => {
+      window.removeEventListener('online', handleOnline);
+      window.removeEventListener('offline', handleOffline);
+    };
+  }, []);
+
+  return isOnline;
+};
 
 export function formatNumberWithCommas(number: number | string): string {
   // Convert the number to a string
@@ -19,10 +40,18 @@ export function formatNumberWithCommas(number: number | string): string {
   return formattedNumber;
 }
 
+export const formatDate = (dateString: string): string => {
+  const date = new Date(dateString);
+  const month = (date.getMonth() + 1).toString().padStart(2, '0');
+  const day = date.getDate().toString().padStart(2, '0');
+  const year = date.getFullYear();
+
+  return `${month}/${day}/${year}`;
+};
+
 export function filterRecordsByKeyAndValue<T>(recordsArray: T[], key: keyof T, value: T[keyof T]): T[] {
   return recordsArray.filter((record) => record[key] === value);
 }
-
 
 interface StaffRecord {
   id: number;
@@ -85,7 +114,7 @@ export const fetcher = async (url: string, token: any) => {
 export const useTokens = () => {
   // Safely get and parse userData from cookies
   const userData = Cookies.get('userData');
-  
+
   try {
     const parsedData = userData ? JSON.parse(userData) : null;
     // Safely access token

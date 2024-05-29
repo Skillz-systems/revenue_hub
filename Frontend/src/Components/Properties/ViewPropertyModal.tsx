@@ -31,9 +31,7 @@ export type PropertyData = {
   street_name: string;
   arrears: number;
   penalty: number;
-  occupationStatus: string;
-  paymentStatus: string;
-  occupantInfo: any[];
+  demand_notice_status: string;
 };
 
 interface ViewPropertyModalProps {
@@ -89,17 +87,17 @@ const ViewPropertyModal: React.FC<ViewPropertyModalProps> = ({
               </span>
               <span
                 className={`rounded-md px-2 py-0.5 font-light text-[10px] text-white font-lexend
-                ${customTableData.status === "Ungenerated"
+                ${customTableData.demand_notice_status === "Ungenerated"
                     ? "bg-primary-color"
-                    : customTableData.status === "Unpaid"
+                    : customTableData.demand_notice_status === "Unpaid"
                       ? "bg-color-bright-orange"
-                      : customTableData.status === "Expired"
+                      : customTableData.demand_notice_status === "Expired"
                         ? "bg-color-bright-red"
                         : "bg-color-bright-green"
                   }
                 `}
               >
-                {customTableData.status}
+                {customTableData.demand_notice_status}
               </span>
             </div>
             <div className="flex items-center gap-2">
@@ -299,9 +297,7 @@ const ViewPropertyModal: React.FC<ViewPropertyModalProps> = ({
               </>
             ) : null}
 
-            {activateState === 1 &&
-              customTableData?.occupationStatus === "Occupied" &&
-              customTableData?.paymentStatus !== "Ungenerated" ? (
+            {activateState === 1 && (
               <div className="flex-col p-2 space-y-2 border-0.6 rounded border-color-text-two">
                 <div className="flex items-center gap-1.5 text-xs text-color-text-two font-lexend">
                   <span className="text-lg">
@@ -311,40 +307,38 @@ const ViewPropertyModal: React.FC<ViewPropertyModalProps> = ({
                 </div>
                 {[
                   {
-                    name: "First Name",
+                    name: "Occupant",
                     value:
-                      customTableData?.occupantInfo[
-                        customTableData?.occupantInfo?.length - 1
-                      ].firstName,
+                      customTableData?.occupant
                   },
-                  {
-                    name: "LastName",
-                    value:
-                      customTableData?.occupantInfo[
-                        customTableData?.occupantInfo?.length - 1
-                      ].lastName,
-                  },
-                  {
-                    name: "Phone Number",
-                    value:
-                      customTableData?.occupantInfo[
-                        customTableData?.occupantInfo?.length - 1
-                      ].phoneNumber,
-                  },
-                  {
-                    name: "Email",
-                    value:
-                      customTableData?.occupantInfo[
-                        customTableData?.occupantInfo?.length - 1
-                      ].email,
-                  },
-                  {
-                    name: "Marital Status",
-                    value:
-                      customTableData?.occupantInfo[
-                        customTableData?.occupantInfo?.length - 1
-                      ].maritalStatus,
-                  },
+                  // {
+                  //   name: "LastName",
+                  //   value:
+                  //     customTableData?.occupantInfo[
+                  //       customTableData?.occupantInfo?.length - 1
+                  //     ].lastName,
+                  // },
+                  // {
+                  //   name: "Phone Number",
+                  //   value:
+                  //     customTableData?.occupantInfo[
+                  //       customTableData?.occupantInfo?.length - 1
+                  //     ].phoneNumber,
+                  // },
+                  // {
+                  //   name: "Email",
+                  //   value:
+                  //     customTableData?.occupantInfo[
+                  //       customTableData?.occupantInfo?.length - 1
+                  //     ].email,
+                  // },
+                  // {
+                  //   name: "Marital Status",
+                  //   value:
+                  //     customTableData?.occupantInfo[
+                  //       customTableData?.occupantInfo?.length - 1
+                  //     ].maritalStatus,
+                  // },
                 ].map((item) => (
                   <div className="flex items-center justify-between font-lexend">
                     <p className="px-1 py-0.5 text-darkerblueberry rounded bg-custom-blue-100 text-xs">
@@ -356,10 +350,10 @@ const ViewPropertyModal: React.FC<ViewPropertyModalProps> = ({
                   </div>
                 ))}
               </div>
-            ) : null}
+            )}
 
             {activateState === 1 &&
-              customTableData?.occupationStatus === "Unoccupied" ? (
+              customTableData?.occupant === "" ? (
               <p className="text-sm text-color-text-black font-lexend">
                 There are no current occupants on the property.
               </p>
@@ -369,16 +363,16 @@ const ViewPropertyModal: React.FC<ViewPropertyModalProps> = ({
                 <div className="flex items-center gap-1.5 text-color-dark-red">
                   <BsCalendar2EventFill />
                   <p className="text-xs">
-                    {customTableData?.paymentStatus === "Ungenerated"
+                    {customTableData?.demand_notice_status === "Ungenerated"
                       ? "No Invoice has been generated on this property"
-                      : customTableData?.paymentStatus === "Expired"
+                      : customTableData?.demand_notice_status === "Expired"
                         ? "DEMAND INVOICE HAS EXPIRED"
-                        : customTableData?.paymentStatus === "Paid"
+                        : customTableData?.demand_notice_status === "Paid"
                           ? "DEMAND INOICE HAS BEEN PAID"
                           : "DAYS TO NEXT INVOICE"}
                   </p>
                 </div>
-                {customTableData?.paymentStatus === "Unpaid" ? (
+                {customTableData?.demand_notice_status === "Unpaid" ? (
                   <span className="px-2 py-0.5 rounded text-xs bg-color-light-red text-darkerblueberry">
                     {365}
                   </span>
@@ -387,14 +381,14 @@ const ViewPropertyModal: React.FC<ViewPropertyModalProps> = ({
             ) : null}
 
             {activateState === 2 &&
-              customTableData?.paymentStatus === "Ungenerated" ? (
+              customTableData?.demand_notice_status === "Ungenerated" ? (
               <p className="text-sm text-color-text-black font-lexend">
                 No Invoice has been generated on this property.
               </p>
             ) : null}
 
             {activateState === 2 &&
-              customTableData.paymentStatus !== "Ungenerated" ? (
+              customTableData.demand_notice_status !== "Ungenerated" ? (
               <div className="flex items-center justify-between gap-3 text-xs group">
                 <span className="flex flex-wrap items-center justify-center w-20 h-8 px-2 py-1 text-xs font-medium rounded text-color-text-three bg-custom-blue-400">
                   {customTableData.pid}
@@ -423,17 +417,17 @@ const ViewPropertyModal: React.FC<ViewPropertyModalProps> = ({
                 <div className="flex items-center justify-center">
                   <span
                     className={`flex flex-wrap items-center justify-center px-1 p-0.5 font-light text-white rounded font-lexend text-[10px]
-                 ${customTableData?.paymentStatus === "Ungenerated"
+                 ${customTableData?.demand_notice_status === "Ungenerated"
                         ? "bg-primary-color"
-                        : customTableData?.paymentStatus === "Unpaid"
+                        : customTableData?.demand_notice_status === "Unpaid"
                           ? "bg-color-bright-orange"
-                          : customTableData?.paymentStatus === "Expired"
+                          : customTableData?.demand_notice_status === "Expired"
                             ? "bg-color-bright-red"
                             : "bg-color-bright-green"
                       }
                  `}
                   >
-                    {customTableData?.paymentStatus}
+                    {customTableData?.demand_notice_status}
                   </span>
                 </div>
                 <span className="flex flex-wrap items-center gap-1">
@@ -461,7 +455,7 @@ const ViewPropertyModal: React.FC<ViewPropertyModalProps> = ({
                         >
                           View Property
                         </p>
-                        {customTableData?.paymentStatus === "Expired" ? (
+                        {customTableData?.demand_notice_status === "Expired" ? (
                           <p
                             className="hover:cursor-pointer"
                             title="Generate Reminder"
@@ -469,7 +463,7 @@ const ViewPropertyModal: React.FC<ViewPropertyModalProps> = ({
                           >
                             Generate Reminder
                           </p>
-                        ) : customTableData?.paymentStatus === "Unpaid" ? (
+                        ) : customTableData?.demand_notice_status === "Unpaid" ? (
                           <p
                             className="hover:cursor-pointer"
                             title="View Reminder"
