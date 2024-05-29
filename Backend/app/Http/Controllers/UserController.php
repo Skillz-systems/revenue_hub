@@ -148,8 +148,6 @@ class UserController extends Controller
         ], 400);
     }
 
-
-
     /**
      * Show  User
      * @OA\GET (
@@ -319,7 +317,9 @@ class UserController extends Controller
             'phone' => ['sometimes', 'string', 'min:11'],
             'role_id' => ['sometimes', 'string', 'max:255'],
             'zone' => ['sometimes', 'string', 'max:255'],
+            'remember_token' => ['sometimes', 'string', 'max:255'],
         ]);
+        $getUserId = 0;
 
 
         if ($validator->fails()) {
@@ -329,20 +329,40 @@ class UserController extends Controller
                 "data" => $validator->errors()
             ], 400);
         }
-
-        if (Auth::user()->role_id !== User::ROLE_ADMIN) {
-            unset($request['role_id']);
-            unset($request['zone']);
-        }
-        if (Auth::user()->role_id === User::ROLE_ADMIN || Auth::user()->id == $staff) {
-            $update = (new StaffService)->updateStaff($request, $staff);
-            if ($update) {
-                return response()->json([
-                    'status' => 'success',
-                    'message' => "Update Successfully",
-                ], 200);
+        if (Auth::check()) {
+            if (Auth::user()->role_id !== User::ROLE_ADMIN) {
+                unset($request['role_id']);
+                unset($request['zone']);
             }
         }
+
+
+        if ($request->remember_token) {
+            $getUserId = User::where('remember_token', $request->remember_token)->first()->id;
+        }
+
+        if (Auth::check()) {
+            if (Auth::user()->role_id === User::ROLE_ADMIN || Auth::user()->id == $staff || $getUserId == $staff) {
+                $update = (new StaffService)->updateStaff($request, $staff);
+                if ($update) {
+                    return response()->json([
+                        'status' => 'success',
+                        'message' => "Update Successfully",
+                    ], 200);
+                }
+            }
+        } else {
+            if ($getUserId == $staff) {
+                $update = (new StaffService)->updateStaff($request, $staff);
+                if ($update) {
+                    return response()->json([
+                        'status' => 'success',
+                        'message' => "Update Successfully",
+                    ], 200);
+                }
+            }
+        }
+
 
 
         return response()->json([
@@ -376,7 +396,7 @@ class UserController extends Controller
      *     ),
      *     @OA\Response(
      *         response="401",
-     *         description="You dont Have Permission",
+     *         description="You don`t Have Permission",
      *         @OA\JsonContent(
      *             @OA\Property(property="status", type="string", example="error"),
      *             @OA\Property(property="message", type="string", example="You dont Have Permission"),
@@ -384,7 +404,7 @@ class UserController extends Controller
      *     ),
      *     @OA\Response(
      *         response="402",
-     *         description="An error occured",
+     *         description="An error occurred",
      *         @OA\JsonContent(
      *             @OA\Property(property="status", type="string", example="error"),
      *             @OA\Property(property="message", type="string", example="An error occured"),
