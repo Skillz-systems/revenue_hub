@@ -8,7 +8,6 @@ import images from "../assets";
 const Payment = () => {
   const { pid } = useParams();
   const [paymentAccount, setPaymentAccount] = useState<any>(null);
-  const [demandInvoiceInfo, setDemandInvoiceInfo] = useState<any>(null);
   const [buttonInfo, setButtonInfo] = useState<boolean | string>(false);
 
   const generatePaymentDetails = async () => {
@@ -18,11 +17,7 @@ const Payment = () => {
         `https://api.revenuehub.skillzserver.com/api/payment/generate-account/${pid}`
       );
       if (response.status === 200) {
-        console.log(
-          "Successfully generated payment account:",
-          response.data.data
-        );
-        setPaymentAccount(response.data.data);
+        setPaymentAccount(response.data);
         setButtonInfo(
           `Successfuly generated payment information for customer with PID-${pid}`
         );
@@ -46,29 +41,9 @@ const Payment = () => {
     }
   };
 
-  const fetchPaymentDetails = async () => {
-    try {
-      const response = await axios.get(
-        `https://api.revenuehub.skillzserver.com/api/payment/view/${pid}`
-      );
-      if (response.status === 200) {
-        console.log("Success:", response.data);
-        setDemandInvoiceInfo(response.data);
-      } else {
-        console.error("Unexpected status code:", response.status);
-      }
-    } catch (error) {
-      if (error.response && error.response.status === 401) {
-        console.error("Unauthorized:", error.response.data);
-      } else {
-        console.error("Internal Server Error:", error);
-      }
-    }
-  };
-
   useEffect(() => {
     if (pid) {
-      fetchPaymentDetails();
+      generatePaymentDetails();
     } else {
       console.log("PID is undefined");
       alert("This page doesn't exist");
@@ -80,20 +55,23 @@ const Payment = () => {
     PropertyIdentificationNumber: `PID-${pid}`,
     QrCodePayment: "3191313-0482402470",
     propertyData: [
-      { label: "Name of Occupier", value: `${pid}` },
+      { label: "Name of Occupier", value: paymentAccount?.property.occupant },
       { label: "Assessment No", value: "AM/B12/TTR/2016/0400" },
       {
         label: "Property Address",
-        value: demandInvoiceInfo?.property.prop_addr,
+        value: paymentAccount?.property.prop_addr,
       },
       {
         label: "Cadestral Zone",
-        value: demandInvoiceInfo?.property.cadastral_zone,
+        value: paymentAccount?.property.cadastral_zone,
       },
-      { label: "Use of Property", value: demandInvoiceInfo?.property.prop_use },
+      {
+        label: "Use of Property",
+        value: paymentAccount?.property.prop_use,
+      },
       {
         label: "Rating District",
-        value: demandInvoiceInfo?.property.rating_dist,
+        value: paymentAccount?.property.rating_dist,
       },
     ],
   };
@@ -200,27 +178,28 @@ const Payment = () => {
                   <p className="font-lexend text-[10px] text-document-grey leading-[12.5px]">
                     Transaction Status:{" "}
                     <b>
-                      {paymentAccount?.response_message ||
-                        "Transaction in Progress"}
+                      {paymentAccount?.data.data.response_message}
                     </b>
                   </p>
                   <b className="font-lexend text-[10px] leading-[12.5px] text-color-dark-red">
                     Note: The transaction session will expire in 1 hour at
-                    exactly {paymentAccount?.expiry_date}.
+                    exactly {paymentAccount?.data.data.expiry_date}.
                   </b>
                 </div>
                 <p className="font-lexend text-[10px] text-document-grey leading-[12.5px]">
                   Payment Amount:{" "}
                   <b className="font-bold">
-                    {formatNumberWithCommas(paymentAccount?.amount || 1000000)}
+                    {formatNumberWithCommas(
+                      paymentAccount?.data.data.amount
+                    )}
                   </b>
                 </p>
                 <p className="font-lexend text-[10px] text-document-grey leading-[12.5px]">
                   Payment Account:{" "}
                   <b>
                     Abuja Municipal Area Council.{" "}
-                    {paymentAccount?.bank_name || "Access Bank"}.{" "}
-                    {paymentAccount?.account_number || "1226435117"}
+                    {paymentAccount?.data.data.bank_name}.{" "}
+                    {paymentAccount?.data.data.account_number}
                   </b>
                 </p>
                 <p className="font-lexend text-[10px] text-document-grey leading-[12.5px]">
