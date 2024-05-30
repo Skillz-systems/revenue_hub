@@ -253,7 +253,7 @@ class UserController extends Controller
      *                 example="success"
      *             ),
      *             @OA\Property(
-     *                 property="user",
+     *                 property="data",
      *                 ref="#/components/schemas/StoreUserResource"
      *             )
      *         )

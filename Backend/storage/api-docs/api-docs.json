@@ -2321,7 +2321,7 @@
                                             "type": "string",
                                             "example": "success"
                                         },
-                                        "user": {
+                                        "data": {
                                             "$ref": "#/components/schemas/StoreUserResource"
                                         }
                                     },
@@ -2874,8 +2874,52 @@
                 "type": "object"
             },
             "StoreUserResource": {
-                "title": "Store Staff Resource",
-                "description": "Store Staff Resource",
+                "title": "Store User Resource",
+                "description": "Resource representation of a stored user",
+                "properties": {
+                    "id": {
+                        "description": "ID of the user",
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "name": {
+                        "description": "Name of the user",
+                        "type": "string",
+                        "example": "John Doe"
+                    },
+                    "email": {
+                        "description": "Email address of the user",
+                        "type": "string",
+                        "format": "email",
+                        "example": "john.doe@example.com"
+                    },
+                    "phone": {
+                        "description": "Phone number of the user",
+                        "type": "string",
+                        "example": "+1234567890"
+                    },
+                    "zone": {
+                        "description": "Zone of the user",
+                        "type": "string",
+                        "example": "North Zone"
+                    },
+                    "role": {
+                        "description": "Role of the user",
+                        "type": "object"
+                    },
+                    "created_at": {
+                        "description": "Timestamp when the user was created",
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2024-01-01T12:00:00Z"
+                    },
+                    "updated_at": {
+                        "description": "Timestamp when the user was last updated",
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2024-01-01T12:00:00Z"
+                    }
+                },
                 "type": "object"
             },
             "User": {
