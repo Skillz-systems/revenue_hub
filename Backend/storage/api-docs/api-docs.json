@@ -2227,7 +2227,7 @@
                         }
                     },
                     "401": {
-                        "description": "You dont Have Permission",
+                        "description": "You don`t Have Permission",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -2247,7 +2247,7 @@
                         }
                     },
                     "402": {
-                        "description": "An error occured",
+                        "description": "An error occurred",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -2259,6 +2259,288 @@
                                         "message": {
                                             "type": "string",
                                             "example": "An error occured"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "api_key": []
+                    }
+                ]
+            }
+        },
+        "/api/user-with-token/{staff}": {
+            "post": {
+                "tags": [
+                    "Staff"
+                ],
+                "summary": "Get User with Token",
+                "description": "Fetches a user by their remember token and staff ID",
+                "operationId": "getUserWithToken",
+                "parameters": [
+                    {
+                        "name": "staff",
+                        "in": "path",
+                        "description": "ID of the staff",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "token": {
+                                        "description": "Remember token of the user",
+                                        "type": "string",
+                                        "example": "your_remember_token_here"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "string",
+                                            "example": "success"
+                                        },
+                                        "data": {
+                                            "$ref": "#/components/schemas/StoreUserResource"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "No Staff Found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "string",
+                                            "example": "error"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "No Staff Found"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "You don't have permission",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "string",
+                                            "example": "error"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "You don't have permission"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/update-staff-details/{staff}": {
+            "put": {
+                "tags": [
+                    "Staff"
+                ],
+                "summary": "Update Staff Details",
+                "description": "This allow staff member to update their details",
+                "operationId": "updateStaffDetails",
+                "parameters": [
+                    {
+                        "name": "staff",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "": {
+                                        "properties": {
+                                            "name": {
+                                                "type": "string"
+                                            },
+                                            "email": {
+                                                "type": "string"
+                                            },
+                                            "phone": {
+                                                "type": "string"
+                                            },
+                                            "zone": {
+                                                "type": "string"
+                                            },
+                                            "remember_token": {
+                                                "type": "string"
+                                            }
+                                        },
+                                        "type": "object"
+                                    }
+                                },
+                                "type": "object",
+                                "example": {
+                                    "name": "example name",
+                                    "email": "example email",
+                                    "phone": "example phone",
+                                    "zone": "example zone"
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Update Successful",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "string",
+                                            "example": "success"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Update Successfully"
+                                        },
+                                        "user": {
+                                            "properties": {
+                                                "id": {
+                                                    "type": "integer",
+                                                    "example": 9
+                                                },
+                                                "name": {
+                                                    "type": "string",
+                                                    "example": "abc kel"
+                                                },
+                                                "email": {
+                                                    "type": "string",
+                                                    "example": "abc@example2.com"
+                                                },
+                                                "phone": {
+                                                    "type": "string",
+                                                    "example": "65728338352"
+                                                },
+                                                "zone": {
+                                                    "type": "string",
+                                                    "example": "nigeria"
+                                                },
+                                                "role": {
+                                                    "properties": {
+                                                        "id": {
+                                                            "type": "integer",
+                                                            "example": 2
+                                                        },
+                                                        "name": {
+                                                            "type": "string",
+                                                            "example": "Admin"
+                                                        }
+                                                    },
+                                                    "type": "object"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "All Fields are Required",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "string",
+                                            "example": "error"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "All Fields are required"
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "name": {
+                                                    "type": "string",
+                                                    "example": "name is required"
+                                                },
+                                                "email": {
+                                                    "type": "string",
+                                                    "example": "email is required"
+                                                },
+                                                "phone": {
+                                                    "type": "string",
+                                                    "example": "phone is required"
+                                                },
+                                                "zone": {
+                                                    "type": "string",
+                                                    "example": "zone is required"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Credential error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "string",
+                                            "example": "error"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Credential error: You are not authorize"
                                         }
                                     },
                                     "type": "object"
@@ -2592,8 +2874,52 @@
                 "type": "object"
             },
             "StoreUserResource": {
-                "title": "Store Staff Resource",
-                "description": "Store Staff Resource",
+                "title": "Store User Resource",
+                "description": "Resource representation of a stored user",
+                "properties": {
+                    "id": {
+                        "description": "ID of the user",
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "name": {
+                        "description": "Name of the user",
+                        "type": "string",
+                        "example": "John Doe"
+                    },
+                    "email": {
+                        "description": "Email address of the user",
+                        "type": "string",
+                        "format": "email",
+                        "example": "john.doe@example.com"
+                    },
+                    "phone": {
+                        "description": "Phone number of the user",
+                        "type": "string",
+                        "example": "+1234567890"
+                    },
+                    "zone": {
+                        "description": "Zone of the user",
+                        "type": "string",
+                        "example": "North Zone"
+                    },
+                    "role": {
+                        "description": "Role of the user",
+                        "type": "object"
+                    },
+                    "created_at": {
+                        "description": "Timestamp when the user was created",
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2024-01-01T12:00:00Z"
+                    },
+                    "updated_at": {
+                        "description": "Timestamp when the user was last updated",
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2024-01-01T12:00:00Z"
+                    }
+                },
                 "type": "object"
             },
             "User": {
