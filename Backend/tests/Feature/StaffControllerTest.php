@@ -92,6 +92,7 @@ class StaffControllerTest extends TestCase
             'phone' => '12345678901',
             'role_id' => "1",
             'zone' => 'Zone 1',
+
         ];
 
         $response = $this->actingAsTestUser()->postJson('/api/staff', $data);
@@ -110,6 +111,7 @@ class StaffControllerTest extends TestCase
         // Assert that the user was registered
         $this->assertDatabaseHas('users', [
             'email' => $data['email'],
+            'remember_token' => $data['email'],
         ]);
     }
 

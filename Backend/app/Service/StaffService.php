@@ -16,7 +16,6 @@ class StaffService
 {
     public function RegisterStaff($request)
     {
-        $request->all()['remember_token'] = Str::random(60);
         $user = User::create($request->all());
         return $user;
     }

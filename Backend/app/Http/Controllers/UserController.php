@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use App\Mail\RegisterMail;
+use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use App\Service\StaffService;
 use Illuminate\Support\Facades\Auth;
@@ -123,6 +124,8 @@ class UserController extends Controller
             'zone' => ['required', 'string', 'max:255'],
         ]);
 
+        $rememberToken = ["remember_token" => Str::random(60)];
+        $request->merge($rememberToken);
 
         if ($validator->fails()) {
             return response()->json([
@@ -134,7 +137,7 @@ class UserController extends Controller
 
         $register = (new StaffService)->RegisterStaff($request);
         if ($register) {
-            //send mail to the staff
+
             Mail::to($request->email)->send(new RegisterMail($register));
 
             return (new StoreUserResource($register))->additional([
