@@ -2277,7 +2277,7 @@
         "/api/user-with-token/{staff}": {
             "post": {
                 "tags": [
-                    "staff"
+                    "Staff"
                 ],
                 "summary": "Get User with Token",
                 "description": "Fetches a user by their remember token and staff ID",
@@ -2371,6 +2371,189 @@
                         }
                     }
                 }
+            }
+        },
+        "/api/update-staff-details/{staff}": {
+            "put": {
+                "tags": [
+                    "Staff"
+                ],
+                "summary": "Update Staff Details",
+                "description": "This allow staff member to update their details",
+                "operationId": "updateStaffDetails",
+                "parameters": [
+                    {
+                        "name": "staff",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "": {
+                                        "properties": {
+                                            "name": {
+                                                "type": "string"
+                                            },
+                                            "email": {
+                                                "type": "string"
+                                            },
+                                            "phone": {
+                                                "type": "string"
+                                            },
+                                            "zone": {
+                                                "type": "string"
+                                            },
+                                            "remember_token": {
+                                                "type": "string"
+                                            }
+                                        },
+                                        "type": "object"
+                                    }
+                                },
+                                "type": "object",
+                                "example": {
+                                    "name": "example name",
+                                    "email": "example email",
+                                    "phone": "example phone",
+                                    "zone": "example zone"
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Update Successful",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "string",
+                                            "example": "success"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Update Successfully"
+                                        },
+                                        "user": {
+                                            "properties": {
+                                                "id": {
+                                                    "type": "integer",
+                                                    "example": 9
+                                                },
+                                                "name": {
+                                                    "type": "string",
+                                                    "example": "abc kel"
+                                                },
+                                                "email": {
+                                                    "type": "string",
+                                                    "example": "abc@example2.com"
+                                                },
+                                                "phone": {
+                                                    "type": "string",
+                                                    "example": "65728338352"
+                                                },
+                                                "zone": {
+                                                    "type": "string",
+                                                    "example": "nigeria"
+                                                },
+                                                "role": {
+                                                    "properties": {
+                                                        "id": {
+                                                            "type": "integer",
+                                                            "example": 2
+                                                        },
+                                                        "name": {
+                                                            "type": "string",
+                                                            "example": "Admin"
+                                                        }
+                                                    },
+                                                    "type": "object"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "All Fields are Required",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "string",
+                                            "example": "error"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "All Fields are required"
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "name": {
+                                                    "type": "string",
+                                                    "example": "name is required"
+                                                },
+                                                "email": {
+                                                    "type": "string",
+                                                    "example": "email is required"
+                                                },
+                                                "phone": {
+                                                    "type": "string",
+                                                    "example": "phone is required"
+                                                },
+                                                "zone": {
+                                                    "type": "string",
+                                                    "example": "zone is required"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Credential error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "string",
+                                            "example": "error"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Credential error: You are not authorize"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "api_key": []
+                    }
+                ]
             }
         }
     },
