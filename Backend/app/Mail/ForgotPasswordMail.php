@@ -24,10 +24,8 @@ class ForgotPasswordMail extends Mailable
      */
     public function __construct(User $user)
     {
-        //
-
         $this->user = $user;
-        $this->url = env('APP_URL') . '/auth/create-password?' . $this->user->id . '/' . $this->user->remember_token;
+        $this->url = env('APP_URL') . '/create-password/' . $this->user->id . '/' . $this->user->remember_token;
     }
 
     /**

@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\Mail;
 use App\Http\Requests\StoreUserRequest;
 use App\Http\Resources\ShowUserResource;
 use App\Http\Resources\StoreUserResource;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 
 class UserController extends Controller
@@ -503,6 +504,7 @@ class UserController extends Controller
             'phone' => ['sometimes', 'string', 'min:11'],
             'role_id' => ['sometimes', 'string', 'max:255'],
             'zone' => ['sometimes', 'string', 'max:255'],
+            'password' => ['sometimes', 'string', 'max:255'],
             'remember_token' => ['sometimes', 'string', 'max:255'],
         ]);
         $getUserId = 0;
@@ -527,8 +529,14 @@ class UserController extends Controller
             $getUserId = User::where('remember_token', $request->remember_token)->first()->id;
         }
 
+        if (!empty($request->password)) {
+            $password = ["password" => Hash::make("$request->password")];
+            $request->merge($password);
+        }
+
         if (Auth::check()) {
             if (Auth::user()->role_id === User::ROLE_ADMIN || Auth::user()->id == $staff || $getUserId == $staff) {
+
                 $update = (new StaffService)->updateStaff($request, $staff);
                 if ($update) {
                     return response()->json([
