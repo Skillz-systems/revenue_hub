@@ -215,6 +215,100 @@ class UserController extends Controller
         ], 403);
     }
 
+    /**
+     * @OA\Post(
+     *     path="/api/user-with-token/{staff}",
+     *     summary="Get User with Token",
+     *     description="Fetches a user by their remember token and staff ID",
+     *     operationId="getUserWithToken",
+     *     tags={"staff"},
+     *     @OA\Parameter(
+     *         name="staff",
+     *         in="path",
+     *         required=true,
+     *         description="ID of the staff",
+     *         @OA\Schema(
+     *             type="integer"
+     *         )
+     *     ),
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(
+     *             @OA\Property(
+     *                 property="token",
+     *                 type="string",
+     *                 description="Remember token of the user",
+     *                 example="your_remember_token_here"
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Successful operation",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(
+     *                 property="status",
+     *                 type="string",
+     *                 example="success"
+     *             ),
+     *             @OA\Property(
+     *                 property="user",
+     *                 ref="#/components/schemas/StoreUserResource"
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="No Staff Found",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(
+     *                 property="status",
+     *                 type="string",
+     *                 example="error"
+     *             ),
+     *             @OA\Property(
+     *                 property="message",
+     *                 type="string",
+     *                 example="No Staff Found"
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=403,
+     *         description="You don't have permission",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(
+     *                 property="status",
+     *                 type="string",
+     *                 example="error"
+     *             ),
+     *             @OA\Property(
+     *                 property="message",
+     *                 type="string",
+     *                 example="You don't have permission"
+     *             )
+     *         )
+     *     )
+     * )
+     */
+    public function getUserWithToken(Request $request, $staff)
+    {
+        $user = User::where('remember_token', $request->token)->first();
+        if ($user && $user->id == $staff) {
+            return (new StoreUserResource($user))->additional([
+                "status" => "success",
+            ]);
+        }
+
+        return response()->json([
+            "status" => "error",
+            "message" => "No Staff Found",
+        ], 404);
+    }
+
 
 
     /**

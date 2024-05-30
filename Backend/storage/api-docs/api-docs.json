@@ -2227,7 +2227,7 @@
                         }
                     },
                     "401": {
-                        "description": "You dont Have Permission",
+                        "description": "You don`t Have Permission",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -2247,7 +2247,7 @@
                         }
                     },
                     "402": {
-                        "description": "An error occured",
+                        "description": "An error occurred",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -2272,6 +2272,105 @@
                         "api_key": []
                     }
                 ]
+            }
+        },
+        "/api/user-with-token/{staff}": {
+            "post": {
+                "tags": [
+                    "staff"
+                ],
+                "summary": "Get User with Token",
+                "description": "Fetches a user by their remember token and staff ID",
+                "operationId": "getUserWithToken",
+                "parameters": [
+                    {
+                        "name": "staff",
+                        "in": "path",
+                        "description": "ID of the staff",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "token": {
+                                        "description": "Remember token of the user",
+                                        "type": "string",
+                                        "example": "your_remember_token_here"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "string",
+                                            "example": "success"
+                                        },
+                                        "user": {
+                                            "$ref": "#/components/schemas/StoreUserResource"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "No Staff Found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "string",
+                                            "example": "error"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "No Staff Found"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "You don't have permission",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "string",
+                                            "example": "error"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "You don't have permission"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
             }
         }
     },

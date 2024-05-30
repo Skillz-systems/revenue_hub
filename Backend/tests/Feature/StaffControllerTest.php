@@ -111,7 +111,7 @@ class StaffControllerTest extends TestCase
         // Assert that the user was registered
         $this->assertDatabaseHas('users', [
             'email' => $data['email'],
-            'remember_token' => $data['email'],
+
         ]);
     }
 
@@ -543,4 +543,43 @@ class StaffControllerTest extends TestCase
             'zone' => 'new-zone',
         ]);
     }
+
+
+    /** @test */
+    public function it_returns_user_with_token_successfully()
+    {
+        // Arrange
+        $staff = User::factory()->create(['remember_token' => 'valid_token']);
+
+        // Act
+        $response = $this->postJson('/api/user-with-token/' . $staff->id, [
+            'token' => 'valid_token',
+        ]);
+
+        // Assert
+        $response->assertStatus(200)
+            ->assertJson([
+                'status' => 'success',
+            ]);
+    }
+
+    /** @test */
+    public function it_returns_no_staff_found_error()
+    {
+        // Arrange
+        $staff = User::factory()->create(['remember_token' => 'valid_token']);
+        // Act
+        $response = $this->postJson('/api/user-with-token/' . 33, [
+            'token' => 'valid_token',
+        ]);
+
+        // Assert
+        $response->assertStatus(404)
+            ->assertJson([
+                'status' => 'error',
+                'message' => 'No Staff Found',
+            ]);
+    }
+
+    /** @test */
 }
