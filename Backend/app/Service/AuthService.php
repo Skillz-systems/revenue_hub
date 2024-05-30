@@ -24,7 +24,8 @@ class AuthService
     {
         $user = User::where('email', $request->email)->first();
         if ($user) {
-            $user->save(['remember_token' => Str::random(60)]);
+            $user->remember_token = Str::random(60);
+            $user->save();
             return $user;
         }
         return false;
