@@ -28,7 +28,7 @@ Route::post('auth/login', [AuthController::class, 'login']);
 // staff store new password route
 Route::post('auth/store-password/', [AuthController::class, 'storePassword']);
 Route::post('auth/forgot-password/', [AuthController::class, 'forgotPassword']);
-
+Route::put('/staff/update-staff-details/{staff}', [UserController::class, 'update']);
 Route::middleware('auth:sanctum')->group(function () {
 
     Route::post('/demand-notice', [DemandNoticeController::class, 'index']);
@@ -45,4 +45,5 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/property/create', [PropertyController::class, "store"]);
     Route::apiResource('/property', PropertyController::class);
 });
+
 Route::get('/payment/generate-account/{id}', [PaymentController::class, 'generateAccount']);

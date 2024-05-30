@@ -512,4 +512,33 @@ class StaffControllerTest extends TestCase
                 'message' => 'Something went wrong',
             ]);
     }
+
+    public function test_that_staff_details_can_be_updated_with_token()
+    {
+        $staff = User::factory()->create(["remember_token" => "abc-1234567"]);
+
+        $response = $this->putJson("/api/staff/update-staff-details/{$staff->id}", [
+            'name' => 'Updated Name',
+            'email' => 'updated@example.com',
+            'phone' => '12345678901',
+            'role_id' => 'new-role',
+            'zone' => 'new-zone',
+            'remember_token' => 'abc-1234567',
+        ]);
+
+        $response->assertStatus(200)
+            ->assertJson([
+                'status' => 'success',
+                'message' => 'Update Successfully',
+            ]);
+
+        $this->assertDatabaseHas('users', [
+            'id' => $staff->id,
+            'name' => 'Updated Name',
+            'email' => 'updated@example.com',
+            'phone' => '12345678901',
+            'role_id' => 'new-role',
+            'zone' => 'new-zone',
+        ]);
+    }
 }
