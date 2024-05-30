@@ -582,4 +582,23 @@ class StaffControllerTest extends TestCase
     }
 
     /** @test */
+    public function user_can_update_their_own_profile_password()
+    {
+        $user = User::factory()->create(['role_id' => User::ROLE_ENFORCERS]);
+
+        $this->actingAs($user);
+
+        $response = $this->putJson("/api/staff/{$user->id}", [
+            'password' => '12345678901',
+        ]);
+
+
+        $response->assertStatus(200)
+            ->assertJson([
+                'status' => 'success',
+                'message' => 'Update Successfully',
+            ]);
+        $user->refresh();
+        $this->assertTrue(Hash::check('12345678901', $user->password));
+    }
 }
