@@ -28,6 +28,7 @@ Route::post('auth/login', [AuthController::class, 'login']);
 // staff store new password route
 Route::post('auth/store-password/', [AuthController::class, 'storePassword']);
 Route::post('auth/forgot-password/', [AuthController::class, 'forgotPassword']);
+Route::post('user-with-token/{staff}', [UserController::class, 'getUserWithToken']);
 Route::put('/staff/update-staff-details/{staff}', [UserController::class, 'update']);
 Route::middleware('auth:sanctum')->group(function () {
 
