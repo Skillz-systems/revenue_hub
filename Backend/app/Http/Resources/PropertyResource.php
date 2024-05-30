@@ -59,7 +59,7 @@ class PropertyResource extends JsonResource
         return [
             'id' => $this->id,
             'pid' => $this->pid,
-            'occupant' => $this->prop_addr,
+            'occupant' => $this->occupant,
             'prop_addr' => $this->prop_addr,
             'street_name' => $this->street_name,
             'asset_no' => $this->asset_no,

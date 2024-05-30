@@ -3,16 +3,17 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use Illuminate\Support\Str;
 use App\Service\AuthService;
 use Illuminate\Http\Request;
 use App\Service\StaffService;
+use App\Mail\ForgotPasswordMail;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Mail;
 use App\Http\Resources\LoginResource;
 use App\Http\Requests\LoginUserRequest;
 use Illuminate\Support\Facades\Validator;
 use App\Http\Requests\StaffStorePasswordRequest;
-use Illuminate\Support\Facades\Mail;
-use App\Mail\ForgotPasswordMail;
 
 class AuthController extends Controller
 {
@@ -247,6 +248,7 @@ class AuthController extends Controller
         }
 
         $forgotPassword = (new AuthService)->forgotPassword($request);
+
         if ($forgotPassword) {
             Mail::to($request->email)->send(new ForgotPasswordMail($forgotPassword));
             return response()->json([
