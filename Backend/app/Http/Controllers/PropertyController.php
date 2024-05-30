@@ -177,7 +177,7 @@ class PropertyController extends Controller
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'pid' => ['required', 'integer', 'unique:properties'],
+            'pid' => ['required', 'string', 'unique:properties'],
             'occupant' => ['required', 'string', 'max:255'],
             'prop_addr' => ['required', 'string', 'max:255'],
             'street_name' => ['required', 'string', 'max:255'],
