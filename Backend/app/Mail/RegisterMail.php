@@ -27,7 +27,7 @@ class RegisterMail extends Mailable
         //
 
         $this->user = $user;
-        $this->url = env('APP_URL') . '/auth/create-password?' . $this->user->id . '/' . $this->user->remember_token;
+        $this->url = env('APP_URL') . '/confirm-account/' . $this->user->id . '/' . $this->user->remember_token;
     }
 
     /**
