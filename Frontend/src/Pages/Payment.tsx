@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { useParams } from "react-router-dom";
 import QRCode from "react-qr-code";
 import { formatNumberWithCommas } from "../Utils/client";
@@ -40,15 +40,6 @@ const Payment = () => {
       }
     }
   };
-
-  useEffect(() => {
-    if (pid) {
-      generatePaymentDetails();
-    } else {
-      console.log("PID is undefined");
-      alert("This page doesn't exist");
-    }
-  }, [pid]);
 
   const demandInvoiceData = {
     Occupant: `THE OCCUPIER/${pid}`,
@@ -177,9 +168,7 @@ const Payment = () => {
                   </b>
                   <p className="font-lexend text-[10px] text-document-grey leading-[12.5px]">
                     Transaction Status:{" "}
-                    <b>
-                      {paymentAccount?.data.data.response_message}
-                    </b>
+                    <b>{paymentAccount?.data.data.response_message}</b>
                   </p>
                   <b className="font-lexend text-[10px] leading-[12.5px] text-color-dark-red">
                     Note: The transaction session will expire in 1 hour at
@@ -189,9 +178,7 @@ const Payment = () => {
                 <p className="font-lexend text-[10px] text-document-grey leading-[12.5px]">
                   Payment Amount:{" "}
                   <b className="font-bold">
-                    {formatNumberWithCommas(
-                      paymentAccount?.data.data.amount
-                    )}
+                    {formatNumberWithCommas(paymentAccount?.data.data.amount)}
                   </b>
                 </p>
                 <p className="font-lexend text-[10px] text-document-grey leading-[12.5px]">

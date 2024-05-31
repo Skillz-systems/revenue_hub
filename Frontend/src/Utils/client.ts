@@ -84,12 +84,18 @@ export function ScrollToTop(id: string): void {
 export const mapDesignationToRoleId = (designation: string): number | null => {
   switch (designation) {
     case "Manager":
+      //can do anything
       return 1;
     case "Admin":
+      //cant delete anything
+      //can view payment, but cant see transaction page
+      //cant see stats, can do other things for staff except delete and settings,
       return 2;
     case "Enforcer":
+      //just view, dont perform any action
       return 3;
-    case "Officer":
+    case "Others":
+      //just view, dont perform any action
       return 4;
     default:
       return null;

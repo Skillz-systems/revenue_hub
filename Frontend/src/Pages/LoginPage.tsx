@@ -1,5 +1,5 @@
 import React, { useState, FormEvent, ChangeEvent } from "react";
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from "react-router-dom";
 import images from "../assets";
 import { InputComponent } from "../Components/Index";
 import { GrFormViewHide, GrFormView } from "react-icons/gr";
@@ -12,10 +12,10 @@ function LoginPage(): JSX.Element {
   const [isLoading, setIsLoading] = useState(false);
   const [errorState, setErrorState] = useState<string | null>(null);
   const [formData, setFormData] = useState({
-    email: "admin@revenuehub.com",
-    password: "12345678",
+    email: "",
+    password: "",
   });
-  const navigate = useNavigate()
+  const navigate = useNavigate();
 
   const handleInputChange = (event: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target;
@@ -30,7 +30,7 @@ function LoginPage(): JSX.Element {
     console.log("FORM DATA:", formData);
 
     if (!formData) {
-      return alert("Please fill in all fields")
+      return alert("Please fill in all fields");
     }
 
     // Validate password
@@ -40,25 +40,30 @@ function LoginPage(): JSX.Element {
     //   setErrorState(message)
     // }
 
-    setIsLoading(true)
+    setIsLoading(true);
 
     try {
-      const response = await axios.post("https://api.revenuehub.skillzserver.com/api/auth/login", {
-        email: formData.email,
-        password: formData.password,
-      })
+      const response = await axios.post(
+        "https://api.revenuehub.skillzserver.com/api/auth/login",
+        {
+          email: formData.email,
+          password: formData.password,
+        }
+      );
 
       if (response.status === 200) {
-        console.log(response.data)
+        console.log(response.data);
         Cookies.set("userToken", response.data.data.token, { expires: 7 }); // Token expires in 7 days
-        Cookies.set("userData", JSON.stringify(response.data.data), { expires: 7 }); // Token expires in 7 days
-        navigate("/")
+        Cookies.set("userData", JSON.stringify(response.data.data), {
+          expires: 7,
+        }); // Token expires in 7 days
+        navigate("/");
       } else if (response.status === 400) {
-        console.log(response.data)
+        console.log(response.data);
         alert(response.data.message);
       } else if (response.status === 401) {
-        console.log(response.data)
-        alert(response.data.message)
+        console.log(response.data);
+        alert(response.data.message);
       } else {
         console.log(response);
         alert("Something went wrong!");
@@ -71,7 +76,7 @@ function LoginPage(): JSX.Element {
         setErrorState("Internal Server Error. Please try again later.");
       }
     }
-    setIsLoading(false)
+    setIsLoading(false);
   };
 
   return (
@@ -125,7 +130,9 @@ function LoginPage(): JSX.Element {
             inputValue={isLoading ? "Submitting..." : "Login"}
             inputStyle="h-12 mg:h-[48px] rounded outline-none px-1 py-0.5 md:px-2 md:py-1 w-full font-lexend text-sm md:text-base font-medium text-white hover:cursor-pointer"
           />
-          <p className="text-xs font-lexend text-color-dark-red">{errorState}</p>
+          <p className="text-xs font-lexend text-color-dark-red">
+            {errorState}
+          </p>
           <p className="flex items-center justify-center text-sm underline text-color-text-two font-lexend">
             Forgot Password?
           </p>

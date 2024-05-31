@@ -28,7 +28,9 @@ const AddNewStaffModal: React.FC<AddNewStaffModalProps> = ({
   const [formData, setFormData] = useState<FormData>({});
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
-  const handleChange = (event: ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+  const handleChange = (
+    event: ChangeEvent<HTMLInputElement | HTMLSelectElement>
+  ) => {
     const { name, value } = event.target;
     setFormData((prevState) => ({
       ...prevState,
@@ -65,7 +67,7 @@ const AddNewStaffModal: React.FC<AddNewStaffModalProps> = ({
       // Alert if any required fields are empty
       alert("Please fill in all required fields.");
     } else {
-      setIsLoading(true)
+      setIsLoading(true);
       try {
         // Get selected staff designation and map it to role ID
         const selectedDesignation = formData.staffDesignation;
@@ -77,7 +79,9 @@ const AddNewStaffModal: React.FC<AddNewStaffModalProps> = ({
 
         // Prepare the request data
         const requestData = {
-          name: `${formData.staffFirstName} ${formData.staffMiddleName ? formData.staffMiddleName + " " : ""}${formData.staffLastName}`,
+          name: `${formData.staffFirstName} ${
+            formData.staffMiddleName ? formData.staffMiddleName + " " : ""
+          }${formData.staffLastName}`,
           email: formData.staffEmail,
           phone: formData.staffPhoneNumber,
           zone: formData.staffZone,
@@ -100,7 +104,7 @@ const AddNewStaffModal: React.FC<AddNewStaffModalProps> = ({
           }
         );
 
-        if (response.status === 200) {
+        if (response.status === 200 || 201) {
           console.log("Success:", response.data);
           alert("Form submitted successfully!");
         } else {
@@ -116,20 +120,21 @@ const AddNewStaffModal: React.FC<AddNewStaffModalProps> = ({
           alert("An error occurred while submitting the form.");
         }
       }
-      setIsLoading(false)
+      setIsLoading(false);
     }
   };
 
   return (
     <form
-      className={`flex-col relative bg-white rounded overflow-y-auto overscroll-contain scrollbar-thin scrollbar-thumb-color-text-two scrollbar-track-white ${propertyModalTransition
-        ? "w-5/12 transition-all ease-in-out duration-500"
-        : "w-32"
-        }`}
+      className={`flex-col relative bg-white rounded overflow-y-auto overscroll-contain scrollbar-thin scrollbar-thumb-color-text-two scrollbar-track-white ${
+        propertyModalTransition
+          ? "w-5/12 transition-all ease-in-out duration-500"
+          : "w-32"
+      }`}
       style={{ height: "95vh" }}
       onSubmit={handleFormSubmit}
-    // method="post"
-    // autoComplete="off"
+      // method="post"
+      // autoComplete="off"
     >
       <img
         src={"/lightCheckeredBackgroundPattern.png"}
@@ -170,10 +175,11 @@ const AddNewStaffModal: React.FC<AddNewStaffModalProps> = ({
                 type={fieldItem.inputType}
                 name={fieldItem.inputName}
                 value={formData[fieldItem.inputName] || ""}
-                className={`w-full text-xs font-lexend h-12 px-4 py-2 border-0.6 outline-none rounded ${formData[fieldItem.inputName]
-                  ? "border-color-dark-green text-color-text-one"
-                  : "border-custom-color-one text-color-text-two"
-                  }`}
+                className={`w-full text-xs font-lexend h-12 px-4 py-2 border-0.6 outline-none rounded ${
+                  formData[fieldItem.inputName]
+                    ? "border-color-dark-green text-color-text-one"
+                    : "border-custom-color-one text-color-text-two"
+                }`}
                 onChange={handleChange}
                 placeholder={fieldItem.placeholder}
                 required={fieldItem.required}
@@ -183,16 +189,15 @@ const AddNewStaffModal: React.FC<AddNewStaffModalProps> = ({
                 key={fieldItem.id}
                 name={fieldItem.inputName}
                 value={formData[fieldItem.inputName] || ""}
-                className={`w-full text-xs font-lexend h-12 px-3 py-2 border-0.6 outline-none rounded ${formData[fieldItem.inputName]
-                  ? "border-color-dark-green text-color-text-one"
-                  : "border-custom-color-one text-color-text-two"
-                  }`}
+                className={`w-full text-xs font-lexend h-12 px-3 py-2 border-0.6 outline-none rounded ${
+                  formData[fieldItem.inputName]
+                    ? "border-color-dark-green text-color-text-one"
+                    : "border-custom-color-one text-color-text-two"
+                }`}
                 onChange={handleChange}
                 required={fieldItem.required}
               >
-                <option value="">
-                  Select {fieldItem.placeholder}
-                </option>
+                <option value="">Select {fieldItem.placeholder}</option>
                 {fieldItem.options?.map((option) => (
                   <option key={option.id} value={option.name} className="mb-4">
                     {option.name}

@@ -42,7 +42,7 @@ const DemandInvoiceDocument = ({
       {
         label: "Name of Occupier",
         value: `${
-          customTableData?.occupant || demandInvoiceInfo?.property.pid
+          customTableData?.occupant || demandInvoiceInfo?.property?.occupant
         }`,
       },
       { label: "Assessment No", value: "AM/B12/TTR/2016/0400" },
@@ -70,7 +70,12 @@ const DemandInvoiceDocument = ({
       },
     ],
     billInfoData: [
-      { label: "Bill Ref", value: "2024/215996" },
+      {
+        label: "Bill Ref",
+        value: `2024/${
+          customTableData?.id || demandInvoiceInfo?.id
+        }`,
+      },
       { label: "Agency Code", value: 2000300 },
       { label: "Revenue Code", value: 1002 },
       { label: "Rate Year", value: 2024 },
@@ -375,7 +380,8 @@ const DemandInvoiceDocument = ({
               <p className="flex items-start justify-center gap-1 font-lexend text-[10px] text-document-grey leading-[12.5px]">
                 <span>2.</span>
                 <span>
-                  Pay by Scanning the QRCode on the right hand which will redirect you to the your unique payment page.
+                  Pay by Scanning the QRCode on the right hand which will
+                  redirect you to the your unique payment page.
                 </span>
               </p>
               <p className="flex items-start justify-center gap-1 font-lexend text-[10px] text-document-grey leading-[12.5px]">

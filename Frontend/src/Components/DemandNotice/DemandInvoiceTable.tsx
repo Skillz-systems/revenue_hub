@@ -170,39 +170,39 @@ const DemandInvoiceTable = ({
   const pageCount = Math.ceil(LengthByActiveMenu() / propertiesPerPage);
 
   const recordField = (record: DemandNotice) => {
-    const lastPaymentStatus = record.property.demand_notice_status;
+    const lastPaymentStatus = record?.property?.demand_notice_status;
 
     return (
       <div
-        key={record.id}
+        key={record?.id}
         className="flex items-center justify-between gap-1 text-xs"
       >
         <span className="flex flex-wrap items-center justify-center w-24 h-10 px-2 py-1 text-sm font-medium rounded text-color-text-three bg-custom-blue-400">
-          {record.property.pid}
+          {record?.property?.pid}
         </span>
         <span className="flex flex-wrap items-center w-2/12 font-lexend text-color-text-black">
-          {record.property.prop_addr}
+          {record?.property?.prop_addr}
         </span>
         <span className="flex flex-wrap items-center w-[5%] text-color-text-black font-lexend text-[10px]">
-          {formatDate(record.date_created)}
+          {formatDate(record?.date_created)}
         </span>
         <span
           className={`flex flex-wrap items-center px-4 py-1 justify-center rounded-xl w-[12%] font-light font-lexend text-color-text-black text-[10px] border-0.6 border-custom-grey-100
-          ${record.property.prop_use === "Commercial"
+          ${record?.property?.prop_use === "Commercial"
               ? "bg-color-light-red"
-              : record.property.prop_use === "Residential"
+              : record?.property?.prop_use === "Residential"
                 ? "bg-color-light-yellow"
                 : "bg-custom-blue-200"
             }
           `}
         >
-          {record.property.prop_use.toUpperCase()}
+          {record?.property?.prop_use.toUpperCase()}
         </span>
         <span className="flex flex-wrap items-center justify-center p-1 font-light rounded w-[12%] font-lexend text-custom-blue-500 bg-custom-blue-100 border-0.6 border-custom-grey-100">
-          {record.property.cadastral_zone}
+          {record?.property?.cadastral_zone}
         </span>
         <span className="flex flex-wrap items-center justify-center text-sm w-[12%] text-color-text-black font-chonburi">
-          {formatNumberWithCommas(record.property.rate_payable)}
+          {formatNumberWithCommas(record?.property?.rate_payable)}
         </span>
         <div className="flex items-center justify-center w-[12%]">
           <span
@@ -222,7 +222,7 @@ const DemandInvoiceTable = ({
           <span
             className="border-0.6 border-custom-grey-100 text-custom-grey-300 px-2 py-2.5 rounded text-base hover:cursor-pointer"
             title="Delete Invoice"
-            onClick={() => deleteDemandNotice(record.id)}
+            onClick={() => deleteDemandNotice(record?.id)}
           >
             <RiDeleteBin5Fill />
           </span>
@@ -230,11 +230,11 @@ const DemandInvoiceTable = ({
             <span
               title="Edit Invoice"
               className="hover:cursor-pointer"
-              onClick={() => handleEditModal(record.id)}
+              onClick={() => handleEditModal(record?.id)}
             >
               <HiOutlineDotsHorizontal />
             </span>
-            {editModal === record.id && (
+            {editModal === record?.id && (
               <span className="absolute space-y-2 top-0 z-10 flex-col w-40 p-4 text-xs bg-white rounded shadow-md -left-44 border-0.6 border-custom-grey-100 text-color-text-black font-lexend">
                 <p className="hover:cursor-pointer" title="View Demand Notice"
                   onClick={() => handleViewDemandInvoiceModal(record)}
