@@ -4,40 +4,68 @@ import QRCode from "react-qr-code";
 import { formatNumberWithCommas } from "../Utils/client";
 import axios from "axios";
 import images from "../assets";
+import { CustomAlert } from "../Components/Index";
 
 const Payment = () => {
   const { pid } = useParams();
   const [paymentAccount, setPaymentAccount] = useState<any>(null);
   const [buttonInfo, setButtonInfo] = useState<boolean | string>(false);
+  const [snackbar, setSnackbar] = useState({
+    open: false,
+    message: "",
+    severity: "success",
+  });
+
+  const handleSnackbarClose = () => {
+    setSnackbar({ ...snackbar, open: false });
+  };
 
   const generatePaymentDetails = async () => {
     try {
-      setButtonInfo(`Generating Payment Information for PID-${pid}...`);
+      setSnackbar({
+        open: true,
+        message: `Generating Payment Information for PID-${pid}...`,
+        severity: "info",
+      });
       const response = await axios.get(
         `https://api.revenuehub.skillzserver.com/api/payment/generate-account/${pid}`
       );
       if (response.status === 200) {
         setPaymentAccount(response.data);
-        setButtonInfo(
-          `Successfuly generated payment information for customer with PID-${pid}`
-        );
+        setSnackbar({
+          open: true,
+          message: `Successfuly generated payment information for customer with PID-${pid}`,
+          severity: "success",
+        });
       } else {
-        setButtonInfo(
-          "Unexpected status code. Something went wrong please try again."
-        );
+        setSnackbar({
+          open: true,
+          message:
+            "Unexpected status code. Something went wrong please try again.",
+          severity: "warning",
+        });
       }
     } catch (error) {
-      if (error.response.status === 400) {
-        alert("Bad request. Property Id is missing.");
-      } else if (error.response.status === 401) {
-        alert("You are unauthenticated");
-      } else if (error.response.status === 403) {
-        alert("You are unauthorized");
-      } else if (error.response.status === 404) {
-        alert("Payment not found");
-      } else {
-        alert("Internal Server Error");
+      let message = "Internal Server Error";
+      if (error.response) {
+        switch (error.response.status) {
+          case 400:
+            message = "Bad request. Property Id is missing.";
+            break;
+          case 401:
+            message = "You are unauthenticated";
+            break;
+          case 403:
+            message = "You are unauthorized";
+            break;
+          case 404:
+            message = "Payment not found";
+            break;
+          default:
+            break;
+        }
       }
+      setSnackbar({ open: true, message, severity: "error" });
     }
   };
 
@@ -75,7 +103,7 @@ const Payment = () => {
             You are about to make payment for your AMAC Demand Notice for
             Property with <b>PID-{pid}</b>.
           </h1>
-          <div className="flex flex-col items-center justify-center w-[300px] bg-white border border-grey rounded shadow-md px-4 py-4">
+          <div className="flex flex-col items-center justify-center space-y-4 w-[300px] bg-white border border-grey rounded shadow-md px-4 py-4">
             <img src={images.logo} alt="Logo" className="w-60 md:w-[150px]" />
             <button
               className="px-3 py-2 text-white rounded bg-primary-color font-lexend"
@@ -84,7 +112,6 @@ const Payment = () => {
               Proceed to make payment
             </button>
           </div>
-          <p className="font-lexend">{buttonInfo}</p>
         </div>
       ) : null}
       {paymentAccount ? (
@@ -229,6 +256,12 @@ const Payment = () => {
         </div>
       ) : null}
       {/* PDF END*/}
+      <CustomAlert
+        isOpen={snackbar.open}
+        message={snackbar.message}
+        severity={snackbar.severity}
+        handleClose={handleSnackbarClose}
+      />
     </div>
   );
 };

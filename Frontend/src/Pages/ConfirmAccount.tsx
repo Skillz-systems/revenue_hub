@@ -1,7 +1,7 @@
 import React, { useState, FormEvent, ChangeEvent, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import images from "../assets";
-import { InputComponent } from "../Components/Index";
+import { InputComponent, CustomAlert } from "../Components/Index";
 import axios from "axios";
 
 function ConfirmAccount(): JSX.Element {
@@ -15,9 +15,23 @@ function ConfirmAccount(): JSX.Element {
   });
   const navigate = useNavigate();
   const { id: userId, token: remember_token } = useParams();
+  const [snackbar, setSnackbar] = useState({
+    open: false,
+    message: "",
+    severity: "success",
+  });
+
+  const handleSnackbarClose = () => {
+    setSnackbar({ ...snackbar, open: false });
+  };
 
   const fetchUserData = async () => {
     try {
+      setSnackbar({
+        open: true,
+        message: "Fetching staff details",
+        severity: "info",
+      });
       const response = await axios.post(
         `https://api.revenuehub.skillzserver.com/api/user-with-token/${userId}`,
         {
@@ -26,17 +40,34 @@ function ConfirmAccount(): JSX.Element {
       );
       if (response.status === 200) {
         setStaff(response.data);
+        setSnackbar({
+          open: true,
+          message: "Successfully retrieved staff data",
+          severity: "success",
+        });
       } else {
         setErrorState(response.data.message);
+        setSnackbar({
+          open: true,
+          message: "Unexpected status code",
+          severity: "warning",
+        });
       }
     } catch (error) {
-      if (error.response.status === 403) {
-        setErrorState("You don't have permission!");
-      } else if (error.response.status === 404) {
-        setErrorState("No Staff Found");
-      } else {
-        setErrorState("Internal Server Error. Please try again later.");
+      let message = "Internal Server Error";
+      if (error.response) {
+        switch (error.response.status) {
+          case 403:
+            message = "You don't have permission!";
+            break;
+          case 404:
+            message = "No Staff Found";
+            break;
+          default:
+            break;
+        }
       }
+      setSnackbar({ open: true, message, severity: "error" });
     }
   };
 
@@ -76,15 +107,27 @@ function ConfirmAccount(): JSX.Element {
         navigate(`/create-password/${userId}/${remember_token}`);
       } else {
         setErrorState(response.data.message);
+        setSnackbar({
+          open: true,
+          message: "Unexpected status code",
+          severity: "warning",
+        });
       }
     } catch (error) {
-      if (error.response.status === 400) {
-        setErrorState("Bad request. All Fields are required!");
-      } else if (error.response.status === 401) {
-        setErrorState("Credential error: You are not authorized");
-      } else {
-        setErrorState("Internal Server Error. Please try again later.");
+      let message = "Internal Server Error";
+      if (error.response) {
+        switch (error.response.status) {
+          case 400:
+            message = "Bad request. All Fields are required!";
+            break;
+          case 401:
+            message = "You are unauthorized";
+            break;
+          default:
+            break;
+        }
       }
+      setSnackbar({ open: true, message, severity: "error" });
     }
     setIsLoading(false);
   };
@@ -170,6 +213,12 @@ function ConfirmAccount(): JSX.Element {
           <img src={images.logo} alt="Logo" className="w-32 md:w-[100px]" />
         </div>
       </form>
+      <CustomAlert
+        isOpen={snackbar.open}
+        message={snackbar.message}
+        severity={snackbar.severity}
+        handleClose={handleSnackbarClose}
+      />
     </div>
   );
 }

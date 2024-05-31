@@ -2,7 +2,12 @@ import React from "react";
 import { LoadingSpinner, StaffTable, userData } from "../Components/Index";
 
 const Staff: React.FC = () => {
-  const { staffInformation, staticInformation } = userData();
+  const {
+    staffInformation,
+    staticInformation,
+    staffSnackbar,
+    handleStaffSnackbarClose,
+  } = userData();
 
   return (
     <div className="flex-col space-y-8">
@@ -11,6 +16,8 @@ const Staff: React.FC = () => {
         <StaffTable
           staticInformation={staticInformation}
           staffInformation={staffInformation}
+          staffSnackbar={staffSnackbar}
+          handleStaffSnackbarClose={handleStaffSnackbarClose}
         />
       ) : (
         <LoadingSpinner title="Loading Staff List" />

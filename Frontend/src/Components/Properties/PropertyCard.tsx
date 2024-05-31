@@ -5,6 +5,7 @@ import { formatNumberWithCommas, useTokens } from "../../Utils/client";
 import { BiSolidEditAlt } from "react-icons/bi";
 import { HiOutlineDotsHorizontal } from "react-icons/hi";
 import axios from "axios";
+import { CustomAlert } from "../Index";
 
 type PropertiesTableProps = {
   id: number;
@@ -33,6 +34,15 @@ const PropertiesTable: React.FC<PropertiesTableProps> = ({
 }) => {
   const { token } = useTokens();
   const [settingsModal, setSettingsModal] = useState<boolean>(false);
+  const [snackbar, setSnackbar] = useState({
+    open: false,
+    message: "",
+    severity: "success",
+  });
+
+  const handleSnackbarClose = () => {
+    setSnackbar((prev) => ({ ...prev, open: false }));
+  };
 
   const deleteProperty = async (pid: number) => {
     try {
@@ -45,25 +55,41 @@ const PropertiesTable: React.FC<PropertiesTableProps> = ({
         }
       );
       if (response.status === 200) {
-        alert("Successfully removed property");
+        setSnackbar({
+          open: true,
+          message: "Successfully removed property",
+          severity: "success",
+        });
       } else {
-        alert("Unexpected status code");
+        setSnackbar({
+          open: true,
+          message: "Unexpected status code",
+          severity: "warning",
+        });
       }
     } catch (error) {
-      if (error.response.status === 400) {
-        alert("Bad request. Property Id is missing.");
-      } else if (error.response.status === 401) {
-        alert("You are unauthenticated");
-      } else if (error.response.status === 403) {
-        alert("You are unauthorized");
-      } else if (error.response.status === 404) {
-        alert("Demand notice not found");
-      } else {
-        alert("Internal Server Error");
+      let message = "Internal Server Error";
+      if (error.response) {
+        switch (error.response.status) {
+          case 400:
+            message = "Bad request. Property Id is missing.";
+            break;
+          case 401:
+            message = "You are unauthenticated";
+            break;
+          case 403:
+            message = "You are unauthorized";
+            break;
+          case 404:
+            message = "Demand notice not found";
+            break;
+          default:
+            break;
+        }
       }
+      setSnackbar({ open: true, message, severity: "error" });
     }
   };
-
   const generateDemandNotice = async (pid: number) => {
     try {
       const response = await axios.post(
@@ -77,21 +103,37 @@ const PropertiesTable: React.FC<PropertiesTableProps> = ({
           },
         }
       );
-      if (response.status === 200 || 201) {
-        alert(`Succesfully created demand notice for ${pid}`);
+      if (response.status === 200 || response.status === 201) {
+        setSnackbar({
+          open: true,
+          message: `Successfully created demand notice for ${pid}`,
+          severity: "success",
+        });
       } else {
-        alert("Unexpected status code");
+        setSnackbar({
+          open: true,
+          message: "Unexpected status code",
+          severity: "warning",
+        });
       }
     } catch (error) {
-      if (error.response.status === 400) {
-        alert("Bad request. Property Id is missing.");
-      } else if (error.response.status === 401) {
-        alert("You are unauthenticated");
-      } else if (error.response.status === 403) {
-        alert("You are unauthorized");
-      } else {
-        alert("Internal Server Error");
+      let message = "Internal Server Error";
+      if (error.response) {
+        switch (error.response.status) {
+          case 400:
+            message = "Bad request. Property Id is missing.";
+            break;
+          case 401:
+            message = "You are unauthenticated";
+            break;
+          case 403:
+            message = "You are unauthorized";
+            break;
+          default:
+            break;
+        }
       }
+      setSnackbar({ open: true, message, severity: "error" });
     }
   };
 
@@ -220,6 +262,12 @@ const PropertiesTable: React.FC<PropertiesTableProps> = ({
           </span>
         </div>
       </div>
+      <CustomAlert
+        isOpen={snackbar.open}
+        message={snackbar.message}
+        severity={snackbar.severity}
+        handleClose={handleSnackbarClose}
+      />
     </div>
   );
 };

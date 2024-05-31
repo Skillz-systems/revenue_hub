@@ -21,10 +21,10 @@ export { Overview, LoadingSpinner } from "../Pages/Overview";
 export { CardData } from "./Card/CardData";
 export { default as Staff } from "../Pages/Staff";
 export { default as StaffTable } from "./Staff/StaffTable";
-export { default as Settings } from "../Pages/Settings.tsx";
+export { default as Settings } from "../Pages/Settings";
 export { default as Properties } from "../Pages/Properties";
 export { default as PropertyCard } from "./Properties/PropertyCard";
-export { default as Statistics } from "../Pages/Statistics.tsx";
+export { default as Statistics } from "../Pages/Statistics";
 export { default as Pagination } from "./Pagination/Pagination";
 export { default as ViewPropertyModal } from "./Properties/ViewPropertyModal";
 export { default as AddNewStaffModal } from "./Staff/AddNewStaffModal";
@@ -34,4 +34,5 @@ export { default as Password } from "./Settings/Password";
 export { default as InputComponent } from "./InputComponent/InputComponent";
 export { default as SelectComponent } from "./InputComponent/SelectComponent";
 export { userData } from "../Data/userData";
+export { default as CustomAlert } from "../Components/ProjectLayout/CustomAlert"
 export * from "../Data/types.ts";

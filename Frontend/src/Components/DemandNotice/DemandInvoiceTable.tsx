@@ -10,6 +10,7 @@ import {
   DemandPropertyModal,
   ViewPropertyModal,
   DemandInvoiceDocument,
+  CustomAlert,
 } from "../Index";
 import { DemandNotice } from "../../Data/types";
 import {
@@ -41,8 +42,16 @@ const DemandInvoiceTable = ({
     undefined
   );
   const [demandInvoiceDocument, setDemandInvoiceDocument] = useState<any>(null);
-
   const { token } = useTokens();
+  const [snackbar, setSnackbar] = useState({
+    open: false,
+    message: "",
+    severity: "success",
+  });
+
+  const handleSnackbarClose = () => {
+    setSnackbar({ ...snackbar, open: false });
+  };
 
   const deleteDemandNotice = async (id: number) => {
     try {
@@ -55,27 +64,39 @@ const DemandInvoiceTable = ({
         }
       );
       if (response.status === 200) {
-        console.log(
-          "Succesfully removed demand notice from database:",
-          response.data
-        );
-        alert("Successfully removed demand notice");
+        setSnackbar({
+          open: true,
+          message: "Successfully removed demand notice",
+          severity: "success",
+        });
       } else {
-        console.error("Unexpected status code:", response.status);
-        alert("Unexpected status code");
+        setSnackbar({
+          open: true,
+          message: "Unexpected status code",
+          severity: "warning",
+        });
       }
     } catch (error) {
-      if (error.response.status === 400) {
-        alert("Bad request. Demand Notice Id is missing.");
-      } else if (error.response.status === 401) {
-        alert("You are unauthenticated");
-      } else if (error.response.status === 403) {
-        alert("You are unauthorized");
-      } else if (error.response.status === 404) {
-        alert("Demand notice not found");
-      } else {
-        alert("Internal Server Error");
+      let message = "Internal Server Error";
+      if (error.response) {
+        switch (error.response.status) {
+          case 400:
+            message = "Bad request. Demand Notice Id is missing.";
+            break;
+          case 401:
+            message = "You are unauthenticated";
+            break;
+          case 403:
+            message = "You are unauthorized";
+            break;
+          case 404:
+            message = "Demand notice not found";
+            break;
+          default:
+            break;
+        }
       }
+      setSnackbar({ open: true, message, severity: "error" });
     }
   };
 
@@ -491,6 +512,12 @@ const DemandInvoiceTable = ({
           />
         </DemandPropertyModal>
       ) : null}
+      <CustomAlert
+        isOpen={snackbar.open}
+        message={snackbar.message}
+        severity={snackbar.severity}
+        handleClose={handleSnackbarClose}
+      />
     </div>
   );
 };

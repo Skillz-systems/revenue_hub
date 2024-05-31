@@ -1,5 +1,6 @@
 import React, { useState, ChangeEvent, FormEvent } from "react";
 import { data } from "./staffInputData";
+import { CustomAlert } from "../../Components/Index";
 import axios from "axios";
 import Cookies from "js-cookie";
 
@@ -27,6 +28,15 @@ const AddNewStaffModal: React.FC<AddNewStaffModalProps> = ({
 }) => {
   const [formData, setFormData] = useState<FormData>({});
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [snackbar, setSnackbar] = useState({
+    open: false,
+    message: "",
+    severity: "success",
+  });
+
+  const handleSnackbarClose = () => {
+    setSnackbar({ ...snackbar, open: false });
+  };
 
   const handleChange = (
     event: ChangeEvent<HTMLInputElement | HTMLSelectElement>
@@ -69,6 +79,11 @@ const AddNewStaffModal: React.FC<AddNewStaffModalProps> = ({
     } else {
       setIsLoading(true);
       try {
+        setSnackbar({
+          open: true,
+          message: "Creating new staff",
+          severity: "info",
+        });
         // Get selected staff designation and map it to role ID
         const selectedDesignation = formData.staffDesignation;
         const selectedRoleId = mapDesignationToRoleId(selectedDesignation);
@@ -103,20 +118,38 @@ const AddNewStaffModal: React.FC<AddNewStaffModalProps> = ({
         );
 
         if (response.status === 200 || 201) {
-          alert("Form submitted successfully!");
+          setSnackbar({
+            open: true,
+            message: "Staff created successfully",
+            severity: "success",
+          });
+          hideNewStaffModal();
         } else {
-          alert("Unexpected status code. Please try again.");
+          setSnackbar({
+            open: true,
+            message: "Unexpected status code",
+            severity: "warning",
+          });
         }
       } catch (error) {
-        if (error.response.status === 400) {
-          alert("Bad request. All fields are required");
-        } else if (error.response.status === 401) {
-          alert("You are unauthenticated");
-        } else if (error.response.status === 403) {
-          alert("You are unauthorized");
-        } else {
-          alert("Internal Server Error");
+        let message = "Internal Server Error";
+        if (error.response) {
+          switch (error.response.status) {
+            case 400:
+              message = "Bad request. Fill in the required fields";
+              break;
+            case 401:
+              message = "You are unauthenticated";
+              break;
+            case 403:
+              message = "You are unauthorized";
+              break;
+            default:
+              break;
+          }
         }
+        setSnackbar({ open: true, message, severity: "error" });
+        hideNewStaffModal();
       }
       setIsLoading(false);
     }
@@ -206,6 +239,12 @@ const AddNewStaffModal: React.FC<AddNewStaffModalProps> = ({
           )}
         </div>
       </div>
+      <CustomAlert
+        isOpen={snackbar.open}
+        message={snackbar.message}
+        severity={snackbar.severity}
+        handleClose={handleSnackbarClose}
+      />
     </form>
   );
 };

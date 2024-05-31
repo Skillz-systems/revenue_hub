@@ -10,6 +10,7 @@ import {
   AddNewStaffModal,
   ViewStaffModal,
   userData,
+  CustomAlert,
 } from "../Index";
 import { filterStaffRecordsByRoleName, ScrollToTop } from "../../Utils/client";
 
@@ -27,7 +28,12 @@ interface StaffRecord {
   updated_at: string;
 }
 
-export default function StaffTable({ staticInformation, staffInformation }) {
+export default function StaffTable({
+  staticInformation,
+  staffInformation,
+  staffSnackbar,
+  handleStaffSnackbarClose,
+}) {
   const [displaySearchIcon, setDisplaySearchIcon] = useState(true);
   const [activeMenu, setActiveMenu] = useState(1);
   const [query, setQuery] = useState("");
@@ -50,7 +56,9 @@ export default function StaffTable({ staticInformation, staffInformation }) {
     ScrollToTop("top-container");
   };
 
-  const handlePropertiesPerPageChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+  const handlePropertiesPerPageChange = (
+    e: React.ChangeEvent<HTMLSelectElement>
+  ) => {
     setPropertiesPerPage(parseInt(e.target.value));
     setCurrentPage(0);
     ScrollToTop("top-container");
@@ -99,34 +107,28 @@ export default function StaffTable({ staticInformation, staffInformation }) {
     activeMenu === 1
       ? currentProperties(staffInformation)
       : activeMenu === 2
-        ? currentProperties(
-          filterStaffRecordsByRoleName(
-            staffInformation,
-            "Manager" || "MD"
-          )
+      ? currentProperties(
+          filterStaffRecordsByRoleName(staffInformation, "Manager" || "MD")
         )
-        : activeMenu === 3
-          ? currentProperties(
-            filterStaffRecordsByRoleName(
-              staffInformation,
-              "Officer"
-            )
-          )
-          : [];
+      : activeMenu === 3
+      ? currentProperties(
+          filterStaffRecordsByRoleName(staffInformation, "Officer")
+        )
+      : [];
 
   const filteredResults = query
     ? staffInformation.filter((record: any) =>
-      Object.values(record).some((value) => {
-        if (typeof value === "string") {
-          // For string values, perform case-insensitive comparison
-          return value.toLowerCase().includes(query.toLowerCase());
-        } else if (typeof value === "number" || Number.isInteger(value)) {
-          // For numeric values, stringify and compare
-          return String(value).toLowerCase().includes(query.toLowerCase());
-        }
-        return false; // Ignore other data types
-      })
-    )
+        Object.values(record).some((value) => {
+          if (typeof value === "string") {
+            // For string values, perform case-insensitive comparison
+            return value.toLowerCase().includes(query.toLowerCase());
+          } else if (typeof value === "number" || Number.isInteger(value)) {
+            // For numeric values, stringify and compare
+            return String(value).toLowerCase().includes(query.toLowerCase());
+          }
+          return false; // Ignore other data types
+        })
+      )
     : [];
 
   const pageCount = Math.ceil(LengthByActiveMenu() / propertiesPerPage);
@@ -151,13 +153,14 @@ export default function StaffTable({ staticInformation, staffInformation }) {
         </span>
         <span
           className={`flex flex-wrap text-center items-center px-2 py-1 justify-center rounded-xl w-1/12 font-light font-lexend text-color-text-black text-[10px] border-0.6 border-custom-grey-100
-            ${staffInformation.role.id === 1
-              ? "bg-color-light-red"
-              : staffInformation.role.id === 4
+            ${
+              staffInformation.role.id === 1
+                ? "bg-color-light-red"
+                : staffInformation.role.id === 4
                 ? "bg-color-light-yellow"
                 : staffInformation.role.id === 2
-                  ? "bg-color-bright-green text-white"
-                  : "bg-primary-color text-white"
+                ? "bg-color-bright-green text-white"
+                : "bg-primary-color text-white"
             }`}
         >
           {staffInformation.role.name.toUpperCase()}
@@ -205,17 +208,11 @@ export default function StaffTable({ staticInformation, staffInformation }) {
       ? filteredResults.length > 0
         ? filteredResults.length
         : filteredResults < 1 && query != ""
-          ? 0
-          : staffInformation.length
+        ? 0
+        : staffInformation.length
       : activeMenu === 2
-        ? filterStaffRecordsByRoleName(
-          staffInformation,
-          "MD"
-        ).length
-        : filterStaffRecordsByRoleName(
-          staffInformation,
-          "Officer"
-        ).length;
+      ? filterStaffRecordsByRoleName(staffInformation, "MD").length
+      : filterStaffRecordsByRoleName(staffInformation, "Officer").length;
   }
 
   return (
@@ -230,10 +227,11 @@ export default function StaffTable({ staticInformation, staffInformation }) {
               displayColumn === false && query !== "" && menu.id > 1 ? null : (
                 <div
                   key={menu.id}
-                  className={`flex items-start justify-between gap-2 px-2 py-1 text-xs font-lexend hover:cursor-pointer ${activeMenu === menu.id
-                    ? "bg-primary-color rounded"
-                    : "bg-inherit"
-                    }`}
+                  className={`flex items-start justify-between gap-2 px-2 py-1 text-xs font-lexend hover:cursor-pointer ${
+                    activeMenu === menu.id
+                      ? "bg-primary-color rounded"
+                      : "bg-inherit"
+                  }`}
                   onClick={() => {
                     setActiveMenu(menu.id);
                     setCurrentPage(0);
@@ -241,10 +239,11 @@ export default function StaffTable({ staticInformation, staffInformation }) {
                   }}
                 >
                   <span
-                    className={`${activeMenu === menu.id
-                      ? "font-medium text-white"
-                      : "text-color-text-two"
-                      }`}
+                    className={`${
+                      activeMenu === menu.id
+                        ? "font-medium text-white"
+                        : "text-color-text-two"
+                    }`}
                   >
                     {menu.name}
                   </span>
@@ -253,18 +252,19 @@ export default function StaffTable({ staticInformation, staffInformation }) {
                       ? filteredResults.length > 0
                         ? filteredResults.length
                         : filteredResults < 1 && query !== ""
-                          ? 0
-                          : staffInformation ? staffInformation.length : 0
+                        ? 0
+                        : staffInformation
+                        ? staffInformation.length
+                        : 0
                       : menu.id === 2
-                        ? filterStaffRecordsByRoleName(
+                      ? filterStaffRecordsByRoleName(
                           staffInformation,
                           "Manager" || "MD"
                         ).length
-                        : filterStaffRecordsByRoleName(
+                      : filterStaffRecordsByRoleName(
                           staffInformation,
                           "Officer"
                         ).length}
-
                   </span>
                 </div>
               )
@@ -273,8 +273,9 @@ export default function StaffTable({ staticInformation, staffInformation }) {
           <div className="flex items-center justify-between gap-4">
             <TableSearchInput
               parentBoxStyle="flex items-center justify-between p-2 bg-custom-grey-100 rounded-3xl border border-custom-color-one"
-              inputBoxStyle={` ${displaySearchIcon ? "w-10/12" : "w-full"
-                } text-xs outline-none bg-inherit font-lexend text-color-text-two`}
+              inputBoxStyle={` ${
+                displaySearchIcon ? "w-10/12" : "w-full"
+              } text-xs outline-none bg-inherit font-lexend text-color-text-two`}
               iconBoxStyle={"text-base text-primary-color hover:cursor-pointer"}
               placeholder={"Search records"}
               searchIcon={<FiSearch />}
@@ -417,6 +418,12 @@ export default function StaffTable({ staticInformation, staffInformation }) {
           )}
         </DemandPropertyModal>
       ) : null}
+      <CustomAlert
+        isOpen={staffSnackbar.open}
+        message={staffSnackbar.message}
+        severity={staffSnackbar.severity}
+        handleClose={handleStaffSnackbarClose}
+      />
     </div>
   );
 }

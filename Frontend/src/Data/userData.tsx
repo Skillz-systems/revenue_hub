@@ -9,6 +9,15 @@ const userData = () => {
   const [accountInformation, setAccountInformation] = useState<any>(null);
   const [staffInformation, setStaffInformation] = useState<any>(null);
   const [statistics, setStatistics] = useState<StatisticsData | null>(null);
+  const [staffSnackbar, setStaffSnackbar] = useState({
+    open: false,
+    message: "",
+    severity: "success",
+  });
+
+  const handleStaffSnackbarClose = () => {
+    setStaffSnackbar({ ...staffSnackbar, open: false });
+  };
 
   // Safely get and parse userData from cookies
   const userData = Cookies.get("userData");
@@ -75,15 +84,28 @@ const userData = () => {
     }
     if (allStaff) {
       setStaffInformation(allStaff.data);
+      setStaffSnackbar({
+        open: true,
+        message: "Successfully loaded staff list",
+        severity: "success",
+      });
     }
   }, [staff, allStaff]);
 
   useEffect(() => {
     if (staffError) {
-      console.error("Error fetching staff information:", staffError);
+      setStaffSnackbar({
+        open: true,
+        message: "Error fetching staff information",
+        severity: "error",
+      });
     }
     if (allStaffError) {
-      console.error("Error fetching All Staff information:", allStaffError);
+      setStaffSnackbar({
+        open: true,
+        message: "Error fetching All Staff information",
+        severity: "error",
+      });
     }
   }, [staffError, allStaffError]);
 
@@ -104,26 +126,42 @@ const userData = () => {
       );
 
       if (response.status === 200) {
-        // Remove the deleted staff from the state
         setStaffInformation((prevStaff) =>
           prevStaff.filter((staff) => staff.id !== staffId)
         );
-        alert("Staff deleted successfully");
+        setStaffSnackbar({
+          open: true,
+          message: "Staff deleted successfully",
+          severity: "success",
+        });
       } else {
-        alert("Unexpected Status Code");
+        setStaffSnackbar({
+          open: true,
+          message: "Unexpected status code",
+          severity: "warning",
+        });
       }
     } catch (error) {
-      if (error.response.status === 400) {
-        alert("Bad request. Staff Id is missing.");
-      } else if (error.response.status === 401) {
-        alert("You are unauthenticated");
-      } else if (error.response.status === 403) {
-        alert("You are unauthorized");
-      } else if (error.response.status === 404) {
-        alert("Staff is not found");
-      } else {
-        alert("Internal Server Error");
+      let message = "Internal Server Error";
+      if (error.response) {
+        switch (error.response.status) {
+          case 400:
+            message = "Bad request. Staff Id is missing.";
+            break;
+          case 401:
+            message = "You are unauthenticated";
+            break;
+          case 403:
+            message = "You are unauthorized";
+            break;
+          case 404:
+            message = "Staff is not found";
+            break;
+          default:
+            break;
+        }
       }
+      setStaffSnackbar({ open: true, message, severity: "error" });
     }
   };
 
@@ -134,6 +172,8 @@ const userData = () => {
     deleteStaffById,
     cadestralZones,
     staticInformation,
+    staffSnackbar,
+    handleStaffSnackbarClose,
   };
 };
 

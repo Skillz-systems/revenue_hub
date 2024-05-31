@@ -1,7 +1,7 @@
 import React, { useState, FormEvent, ChangeEvent } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import images from "../assets";
-import { InputComponent } from "../Components/Index";
+import { InputComponent, CustomAlert } from "../Components/Index";
 import { GrFormViewHide, GrFormView } from "react-icons/gr";
 import axios from "axios";
 
@@ -15,6 +15,15 @@ function AccountPassword(): JSX.Element {
   });
   const { id: userId, token: remember_token } = useParams();
   const navigate = useNavigate();
+  const [snackbar, setSnackbar] = useState({
+    open: false,
+    message: "",
+    severity: "success",
+  });
+
+  const handleSnackbarClose = () => {
+    setSnackbar({ ...snackbar, open: false });
+  };
 
   const handleInputChange = (event: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target;
@@ -67,13 +76,27 @@ function AccountPassword(): JSX.Element {
         navigate("/login");
       } else {
         setErrorState(response.data.message);
+        setSnackbar({
+          open: true,
+          message: "Unexpected status code",
+          severity: "warning",
+        });
       }
     } catch (error) {
-      if (error.response.status === 401) {
-        setErrorState("Invalid Password Token");
-      } else {
-        setErrorState("Internal Server Error. Please try again later.");
+      let message = "Internal Server Error";
+      if (error.response) {
+        switch (error.response.status) {
+          case 400:
+            message = "Bad request. Fill in the required fields";
+            break;
+          case 401:
+            message = "Invalid Password Token";
+            break;
+          default:
+            break;
+        }
       }
+      setSnackbar({ open: true, message, severity: "error" });
     }
     setIsLoading(false);
   };
@@ -143,6 +166,12 @@ function AccountPassword(): JSX.Element {
           <img src={images.logo} alt="Logo" className="w-32 md:w-[100px]" />
         </div>
       </form>
+      <CustomAlert
+        isOpen={snackbar.open}
+        message={snackbar.message}
+        severity={snackbar.severity}
+        handleClose={handleSnackbarClose}
+      />
     </div>
   );
 }
