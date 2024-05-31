@@ -12,8 +12,8 @@ function App() {
     <>
       <Routes>
         <Route path="/login" element={<LoginPage />} />
-        <Route path="/confirm-account/:id" element={<ConfirmAccount />} />
-        <Route path="/create-password" element={<AccountPassword />} />
+        <Route path="/confirm-account/:id/:token/" element={<ConfirmAccount />} />{/* Add /token */}
+        <Route path="/create-password/:id/:token/" element={<AccountPassword />} /> {/* Add ID and /token */}
         <Route path="/invoice/:pid" element={<Payment />} />
         <Route path="/" element={
           <ProtectedRoute>

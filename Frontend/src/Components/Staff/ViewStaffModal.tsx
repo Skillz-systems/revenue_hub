@@ -4,22 +4,7 @@ import { IoPersonCircle } from "react-icons/io5";
 import { MdCancel, MdLocationPin } from "react-icons/md";
 import { RiDeleteBin5Fill } from "react-icons/ri";
 
-interface ViewStaffModalProps {
-  hideViewStaffModal: () => void;
-  propertyModalTransition: boolean;
-  customTableData: {
-    staffId: string;
-    firstName: string;
-    lastName: string;
-    middleName: string;
-    email: string;
-    phoneNumber: string;
-    designation: string;
-    staffZone: string;
-  };
-}
-
-const ViewStaffModal: React.FC<ViewStaffModalProps> = ({
+const ViewStaffModal = ({
   hideViewStaffModal,
   propertyModalTransition,
   customTableData,
@@ -47,21 +32,21 @@ const ViewStaffModal: React.FC<ViewStaffModalProps> = ({
               STAFF ID
             </h3>
             <p className="text-base font-bold text-color-text-one">
-              {customTableData.staffId}
+              {customTableData?.id}
             </p>
             <span
               className={`rounded-xl px-1 py-0.5 text-[10px] font-light font-lexend text-darkerblueberry border-0.6 border-custom-grey-100
-                  ${customTableData.designation === "Manager"
+                  ${customTableData?.role.name === "Manager"
                   ? "bg-color-light-red"
-                  : customTableData.designation === "Officer"
+                  : customTableData?.role.name === "Officer"
                     ? "bg-color-light-yellow"
-                    : customTableData.designation === "Admin"
+                    : customTableData?.role.name === "Admin"
                       ? "bg-color-bright-green text-white"
                       : "bg-primary-color text-white"
                 }
                       `}
             >
-              {customTableData.designation.toUpperCase()}
+              {customTableData?.role.name.toUpperCase()}
             </span>
           </div>
           <div className="flex items-center gap-2">
@@ -92,27 +77,27 @@ const ViewStaffModal: React.FC<ViewStaffModalProps> = ({
             {[
               {
                 name: "Staff ID",
-                value: customTableData.staffId,
+                value: customTableData?.id,
               },
               {
-                name: "First Name",
-                value: customTableData.firstName,
+                name: "Name",
+                value: customTableData?.name,
               },
-              {
-                name: "Last Name",
-                value: customTableData.lastName,
-              },
-              {
-                name: "Middle Name",
-                value: customTableData.middleName,
-              },
+              // {
+              //   name: "Last Name",
+              //   value: customTableData.lastName,
+              // },
+              // {
+              //   name: "Middle Name",
+              //   value: customTableData.middleName,
+              // },
               {
                 name: "Email",
-                value: customTableData.email,
+                value: customTableData?.email,
               },
               {
                 name: "Phone Number",
-                value: customTableData.phoneNumber,
+                value: customTableData?.phone,
               },
             ].map((item, index) => (
               <div
@@ -136,17 +121,17 @@ const ViewStaffModal: React.FC<ViewStaffModalProps> = ({
           </div>
           <span
             className={`px-1 py-0.5 rounded-xl text-[10px] font-light text-darkerblueberry border-[0.4px] border-divider-grey
-          ${customTableData.designation === "Manager"
+          ${customTableData?.role.name === "Manager"
                 ? "bg-color-light-red"
-                : customTableData.designation === "Officer"
+                : customTableData?.role.name === "Officer"
                   ? "bg-color-light-yellow"
-                  : customTableData.designation === "Admin"
+                  : customTableData?.role.name === "Admin"
                     ? "bg-color-bright-green text-white"
                     : "bg-primary-color text-white"
               }
           `}
           >
-            {customTableData.designation.toUpperCase()}
+            {customTableData?.role.name.toUpperCase()}
           </span>
         </div>
         <div className="flex items-center justify-between p-2 space-y-2 border-0.6 rounded bg-white border-custom-color-one font-lexend">
@@ -155,7 +140,7 @@ const ViewStaffModal: React.FC<ViewStaffModalProps> = ({
             <p className="text-xs text-darkerblueberry">Zone</p>
           </div>
           <span className="px-2 py-0.5 rounded text-xs bg-custom-grey-100 text-darkerblueberry">
-            {customTableData.staffZone.toUpperCase()}
+            {customTableData?.zone.toUpperCase()}
           </span>
         </div>
       </div>

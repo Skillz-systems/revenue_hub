@@ -4,14 +4,13 @@ import {
   Pagination,
   DemandPropertyModal,
   ViewPropertyModal,
-  Card,
-  CardData2,
-  useAppData,
+  userData,
+  LoadingSpinner,
 } from "../Components/Index";
 import { BsCaretDownFill } from "react-icons/bs";
 import { HiOutlineDotsHorizontal } from "react-icons/hi";
 import { ScrollToTop, fetcher, useTokens } from "../Utils/client";
-import useSWR from 'swr';
+import useSWR from "swr";
 
 type PropertyData = {
   active: string;
@@ -39,13 +38,15 @@ type PropertyArray = PropertyData[];
 
 export default function Properties() {
   const { token } = useTokens();
-  const cardData = CardData2();
   const [districtState, setDistrictState] = useState<string>("");
   const [propertyUseState, setPropertyUseState] = useState<string>("");
   const [viewPropertyModal, setViewPropertyModal] = useState<any>(null);
-  const [propertyModalTransition, setPropertyModalTransition] = useState<boolean>(false);
-  const [propertyInformation, setPropertyInformation] = useState<PropertyArray | any>();
-  const { staticInformation } = useAppData()
+  const [propertyModalTransition, setPropertyModalTransition] =
+    useState<boolean>(false);
+  const [propertyInformation, setPropertyInformation] = useState<
+    PropertyArray | any
+  >();
+  const { staticInformation } = userData();
 
   const { data, error } = useSWR(
     token ? "https://api.revenuehub.skillzserver.com/api/property" : null, // Only fetch if token exists
@@ -60,9 +61,9 @@ export default function Properties() {
 
   useEffect(() => {
     if (error) {
-      console.error("Error fetching Property Data:", error)
+      alert(`Error fetching Property Data: ${error}`);
     }
-  }, [data])
+  }, [data]);
 
   const handleViewPropertyModal = (property: any) => {
     setViewPropertyModal(property);
@@ -71,7 +72,9 @@ export default function Properties() {
     }, 250);
   };
 
-  const handleSelectDistrict = (event: React.ChangeEvent<HTMLSelectElement>) => {
+  const handleSelectDistrict = (
+    event: React.ChangeEvent<HTMLSelectElement>
+  ) => {
     const selectedDistrict = event.target.value;
     if (selectedDistrict === "All Districts") {
       setDistrictState("");
@@ -82,7 +85,9 @@ export default function Properties() {
     }
   };
 
-  const handleSelectPropertyUse = (event: React.ChangeEvent<HTMLSelectElement>) => {
+  const handleSelectPropertyUse = (
+    event: React.ChangeEvent<HTMLSelectElement>
+  ) => {
     const selectedPropertyUse = event.target.value;
     if (selectedPropertyUse === "All Property Use") {
       setPropertyUseState("");
@@ -101,7 +106,9 @@ export default function Properties() {
   // PAGINATION LOGIC START
   const [currentPage, setCurrentPage] = useState<number>(0);
   const [propertiesPerPage, setPropertiesPerPage] = useState<number>(12);
-  const [currentStyle, setCurrentStyle] = useState<number | undefined>(undefined);
+  const [currentStyle, setCurrentStyle] = useState<number | undefined>(
+    undefined
+  );
 
   const offset = currentPage * propertiesPerPage;
 
@@ -110,7 +117,9 @@ export default function Properties() {
     ScrollToTop("top-container");
   };
 
-  const handlePropertiesPerPageChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+  const handlePropertiesPerPageChange = (
+    e: React.ChangeEvent<HTMLSelectElement>
+  ) => {
     setPropertiesPerPage(parseInt(e.target.value));
     ScrollToTop("top-container");
   };
@@ -143,36 +152,35 @@ export default function Properties() {
 
   const filteredDistrictResults = districtState
     ? propertyInformation.filter((record) =>
-      Object.values(record).some((value) => {
-        if (typeof value === "string") {
-          return value.toLowerCase().includes(districtState.toLowerCase());
-        }
-        return false;
-      })
-    )
+        Object.values(record).some((value) => {
+          if (typeof value === "string") {
+            return value.toLowerCase().includes(districtState.toLowerCase());
+          }
+          return false;
+        })
+      )
     : [];
 
   const filteredPropertyUseResults = propertyUseState
     ? propertyInformation.filter((record) =>
-      Object.values(record).some((value) => {
-        if (typeof value === "string") {
-          return value.toLowerCase().includes(propertyUseState.toLowerCase());
-        }
-        return false;
-      })
-    )
+        Object.values(record).some((value) => {
+          if (typeof value === "string") {
+            return value.toLowerCase().includes(propertyUseState.toLowerCase());
+          }
+          return false;
+        })
+      )
     : [];
 
   //RUN MORE TESTS ON DATA SWITCH
   const filteredCombinedResults =
     districtState !== "" && propertyUseState !== ""
       ? filteredPropertyUseResults.filter((propertyRecord) =>
-        filteredDistrictResults.some(
-          (districtRecord) => propertyRecord === districtRecord
+          filteredDistrictResults.some(
+            (districtRecord) => propertyRecord === districtRecord
+          )
         )
-      )
       : [];
-
 
   const LengthByFilterState = (): number => {
     return districtState !== ""
@@ -180,10 +188,10 @@ export default function Properties() {
         ? filteredDistrictResults.length
         : 0
       : propertyUseState !== ""
-        ? filteredPropertyUseResults.length > 0
-          ? filteredPropertyUseResults.length
-          : 0
-        : propertyInformation?.length;
+      ? filteredPropertyUseResults.length > 0
+        ? filteredPropertyUseResults.length
+        : 0
+      : propertyInformation?.length;
   };
 
   const pageCount = Math.ceil(LengthByFilterState() / propertiesPerPage);
@@ -192,31 +200,6 @@ export default function Properties() {
     <div>
       {propertyInformation ? (
         <>
-          <div className="grid grid-cols-2 gap-x-3 gap-y-3 md:grid-cols-3 md:gap-x-4 md:gap-y-8">
-            {cardData.map((card) => (
-              <Card
-                key={card.id}
-                id={card.id}
-                icon={card.icon}
-                description={card.description}
-                name={card.name}
-                value={card.value}
-                containerStyle={`flex flex-col items-start p-2 space-y-4 lg:p-4 lg:space-y-8 border-0.6 w-full border-custom-color-one shadow rounded
-                ${card.id === 1 && "bg-custom-grey-200"}`}
-                iconStyle={`flex items-center justify-center w-6 lg:w-10 h-6 lg:h-10 lg:p-2 text-base lg:text-2xl rounded 
-                ${[1].includes(card.id) &&
-                  "bg-custom-blue-200 text-primary-color"
-                  }
-                ${[2, 3].includes(card.id) &&
-                  "bg-color-light-yellow text-color-bright-orange"
-                  }  
-                `}
-                descriptionStyle={"text-[10px] lg:text-xs text-color-text-two font-lexend"}
-                nameStyle={"text-xs lg:text-sm font-medium lg:font-semibold text-color-text-one font-lexend"}
-                valueStyle={"text-lg lg:text-3xl"}
-              />
-            ))}
-          </div>
           <hr className="border-0.5 mb-8 border-custom-grey-100" />
           <div
             id="top-container"
@@ -283,9 +266,7 @@ export default function Properties() {
                   filteredCombinedResults.map((property) => (
                     <PropertyCard
                       id={property.id}
-                      personalIdentificationNumber={
-                        property.pid
-                      }
+                      personalIdentificationNumber={property.pid}
                       propertyUse={property.prop_use}
                       paymentStatus={property.demand_notice_status}
                       propertyAddress={property.prop_addr}
@@ -293,7 +274,9 @@ export default function Properties() {
                       cadestralZone={property.cadastral_zone}
                       ratePaybale={property.rate_payable}
                       occupationStatus={"Occupied"}
-                      setViewPropertyModal={() => handleViewPropertyModal(property)}
+                      setViewPropertyModal={() =>
+                        handleViewPropertyModal(property)
+                      }
                     />
                   ))
                 ) : (
@@ -306,9 +289,7 @@ export default function Properties() {
                   filteredDistrictResults.map((property) => (
                     <PropertyCard
                       id={property.id}
-                      personalIdentificationNumber={
-                        property.pid
-                      }
+                      personalIdentificationNumber={property.pid}
                       propertyUse={property.prop_use}
                       paymentStatus={property.demand_notice_status}
                       propertyAddress={property.prop_addr}
@@ -316,7 +297,9 @@ export default function Properties() {
                       cadestralZone={property.cadastral_zone}
                       ratePaybale={property.rate_payable}
                       occupationStatus={"Occupied"}
-                      setViewPropertyModal={() => handleViewPropertyModal(property)}
+                      setViewPropertyModal={() =>
+                        handleViewPropertyModal(property)
+                      }
                     />
                   ))
                 ) : (
@@ -329,9 +312,7 @@ export default function Properties() {
                   filteredPropertyUseResults.map((property) => (
                     <PropertyCard
                       id={property.id}
-                      personalIdentificationNumber={
-                        property.pid
-                      }
+                      personalIdentificationNumber={property.pid}
                       propertyUse={property.prop_use}
                       paymentStatus={property.demand_notice_status}
                       propertyAddress={property.prop_addr}
@@ -339,7 +320,9 @@ export default function Properties() {
                       cadestralZone={property.cadastral_zone}
                       ratePaybale={property.rate_payable}
                       occupationStatus={"Occupied"}
-                      setViewPropertyModal={() => handleViewPropertyModal(property)}
+                      setViewPropertyModal={() =>
+                        handleViewPropertyModal(property)
+                      }
                     />
                   ))
                 ) : (
@@ -351,9 +334,7 @@ export default function Properties() {
                 currentProperties.map((property) => (
                   <PropertyCard
                     id={property.id}
-                    personalIdentificationNumber={
-                      property.pid
-                    }
+                    personalIdentificationNumber={property.pid}
                     propertyUse={property.prop_use}
                     paymentStatus={property.demand_notice_status}
                     propertyAddress={property.prop_addr}
@@ -361,7 +342,9 @@ export default function Properties() {
                     cadestralZone={property.cadastral_zone}
                     ratePaybale={property.rate_payable}
                     occupationStatus={"Occupied"}
-                    setViewPropertyModal={() => handleViewPropertyModal(property)}
+                    setViewPropertyModal={() =>
+                      handleViewPropertyModal(property)
+                    }
                   />
                 ))
               ) : (
@@ -425,7 +408,7 @@ export default function Properties() {
           ) : null}
         </>
       ) : (
-        <div>Loading...</div>
+        <LoadingSpinner title="Loading Properties" />
       )}
     </div>
   );

@@ -1,5 +1,6 @@
 import React, { useState, ChangeEvent, FormEvent } from "react";
 import { data } from "./staffInputData";
+import { CustomAlert } from "../../Components/Index";
 import axios from "axios";
 import Cookies from "js-cookie";
 
@@ -27,8 +28,19 @@ const AddNewStaffModal: React.FC<AddNewStaffModalProps> = ({
 }) => {
   const [formData, setFormData] = useState<FormData>({});
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [snackbar, setSnackbar] = useState({
+    open: false,
+    message: "",
+    severity: "success",
+  });
 
-  const handleChange = (event: ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+  const handleSnackbarClose = () => {
+    setSnackbar({ ...snackbar, open: false });
+  };
+
+  const handleChange = (
+    event: ChangeEvent<HTMLInputElement | HTMLSelectElement>
+  ) => {
     const { name, value } = event.target;
     setFormData((prevState) => ({
       ...prevState,
@@ -45,10 +57,10 @@ const AddNewStaffModal: React.FC<AddNewStaffModalProps> = ({
         return "2";
       case "Enforcer":
         return "3";
-      case "Officer":
+      case "Others":
         return "4";
       default:
-        return null;
+        return "4";
     }
   };
 
@@ -65,8 +77,13 @@ const AddNewStaffModal: React.FC<AddNewStaffModalProps> = ({
       // Alert if any required fields are empty
       alert("Please fill in all required fields.");
     } else {
-      setIsLoading(true)
+      setIsLoading(true);
       try {
+        setSnackbar({
+          open: true,
+          message: "Creating new staff",
+          severity: "info",
+        });
         // Get selected staff designation and map it to role ID
         const selectedDesignation = formData.staffDesignation;
         const selectedRoleId = mapDesignationToRoleId(selectedDesignation);
@@ -77,15 +94,16 @@ const AddNewStaffModal: React.FC<AddNewStaffModalProps> = ({
 
         // Prepare the request data
         const requestData = {
-          name: `${formData.staffFirstName} ${formData.staffMiddleName ? formData.staffMiddleName + " " : ""}${formData.staffLastName}`,
+          name: `${formData.staffFirstName} ${
+            formData.staffMiddleName ? formData.staffMiddleName + " " : ""
+          }${formData.staffLastName}`,
           email: formData.staffEmail,
           phone: formData.staffPhoneNumber,
           zone: formData.staffZone,
           role_id: selectedRoleId,
         };
 
-        console.log("requestData", requestData);
-
+        console.log("Request Data:", requestData);
         // Get the bearer token from cookies
         const token = Cookies.get("userToken");
 
@@ -100,36 +118,55 @@ const AddNewStaffModal: React.FC<AddNewStaffModalProps> = ({
           }
         );
 
-        if (response.status === 200) {
-          console.log("Success:", response.data);
-          alert("Form submitted successfully!");
+        if (response.status === 200 || 201) {
+          setSnackbar({
+            open: true,
+            message: "Staff created successfully",
+            severity: "success",
+          });
+          hideNewStaffModal();
         } else {
-          console.error("Unexpected status code:", response.status);
-          alert("Unexpected status code. Please try again.");
+          setSnackbar({
+            open: true,
+            message: "Unexpected status code",
+            severity: "warning",
+          });
         }
       } catch (error) {
-        if (error.response && error.response.status === 401) {
-          console.error("Unauthorized:", error.response.data);
-          alert("Unauthorized. Please login again.");
-        } else {
-          console.error("Error submitting form:", error);
-          alert("An error occurred while submitting the form.");
+        let message = "Internal Server Error";
+        if (error.response) {
+          switch (error.response.status) {
+            case 400:
+              message = "Bad request. Fill in the required fields";
+              break;
+            case 401:
+              message = "You are unauthenticated";
+              break;
+            case 403:
+              message = "You are unauthorized";
+              break;
+            default:
+              break;
+          }
         }
+        setSnackbar({ open: true, message, severity: "error" });
+        // hideNewStaffModal();
       }
-      setIsLoading(false)
+      setIsLoading(false);
     }
   };
 
   return (
     <form
-      className={`flex-col relative bg-white rounded overflow-y-auto overscroll-contain scrollbar-thin scrollbar-thumb-color-text-two scrollbar-track-white ${propertyModalTransition
-        ? "w-5/12 transition-all ease-in-out duration-500"
-        : "w-32"
-        }`}
+      className={`flex-col relative bg-white rounded overflow-y-auto overscroll-contain scrollbar-thin scrollbar-thumb-color-text-two scrollbar-track-white ${
+        propertyModalTransition
+          ? "w-5/12 transition-all ease-in-out duration-500"
+          : "w-32"
+      }`}
       style={{ height: "95vh" }}
       onSubmit={handleFormSubmit}
-    // method="post"
-    // autoComplete="off"
+      // method="post"
+      // autoComplete="off"
     >
       <img
         src={"/lightCheckeredBackgroundPattern.png"}
@@ -170,10 +207,11 @@ const AddNewStaffModal: React.FC<AddNewStaffModalProps> = ({
                 type={fieldItem.inputType}
                 name={fieldItem.inputName}
                 value={formData[fieldItem.inputName] || ""}
-                className={`w-full text-xs font-lexend h-12 px-4 py-2 border-0.6 outline-none rounded ${formData[fieldItem.inputName]
-                  ? "border-color-dark-green text-color-text-one"
-                  : "border-custom-color-one text-color-text-two"
-                  }`}
+                className={`w-full text-xs font-lexend h-12 px-4 py-2 border-0.6 outline-none rounded ${
+                  formData[fieldItem.inputName]
+                    ? "border-color-dark-green text-color-text-one"
+                    : "border-custom-color-one text-color-text-two"
+                }`}
                 onChange={handleChange}
                 placeholder={fieldItem.placeholder}
                 required={fieldItem.required}
@@ -183,16 +221,15 @@ const AddNewStaffModal: React.FC<AddNewStaffModalProps> = ({
                 key={fieldItem.id}
                 name={fieldItem.inputName}
                 value={formData[fieldItem.inputName] || ""}
-                className={`w-full text-xs font-lexend h-12 px-3 py-2 border-0.6 outline-none rounded ${formData[fieldItem.inputName]
-                  ? "border-color-dark-green text-color-text-one"
-                  : "border-custom-color-one text-color-text-two"
-                  }`}
+                className={`w-full text-xs font-lexend h-12 px-3 py-2 border-0.6 outline-none rounded ${
+                  formData[fieldItem.inputName]
+                    ? "border-color-dark-green text-color-text-one"
+                    : "border-custom-color-one text-color-text-two"
+                }`}
                 onChange={handleChange}
                 required={fieldItem.required}
               >
-                <option value="">
-                  Select {fieldItem.placeholder}
-                </option>
+                <option value="">Select {fieldItem.placeholder}</option>
                 {fieldItem.options?.map((option) => (
                   <option key={option.id} value={option.name} className="mb-4">
                     {option.name}
@@ -203,6 +240,12 @@ const AddNewStaffModal: React.FC<AddNewStaffModalProps> = ({
           )}
         </div>
       </div>
+      <CustomAlert
+        isOpen={snackbar.open}
+        message={snackbar.message}
+        severity={snackbar.severity}
+        handleClose={handleSnackbarClose}
+      />
     </form>
   );
 };
