@@ -3,12 +3,14 @@
 namespace Tests\Feature;
 
 use App\Models\DemandNotice;
+use App\Models\DemandNoticeAccount;
 use App\Models\Payment;
 use App\Models\Property;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Http\Request;
 
 class PaymentTest extends TestCase
 {
@@ -124,4 +126,62 @@ class PaymentTest extends TestCase
     //         ]
     //     ]);
     // }
+
+
+    public function test_to_see_if_a_demand_notice_payment_can_be_created(): void
+    {
+        $data =
+            [
+                "event" => "charge.completed",
+                "data" => [
+                    "id" => 407347576,
+                    "tx_ref" => "Links-221401982810",
+                    "flw_ref" => "000016210415121239000082517439",
+                    "device_fingerprint" => "7852b6c97d67edce50a5f1e540719e39",
+                    "amount" => 30020,
+                    "currency" => "NGN",
+                    "charged_amount" => 10,
+                    "app_fee" => 0.14,
+                    "merchant_fee" => 0,
+                    "processor_response" => "success",
+                    "auth_model" => "AUTH",
+                    "ip" => "72.140.222.142",
+                    "narration" => "payment for sample product",
+                    "status" => "successful",
+                    "payment_type" => "bank_transfer",
+                    "created_at" => "2021-04-15T11:13:10.000Z",
+                    "account_id" => 82913,
+                    "customer" => [
+                        "id" => 254967086,
+                        "fullname" => "Flutterwave Developers",
+                        "phone_number" => null,
+                        "email" => "developers@flutterwavego.com",
+                        "created_at" => "2021-04-14T16:39:17.000Z"
+                    ]
+                ],
+                "event.type" => "BANK_TRANSFER_TRANSACTION"
+
+            ];
+
+
+        $property = Property::factory()->create();
+        $demandNotice = DemandNotice::factory()->create([
+            "property_id" => $property->id
+        ]);
+        DemandNoticeAccount::factory()->create([
+            "demand_notice_id" => $demandNotice->id,
+            "amount" => "30020",
+            "tx_ref" => "Links-221401982810",
+        ]);
+        $response = $this->postJson("/api/payment/webhook", $data);
+
+        $this->assertDatabaseHas('payments', [
+            "demand_notice_id" => $demandNotice->id
+        ]);
+        $response->assertStatus(200)->assertJsonStructure([
+            "status",
+            "message",
+            "data"
+        ]);
+    }
 }

@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class Payment extends Model
 {
     use HasFactory;
+    const STATUS_COMPLETED = 1;
     protected $fillable =
     [
         "tx_ref",
