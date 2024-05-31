@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { MdCancel } from "react-icons/md";
 import { BiSolidEditAlt } from "react-icons/bi";
 import { PiBuildingsFill } from "react-icons/pi";
@@ -10,40 +10,34 @@ import { HiOutlineDotsHorizontal } from "react-icons/hi";
 import { FaPeopleRoof } from "react-icons/fa6";
 import { DemandPropertyModal, DemandInvoiceDocument } from "../Index";
 
-interface InvoiceData {
-  dateCreated: string;
-  arrears: number;
-  penalty: number;
-}
-
-interface OccupantInfo {
-  firstName: string;
-  lastName: string;
-  phoneNumber: string;
-  email: string;
-  maritalStatus: string;
-}
-
-interface CustomTableData {
-  personalIdentificationNumber: string;
-  assetNumber: string;
-  cadestralZone: string;
-  propertyAddress: string;
-  propertyUse: string;
-  group: string;
-  propertyType: string;
-  occupationStatus: string;
-  annualValue: number;
-  ratePayable: number;
-  demandInvoiceData: InvoiceData[];
-  occupantInfo: OccupantInfo[];
-  paymentStatus: string;
-}
+// export type PropertyData = {
+//   active: string;
+//   annual_value: string;
+//   asset_no: string;
+//   cadastral_zone: string;
+//   category: string | null;
+//   demand_notice: any[];
+//   grand_total: string;
+//   group: string;
+//   id: number;
+//   occupant: string;
+//   pid: string;
+//   prop_addr: string;
+//   prop_type: string;
+//   prop_use: string;
+//   rate_payable: number;
+//   rating_dist: string;
+//   status: string;
+//   street_name: string;
+//   arrears: number;
+//   penalty: number;
+//   demand_notice_status: string;
+// };
 
 interface ViewPropertyModalProps {
   hideViewPropertyModal: () => void;
   propertyModalTransition: boolean;
-  customTableData: CustomTableData;
+  customTableData: any;
 }
 
 const ViewPropertyModal: React.FC<ViewPropertyModalProps> = ({
@@ -52,58 +46,18 @@ const ViewPropertyModal: React.FC<ViewPropertyModalProps> = ({
   customTableData,
 }) => {
   const [activateState, setActiveState] = useState<number>(0);
-  const [daysUntilDue, setDaysUntilDue] = useState<number | null>(null);
   const [editModal, setEditModal] = useState<boolean>(false);
-  const [demandInvoiceDocument, setDemandInvoiceDocument] = useState<boolean>(false);
-
-  const generateDueDate = (): string => {
-    // Split the date string into day, month, and year
-    const [day, month, year] =
-      customTableData.demandInvoiceData[
-        customTableData.demandInvoiceData.length - 1
-      ].dateCreated.split("/");
-
-    // Create a new Date object with the correct order of day, month, and year
-    const dateCreated = new Date(`${month}/${day}/${year}`);
-
-    // Add 365 days to the date
-    const dueDate = new Date(dateCreated);
-    dueDate.setDate(dateCreated.getDate() + 365);
-
-    // Format the due date as desired
-    return dueDate.toDateString();
-  };
-
-  useEffect(() => {
-    const dueDate = new Date(generateDueDate());
-    const currentDate = new Date();
-    const differenceInTime = dueDate.getTime() - currentDate.getTime();
-    const differenceInDays = Math.ceil(differenceInTime / (1000 * 3600 * 24));
-    setDaysUntilDue(differenceInDays);
-  }, [
-    customTableData.demandInvoiceData[
-      customTableData.demandInvoiceData.length - 1
-    ].dateCreated,
-  ]);
-
-  const grandTotal = formatNumberWithCommas(
-    customTableData.annualValue +
-    customTableData.ratePayable +
-    customTableData.demandInvoiceData[
-      customTableData.demandInvoiceData.length - 1
-    ].arrears -
-    customTableData.demandInvoiceData[
-      customTableData.demandInvoiceData.length - 1
-    ].penalty
-  );
-
+  const [demandInvoiceDocument, setDemandInvoiceDocument] =
+    useState<boolean>(false);
+  console.log("DATA", customTableData);
   return (
     <>
       <div
-        className={`flex-col relative bg-white rounded overflow-y-auto overscroll-contain scrollbar-thin scrollbar-thumb-color-text-two scrollbar-track-white ${propertyModalTransition
-          ? "w-6/12 transition-all ease-in-out duration-500"
-          : "w-32"
-          }`}
+        className={`flex-col relative bg-white rounded overflow-y-auto overscroll-contain scrollbar-thin scrollbar-thumb-color-text-two scrollbar-track-white ${
+          propertyModalTransition
+            ? "w-6/12 transition-all ease-in-out duration-500"
+            : "w-32"
+        }`}
         style={{ height: "95vh" }}
       >
         <img
@@ -119,33 +73,45 @@ const ViewPropertyModal: React.FC<ViewPropertyModalProps> = ({
             <div className="flex items-center gap-2">
               <h3 className="text-base font-bold text-color-text-two">PIN</h3>
               <p className="font-bold text-color-text-one">
-                {customTableData.personalIdentificationNumber}
+                {customTableData?.pid || customTableData?.property.pid}
               </p>
               <span
                 className={`rounded-lg px-1 font-light font-lexend text-color-text-black text-[10px] border-0.6 border-custom-grey-100
-                ${customTableData.propertyUse === "Commercial"
+                ${
+                  customTableData?.prop_use ||
+                  customTableData?.property?.prop_use === "Commercial"
                     ? "bg-color-light-red"
-                    : customTableData.propertyUse === "Residential"
-                      ? "bg-color-light-yellow"
-                      : "bg-custom-blue-200"
-                  }
+                    : customTableData?.prop_use ||
+                      customTableData?.property?.prop_use === "Residential"
+                    ? "bg-color-light-yellow"
+                    : "bg-custom-blue-200"
+                }
                 `}
               >
-                {customTableData.propertyUse.toUpperCase()}
+                {customTableData?.prop_use ||
+                  customTableData?.property?.prop_use}
               </span>
               <span
                 className={`rounded-md px-2 py-0.5 font-light text-[10px] text-white font-lexend
-                ${customTableData.paymentStatus === "Ungenerated"
+                ${
+                  customTableData?.demand_notice_status ||
+                  customTableData?.property?.demand_notice_status ===
+                    "Ungenerated"
                     ? "bg-primary-color"
-                    : customTableData.paymentStatus === "Unpaid"
-                      ? "bg-color-bright-orange"
-                      : customTableData.paymentStatus === "Expired"
-                        ? "bg-color-bright-red"
-                        : "bg-color-bright-green"
-                  }
+                    : customTableData?.demand_notice_status ||
+                      customTableData?.property?.demand_notice_status ===
+                        "Unpaid"
+                    ? "bg-color-bright-orange"
+                    : customTableData?.demand_notice_status ||
+                      customTableData?.property?.demand_notice_status ===
+                        "Expired"
+                    ? "bg-color-bright-red"
+                    : "bg-color-bright-green"
+                }
                 `}
               >
-                {customTableData.paymentStatus}
+                {customTableData?.demand_notice_status ||
+                  customTableData?.property?.demand_notice_status}
               </span>
             </div>
             <div className="flex items-center gap-2">
@@ -171,10 +137,11 @@ const ViewPropertyModal: React.FC<ViewPropertyModalProps> = ({
                 (item, index) => (
                   <button
                     key={index}
-                    className={`flex gap-2 text-xs text-color-text-two font-lexend px-2 py-1 ${activateState === index
-                      ? "text-white font-medium bg-primary-color rounded"
-                      : ""
-                      }`}
+                    className={`flex gap-2 text-xs text-color-text-two font-lexend px-2 py-1 ${
+                      activateState === index
+                        ? "text-white font-medium bg-primary-color rounded"
+                        : ""
+                    }`}
                     type="button"
                     onClick={() => {
                       setActiveState(index);
@@ -182,11 +149,17 @@ const ViewPropertyModal: React.FC<ViewPropertyModalProps> = ({
                   >
                     {item}
                     {item === "Invoices" ? (
-                      customTableData.paymentStatus !== "Ungenerated" ? (
+                      customTableData?.demand_notice_status ||
+                      customTableData?.property?.demand_notice_status ===
+                        "Ungenerated" ? (
                         <span className="px-1.5 text-xs border rounded text-color-text-three font-lexend bg-custom-blue-200 border-custom-color-two">
-                          {/* {customTableData.demandInvoiceData.length} */}1
+                          0
                         </span>
-                      ) : null
+                      ) : (
+                        <span className="px-1.5 text-xs border rounded text-color-text-three font-lexend bg-custom-blue-200 border-custom-color-two">
+                          1
+                        </span>
+                      )
                     ) : null}
                   </button>
                 )
@@ -204,23 +177,32 @@ const ViewPropertyModal: React.FC<ViewPropertyModalProps> = ({
                   {[
                     {
                       name: "Property Identification Number",
-                      value: customTableData.personalIdentificationNumber,
+                      value:
+                        customTableData?.pid || customTableData?.property?.pid,
                     },
                     {
                       name: "Asset Number",
-                      value: customTableData.assetNumber,
+                      value:
+                        customTableData?.asset_no ||
+                        customTableData?.property?.asset_no,
                     },
                     {
                       name: "Cadastral Zone",
-                      value: customTableData.cadestralZone,
+                      value:
+                        customTableData?.cadastral_zone ||
+                        customTableData?.property?.cadastral_zone,
                     },
                     {
                       name: "Property Address",
-                      value: customTableData.propertyAddress,
+                      value:
+                        customTableData?.prop_addr ||
+                        customTableData?.property?.prop_addr,
                     },
                     {
                       name: "Rating District",
-                      value: customTableData.cadestralZone.toUpperCase(),
+                      value:
+                        customTableData?.cadastral_zone ||
+                        customTableData?.property?.cadastral_zone,
                     },
                   ].map((item) => (
                     <div className="flex items-center justify-between font-lexend">
@@ -241,19 +223,37 @@ const ViewPropertyModal: React.FC<ViewPropertyModalProps> = ({
                     PROPERTIES
                   </div>
                   {[
-                    { name: "Category", value: customTableData.propertyUse },
-                    { name: "Group", value: customTableData.group },
+                    {
+                      name: "Category",
+                      value:
+                        customTableData?.category ||
+                        customTableData?.property?.category,
+                    },
+                    {
+                      name: "Group",
+                      value:
+                        customTableData?.group ||
+                        customTableData?.property?.group,
+                    },
                     {
                       name: "Property Type",
-                      value: customTableData.propertyType,
+                      value:
+                        customTableData?.prop_type ||
+                        customTableData?.property?.prop_type,
                     },
                     {
                       name: "Property Use",
-                      value: customTableData.propertyUse,
+                      value:
+                        customTableData?.prop_use ||
+                        customTableData?.property?.prop_use,
                     },
                     {
                       name: "Occupation Status",
-                      value: customTableData.occupationStatus.toUpperCase(),
+                      value:
+                        customTableData?.occupant ||
+                        customTableData?.property?.occupant
+                          ? "OCCUPIED"
+                          : "ONUCCUPIED",
                     },
                   ].map((item, index) => (
                     <div className="flex items-center justify-between font-lexend">
@@ -264,27 +264,30 @@ const ViewPropertyModal: React.FC<ViewPropertyModalProps> = ({
                         <span
                           className={`flex items-center justify-center 
                     
-                        ${index === 4 &&
-                              customTableData.occupationStatus === "Unoccupied"
-                              ? "text-color-bright-red"
-                              : index === 4 &&
-                                customTableData.occupationStatus === "Occupied"
-                                ? "text-color-bright-green"
-                                : "text-color-text-black"
-                            }
-                        ${index === 3 &&
-                              customTableData.propertyUse === "Commercial"
-                              ? "bg-color-light-red rounded-lg px-1 font-light font-lexend text-color-text-black text-[10px] border-[0.4px] border-divider-grey"
-                              : index === 3 &&
-                                customTableData.propertyUse === "Residential"
-                                ? "bg-color-light-yellow rounded-lg px-1 font-light font-lexend text-color-text-black text-[10px] border-[0.4px] border-divider-grey"
-                                : index === 3
-                                  ? "bg-custom-blue-200 rounded-lg px-1 font-light font-lexend text-color-text-black text-[10px] border-[0.4px] border-divider-grey"
-                                  : ""
-                            }
+                        ${
+                          (index === 4 && customTableData?.occupant) ||
+                          customTableData?.property?.occupant === "Unoccupied"
+                            ? "text-color-bright-red"
+                            : (index === 4 && customTableData?.occupant) ||
+                              customTableData?.property?.occupant === "Occupied"
+                            ? "text-color-bright-green"
+                            : "text-color-text-black"
+                        }
+                        ${
+                          (index === 3 && customTableData?.prop_use) ||
+                          customTableData?.property?.prop_use === "Commercial"
+                            ? "bg-color-light-red rounded-lg px-1 font-light font-lexend text-color-text-black text-[10px] border-[0.4px] border-divider-grey"
+                            : (index === 3 && customTableData?.prop_use) ||
+                              customTableData?.property?.prop_use ===
+                                "Residential"
+                            ? "bg-color-light-yellow rounded-lg px-1 font-light font-lexend text-color-text-black text-[10px] border-[0.4px] border-divider-grey"
+                            : index === 3
+                            ? "bg-custom-blue-200 rounded-lg px-1 font-light font-lexend text-color-text-black text-[10px] border-[0.4px] border-divider-grey"
+                            : ""
+                        }
                       `}
                         >
-                          {index === 3 ? item.value.toUpperCase() : item.value}
+                          {index === 3 ? item.value : item.value}
                         </span>
                       </p>
                     </div>
@@ -301,32 +304,40 @@ const ViewPropertyModal: React.FC<ViewPropertyModalProps> = ({
                     {
                       name: "Annual Value",
                       value: formatNumberWithCommas(
-                        customTableData.annualValue
+                        customTableData?.annual_value ||
+                          customTableData?.property?.annual_value
                       ),
                     },
                     {
                       name: "Rate Payable",
                       value: formatNumberWithCommas(
-                        customTableData.ratePayable
+                        customTableData?.rate_payable ||
+                          customTableData?.property?.rate_payable
                       ),
                     },
                     {
                       name: "Arrears",
                       value: formatNumberWithCommas(
-                        customTableData.demandInvoiceData[
-                          customTableData.demandInvoiceData.length - 1
-                        ].arrears
+                        customTableData?.arrears ||
+                          customTableData?.arears_amount ||
+                          0
                       ),
                     },
                     {
                       name: "Penalty",
                       value: formatNumberWithCommas(
-                        customTableData.demandInvoiceData[
-                          customTableData.demandInvoiceData.length - 1
-                        ].penalty
+                        customTableData?.penalty ||
+                          customTableData?.arears_amount ||
+                          0
                       ),
                     },
-                    { name: "Grand Total", value: grandTotal },
+                    {
+                      name: "Grand Total",
+                      value: formatNumberWithCommas(
+                        customTableData?.grand_total ||
+                          customTableData?.property?.grand_total
+                      ),
+                    },
                   ].map((item, index) => (
                     <div
                       key={index}
@@ -336,10 +347,11 @@ const ViewPropertyModal: React.FC<ViewPropertyModalProps> = ({
                         {item.name}
                       </p>
                       <p
-                        className={`flex w-[50%] justify-end text-xs font-medium ${index === 3
-                          ? "text-color-bright-red"
-                          : "text-color-text-black"
-                          }`}
+                        className={`flex w-[50%] justify-end text-xs font-medium ${
+                          index === 3
+                            ? "text-color-bright-red"
+                            : "text-color-text-black"
+                        }`}
                       >
                         {index === 3 ? `(${item.value})` : item.value}
                       </p>
@@ -349,9 +361,7 @@ const ViewPropertyModal: React.FC<ViewPropertyModalProps> = ({
               </>
             ) : null}
 
-            {activateState === 1 &&
-              customTableData.occupationStatus === "Occupied" &&
-              customTableData.paymentStatus !== "Ungenerated" ? (
+            {activateState === 1 && (
               <div className="flex-col p-2 space-y-2 border-0.6 rounded border-color-text-two">
                 <div className="flex items-center gap-1.5 text-xs text-color-text-two font-lexend">
                   <span className="text-lg">
@@ -361,40 +371,39 @@ const ViewPropertyModal: React.FC<ViewPropertyModalProps> = ({
                 </div>
                 {[
                   {
-                    name: "First Name",
+                    name: "Occupant",
                     value:
-                      customTableData.occupantInfo[
-                        customTableData.occupantInfo.length - 1
-                      ].firstName,
+                      customTableData?.occupant ||
+                      customTableData?.property?.occupant,
                   },
-                  {
-                    name: "LastName",
-                    value:
-                      customTableData.occupantInfo[
-                        customTableData.occupantInfo.length - 1
-                      ].lastName,
-                  },
-                  {
-                    name: "Phone Number",
-                    value:
-                      customTableData.occupantInfo[
-                        customTableData.occupantInfo.length - 1
-                      ].phoneNumber,
-                  },
-                  {
-                    name: "Email",
-                    value:
-                      customTableData.occupantInfo[
-                        customTableData.occupantInfo.length - 1
-                      ].email,
-                  },
-                  {
-                    name: "Marital Status",
-                    value:
-                      customTableData.occupantInfo[
-                        customTableData.occupantInfo.length - 1
-                      ].maritalStatus,
-                  },
+                  // {
+                  //   name: "LastName",
+                  //   value:
+                  //     customTableData?.occupantInfo[
+                  //       customTableData?.occupantInfo?.length - 1
+                  //     ].lastName,
+                  // },
+                  // {
+                  //   name: "Phone Number",
+                  //   value:
+                  //     customTableData?.occupantInfo[
+                  //       customTableData?.occupantInfo?.length - 1
+                  //     ].phoneNumber,
+                  // },
+                  // {
+                  //   name: "Email",
+                  //   value:
+                  //     customTableData?.occupantInfo[
+                  //       customTableData?.occupantInfo?.length - 1
+                  //     ].email,
+                  // },
+                  // {
+                  //   name: "Marital Status",
+                  //   value:
+                  //     customTableData?.occupantInfo[
+                  //       customTableData?.occupantInfo?.length - 1
+                  //     ].maritalStatus,
+                  // },
                 ].map((item) => (
                   <div className="flex items-center justify-between font-lexend">
                     <p className="px-1 py-0.5 text-darkerblueberry rounded bg-custom-blue-100 text-xs">
@@ -406,10 +415,11 @@ const ViewPropertyModal: React.FC<ViewPropertyModalProps> = ({
                   </div>
                 ))}
               </div>
-            ) : null}
+            )}
 
             {activateState === 1 &&
-              customTableData.occupationStatus === "Unoccupied" ? (
+            (customTableData?.occupant ||
+              customTableData?.property?.occupant) === "" ? (
               <p className="text-sm text-color-text-black font-lexend">
                 There are no current occupants on the property.
               </p>
@@ -419,75 +429,98 @@ const ViewPropertyModal: React.FC<ViewPropertyModalProps> = ({
                 <div className="flex items-center gap-1.5 text-color-dark-red">
                   <BsCalendar2EventFill />
                   <p className="text-xs">
-                    {customTableData.paymentStatus === "Ungenerated"
+                    {customTableData?.demand_notice_status ||
+                    customTableData?.property?.demand_notice_status ===
+                      "Ungenerated"
                       ? "No Invoice has been generated on this property"
-                      : customTableData.paymentStatus === "Expired"
-                        ? "DEMAND INVOICE HAS EXPIRED"
-                        : customTableData.paymentStatus === "Paid"
-                          ? "DEMAND INOICE HAS BEEN PAID"
-                          : "DAYS TO NEXT INVOICE"}
+                      : customTableData?.demand_notice_status ||
+                        customTableData?.property?.demand_notice_status ===
+                          "Expired"
+                      ? "DEMAND INVOICE HAS EXPIRED"
+                      : customTableData?.demand_notice_status ||
+                        customTableData?.property?.demand_notice_status ===
+                          "Paid"
+                      ? "DEMAND INOICE HAS BEEN PAID"
+                      : "DAYS TO NEXT INVOICE"}
                   </p>
                 </div>
-                {customTableData.paymentStatus === "Unpaid" ? (
+                {customTableData?.demand_notice_status ||
+                customTableData?.property?.demand_notice_status === "Unpaid" ? (
                   <span className="px-2 py-0.5 rounded text-xs bg-color-light-red text-darkerblueberry">
-                    {daysUntilDue}
+                    {365}
                   </span>
                 ) : null}
               </div>
             ) : null}
 
             {activateState === 2 &&
-              customTableData.paymentStatus === "Ungenerated" ? (
+            (customTableData?.demand_notice_status ||
+              customTableData?.property?.demand_notice_status) ===
+              "Ungenerated" ? (
               <p className="text-sm text-color-text-black font-lexend">
                 No Invoice has been generated on this property.
               </p>
             ) : null}
 
             {activateState === 2 &&
-              customTableData.paymentStatus !== "Ungenerated" ? (
+            (customTableData?.demand_notice_status ||
+              customTableData?.property?.demand_notice_status) !==
+              "Ungenerated" ? (
               <div className="flex items-center justify-between gap-3 text-xs group">
                 <span className="flex flex-wrap items-center justify-center w-20 h-8 px-2 py-1 text-xs font-medium rounded text-color-text-three bg-custom-blue-400">
-                  {customTableData.personalIdentificationNumber}
+                  {customTableData?.pid || customTableData?.property?.pid}
                 </span>
                 <span className="flex flex-wrap items-center text-[10px] font-lexend text-color-text-black">
-                  {customTableData.propertyAddress}
+                  {customTableData?.prop_addr ||
+                    customTableData?.property?.prop_addr}
                 </span>
                 <span className="flex flex-wrap items-center text-color-text-black font-lexend text-[10px]">
-                  {
-                    customTableData.demandInvoiceData[
-                      customTableData.demandInvoiceData.length - 1
-                    ].dateCreated
-                  }
+                  {`24/5/2024`}
                 </span>
                 <span
                   className={`flex-wrap hidden items-center px-1 py-0.5 justify-center rounded-xl font-light font-lexend text-color-text-black text-[10px] border-0.6 border-custom-grey-100 group-hover:flex
-                  ${customTableData.propertyUse === "Commercial"
+                  ${
+                    customTableData?.prop_use ||
+                    customTableData?.property?.prop_use === "Commercial"
                       ? "bg-color-light-red"
-                      : customTableData.propertyUse === "Residential"
-                        ? "bg-color-light-yellow"
-                        : "bg-custom-blue-200"
-                    }
+                      : customTableData?.prop_use ||
+                        customTableData?.property?.prop_use === "Residential"
+                      ? "bg-color-light-yellow"
+                      : "bg-custom-blue-200"
+                  }
                `}
                 >
-                  {customTableData.propertyUse.toUpperCase()}
+                  {customTableData?.prop_use ||
+                    customTableData?.property?.prop_use}
                 </span>
                 <span className="flex flex-wrap items-center justify-center text-sm text-color-text-black font-chonburi">
-                  {formatNumberWithCommas(customTableData.ratePayable)}
+                  {formatNumberWithCommas(
+                    customTableData?.rate_payable ||
+                      customTableData?.property?.rate_payable
+                  )}
                 </span>
                 <div className="flex items-center justify-center">
                   <span
                     className={`flex flex-wrap items-center justify-center px-1 p-0.5 font-light text-white rounded font-lexend text-[10px]
-                 ${customTableData.paymentStatus === "Ungenerated"
-                        ? "bg-primary-color"
-                        : customTableData.paymentStatus === "Unpaid"
-                          ? "bg-color-bright-orange"
-                          : customTableData.paymentStatus === "Expired"
-                            ? "bg-color-bright-red"
-                            : "bg-color-bright-green"
-                      }
+                 ${
+                   customTableData?.demand_notice_status ||
+                   customTableData?.property?.demand_notice_status ===
+                     "Ungenerated"
+                     ? "bg-primary-color"
+                     : customTableData?.demand_notice_status ||
+                       customTableData?.property?.demand_notice_status ===
+                         "Unpaid"
+                     ? "bg-color-bright-orange"
+                     : customTableData?.demand_notice_status ||
+                       customTableData?.property?.demand_notice_status ===
+                         "Expired"
+                     ? "bg-color-bright-red"
+                     : "bg-color-bright-green"
+                 }
                  `}
                   >
-                    {customTableData.paymentStatus}
+                    {customTableData?.demand_notice_status ||
+                      customTableData?.property?.demand_notice_status}
                   </span>
                 </div>
                 <span className="flex flex-wrap items-center gap-1">
@@ -515,7 +548,9 @@ const ViewPropertyModal: React.FC<ViewPropertyModalProps> = ({
                         >
                           View Property
                         </p>
-                        {customTableData.paymentStatus === "Expired" ? (
+                        {customTableData?.demand_notice_status ||
+                        customTableData?.property?.demand_notice_status ===
+                          "Expired" ? (
                           <p
                             className="hover:cursor-pointer"
                             title="Generate Reminder"
@@ -523,7 +558,9 @@ const ViewPropertyModal: React.FC<ViewPropertyModalProps> = ({
                           >
                             Generate Reminder
                           </p>
-                        ) : customTableData.paymentStatus === "Unpaid" ? (
+                        ) : customTableData?.demand_notice_status ||
+                          customTableData?.property?.demand_notice_status ===
+                            "Unpaid" ? (
                           <p
                             className="hover:cursor-pointer"
                             title="View Reminder"
@@ -561,6 +598,6 @@ const ViewPropertyModal: React.FC<ViewPropertyModalProps> = ({
       ) : null}
     </>
   );
-}
+};
 
 export default ViewPropertyModal;

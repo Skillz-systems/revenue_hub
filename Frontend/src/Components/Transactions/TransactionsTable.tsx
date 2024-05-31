@@ -9,6 +9,7 @@ import {
   DemandPropertyModal,
   ViewTransactionModal,
 } from "../Index";
+import { TransactionInformationType } from "../Index";
 import {
   formatNumberWithCommas,
   filterRecordsByKeyAndValue,
@@ -53,7 +54,7 @@ const TransactionsTable = ({
   };
 
   const currentProperties = (data: any[]) => {
-    return data.slice(offset, offset + propertiesPerPage);
+    return data?.slice(offset, offset + propertiesPerPage);
   };
 
   const paginationStyles = {

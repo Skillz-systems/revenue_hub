@@ -9,10 +9,31 @@ import {
   DemandPropertyModal,
   AddNewStaffModal,
   ViewStaffModal,
+  userData,
+  CustomAlert,
 } from "../Index";
-import { filterRecordsByKeyAndValue, ScrollToTop } from "../../Utils/client";
+import { filterStaffRecordsByRoleName, ScrollToTop } from "../../Utils/client";
 
-export default function StaffTable({ staticInformation, staffInformation }) {
+interface StaffRecord {
+  id: number;
+  name: string;
+  email: string;
+  phone: string;
+  zone: string;
+  role: {
+    id: number;
+    name: string;
+  };
+  created_at: string;
+  updated_at: string;
+}
+
+export default function StaffTable({
+  staticInformation,
+  staffInformation,
+  staffSnackbar,
+  handleStaffSnackbarClose,
+}) {
   const [displaySearchIcon, setDisplaySearchIcon] = useState(true);
   const [activeMenu, setActiveMenu] = useState(1);
   const [query, setQuery] = useState("");
@@ -21,6 +42,7 @@ export default function StaffTable({ staticInformation, staffInformation }) {
   const [newStaffModal, setNewStaffModal] = useState(false);
   const [viewStaffModal, setViewStaffModal] = useState<any>(null);
   const [propertyModalTransition, setPropertyModalTransition] = useState(false);
+  const { deleteStaffById } = userData();
 
   // PAGINATION LOGIC
   const [currentPage, setCurrentPage] = useState(0);
@@ -34,14 +56,19 @@ export default function StaffTable({ staticInformation, staffInformation }) {
     ScrollToTop("top-container");
   };
 
-  const handlePropertiesPerPageChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+  const handlePropertiesPerPageChange = (
+    e: React.ChangeEvent<HTMLSelectElement>
+  ) => {
     setPropertiesPerPage(parseInt(e.target.value));
     setCurrentPage(0);
     ScrollToTop("top-container");
   };
 
-  const currentProperties = (data: any[]) => {
-    return data.slice(offset, offset + propertiesPerPage);
+  const currentProperties = (data: StaffRecord[] | null | undefined) => {
+    if (!data) {
+      return [];
+    }
+    return data?.slice(offset, offset + propertiesPerPage);
   };
 
   const paginationStyles = {
@@ -80,36 +107,28 @@ export default function StaffTable({ staticInformation, staffInformation }) {
     activeMenu === 1
       ? currentProperties(staffInformation)
       : activeMenu === 2
-        ? currentProperties(
-          filterRecordsByKeyAndValue(
-            staffInformation,
-            "designation",
-            "Manager"
-          )
+      ? currentProperties(
+          filterStaffRecordsByRoleName(staffInformation, "Manager" || "MD")
         )
-        : activeMenu === 3
-          ? currentProperties(
-            filterRecordsByKeyAndValue(
-              staffInformation,
-              "designation",
-              "Officer"
-            )
-          )
-          : [];
+      : activeMenu === 3
+      ? currentProperties(
+          filterStaffRecordsByRoleName(staffInformation, "Officer")
+        )
+      : [];
 
   const filteredResults = query
-    ? staffInformation.filter((record: any) =>
-      Object.values(record).some((value) => {
-        if (typeof value === "string") {
-          // For string values, perform case-insensitive comparison
-          return value.toLowerCase().includes(query.toLowerCase());
-        } else if (typeof value === "number" || Number.isInteger(value)) {
-          // For numeric values, stringify and compare
-          return String(value).toLowerCase().includes(query.toLowerCase());
-        }
-        return false; // Ignore other data types
-      })
-    )
+    ? staffInformation?.filter((record: any) =>
+        Object.values(record).some((value) => {
+          if (typeof value === "string") {
+            // For string values, perform case-insensitive comparison
+            return value.toLowerCase().includes(query.toLowerCase());
+          } else if (typeof value === "number" || Number.isInteger(value)) {
+            // For numeric values, stringify and compare
+            return String(value).toLowerCase().includes(query.toLowerCase());
+          }
+          return false; // Ignore other data types
+        })
+      )
     : [];
 
   const pageCount = Math.ceil(LengthByActiveMenu() / propertiesPerPage);
@@ -117,44 +136,45 @@ export default function StaffTable({ staticInformation, staffInformation }) {
   const recordField = (staffInformation: any) => {
     return (
       <div
-        key={staffInformation.id}
+        key={staffInformation?.id}
         className="flex items-center justify-between gap-1 text-xs"
       >
         <span className="flex flex-wrap items-center justify-center h-10 px-2 py-1 text-sm font-medium rounded w-[12%] text-color-text-three bg-custom-blue-400">
-          {staffInformation.staffId}
+          {staffInformation?.id}
         </span>
         <span className="flex flex-wrap items-center w-40 text-sm font-bold rounded font-lexend text-color-text-black">
-          {staffInformation.fullName}
+          {staffInformation?.name}
         </span>
         <span className="flex flex-wrap items-center w-2/12 text-xs font-lexend text-color-text-black">
-          {staffInformation.email}
+          {staffInformation?.email}
         </span>
         <span className="flex flex-wrap items-center justify-center w-2/12 text-xs font-lexend text-color-text-black">
-          {staffInformation.phoneNumber}
+          {staffInformation?.phone}
         </span>
         <span
           className={`flex flex-wrap text-center items-center px-2 py-1 justify-center rounded-xl w-1/12 font-light font-lexend text-color-text-black text-[10px] border-0.6 border-custom-grey-100
-            ${staffInformation.designation === "Manager"
-              ? "bg-color-light-red"
-              : staffInformation.designation === "Officer"
+            ${
+              staffInformation?.role?.id === 1
+                ? "bg-color-light-red"
+                : staffInformation?.role?.id === 4
                 ? "bg-color-light-yellow"
-                : staffInformation.designation === "Admin"
-                  ? "bg-color-bright-green text-white"
-                  : "bg-primary-color text-white"
+                : staffInformation?.role?.id === 2
+                ? "bg-color-bright-green text-white"
+                : "bg-primary-color text-white"
             }`}
         >
-          {staffInformation.designation.toUpperCase()}
+          {staffInformation?.role?.name.toUpperCase()}
         </span>
         <span className="flex flex-wrap items-center justify-center w-1/12 gap-1">
           <span className="border-0.6 relative border-custom-grey-100 text-custom-grey-300 px-2 py-2.5 rounded text-base hover:cursor-pointer">
             <span
               title="Edit Staffs Details"
               className="hover:cursor-pointer"
-              onClick={() => handleEditModal(staffInformation.id)}
+              onClick={() => handleEditModal(staffInformation?.id)}
             >
               <HiOutlineDotsHorizontal />
             </span>
-            {editModal === staffInformation.id && (
+            {editModal === staffInformation?.id && (
               <span className="absolute space-y-2 top-0 z-10 flex-col w-36 p-4 text-xs bg-white rounded shadow-md -left-44 border-0.6 border-custom-grey-100 text-color-text-black font-lexend">
                 <p
                   className="hover:cursor-pointer"
@@ -168,7 +188,11 @@ export default function StaffTable({ staticInformation, staffInformation }) {
                 >
                   View Staff Details
                 </p>
-                <p className="hover:cursor-pointer" title="Remove Staff">
+                <p
+                  className="hover:cursor-pointer"
+                  title="Remove Staff"
+                  onClick={() => deleteStaffById(staffInformation?.id)}
+                >
                   Remove Staff
                 </p>
               </span>
@@ -181,22 +205,14 @@ export default function StaffTable({ staticInformation, staffInformation }) {
 
   function LengthByActiveMenu() {
     return activeMenu === 1
-      ? filteredResults.length > 0
-        ? filteredResults.length
+      ? filteredResults?.length > 0
+        ? filteredResults?.length
         : filteredResults < 1 && query != ""
-          ? 0
-          : staffInformation.length
+        ? 0
+        : staffInformation.length
       : activeMenu === 2
-        ? filterRecordsByKeyAndValue(
-          staffInformation,
-          "designation",
-          "Manager"
-        ).length
-        : filterRecordsByKeyAndValue(
-          staffInformation,
-          "designation",
-          "Officer"
-        ).length;
+      ? filterStaffRecordsByRoleName(staffInformation, "MD").length
+      : filterStaffRecordsByRoleName(staffInformation, "Officer").length;
   }
 
   return (
@@ -207,14 +223,15 @@ export default function StaffTable({ staticInformation, staffInformation }) {
       >
         <div className="flex items-start justify-between ">
           <div className="flex items-center justify-between border-0.6 border-custom-grey-100 rounded p-1">
-            {staticInformation.staff.menu.map((menu) =>
+            {staticInformation?.staff?.menu.map((menu) =>
               displayColumn === false && query !== "" && menu.id > 1 ? null : (
                 <div
                   key={menu.id}
-                  className={`flex items-start justify-between gap-2 px-2 py-1 text-xs font-lexend hover:cursor-pointer ${activeMenu === menu.id
-                    ? "bg-primary-color rounded"
-                    : "bg-inherit"
-                    }`}
+                  className={`flex items-start justify-between gap-2 px-2 py-1 text-xs font-lexend hover:cursor-pointer ${
+                    activeMenu === menu.id
+                      ? "bg-primary-color rounded"
+                      : "bg-inherit"
+                  }`}
                   onClick={() => {
                     setActiveMenu(menu.id);
                     setCurrentPage(0);
@@ -222,29 +239,30 @@ export default function StaffTable({ staticInformation, staffInformation }) {
                   }}
                 >
                   <span
-                    className={`${activeMenu === menu.id
-                      ? "font-medium text-white"
-                      : "text-color-text-two"
-                      }`}
+                    className={`${
+                      activeMenu === menu.id
+                        ? "font-medium text-white"
+                        : "text-color-text-two"
+                    }`}
                   >
                     {menu.name}
                   </span>
                   <span className="px-1 border rounded text-color-text-three bg-custom-blue-200 border-custom-color-two">
                     {menu.id === 1
-                      ? filteredResults.length > 0
-                        ? filteredResults.length
-                        : filteredResults < 1 && query != ""
-                          ? 0
-                          : staffInformation.length
+                      ? filteredResults?.length > 0
+                        ? filteredResults?.length
+                        : filteredResults < 1 && query !== ""
+                        ? 0
+                        : staffInformation
+                        ? staffInformation?.length
+                        : 0
                       : menu.id === 2
-                        ? filterRecordsByKeyAndValue(
+                      ? filterStaffRecordsByRoleName(
                           staffInformation,
-                          "designation",
-                          "Manager"
+                          "Manager" || "MD"
                         ).length
-                        : filterRecordsByKeyAndValue(
+                      : filterStaffRecordsByRoleName(
                           staffInformation,
-                          "designation",
                           "Officer"
                         ).length}
                   </span>
@@ -255,8 +273,9 @@ export default function StaffTable({ staticInformation, staffInformation }) {
           <div className="flex items-center justify-between gap-4">
             <TableSearchInput
               parentBoxStyle="flex items-center justify-between p-2 bg-custom-grey-100 rounded-3xl border border-custom-color-one"
-              inputBoxStyle={` ${displaySearchIcon ? "w-10/12" : "w-full"
-                } text-xs outline-none bg-inherit font-lexend text-color-text-two`}
+              inputBoxStyle={` ${
+                displaySearchIcon ? "w-10/12" : "w-full"
+              } text-xs outline-none bg-inherit font-lexend text-color-text-two`}
               iconBoxStyle={"text-base text-primary-color hover:cursor-pointer"}
               placeholder={"Search records"}
               searchIcon={<FiSearch />}
@@ -303,12 +322,12 @@ export default function StaffTable({ staticInformation, staffInformation }) {
               <div
                 key={column.id}
                 className={`flex items-center gap-1 w-1/12 text-color-text-two text-[10px] font-lexend
-            ${column.id === 1 && "w-[12%]"}
-            ${column.id === 2 && "w-40"}
-            ${[3, 4].includes(column.id) && "w-2/12"}
-            ${column.id === 4 && "justify-center"}
-            ${[5, 6].includes(column.id) && "w-1/12 justify-center"}
-            `}
+                ${column.id === 1 && "w-[12%]"}
+                ${column.id === 2 && "w-40"}
+                ${[3, 4].includes(column.id) && "w-2/12"}
+                ${column.id === 4 && "justify-center"}
+                ${[5, 6].includes(column.id) && "w-1/12 justify-center"}
+                `}
               >
                 <GoDotFill />
                 <span className="flex items-center justify-center gap-1">
@@ -319,15 +338,15 @@ export default function StaffTable({ staticInformation, staffInformation }) {
           </div>
           <div className="flex-col space-y-4">
             {query === "" ? (
-              filteredRecords.length > 0 ? (
-                filteredRecords.map((record) => recordField(record))
+              filteredRecords?.length > 0 ? (
+                filteredRecords?.map((record) => recordField(record))
               ) : (
                 <p className="text-sm font-medium font-lexend text-color-text-black">
                   No results found.
                 </p>
               )
             ) : filteredResults.length > 0 ? (
-              filteredResults.map((record) => recordField(record))
+              filteredResults?.map((record) => recordField(record))
             ) : (
               <p className="text-sm font-medium font-lexend text-color-text-black">
                 No results found.
@@ -399,6 +418,12 @@ export default function StaffTable({ staticInformation, staffInformation }) {
           )}
         </DemandPropertyModal>
       ) : null}
+      <CustomAlert
+        isOpen={staffSnackbar?.open}
+        message={staffSnackbar?.message}
+        severity={staffSnackbar?.severity}
+        handleClose={handleStaffSnackbarClose}
+      />
     </div>
   );
 }

@@ -1,4 +1,4 @@
-import { staticInformation } from "../../Data/appData"
+import { staticInformation } from "../../Data/userData";
 
 interface InputOption {
   id: number;
@@ -57,8 +57,8 @@ const data: InputData[] = [
     inputType: "select",
     options: [
       { id: 1, name: "Manager" },
-      { id: 2, name: "Officer" },
-      { id: 3, name: "Admin" },
+      { id: 2, name: "Admin" },
+      { id: 3, name: "Officer" },
       { id: 4, name: "Enforcer" },
     ],
     required: true,

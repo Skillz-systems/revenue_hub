@@ -5,6 +5,7 @@ import { FaChevronDown } from "react-icons/fa";
 import { IoPersonCircle } from "react-icons/io5";
 import { GrPowerShutdown } from "react-icons/gr";
 import { GiHamburgerMenu } from "react-icons/gi";
+import Cookies from "js-cookie";
 
 interface TopNavigationProps {
   userName: string;
@@ -60,6 +61,11 @@ const TopNavigation: React.FC<TopNavigationProps> = ({
     return formattedDate;
   };
 
+  const handleLogout = () => {
+    Cookies.remove("userToken")
+    navigate("/login")
+  }
+
   return (
     <div
       className={`flex items-center justify-between p-4 border-b-0.6 border-custom-border rounded-t ${parentStyle}`}
@@ -71,7 +77,7 @@ const TopNavigation: React.FC<TopNavigationProps> = ({
         </p>
       </div>
       <div className="flex text-3xl lg:hidden">
-        <GiHamburgerMenu/>
+        <GiHamburgerMenu />
       </div>
       <div className="hidden w-auto gap-4 lg:flex">
         <div className="relative flex">
@@ -112,7 +118,7 @@ const TopNavigation: React.FC<TopNavigationProps> = ({
               <p
                 className="flex items-center justify-between hover:cursor-pointer"
                 title="Logout"
-                onClick={() => navigate("/login")}
+                onClick={handleLogout}
               >
                 Logout
                 <span className="text-base text-color-dark-red">

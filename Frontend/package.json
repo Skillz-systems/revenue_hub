@@ -11,8 +11,13 @@
     "test": "vitest"
   },
   "dependencies": {
+    "@emotion/react": "^11.11.4",
+    "@emotion/styled": "^11.11.5",
+    "@mui/material": "^5.15.19",
     "@types/node": "^20.12.12",
+    "axios": "^1.7.2",
     "html2canvas": "^1.4.1",
+    "js-cookie": "^3.0.5",
     "jspdf": "^2.5.1",
     "ngrok": "^5.0.0-beta.2",
     "react": "^18.2.0",
@@ -21,11 +26,14 @@
     "react-paginate": "^8.2.0",
     "react-qr-code": "^2.0.13",
     "react-router-dom": "^6.23.0",
+    "recharts": "^2.12.7",
+    "swr": "^2.2.5",
     "typescript": "^5.4.5"
   },
   "devDependencies": {
     "@testing-library/jest-dom": "^6.4.2",
     "@testing-library/react": "^15.0.5",
+    "@types/js-cookie": "^3.0.6",
     "@types/react": "^18.3.2",
     "@types/react-dom": "^18.3.0",
     "@vitejs/plugin-react-swc": "^3.5.0",
