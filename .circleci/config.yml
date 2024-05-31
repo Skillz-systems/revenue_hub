@@ -124,7 +124,18 @@ jobs:
       - run:
           name: ssh and effect migration  
           command: |
-             ssh -p 7822 -t skillz@185.160.67.60 "cd revenuehub/api && php artisan migrate && php artisan l5-swagger:generate"
+            sed -i -e 's:/public/index.php:/index.php:g' Backend/public/index.php
+            sed -i -e 's:/../vendor/autoload.php:/vendor/autoload.php:g' Backend/public/index.php
+            sed -i -e 's:DB_DATABASE=forge:DB_DATABASE=skillz_revenuehub:g' Backend/.env
+            sed -i -e 's:DB_USERNAME=forge:DB_USERNAME=skillz_revenuehub:g' Backend/.env
+            sed -i -e 's:/../bootstrap/app.php:/bootstrap/app.php:g' Backend/public/index.php
+            sed -i -e 's:DB_PASSWORD=forge:DB_PASSWORD="Ubuxa##99":g' Backend/.env
+            sed -i -e 's:BVN=forge:BVN=${BVN}:g' Backend/.env
+            sed -i -e 's:PUBLIC_KEY=forge:PUBLIC_KEY=$PUBLIC_KEY:g' Backend/.env
+            sed -i -e "s:SECRET_KEY=forge:SECRET_KEY=$SECRET_KEY:g" Backend/.env
+            sed -i -e "s:ENCRYPTION_KEY=forge:ENCRYPTION_KEY=${ENCRYPTION_KEY}:g" Backend/.env
+            sed -i -e "s:MAILERSEND_API_KEY=forge:MAILERSEND_API_KEY=${MAILERSEND_API_KEY}:g" Backend/.env
+
 workflows:
   version: 2
   revenue_hub_deploy:
