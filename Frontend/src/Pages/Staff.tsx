@@ -1,5 +1,5 @@
 import React from "react";
-import { StaffTable, userData } from "../Components/Index";
+import { LoadingSpinner, StaffTable, userData } from "../Components/Index";
 
 const Staff: React.FC = () => {
   const { staffInformation, staticInformation } = userData();
@@ -13,7 +13,7 @@ const Staff: React.FC = () => {
           staffInformation={staffInformation}
         />
       ) : (
-        <div>Loading...</div>
+        <LoadingSpinner title="Loading Staff List" />
       )}
     </div>
   );

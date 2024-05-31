@@ -5,6 +5,7 @@ import {
   DemandPropertyModal,
   ViewPropertyModal,
   userData,
+  LoadingSpinner,
 } from "../Components/Index";
 import { BsCaretDownFill } from "react-icons/bs";
 import { HiOutlineDotsHorizontal } from "react-icons/hi";
@@ -407,7 +408,7 @@ export default function Properties() {
           ) : null}
         </>
       ) : (
-        <div>Loading...</div>
+        <LoadingSpinner title="Loading Properties" />
       )}
     </div>
   );

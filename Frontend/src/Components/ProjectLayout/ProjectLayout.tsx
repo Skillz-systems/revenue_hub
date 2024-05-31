@@ -83,7 +83,7 @@ const ProjectLayout: React.FC = () => {
                 fill="currentFill"
               />
             </svg>
-            <span className="sr-only">Loading...</span>
+            {/* <span className="sr-only">Loading...</span> */}
           </div>
         </div>
       ) : (

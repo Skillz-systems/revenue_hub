@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { DemandInvoiceTable, userData } from "../Components/Index";
+import { DemandInvoiceTable, LoadingSpinner, userData } from "../Components/Index";
 import { useTokens } from "../Utils/client";
 import axios from "axios";
 
@@ -48,7 +48,7 @@ export const DemandNotice: React.FC = () => {
           demandNoticeInformation={demandNoticeInformation}
         />
       ) : (
-        <div>Loading...</div>
+        <LoadingSpinner title="Loading Demand Notices" />
       )}
     </div>
   );

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { TransactionsTable, userData } from "../Components/Index";
+import { LoadingSpinner, TransactionsTable, userData } from "../Components/Index";
 import { useTokens } from "../Utils/client";
 import axios from "axios";
 
@@ -48,7 +48,7 @@ const Transactions: React.FC = () => {
           transactionInformation={transactionInformation}
         />
       ) : (
-        <div>Loading...</div>
+        <LoadingSpinner title="Loading Transactions" />
       )}
     </div>
   );

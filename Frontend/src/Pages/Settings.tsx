@@ -1,5 +1,5 @@
 import React from "react";
-import { StaffTable, userData } from "../Components/Index";
+import { LoadingSpinner, StaffTable, userData } from "../Components/Index";
 
 export default function Settings() {
   const { staffInformation, staticInformation } = userData();
@@ -13,7 +13,7 @@ export default function Settings() {
           staffInformation={staffInformation}
         />
       ) : (
-        <div>Loading...</div>
+        <LoadingSpinner title="Loading Settings" />
       )}
     </div>
   );
