@@ -132,35 +132,38 @@ class PaymentTest extends TestCase
     {
         $data =
             [
-                "event" => "charge.completed",
-                "data" => [
-                    "id" => 407347576,
-                    "tx_ref" => "Links-221401982810",
-                    "flw_ref" => "000016210415121239000082517439",
-                    "device_fingerprint" => "7852b6c97d67edce50a5f1e540719e39",
-                    "amount" => 30020,
-                    "currency" => "NGN",
-                    "charged_amount" => 10,
-                    "app_fee" => 0.14,
-                    "merchant_fee" => 0,
-                    "processor_response" => "success",
-                    "auth_model" => "AUTH",
-                    "ip" => "72.140.222.142",
-                    "narration" => "payment for sample product",
-                    "status" => "successful",
-                    "payment_type" => "bank_transfer",
-                    "created_at" => "2021-04-15T11:13:10.000Z",
-                    "account_id" => 82913,
-                    "customer" => [
-                        "id" => 254967086,
-                        "fullname" => "Flutterwave Developers",
-                        "phone_number" => null,
-                        "email" => "developers@flutterwavego.com",
-                        "created_at" => "2021-04-14T16:39:17.000Z"
-                    ]
+                "id" => 1415777651,
+                "txRef" => "19398114_1717176169",
+                "flwRef" => "100006240531182421257424789154",
+                "orderRef" => "URF_1717176169673_30835",
+                "paymentPlan" => null,
+                "paymentPage" => null,
+                "createdAt" => "2024-05-31T17:24:39.000Z",
+                "amount" => 50,
+                "charged_amount" => 50,
+                "status" => "successful",
+                "IP" => "::ffff:172.16.30.14",
+                "currency" => "NGN",
+                "appfee" => 0.7,
+                "merchantfee" => 0,
+                "merchantbearsfee" => 1,
+                "customer" => [
+                    "id" => 889141038,
+                    "phone" => "08012345678",
+                    "fullName" => "Anonymous customer",
+                    "customertoken" => null,
+                    "email" => "19398114@revenuhub.ng",
+                    "createdAt" => "2024-05-31T07:34:26.000Z",
+                    "updatedAt" => "2024-05-31T07:34:26.000Z",
+                    "deletedAt" => null,
+                    "AccountId" => 22129,
                 ],
-                "event.type" => "BANK_TRANSFER_TRANSACTION"
-
+                "entity" => [
+                    "account_number" => "7070173013",
+                    "first_name" => "KINGSLEY CHIBUIKE",
+                    "last_name" => "ACHUMIE",
+                    "createdAt" => "2024-05-31T17:01:02.000Z",
+                ],
             ];
 
 
@@ -171,7 +174,7 @@ class PaymentTest extends TestCase
         DemandNoticeAccount::factory()->create([
             "demand_notice_id" => $demandNotice->id,
             "amount" => "30020",
-            "tx_ref" => "Links-221401982810",
+            "tx_ref" => "19398114_1717176169",
         ]);
         $response = $this->postJson("/api/payment/webhook", $data);
 
