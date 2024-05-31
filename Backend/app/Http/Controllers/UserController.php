@@ -117,39 +117,46 @@ class UserController extends Controller
      */
     public function store(StoreUserRequest $request)
     {
-        $validator = Validator::make($request->all(), [
-            'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string'],
-            'phone' => ['required', 'string', 'min:11'],
-            'role_id' => ['required', 'string'],
-            'zone' => ['required', 'string', 'max:255'],
-        ]);
+        if (Auth::user()->role_id == User::ROLE_ADMIN) {
+            $validator = Validator::make($request->all(), [
+                'name' => ['required', 'string', 'max:255'],
+                'email' => ['required', 'string'],
+                'phone' => ['required', 'string', 'min:11'],
+                'role_id' => ['required', 'string'],
+                'zone' => ['required', 'string', 'max:255'],
+            ]);
 
-        $rememberToken = ["remember_token" => Str::random(60)];
-        $request->merge($rememberToken);
+            $rememberToken = ["remember_token" => Str::random(60)];
+            $request->merge($rememberToken);
 
-        if ($validator->fails()) {
+            if ($validator->fails()) {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => "All fields are required ",
+                    "data" => $validator->errors()
+                ], 400);
+            }
+
+            $register = (new StaffService)->RegisterStaff($request);
+            if ($register) {
+
+                Mail::to($request->email)->send(new RegisterMail($register));
+
+                return (new StoreUserResource($register))->additional([
+                    "status" => "success",
+                    "message" => "Register Successfully",
+                ]);
+            }
             return response()->json([
-                'status' => 'error',
-                'message' => "All fields are required ",
-                "data" => $validator->errors()
+                "status" => "success",
+                "message" => "Register Successfully",
             ], 400);
         }
 
-        $register = (new StaffService)->RegisterStaff($request);
-        if ($register) {
-
-            Mail::to($request->email)->send(new RegisterMail($register));
-
-            return (new StoreUserResource($register))->additional([
-                "status" => "success",
-                "message" => "Register Successfully",
-            ]);
-        }
         return response()->json([
-            "status" => "success",
-            "message" => "Register Successfully",
-        ], 400);
+            "status" => "error",
+            "message" => "You dont Have Permission",
+        ], 401);
     }
 
     /**
@@ -196,7 +203,7 @@ class UserController extends Controller
     public function show($staff)
     {
 
-        if (Auth::user()->role_id == User::ROLE_ADMIN) {
+        if (Auth::user()->role_id == User::ROLE_ADMIN || Auth::user()->id == $staff) {
             $specificStaff = $this->staffService->viewStaff($staff);
             if ($specificStaff) {
                 return (new StoreUserResource($specificStaff))->additional([
