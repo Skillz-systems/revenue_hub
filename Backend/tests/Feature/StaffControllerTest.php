@@ -92,6 +92,7 @@ class StaffControllerTest extends TestCase
             'phone' => '12345678901',
             'role_id' => "1",
             'zone' => 'Zone 1',
+
         ];
 
         $response = $this->actingAsTestUser()->postJson('/api/staff', $data);
@@ -110,6 +111,7 @@ class StaffControllerTest extends TestCase
         // Assert that the user was registered
         $this->assertDatabaseHas('users', [
             'email' => $data['email'],
+
         ]);
     }
 
@@ -540,5 +542,63 @@ class StaffControllerTest extends TestCase
             'role_id' => 'new-role',
             'zone' => 'new-zone',
         ]);
+    }
+
+
+    /** @test */
+    public function it_returns_user_with_token_successfully()
+    {
+        // Arrange
+        $staff = User::factory()->create(['remember_token' => 'valid_token']);
+
+        // Act
+        $response = $this->postJson('/api/user-with-token/' . $staff->id, [
+            'token' => 'valid_token',
+        ]);
+
+        // Assert
+        $response->assertStatus(200)
+            ->assertJson([
+                'status' => 'success',
+            ]);
+    }
+
+    /** @test */
+    public function it_returns_no_staff_found_error()
+    {
+        // Arrange
+        $staff = User::factory()->create(['remember_token' => 'valid_token']);
+        // Act
+        $response = $this->postJson('/api/user-with-token/' . 33, [
+            'token' => 'valid_token',
+        ]);
+
+        // Assert
+        $response->assertStatus(404)
+            ->assertJson([
+                'status' => 'error',
+                'message' => 'No Staff Found',
+            ]);
+    }
+
+    /** @test */
+    public function user_can_update_their_own_profile_password()
+    {
+        $user = User::factory()->create(['role_id' => User::ROLE_ENFORCERS]);
+
+        $this->actingAs($user);
+
+        $response = $this->putJson("/api/staff/{$user->id}", [
+            'password' => '12345678901',
+        ]);
+
+
+        $response->assertStatus(200)
+            ->assertJson([
+                'status' => 'success',
+                'message' => 'Update Successfully',
+            ]);
+        $user->refresh();
+        $this->assertTrue(Hash::check('12345678901', $user->password));
     }
 }

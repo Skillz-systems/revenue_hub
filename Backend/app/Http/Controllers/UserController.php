@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use App\Mail\RegisterMail;
+use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use App\Service\StaffService;
 use Illuminate\Support\Facades\Auth;
@@ -11,6 +12,7 @@ use Illuminate\Support\Facades\Mail;
 use App\Http\Requests\StoreUserRequest;
 use App\Http\Resources\ShowUserResource;
 use App\Http\Resources\StoreUserResource;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 
 class UserController extends Controller
@@ -123,6 +125,8 @@ class UserController extends Controller
             'zone' => ['required', 'string', 'max:255'],
         ]);
 
+        $rememberToken = ["remember_token" => Str::random(60)];
+        $request->merge($rememberToken);
 
         if ($validator->fails()) {
             return response()->json([
@@ -134,7 +138,7 @@ class UserController extends Controller
 
         $register = (new StaffService)->RegisterStaff($request);
         if ($register) {
-            //send mail to the staff
+
             Mail::to($request->email)->send(new RegisterMail($register));
 
             return (new StoreUserResource($register))->additional([
@@ -210,6 +214,100 @@ class UserController extends Controller
             "status" => "error",
             "message" => "You dont Have Permission",
         ], 403);
+    }
+
+    /**
+     * @OA\Post(
+     *     path="/api/user-with-token/{staff}",
+     *     summary="Get User with Token",
+     *     description="Fetches a user by their remember token and staff ID",
+     *     operationId="getUserWithToken",
+     *     tags={"Staff"},
+     *     @OA\Parameter(
+     *         name="staff",
+     *         in="path",
+     *         required=true,
+     *         description="ID of the staff",
+     *         @OA\Schema(
+     *             type="integer"
+     *         )
+     *     ),
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(
+     *             @OA\Property(
+     *                 property="token",
+     *                 type="string",
+     *                 description="Remember token of the user",
+     *                 example="your_remember_token_here"
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Successful operation",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(
+     *                 property="status",
+     *                 type="string",
+     *                 example="success"
+     *             ),
+     *             @OA\Property(
+     *                 property="data",
+     *                 ref="#/components/schemas/StoreUserResource"
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="No Staff Found",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(
+     *                 property="status",
+     *                 type="string",
+     *                 example="error"
+     *             ),
+     *             @OA\Property(
+     *                 property="message",
+     *                 type="string",
+     *                 example="No Staff Found"
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=403,
+     *         description="You don't have permission",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(
+     *                 property="status",
+     *                 type="string",
+     *                 example="error"
+     *             ),
+     *             @OA\Property(
+     *                 property="message",
+     *                 type="string",
+     *                 example="You don't have permission"
+     *             )
+     *         )
+     *     )
+     * )
+     */
+    public function getUserWithToken(Request $request, $staff)
+    {
+        $user = User::where('remember_token', $request->token)->first();
+        if ($user && $user->id == $staff) {
+            return (new StoreUserResource($user))->additional([
+                "status" => "success",
+            ]);
+        }
+
+        return response()->json([
+            "status" => "error",
+            "message" => "No Staff Found",
+        ], 404);
     }
 
 
@@ -304,9 +402,98 @@ class UserController extends Controller
      *
      * )
      *
+     *    @OA\PUT(
+     *     path="/api/update-staff-details/{staff}",
+     *     tags={"Staff"},
+     *     summary="Update Staff Details",
+     *     description="This allow staff member to update their details",
+     *     operationId="updateStaffDetails",
+     *     security={{"api_key":{}}},
+     *     @OA\Parameter(
+     *         in="path",
+     *         name="staff",
+     *         required=true,
+     *         @OA\Schema(type="string")
+     *     ), 
+     *     @OA\RequestBody(
+     *         @OA\MediaType(
+     *             mediaType="application/json",
+     *             @OA\Schema(
+     *                 @OA\Property(
+     *                      type="object",
+     *                      @OA\Property(
+     *                          property="name",
+     *                          type="string"
+     *                      ),
+     *                      @OA\Property(
+     *                          property="email",
+     *                          type="string"
+     *                      ),
+     *                      @OA\Property(
+     *                          property="phone",
+     *                          type="string"
+     *                      ),
+     *                      @OA\Property(
+     *                          property="zone",
+     *                          type="string"
+     *                      ),
+     *                      @OA\Property(
+     *                          property="remember_token",
+     *                          type="string"
+     *                      ),
+     *                 ),
+     *                 example={
+     *                     "name":"example name",
+     *                     "email":"example email",
+     *                     "phone":"example phone",
+     *                     "zone":"example zone"
+     *                }
+     *             )
+     *         )
+     *      ),
+     *     @OA\Response(
+     *         response="200",
+     *         description="Update Successful",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="status", type="string", example="success"),
+     *             @OA\Property(property="message", type="string", example="Update Successfully"),
+     *             @OA\Property(property="user", type="object",
+     *                 @OA\Property(property="id", type="integer", example=9),
+     *                 @OA\Property(property="name", type="string", example="abc kel"),
+     *                 @OA\Property(property="email", type="string", example="abc@example2.com"),
+     *                 @OA\Property(property="phone", type="string", example="65728338352"),
+     *                 @OA\Property(property="zone", type="string", example="nigeria"),
+     *                 @OA\Property(property="role", type="object",
+     *                     @OA\Property(property="id", type="integer", example=2),
+     *                     @OA\Property(property="name", type="string", example="Admin"),
+     *                 ),
+     *             ),
+     *        ),
+     *     ),
+     *     @OA\Response(
+     *         response="400",
+     *         description="All Fields are Required",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="status", type="string", example="error"),
+     *             @OA\Property(property="message", type="string", example="All Fields are required"),
+     *             @OA\Property(property="data", type="object",
+     *                  @OA\Property(property="name", type="string", example="name is required"),
+     *                  @OA\Property(property="email", type="string", example="email is required"),
+     *                  @OA\Property(property="phone", type="string", example="phone is required"),
+     *                  @OA\Property(property="zone", type="string", example="zone is required"),
+     *             ),
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response="401",
+     *         description="Credential error",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="status", type="string", example="error"),
+     *             @OA\Property(property="message", type="string", example="Credential error: You are not authorize"),
+     *         )
+     *     ),
      *
-     *
-     *
+     * )
      */
 
     public function update(Request $request, $staff)
@@ -317,6 +504,7 @@ class UserController extends Controller
             'phone' => ['sometimes', 'string', 'min:11'],
             'role_id' => ['sometimes', 'string', 'max:255'],
             'zone' => ['sometimes', 'string', 'max:255'],
+            'password' => ['sometimes', 'string', 'max:255'],
             'remember_token' => ['sometimes', 'string', 'max:255'],
         ]);
         $getUserId = 0;
@@ -341,8 +529,14 @@ class UserController extends Controller
             $getUserId = User::where('remember_token', $request->remember_token)->first()->id;
         }
 
+        if (!empty($request->password)) {
+            $password = ["password" => Hash::make("$request->password")];
+            $request->merge($password);
+        }
+
         if (Auth::check()) {
             if (Auth::user()->role_id === User::ROLE_ADMIN || Auth::user()->id == $staff || $getUserId == $staff) {
+
                 $update = (new StaffService)->updateStaff($request, $staff);
                 if ($update) {
                     return response()->json([
