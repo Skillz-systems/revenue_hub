@@ -8,7 +8,6 @@ import Cookies from "js-cookie";
 
 function LoginPage(): JSX.Element {
   const [passwordDisplay, setPasswordDisplay] = useState(false);
-  const [isOnline, setIsOnline] = useState(navigator.onLine);
   const [isLoading, setIsLoading] = useState(false);
   const [errorState, setErrorState] = useState<string | null>(null);
   const [formData, setFormData] = useState({
@@ -55,11 +54,13 @@ function LoginPage(): JSX.Element {
       }
     } catch (error) {
       if (error.response.status === 400) {
-        setErrorState("Ensure that all required filed are properly filled. Your password is at least 8 characters.");
+        setErrorState(
+          "Ensure that all required filed are properly filled. Your password is at least 8 characters."
+        );
       } else if (error.response.status === 401) {
         setErrorState("Invalid email or password. Please try again.");
       } else {
-        setErrorState("Internal Server Error. Please report the issue")
+        setErrorState("Internal Server Error. Please report the issue");
       }
     }
     setIsLoading(false);

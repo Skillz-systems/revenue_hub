@@ -1,11 +1,10 @@
 import React, { useState, FormEvent, ChangeEvent, useEffect } from "react";
-import { useNavigate, useParams, } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import images from "../assets";
 import { InputComponent } from "../Components/Index";
 import axios from "axios";
 
 function ConfirmAccount(): JSX.Element {
-  const [isOnline, setIsOnline] = useState(navigator.onLine);
   const [isLoading, setIsLoading] = useState(false);
   const [errorState, setErrorState] = useState<string | null>(null);
   const [staff, setStaff] = useState<any>(null);
@@ -27,12 +26,18 @@ function ConfirmAccount(): JSX.Element {
       );
       if (response.status === 200) {
         setStaff(response.data);
-        console.log(response.data);
       } else {
-        console.log("Something went wrong:", response.data);
+        setErrorState(response.data.message);
       }
     } catch (error) {
-      console.error("Internal Server Error:", error);
+      if (error.response.status === 403) {
+        setErrorState("You don't have permission!");
+      }
+      if (error.response.status === 404) {
+        setErrorState("No Staff Found");
+      } else {
+        setErrorState("Internal Server Error. Please try again later.");
+      }
     }
   };
 
@@ -69,23 +74,17 @@ function ConfirmAccount(): JSX.Element {
       );
 
       if (response.status === 200 || 201) {
-        console.log(response.data);
         navigate(`/create-password/${userId}/${remember_token}`);
-      } else if (response.status === 400) {
-        console.log(response.data);
-        alert(response.data.message);
-      } else if (response.status === 401) {
-        console.log(response.data);
-        alert(response.data.message);
       } else {
-        console.log(response);
-        alert("Something went wrong!");
+        setErrorState(response.data.message);
       }
     } catch (error) {
-      if (error.response && error.response.status === 401) {
-        setErrorState("Invalid email or phone number. Please try again.");
+      if (error.response.status === 400) {
+        setErrorState("Bad request. All Fields are required!");
+      }
+      if (error.response.status === 401) {
+        setErrorState("Credential error: You are not authorized");
       } else {
-        console.error("Internal Server Error:", error);
         setErrorState("Internal Server Error. Please try again later.");
       }
     }

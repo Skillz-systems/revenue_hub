@@ -17,7 +17,7 @@ export { default as TableSearchInput } from "./DemandNotice/TableSearchInput";
 export { default as Transactions } from "../Pages/Transactions";
 export { default as TransactionsTable } from "./Transactions/TransactionsTable";
 export { default as ViewTransactionModal } from "./Transactions/ViewTransactionModal";
-export { default as Overview } from "../Pages/Overview";
+export { Overview, LoadingSpinner } from "../Pages/Overview";
 export { CardData } from "./Card/CardData";
 export { default as Staff } from "../Pages/Staff";
 export { default as StaffTable } from "./Staff/StaffTable";

@@ -7,7 +7,6 @@ import axios from "axios";
 
 function AccountPassword(): JSX.Element {
   const [passwordDisplay, setPasswordDisplay] = useState(false);
-  const [isOnline, setIsOnline] = useState(navigator.onLine);
   const [isLoading, setIsLoading] = useState(false);
   const [errorState, setErrorState] = useState<string | null>(null);
   const [formData, setFormData] = useState({
@@ -65,23 +64,14 @@ function AccountPassword(): JSX.Element {
       );
 
       if (response.status === 200 || 201) {
-        console.log(response.data);
         navigate("/login");
-      } else if (response.status === 400) {
-        console.log(response.data);
-        alert(response.data.message);
-      } else if (response.status === 401) {
-        console.log(response.data);
-        alert(response.data.message);
       } else {
-        console.log(response);
-        alert("Something went wrong!");
+        setErrorState(response.data.message);
       }
     } catch (error) {
-      if (error.response && error.response.status === 401) {
-        setErrorState("Invalid email or password. Please try again.");
+      if (error.response.status === 401) {
+        setErrorState("Invalid Password Token");
       } else {
-        console.error("Internal Server Error:", error);
         setErrorState("Internal Server Error. Please try again later.");
       }
     }
