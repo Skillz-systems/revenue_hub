@@ -9,8 +9,6 @@ import QRCode from "react-qr-code";
 import { formatNumberWithCommas } from "../../Utils/client";
 import html2canvas from "html2canvas";
 import jsPDF from "jspdf";
-import { DemandInvoiceDataType } from "../Index";
-import { PropertyData } from "../Properties/ViewPropertyModal";
 import { DemandNotice } from "../../Data/types";
 import "../../print.css";
 
@@ -28,7 +26,7 @@ const DemandInvoiceDocument = ({
   demandInvoiceInfo?: DemandNotice;
   hideDemandInvoiceModal: () => any;
 }) => {
-  const demandInvoiceData: DemandInvoiceDataType = {
+  const demandInvoiceData = {
     Occupant: `THE OCCUPIER/${
       customTableData?.pid || demandInvoiceInfo?.property.pid
     }`,

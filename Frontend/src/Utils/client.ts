@@ -75,7 +75,7 @@ export function filterStaffRecordsByRoleName(
   recordsArray: StaffRecord[],
   roleName: string
 ): StaffRecord[] {
-  return recordsArray.filter((record) => record.role.name === roleName);
+  return recordsArray.filter((record) => record?.role?.name === roleName);
 }
 
 export function ScrollToTop(id: string): void {

@@ -68,7 +68,7 @@ export default function StaffTable({
     if (!data) {
       return [];
     }
-    return data.slice(offset, offset + propertiesPerPage);
+    return data?.slice(offset, offset + propertiesPerPage);
   };
 
   const paginationStyles = {
@@ -117,7 +117,7 @@ export default function StaffTable({
       : [];
 
   const filteredResults = query
-    ? staffInformation.filter((record: any) =>
+    ? staffInformation?.filter((record: any) =>
         Object.values(record).some((value) => {
           if (typeof value === "string") {
             // For string values, perform case-insensitive comparison
@@ -136,45 +136,45 @@ export default function StaffTable({
   const recordField = (staffInformation: any) => {
     return (
       <div
-        key={staffInformation.id}
+        key={staffInformation?.id}
         className="flex items-center justify-between gap-1 text-xs"
       >
         <span className="flex flex-wrap items-center justify-center h-10 px-2 py-1 text-sm font-medium rounded w-[12%] text-color-text-three bg-custom-blue-400">
-          {staffInformation.id}
+          {staffInformation?.id}
         </span>
         <span className="flex flex-wrap items-center w-40 text-sm font-bold rounded font-lexend text-color-text-black">
-          {staffInformation.name}
+          {staffInformation?.name}
         </span>
         <span className="flex flex-wrap items-center w-2/12 text-xs font-lexend text-color-text-black">
-          {staffInformation.email}
+          {staffInformation?.email}
         </span>
         <span className="flex flex-wrap items-center justify-center w-2/12 text-xs font-lexend text-color-text-black">
-          {staffInformation.phone}
+          {staffInformation?.phone}
         </span>
         <span
           className={`flex flex-wrap text-center items-center px-2 py-1 justify-center rounded-xl w-1/12 font-light font-lexend text-color-text-black text-[10px] border-0.6 border-custom-grey-100
             ${
-              staffInformation.role.id === 1
+              staffInformation?.role?.id === 1
                 ? "bg-color-light-red"
-                : staffInformation.role.id === 4
+                : staffInformation?.role?.id === 4
                 ? "bg-color-light-yellow"
-                : staffInformation.role.id === 2
+                : staffInformation?.role?.id === 2
                 ? "bg-color-bright-green text-white"
                 : "bg-primary-color text-white"
             }`}
         >
-          {staffInformation.role.name.toUpperCase()}
+          {staffInformation?.role?.name.toUpperCase()}
         </span>
         <span className="flex flex-wrap items-center justify-center w-1/12 gap-1">
           <span className="border-0.6 relative border-custom-grey-100 text-custom-grey-300 px-2 py-2.5 rounded text-base hover:cursor-pointer">
             <span
               title="Edit Staffs Details"
               className="hover:cursor-pointer"
-              onClick={() => handleEditModal(staffInformation.id)}
+              onClick={() => handleEditModal(staffInformation?.id)}
             >
               <HiOutlineDotsHorizontal />
             </span>
-            {editModal === staffInformation.id && (
+            {editModal === staffInformation?.id && (
               <span className="absolute space-y-2 top-0 z-10 flex-col w-36 p-4 text-xs bg-white rounded shadow-md -left-44 border-0.6 border-custom-grey-100 text-color-text-black font-lexend">
                 <p
                   className="hover:cursor-pointer"
@@ -191,7 +191,7 @@ export default function StaffTable({
                 <p
                   className="hover:cursor-pointer"
                   title="Remove Staff"
-                  onClick={() => deleteStaffById(staffInformation.id)}
+                  onClick={() => deleteStaffById(staffInformation?.id)}
                 >
                   Remove Staff
                 </p>
@@ -205,8 +205,8 @@ export default function StaffTable({
 
   function LengthByActiveMenu() {
     return activeMenu === 1
-      ? filteredResults.length > 0
-        ? filteredResults.length
+      ? filteredResults?.length > 0
+        ? filteredResults?.length
         : filteredResults < 1 && query != ""
         ? 0
         : staffInformation.length
@@ -223,7 +223,7 @@ export default function StaffTable({
       >
         <div className="flex items-start justify-between ">
           <div className="flex items-center justify-between border-0.6 border-custom-grey-100 rounded p-1">
-            {staticInformation.staff.menu.map((menu) =>
+            {staticInformation?.staff?.menu.map((menu) =>
               displayColumn === false && query !== "" && menu.id > 1 ? null : (
                 <div
                   key={menu.id}
@@ -249,12 +249,12 @@ export default function StaffTable({
                   </span>
                   <span className="px-1 border rounded text-color-text-three bg-custom-blue-200 border-custom-color-two">
                     {menu.id === 1
-                      ? filteredResults.length > 0
-                        ? filteredResults.length
+                      ? filteredResults?.length > 0
+                        ? filteredResults?.length
                         : filteredResults < 1 && query !== ""
                         ? 0
                         : staffInformation
-                        ? staffInformation.length
+                        ? staffInformation?.length
                         : 0
                       : menu.id === 2
                       ? filterStaffRecordsByRoleName(
@@ -338,15 +338,15 @@ export default function StaffTable({
           </div>
           <div className="flex-col space-y-4">
             {query === "" ? (
-              filteredRecords.length > 0 ? (
-                filteredRecords.map((record) => recordField(record))
+              filteredRecords?.length > 0 ? (
+                filteredRecords?.map((record) => recordField(record))
               ) : (
                 <p className="text-sm font-medium font-lexend text-color-text-black">
                   No results found.
                 </p>
               )
             ) : filteredResults.length > 0 ? (
-              filteredResults.map((record) => recordField(record))
+              filteredResults?.map((record) => recordField(record))
             ) : (
               <p className="text-sm font-medium font-lexend text-color-text-black">
                 No results found.

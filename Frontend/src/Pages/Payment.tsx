@@ -204,13 +204,13 @@ const Payment = () => {
                 </div>
                 <p className="font-lexend text-[10px] text-document-grey leading-[12.5px]">
                   Payment Amount:{" "}
-                  <b className="font-bold">
+                  <b className="font-bold text-[12px] text-color-bright-green">
                     {formatNumberWithCommas(paymentAccount?.data.data.amount)}
                   </b>
                 </p>
                 <p className="font-lexend text-[10px] text-document-grey leading-[12.5px]">
                   Payment Account:{" "}
-                  <b>
+                  <b className="text-[12px] text-color-bright-green">
                     Abuja Municipal Area Council.{" "}
                     {paymentAccount?.data.data.bank_name}.{" "}
                     {paymentAccount?.data.data.account_number}

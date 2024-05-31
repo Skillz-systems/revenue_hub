@@ -152,14 +152,11 @@ function AccountPassword(): JSX.Element {
           <InputComponent
             inputContainer="flex items-center justify-between gap-1 bg-primary-color rounded"
             inputType="submit"
-            inputValue={isLoading ? "Submitting..." : "Login"}
+            inputValue={isLoading ? "Submitting..." : "Create Password"}
             inputStyle="h-12 mg:h-[48px] rounded outline-none px-1 py-0.5 md:px-2 md:py-1 w-full font-lexend text-sm md:text-base font-medium text-white hover:cursor-pointer"
           />
           <p className="text-xs font-lexend text-color-dark-red">
             {errorState}
-          </p>
-          <p className="flex items-center justify-center text-sm underline text-color-text-two font-lexend">
-            Forgot Password?
           </p>
         </div>
         <div className="items-center justify-center hidden w-full pt-2 md:flex">

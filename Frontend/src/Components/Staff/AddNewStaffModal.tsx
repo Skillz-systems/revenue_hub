@@ -57,10 +57,10 @@ const AddNewStaffModal: React.FC<AddNewStaffModalProps> = ({
         return "2";
       case "Enforcer":
         return "3";
-      case "Officer":
+      case "Others":
         return "4";
       default:
-        return null;
+        return "4";
     }
   };
 
@@ -103,6 +103,7 @@ const AddNewStaffModal: React.FC<AddNewStaffModalProps> = ({
           role_id: selectedRoleId,
         };
 
+        console.log("Request Data:", requestData);
         // Get the bearer token from cookies
         const token = Cookies.get("userToken");
 

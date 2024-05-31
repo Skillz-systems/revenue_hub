@@ -115,6 +115,11 @@ const userData = () => {
 
   const deleteStaffById = async (staffId: number) => {
     try {
+      setStaffSnackbar({
+        open: true,
+        message: "Deleting staff",
+        severity: "info",
+      });
       const response = await axios.delete(
         `https://api.revenuehub.skillzserver.com/api/staff/${staffId}`,
         {
