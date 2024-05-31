@@ -63,6 +63,7 @@ class PaymentService
                     "account_number" => $response->data->account_number,
                     "account_name" => $response->data->note,
                     "account_bank_name" => $response->data->bank_name,
+                    "tx_ref" => $tx_ref,
                 ]);
             } else {
                 $accountNumberCreated = DemandNoticeAccount::create([
@@ -88,6 +89,11 @@ class PaymentService
     public function totalNumberOfPaymentByYear($data)
     {
         return $this->model()->whereYear('created_at', $data)->count();
+    }
+
+    public function getAccountNumberByTxRef($txRef)
+    {
+        return DemandNoticeAccount::where("tx_ref", $txRef)->first();
     }
 
     public function model()
