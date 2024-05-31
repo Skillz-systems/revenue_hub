@@ -293,19 +293,19 @@ class PaymentController extends Controller
     {
         DB::beginTransaction();
         try {
-            if ($request->has('event') && $request->event == "charge.completed") {
+            if ($request->has('status') && $request->status == "successful") {
                 // get account 
-                $getAccount = $this->paymentService->getAccountNumberByTxRef($request->data["tx_ref"]);
+                $getAccount = $this->paymentService->getAccountNumberByTxRef($request->txRef);
                 if ($getAccount) {
                     // save Payment
                     $paymentData = [
-                        "tx_ref" => $request->data["tx_ref"],
-                        "flw_ref" => $request->data["flw_ref"],
+                        "tx_ref" => $request->txRef,
+                        "flw_ref" => $request->flwRef,
                         "demand_notice_id" => $getAccount->demand_notice_id,
-                        "actual_amount" => $request->data["amount"],
-                        "charged_amount" => $request->data["charged_amount"],
-                        "app_fee" => $request->data["app_fee"],
-                        "merchant_fee" => $request->data["merchant_fee"],
+                        "actual_amount" => $request->amount,
+                        "charged_amount" => $request->charged_amount,
+                        "app_fee" => $request->appfee,
+                        "merchant_fee" => $request->merchantfee,
                         "status" => Payment::STATUS_COMPLETED,
                         "webhook_string" => json_encode($request->all()),
                     ];
@@ -316,9 +316,11 @@ class PaymentController extends Controller
                         //return response()->json(["status" => "success", "data" => $request->all(), "message" => "Payment received"], 200);
                     }
                 }
+                DB::commit();
+                return response()->json(["status" => "success", "data" => "", "message" => "Payment received"], 200);
             }
-            DB::commit();
-            return response()->json(["status" => "success", "data" => $payment, "message" => "Payment received"], 200);
+            Log::error('Failed to update payment data', ['error' => "No status key or status not successful"]);
+            return response()->json(["status" => "error", "data" => "", "message" => "Payment not saved"], 400);
         } catch (\Exception $e) {
             DB::rollBack();
 
