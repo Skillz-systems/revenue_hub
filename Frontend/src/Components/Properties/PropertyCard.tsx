@@ -106,7 +106,7 @@ const PropertiesTable: React.FC<PropertiesTableProps> = ({
       if (response.status === 200 || response.status === 201) {
         setSnackbar({
           open: true,
-          message: `Successfully created demand notice for ${pid}`,
+          message: `Successfully created demand notice`,
           severity: "success",
         });
       } else {

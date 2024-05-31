@@ -150,7 +150,7 @@ const AddNewStaffModal: React.FC<AddNewStaffModalProps> = ({
           }
         }
         setSnackbar({ open: true, message, severity: "error" });
-        hideNewStaffModal();
+        // hideNewStaffModal();
       }
       setIsLoading(false);
     }

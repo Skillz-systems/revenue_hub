@@ -98,7 +98,6 @@ function ConfirmAccount(): JSX.Element {
           name: formData.firstName,
           email: formData.email,
           phone: formData.phoneNumber,
-          role_id: userId,
           remember_token: remember_token,
         }
       );

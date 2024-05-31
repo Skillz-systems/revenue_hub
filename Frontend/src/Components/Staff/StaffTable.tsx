@@ -419,9 +419,9 @@ export default function StaffTable({
         </DemandPropertyModal>
       ) : null}
       <CustomAlert
-        isOpen={staffSnackbar.open}
-        message={staffSnackbar.message}
-        severity={staffSnackbar.severity}
+        isOpen={staffSnackbar?.open}
+        message={staffSnackbar?.message}
+        severity={staffSnackbar?.severity}
         handleClose={handleStaffSnackbarClose}
       />
     </div>

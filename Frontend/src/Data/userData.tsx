@@ -81,6 +81,11 @@ const userData = () => {
   useEffect(() => {
     if (staff) {
       setAccountInformation(staff.data);
+      setStaffSnackbar({
+        open: true,
+        message: "Successfully loaded staff",
+        severity: "success",
+      });
     }
     if (allStaff) {
       setStaffInformation(allStaff.data);
