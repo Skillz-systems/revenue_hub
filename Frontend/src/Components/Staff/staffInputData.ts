@@ -1,4 +1,4 @@
-import { staticInformation } from "../../Data/appData"
+import { staticInformation } from "../../Data/userData";
 
 interface InputOption {
   id: number;

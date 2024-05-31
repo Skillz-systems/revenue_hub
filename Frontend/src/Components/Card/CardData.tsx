@@ -1,7 +1,6 @@
 import React from "react";
 import { RiShieldStarFill } from "react-icons/ri";
 import { IoAlertCircleSharp } from "react-icons/io5";
-import { useAppData } from "../../Context/DataContext";
 import { userData } from "../Index";
 
 interface CardItem {
@@ -58,34 +57,5 @@ export function CardData(): CardItem[] {
     //   name: "Demand Notices",
     //   value: 0,
     // },
-  ];
-}
-
-export function CardData2(): CardItem[] {
-  const { cardInformation } = useAppData();
-  const { statistics } = userData();
-
-  return [
-    {
-      id: 1,
-      icon: <RiShieldStarFill />,
-      description: "Registered Properties in the last",
-      name: "30 Days",
-      value: cardInformation.totalRegisteredPropertiesLast30Days,
-    },
-    {
-      id: 2,
-      icon: <IoAlertCircleSharp />,
-      description: "Ungenerated",
-      name: "Properties",
-      value: cardInformation.totalUngeneratedProperties,
-    },
-    {
-      id: 3,
-      icon: <IoAlertCircleSharp />,
-      description: "Properties without",
-      name: "Rating",
-      value: cardInformation.propertiesWithoutRatingDistrict,
-    },
   ];
 }

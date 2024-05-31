@@ -5,18 +5,19 @@ import { formatNumberWithCommas, useTokens } from "../../Utils/client";
 import { BiSolidEditAlt } from "react-icons/bi";
 import { HiOutlineDotsHorizontal } from "react-icons/hi";
 import axios from "axios";
+import { CustomAlert } from "../Index";
 
 type PropertiesTableProps = {
   id: number;
-  personalIdentificationNumber: string,
-  propertyUse: string,
-  paymentStatus: string,
-  propertyAddress: string,
-  group: string,
-  cadestralZone: string,
-  ratePaybale: number,
-  setViewPropertyModal: () => void,
-  occupationStatus: string,
+  personalIdentificationNumber: string;
+  propertyUse: string;
+  paymentStatus: string;
+  propertyAddress: string;
+  group: string;
+  cadestralZone: string;
+  ratePaybale: number;
+  setViewPropertyModal: () => void;
+  occupationStatus: string;
 };
 
 const PropertiesTable: React.FC<PropertiesTableProps> = ({
@@ -31,8 +32,17 @@ const PropertiesTable: React.FC<PropertiesTableProps> = ({
   setViewPropertyModal,
   occupationStatus,
 }) => {
-  const { token } = useTokens()
-  const [settingsModal, setSettingsModal] = useState<boolean>(false)
+  const { token } = useTokens();
+  const [settingsModal, setSettingsModal] = useState<boolean>(false);
+  const [snackbar, setSnackbar] = useState({
+    open: false,
+    message: "",
+    severity: "success",
+  });
+
+  const handleSnackbarClose = () => {
+    setSnackbar((prev) => ({ ...prev, open: false }));
+  };
 
   const deleteProperty = async (pid: number) => {
     try {
@@ -45,23 +55,41 @@ const PropertiesTable: React.FC<PropertiesTableProps> = ({
         }
       );
       if (response.status === 200) {
-        console.log("Succesfully removed property from database:", response.data)
-        alert("Successfully removed property")
+        setSnackbar({
+          open: true,
+          message: "Successfully removed property",
+          severity: "success",
+        });
       } else {
-        console.error("Unexpected status code:", response.status);
-        alert("Unexpected status code")
+        setSnackbar({
+          open: true,
+          message: "Unexpected status code",
+          severity: "warning",
+        });
       }
     } catch (error) {
-      if (error.response && error.response.status === 401) {
-        console.error("Unauthorized:", error.response.data);
-        alert("Unauthorized")
-      } else {
-        console.error("Internal Server Error:", error);
-        alert("Internal Server Error")
+      let message = "Internal Server Error";
+      if (error.response) {
+        switch (error.response.status) {
+          case 400:
+            message = "Bad request. Property Id is missing.";
+            break;
+          case 401:
+            message = "You are unauthenticated";
+            break;
+          case 403:
+            message = "You are unauthorized";
+            break;
+          case 404:
+            message = "Demand notice not found";
+            break;
+          default:
+            break;
+        }
       }
+      setSnackbar({ open: true, message, severity: "error" });
     }
-  }
-
+  };
   const generateDemandNotice = async (pid: number) => {
     try {
       const response = await axios.post(
@@ -75,28 +103,42 @@ const PropertiesTable: React.FC<PropertiesTableProps> = ({
           },
         }
       );
-      if (response.status === 200 || 201) {
-        console.log(`Succesfully created demand notice for ${pid}`, response.data)
-        alert(`Succesfully created demand notice for ${pid}`)
+      if (response.status === 200 || response.status === 201) {
+        setSnackbar({
+          open: true,
+          message: `Successfully created demand notice`,
+          severity: "success",
+        });
       } else {
-        console.error("Unexpected status code:", response.status);
-        alert("Unexpected status code")
+        setSnackbar({
+          open: true,
+          message: "Unexpected status code",
+          severity: "warning",
+        });
       }
     } catch (error) {
-      if (error.response && error.response.status === 401) {
-        console.error("Unauthorized:", error.response.data);
-        alert("Unauthorized")
-      } else {
-        console.error("Internal Server Error:", error);
-        alert("Internal Server Error")
+      let message = "Internal Server Error";
+      if (error.response) {
+        switch (error.response.status) {
+          case 400:
+            message = "Bad request. Property Id is missing.";
+            break;
+          case 401:
+            message = "You are unauthenticated";
+            break;
+          case 403:
+            message = "You are unauthorized";
+            break;
+          default:
+            break;
+        }
       }
+      setSnackbar({ open: true, message, severity: "error" });
     }
-  }
+  };
 
   return (
-    <div
-      className="flex-col border border-divider-grey w-[32%] rounded"
-    >
+    <div className="flex-col border border-divider-grey w-[32%] rounded">
       <div className="flex items-center justify-between px-2.5 py-3 gap-1 border-b border-divider-grey">
         <div className="flex items-center justify-between gap-2">
           <span className="text-xs font-bold text-color-text-one">
@@ -104,12 +146,13 @@ const PropertiesTable: React.FC<PropertiesTableProps> = ({
           </span>
           <span
             className={`rounded-md px-2 py-0.5 font-light font-lexend text-color-text-black text-[10px] border-0.6 border-custom-grey-100
-            ${propertyUse === "COMMERCIAL"
+            ${
+              propertyUse === "COMMERCIAL"
                 ? "bg-color-light-red"
                 : propertyUse === "RESIDENTIAL"
-                  ? "bg-color-light-yellow"
-                  : "bg-custom-blue-200"
-              }
+                ? "bg-color-light-yellow"
+                : "bg-custom-blue-200"
+            }
             `}
           >
             {propertyUse.toUpperCase()}
@@ -117,20 +160,22 @@ const PropertiesTable: React.FC<PropertiesTableProps> = ({
         </div>
         <span
           className={`rounded-md px-2 py-0.5 font-light text-[10px] text-white font-lexend
-          ${paymentStatus === "Ungenerated"
+          ${
+            paymentStatus === "Ungenerated"
               ? "bg-primary-color"
               : paymentStatus === "Unpaid"
-                ? "bg-color-bright-orange"
-                : paymentStatus === "Expired"
-                  ? "bg-color-bright-red"
-                  : "bg-color-bright-green"
-            }
+              ? "bg-color-bright-orange"
+              : paymentStatus === "Expired"
+              ? "bg-color-bright-red"
+              : "bg-color-bright-green"
+          }
           `}
         >
           {paymentStatus}
         </span>
       </div>
-      <div className="fle-col px-2.5 py-3 space-y-2 hover:cursor-pointer"
+      <div
+        className="fle-col px-2.5 py-3 space-y-2 hover:cursor-pointer"
         onClick={setViewPropertyModal}
       >
         <div className="text-xs font-lexend text-color-text-black">
@@ -182,19 +227,32 @@ const PropertiesTable: React.FC<PropertiesTableProps> = ({
               title="More Options"
               className="text-xl hover:cursor-pointer text-custom-grey-300"
               onClick={() => {
-                setSettingsModal(!settingsModal)
+                setSettingsModal(!settingsModal);
               }}
             >
               <HiOutlineDotsHorizontal />
             </span>
             {settingsModal && (
               <span className="absolute space-y-2 top-0 z-10 flex-col w-40 p-4 text-xs bg-white rounded shadow-md -left-44 border-0.6 border-custom-grey-100 text-color-text-black font-lexend">
-                <p className="hover:cursor-pointer" title="View Demand Notice"
-                  onClick={() => generateDemandNotice(id)}
+                {paymentStatus === "Ungenerated" ? (
+                  <p
+                    className="hover:cursor-pointer"
+                    title="View Demand Notice"
+                    onClick={() => generateDemandNotice(id)}
+                  >
+                    Generate Demand Notice
+                  </p>
+                ) : null}
+                <p
+                  className="hover:cursor-pointer"
+                  title="View Demand Notice"
+                  onClick={setViewPropertyModal}
                 >
-                  Generate Demand Notice
+                  View Property
                 </p>
-                <p className="hover:cursor-pointer" title="View Demand Notice"
+                <p
+                  className="hover:cursor-pointer"
+                  title="View Demand Notice"
                   onClick={() => deleteProperty(id)}
                 >
                   Delete Property
@@ -204,6 +262,12 @@ const PropertiesTable: React.FC<PropertiesTableProps> = ({
           </span>
         </div>
       </div>
+      <CustomAlert
+        isOpen={snackbar.open}
+        message={snackbar.message}
+        severity={snackbar.severity}
+        handleClose={handleSnackbarClose}
+      />
     </div>
   );
 };

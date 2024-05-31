@@ -1,62 +1,53 @@
-import React, { createContext, useContext, ReactNode } from "react"
-import {
-    staticInformation,
-    propertyInformation,
-    demandNoticeInformation,
-    transactionInformation,
-    staffInformation,
-    cardInformation,
-    accountInformation,
-    demandInvoiceData
-} from "../Data/appData";
-import {
-    StaticInformation,
-    PropertyInformationType,
-    TransactionInformationType,
-    StaffInformationType,
-    CardInformation,
-    StaffRecord,
-    DemandInvoiceDataType
-} from "../Data/types";
-
+import React, {
+  createContext,
+  useContext,
+  ReactNode,
+  useEffect,
+  useState,
+} from "react";
 interface DataContextType {
-    staticInformation: StaticInformation;
-    propertyInformation: PropertyInformationType;
-    demandNoticeInformation: PropertyInformationType;
-    transactionInformation: TransactionInformationType;
-    staffInformation: StaffInformationType;
-    cardInformation: CardInformation;
-    accountInformation: StaffRecord;
-    demandInvoiceData: DemandInvoiceDataType,
+  isOnline: boolean; // New property for online status
 }
 
 const DataContext = createContext<DataContextType | undefined>(undefined);
 
 interface DataProviderProps {
-    children: ReactNode;
+  children: ReactNode;
 }
 
 export const DataProvider: React.FC<DataProviderProps> = ({ children }) => {
-    return (
-        <DataContext.Provider value={{
-            staticInformation,
-            propertyInformation,
-            demandNoticeInformation,
-            transactionInformation,
-            staffInformation,
-            cardInformation,
-            accountInformation,
-            demandInvoiceData,
-        }}>
-            {children}
-        </DataContext.Provider>
-    );
+  const [isOnline, setIsOnline] = useState(
+    typeof window !== "undefined" ? window.navigator.onLine : true
+  );
+
+  useEffect(() => {
+    const handleOnline = () => setIsOnline(true);
+    const handleOffline = () => setIsOnline(false);
+
+    window.addEventListener("online", handleOnline);
+    window.addEventListener("offline", handleOffline);
+
+    return () => {
+      window.removeEventListener("online", handleOnline);
+      window.removeEventListener("offline", handleOffline);
+    };
+  }, []);
+
+  return (
+    <DataContext.Provider
+      value={{
+        isOnline,
+      }}
+    >
+      {children}
+    </DataContext.Provider>
+  );
 };
 
 export const useAppData = (): DataContextType => {
-    const context = useContext(DataContext);
-    if (context === undefined) {
-        throw new Error("useAppData must be used within a DataProvider");
-    }
-    return context;
+  const context = useContext(DataContext);
+  if (context === undefined) {
+    throw new Error("useAppData must be used within a DataProvider");
+  }
+  return context;
 };

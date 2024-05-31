@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { data } from "./inputFieldData";
 import axios from "axios";
 import Cookies from "js-cookie";
+import { CustomAlert } from "../Index";
 
 interface AddPropertyProps {
   hideAddPropertyModal: () => void;
@@ -16,9 +17,20 @@ const AddProperty: React.FC<AddPropertyProps> = ({
   const [errorState, setErrorState] = useState<number | undefined>();
   const [errorField, setErrorField] = useState<string | undefined>(undefined);
   const [formData, setFormData] = useState<any>({});
-  const [isLoading, setIsLoading] = useState<boolean>(false)
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [snackbar, setSnackbar] = useState({
+    open: false,
+    message: "",
+    severity: "success",
+  });
 
-  const handleChange = (event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+  const handleSnackbarClose = () => {
+    setSnackbar({ ...snackbar, open: false });
+  };
+
+  const handleChange = (
+    event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+  ) => {
     const { name, value } = event.target;
     setFormData((prevState) => ({
       ...prevState,
@@ -52,7 +64,7 @@ const AddProperty: React.FC<AddPropertyProps> = ({
       setErrorState(sectionWithError?.id);
       setErrorField(firstEmptyField.inputName);
     } else {
-      setIsLoading(true)
+      setIsLoading(true);
       try {
         const requestData = {
           pid: formData.propertyIdentificationNumber,
@@ -70,7 +82,7 @@ const AddProperty: React.FC<AddPropertyProps> = ({
           group: formData.group,
           active: "Active",
           occupant: `${formData.occupantsFirstName} ${formData.occupantsLastName}`,
-        }
+        };
 
         console.log("requestData", requestData);
 
@@ -89,23 +101,38 @@ const AddProperty: React.FC<AddPropertyProps> = ({
         );
 
         if (response.status === 200 || 201) {
-          console.log("Success:", response.data);
-          alert("Form submitted successfully!");
+          setSnackbar({
+            open: true,
+            message: "Property created successfully",
+            severity: "success",
+          });
         } else {
-          console.error("Unexpected status code:", response.status);
-          alert("Unexpected status code. Please try again.");
+          setSnackbar({
+            open: true,
+            message: "Unexpected status code",
+            severity: "warning",
+          });
         }
-
       } catch (error) {
-        if (error.response && error.response.status === 401) {
-          console.error("Unauthorized:", error.response.data);
-          alert("Unauthorized. Please login again.");
-        } else {
-          console.error("Error submitting form:", error);
-          alert("An error occurred while submitting the form.");
+        let message = "Internal Server Error";
+        if (error.response) {
+          switch (error.response.status) {
+            case 400:
+              message = "Bad request. Fill in the required fields";
+              break;
+            case 401:
+              message = "You are unauthenticated";
+              break;
+            case 403:
+              message = "You are unauthorized";
+              break;
+            default:
+              break;
+          }
         }
+        setSnackbar({ open: true, message, severity: "error" });
       }
-      setIsLoading(false)
+      setIsLoading(false);
     }
   };
 
@@ -118,14 +145,15 @@ const AddProperty: React.FC<AddPropertyProps> = ({
 
   return (
     <form
-      className={`flex-col relative bg-white rounded overflow-y-auto overscroll-contain scrollbar-thin scrollbar-thumb-color-text-two scrollbar-track-white ${propertyModalTransition
-        ? "w-6/12 transition-all ease-in-out duration-500"
-        : "w-32"
-        }`}
+      className={`flex-col relative bg-white rounded overflow-y-auto overscroll-contain scrollbar-thin scrollbar-thumb-color-text-two scrollbar-track-white ${
+        propertyModalTransition
+          ? "w-6/12 transition-all ease-in-out duration-500"
+          : "w-32"
+      }`}
       style={{ height: "95vh" }}
       onSubmit={handleFormSubmit}
       method="post"
-    // autoComplete="off"
+      // autoComplete="off"
     >
       <img
         src={"/lightCheckeredBackgroundPattern.png"}
@@ -163,10 +191,11 @@ const AddProperty: React.FC<AddPropertyProps> = ({
             {data.section.map((item) => (
               <button
                 key={item.id}
-                className={`text-xs text-color-text-two font-lexend px-2 py-1 ${activateState === item.id
-                  ? "text-white font-medium bg-primary-color rounded"
-                  : ""
-                  }`}
+                className={`text-xs text-color-text-two font-lexend px-2 py-1 ${
+                  activateState === item.id
+                    ? "text-white font-medium bg-primary-color rounded"
+                    : ""
+                }`}
                 type="button"
                 onClick={() => {
                   setActiveState(item.id);
@@ -187,12 +216,13 @@ const AddProperty: React.FC<AddPropertyProps> = ({
                       type={fieldItem.inputType}
                       name={fieldItem.inputName}
                       value={formData[fieldItem.inputName] || ""}
-                      className={`w-full text-xs font-lexend h-12 px-4 py-2 border-0.6 outline-none rounded ${formData[fieldItem.inputName]
-                        ? "border-color-dark-green text-color-text-one"
-                        : errorField === fieldItem.inputName
+                      className={`w-full text-xs font-lexend h-12 px-4 py-2 border-0.6 outline-none rounded ${
+                        formData[fieldItem.inputName]
+                          ? "border-color-dark-green text-color-text-one"
+                          : errorField === fieldItem.inputName
                           ? "border-0.6 border-color-dark-red text-color-text-one"
                           : "border-custom-color-one text-color-text-two"
-                        }`}
+                      }`}
                       onChange={handleChange}
                       placeholder={
                         errorField === fieldItem.inputName
@@ -206,12 +236,13 @@ const AddProperty: React.FC<AddPropertyProps> = ({
                       key={fieldItem.id}
                       name={fieldItem.inputName}
                       value={formData[fieldItem.inputName] || ""}
-                      className={`w-full text-xs font-lexend h-12 px-3 py-2 border-0.6 outline-none rounded ${formData[fieldItem.inputName]
-                        ? "border-color-dark-green text-color-text-one"
-                        : errorField === fieldItem.inputName
+                      className={`w-full text-xs font-lexend h-12 px-3 py-2 border-0.6 outline-none rounded ${
+                        formData[fieldItem.inputName]
+                          ? "border-color-dark-green text-color-text-one"
+                          : errorField === fieldItem.inputName
                           ? "border-0.6 border-color-dark-red text-color-text-one"
                           : "border-custom-color-one text-color-text-two"
-                        }`}
+                      }`}
                       onChange={handleChange}
                       required={fieldItem.required}
                     >
@@ -237,8 +268,14 @@ const AddProperty: React.FC<AddPropertyProps> = ({
           </div>
         </div>
       </div>
+      <CustomAlert
+        isOpen={snackbar.open}
+        message={snackbar.message}
+        severity={snackbar.severity}
+        handleClose={handleSnackbarClose}
+      />
     </form>
   );
-}
+};
 
 export default AddProperty;

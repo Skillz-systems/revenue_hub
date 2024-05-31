@@ -22,7 +22,6 @@ import {
   Settings,
   Properties,
   Statistics,
-  useAppData,
   userData,
 } from "../Index";
 
@@ -37,13 +36,12 @@ interface MenuItem {
   menuIcon: JSX.Element;
   menuIconTwo: JSX.Element;
   menuName: string;
-  menuItemCount: number;
+  menuItemCount: number | undefined;
   componentName: string;
   component: JSX.Element;
 }
 
 const MenuItemData = () => {
-  const { cardInformation } = useAppData();
   const { statistics } = userData();
 
   const menuItems: MenuItem[] = [
