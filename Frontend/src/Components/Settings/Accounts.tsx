@@ -4,7 +4,7 @@ import { GiJusticeStar } from "react-icons/gi";
 import { IoPersonCircle } from "react-icons/io5";
 import { MdCancel, MdLocationPin } from "react-icons/md";
 import { InputComponent, SelectComponent } from "../Index";
-import { staticInformation } from "../../Data/appData"
+import { userData } from "../../Data/userData";
 import axios from "axios";
 import { useTokens } from "../../Utils/client";
 
@@ -18,7 +18,7 @@ type CurrentUserData = {
     name: string;
   };
   zone: string;
-}
+};
 
 type AccountsProps = {
   currentUserData: CurrentUserData;
@@ -40,6 +40,7 @@ export default function Accounts({ currentUserData }: AccountsProps) {
     zone: currentUserData.zone,
   });
   const { token, userId } = useTokens();
+  const { staticInformation } = userData();
 
   useEffect(() => {
     setFormData({
@@ -55,7 +56,9 @@ export default function Accounts({ currentUserData }: AccountsProps) {
     });
   }, [editStaff, currentUserData]);
 
-  const handleInputChange = (event: ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+  const handleInputChange = (
+    event: ChangeEvent<HTMLInputElement | HTMLSelectElement>
+  ) => {
     const { name, value } = event.target;
     setFormData((prevState) => ({
       ...prevState,
@@ -99,7 +102,7 @@ export default function Accounts({ currentUserData }: AccountsProps) {
       };
 
       console.log("requestData", requestData);
-      setIsLoading(true)
+      setIsLoading(true);
 
       try {
         const response = await axios.put(
@@ -118,7 +121,7 @@ export default function Accounts({ currentUserData }: AccountsProps) {
           console.error("Unexpected status code:", response.status);
           alert("Unexpected status code. Please try again.");
         }
-        setIsLoading(false)
+        setIsLoading(false);
       } catch (error) {
         if (error.response && error.response.status === 401) {
           console.error("Unauthorized:", error.response.data);
@@ -128,7 +131,7 @@ export default function Accounts({ currentUserData }: AccountsProps) {
           alert("An error occurred while submitting the form.");
         }
       }
-      setIsLoading(false)
+      setIsLoading(false);
       console.log("FORM DATA:", formData);
       setDisplaySave(false);
       setEditStaff(false);
@@ -246,10 +249,11 @@ export default function Accounts({ currentUserData }: AccountsProps) {
                     handleInputChange={handleInputChange}
                     placeholder={`Enter your ${item.label}`}
                     required={true}
-                    inputStyle={`flex items-center justify-end text-xs font-medium text-darkerblueberry outline-none ${editStaff
-                      ? "px-2 py-1 text-left border-0.6 border-custom-color-one rounded"
-                      : "border-none text-right"
-                      } `}
+                    inputStyle={`flex items-center justify-end text-xs font-medium text-darkerblueberry outline-none ${
+                      editStaff
+                        ? "px-2 py-1 text-left border-0.6 border-custom-color-one rounded"
+                        : "border-none text-right"
+                    } `}
                     readOnly={!editStaff}
                     iconStyle=""
                   />
@@ -263,7 +267,9 @@ export default function Accounts({ currentUserData }: AccountsProps) {
             <GiJusticeStar />
             <p className="text-xs text-darkerblueberry">Designation</p>
           </div>
-          {editStaff && (currentUserData.role.name === "Admin" || currentUserData.role.id === 2) ? (
+          {editStaff &&
+          (currentUserData.role.name === "Admin" ||
+            currentUserData.role.id === 2) ? (
             <SelectComponent
               selectContainer=""
               selectId="role"
@@ -277,20 +283,21 @@ export default function Accounts({ currentUserData }: AccountsProps) {
               readOnly={!editStaff}
             />
           ) : (
-            <span className={`px-1 py-0.5 rounded-xl text-[10px] font-light text-darkerblueberry border-[0.4px] border-divider-grey
-                ${currentUserData.role.id === 1
-                ? "bg-color-light-red"
-                : currentUserData.role.id === 4
-                  ? "bg-color-light-yellow"
-                  : currentUserData.role.id === 2
+            <span
+              className={`px-1 py-0.5 rounded-xl text-[10px] font-light text-darkerblueberry border-[0.4px] border-divider-grey
+                ${
+                  currentUserData.role.id === 1
+                    ? "bg-color-light-red"
+                    : currentUserData.role.id === 4
+                    ? "bg-color-light-yellow"
+                    : currentUserData.role.id === 2
                     ? "bg-color-bright-green text-white"
                     : "bg-primary-color text-white"
-              }
+                }
                 `}
             >
               {currentUserData.role.name.toUpperCase()}
             </span>
-
           )}
         </div>
         <div className="flex items-center justify-between p-2 space-y-2 border-0.6 rounded bg-white border-custom-color-one font-lexend">

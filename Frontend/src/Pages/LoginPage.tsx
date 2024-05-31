@@ -33,13 +33,6 @@ function LoginPage(): JSX.Element {
       return alert("Please fill in all fields");
     }
 
-    // Validate password
-    // const passwordRegex = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&*])(?=.{6,})/;
-    // if (!passwordRegex.test(formData.password)) {
-    //   const message = "Password must be at least 6 characters long and contain at least 1 number, 1 symbol, 1 uppercase letter, and 1 lowercase letter."
-    //   setErrorState(message)
-    // }
-
     setIsLoading(true);
 
     try {
@@ -52,28 +45,21 @@ function LoginPage(): JSX.Element {
       );
 
       if (response.status === 200) {
-        console.log(response.data);
         Cookies.set("userToken", response.data.data.token, { expires: 7 }); // Token expires in 7 days
         Cookies.set("userData", JSON.stringify(response.data.data), {
           expires: 7,
         }); // Token expires in 7 days
         navigate("/");
-      } else if (response.status === 400) {
-        console.log(response.data);
-        alert(response.data.message);
-      } else if (response.status === 401) {
-        console.log(response.data);
-        alert(response.data.message);
       } else {
-        console.log(response);
-        alert("Something went wrong!");
+        setErrorState(response.data.message);
       }
     } catch (error) {
-      if (error.response && error.response.status === 401) {
+      if (error.response.status === 400) {
+        setErrorState("Ensure that all required filed are properly filled. Your password is at least 8 characters.");
+      } else if (error.response.status === 401) {
         setErrorState("Invalid email or password. Please try again.");
       } else {
-        console.error("Internal Server Error:", error);
-        setErrorState("Internal Server Error. Please try again later.");
+        setErrorState("Internal Server Error. Please report the issue")
       }
     }
     setIsLoading(false);

@@ -15,61 +15,6 @@ export interface StaticInformation {
     };
 }
 
-export interface PropertyRecord {
-    id: number;
-    dateRegistered: string;
-    annualValue: number;
-    ratePayable: number;
-    paymentStatus: string;
-    assetNumber: string;
-    personalIdentificationNumber: string;
-    propertyAddress: string;
-    category: string;
-    propertyUse: string;
-    propertyType: string;
-    cadestralZone: string;
-    ratingDistrict: string;
-    group: string;
-    occupationStatus: string;
-    occupantInfo: [{
-        id: number;
-        firstName: string;
-        lastName: string;
-        phoneNumber: string;
-        email: string;
-        maritalStatus: string;
-    }];
-    demandInvoiceData: {
-        id: number;
-        demandNoticeNumber: string;
-        arrears: number;
-        penalty: number,
-        dateCreated: any;
-    }[];
-
-}
-export type PropertyInformationType = PropertyRecord[];
-
-export interface TransactionRecord {
-    id: number;
-    transactionId: string;
-    transactionType: string;
-    transactionDate: string;
-    transactionTime: string;
-    propertyDetails: {
-        demandNoticeNumber: string;
-        personalIdentificationNumber: string;
-        assetNumber: string;
-        cadastralZone: string;
-        address: string;
-        ratingDistrict: string;
-        ratePayable: number;
-    };
-    transactionAmount: number;
-    transactionStatus: string;
-}
-export type TransactionInformationType = TransactionRecord[];
-
 export interface StaffRecord {
     id: number;
     staffId: string;
@@ -103,15 +48,6 @@ export interface InvoiceProperty {
     isTotal?: boolean;
 }
 
-export interface DemandInvoiceDataType {
-    Occupant: string;
-    PropertyIdentificationNumber: string;
-    QrCodePayment: string;
-    propertyData: InvoiceProperty[];
-    billInfoData: InvoiceProperty[];
-    billDetailsData: InvoiceProperty[];
-}
-
 export interface StatisticsData {
     total_payments: number;
     total_demand_notices: number;
@@ -121,7 +57,6 @@ export interface StatisticsData {
     total_properties: number;
     total_users: number;
 }
-
 
 export interface DemandNotice {
     id: number;

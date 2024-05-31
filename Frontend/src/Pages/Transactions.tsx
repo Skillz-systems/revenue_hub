@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from "react";
-import { TransactionsTable, useAppData, Card, CardData } from "../Components/Index";
+import { TransactionsTable, userData, Card, CardData } from "../Components/Index";
 import { useTokens } from "../Utils/client";
 import axios from "axios";
 
 const Transactions: React.FC = () => {
   const { token } = useTokens();
   const cardData = CardData();
-  const { staticInformation } = useAppData();
+  const { staticInformation } = userData();
   const [transactionInformation, setTransactionInformation] = useState<any>(null)
 
   const fetchTransactions = async (dateFilter = "") => {
