@@ -22,21 +22,21 @@ const Payment = () => {
           `Successfuly generated payment information for customer with PID-${pid}`
         );
       } else {
-        console.error(
-          "Unexpected status code while generating payment account:",
-          response.status
-        );
         setButtonInfo(
           "Unexpected status code. Something went wrong please try again."
         );
       }
     } catch (error) {
-      if (error.response && error.response.status === 401) {
-        console.error("Unauthorized:", error.response.data);
-        setButtonInfo(`You are Unauthorized: ${error}`);
+      if (error.response.status === 400) {
+        alert("Bad request. Property Id is missing.");
+      } else if (error.response.status === 401) {
+        alert("You are unauthenticated");
+      } else if (error.response.status === 403) {
+        alert("You are unauthorized");
+      } else if (error.response.status === 404) {
+        alert("Payment not found");
       } else {
-        console.error("Internal Server Error:", error);
-        setButtonInfo(`Internal Server Error: ${error}`);
+        alert("Internal Server Error");
       }
     }
   };

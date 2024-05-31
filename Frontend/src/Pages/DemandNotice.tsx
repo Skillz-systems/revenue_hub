@@ -1,5 +1,9 @@
 import React, { useState, useEffect } from "react";
-import { DemandInvoiceTable, LoadingSpinner, userData } from "../Components/Index";
+import {
+  DemandInvoiceTable,
+  LoadingSpinner,
+  userData,
+} from "../Components/Index";
 import { useTokens } from "../Utils/client";
 import axios from "axios";
 
@@ -24,13 +28,17 @@ export const DemandNotice: React.FC = () => {
         console.log("Success:", response.data.data);
         setDemandNoticeInformation(response.data.data);
       } else {
-        console.error("Unexpected status code:", response.status);
+        alert("Unexpected status code");
       }
     } catch (error) {
-      if (error.response && error.response.status === 401) {
-        console.error("Unauthorized:", error.response.data);
+      if (error.response.status === 400) {
+        alert("Bad request");
+      } else if (error.response.status === 401) {
+        alert("You are unauthenticated");
+      } else if (error.response.status === 403) {
+        alert("You are unauthorized");
       } else {
-        console.error("Error submitting form:", error);
+        alert("Internal Server Error");
       }
     }
   };

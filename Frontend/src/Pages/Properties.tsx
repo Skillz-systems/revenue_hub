@@ -61,7 +61,7 @@ export default function Properties() {
 
   useEffect(() => {
     if (error) {
-      console.error("Error fetching Property Data:", error);
+      alert(`Error fetching Property Data: ${error}`);
     }
   }, [data]);
 

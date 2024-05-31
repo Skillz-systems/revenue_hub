@@ -45,21 +45,20 @@ const PropertiesTable: React.FC<PropertiesTableProps> = ({
         }
       );
       if (response.status === 200) {
-        console.log(
-          "Succesfully removed property from database:",
-          response.data
-        );
         alert("Successfully removed property");
       } else {
-        console.error("Unexpected status code:", response.status);
         alert("Unexpected status code");
       }
     } catch (error) {
-      if (error.response && error.response.status === 401) {
-        console.error("Unauthorized:", error.response.data);
-        alert("Unauthorized");
+      if (error.response.status === 400) {
+        alert("Bad request. Property Id is missing.");
+      } else if (error.response.status === 401) {
+        alert("You are unauthenticated");
+      } else if (error.response.status === 403) {
+        alert("You are unauthorized");
+      } else if (error.response.status === 404) {
+        alert("Demand notice not found");
       } else {
-        console.error("Internal Server Error:", error);
         alert("Internal Server Error");
       }
     }
@@ -79,21 +78,18 @@ const PropertiesTable: React.FC<PropertiesTableProps> = ({
         }
       );
       if (response.status === 200 || 201) {
-        console.log(
-          `Succesfully created demand notice for ${pid}`,
-          response.data
-        );
         alert(`Succesfully created demand notice for ${pid}`);
       } else {
-        console.error("Unexpected status code:", response.status);
         alert("Unexpected status code");
       }
     } catch (error) {
-      if (error.response && error.response.status === 401) {
-        console.error("Unauthorized:", error.response.data);
-        alert("Unauthorized");
+      if (error.response.status === 400) {
+        alert("Bad request. Property Id is missing.");
+      } else if (error.response.status === 401) {
+        alert("You are unauthenticated");
+      } else if (error.response.status === 403) {
+        alert("You are unauthorized");
       } else {
-        console.error("Internal Server Error:", error);
         alert("Internal Server Error");
       }
     }

@@ -101,7 +101,6 @@ export default function Accounts({ currentUserData }: AccountsProps) {
         zone: formData.zone,
       };
 
-      console.log("requestData", requestData);
       setIsLoading(true);
 
       try {
@@ -115,24 +114,23 @@ export default function Accounts({ currentUserData }: AccountsProps) {
           }
         );
         if (response.status === 200) {
-          console.log("Success:", response.data);
           alert("Form submitted successfully!");
         } else {
-          console.error("Unexpected status code:", response.status);
           alert("Unexpected status code. Please try again.");
         }
         setIsLoading(false);
       } catch (error) {
-        if (error.response && error.response.status === 401) {
-          console.error("Unauthorized:", error.response.data);
-          alert("Unauthorized. Please login again.");
+        if (error.response.status === 400) {
+          alert("Bad request. All fields are required");
+        } else if (error.response.status === 401) {
+          alert("You are unauthenticated");
+        } else if (error.response.status === 403) {
+          alert("You are unauthorized");
         } else {
-          console.error("Error submitting form:", error);
-          alert("An error occurred while submitting the form.");
+          alert("Internal Server Error");
         }
       }
       setIsLoading(false);
-      console.log("FORM DATA:", formData);
       setDisplaySave(false);
       setEditStaff(false);
     } else {

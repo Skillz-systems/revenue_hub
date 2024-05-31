@@ -52,13 +52,19 @@ const userData = () => {
       if (response.status === 200) {
         setStatistics(response.data.data);
       } else {
-        console.error("Unexpected status code:", response.status);
+        alert("Unexpected Status Code");
       }
     } catch (error) {
-      if (error.response && error.response.status === 401) {
-        console.error("Unauthorized:", error.response.data);
+      if (error.response.status === 400) {
+        alert("Bad request.");
+      } else if (error.response.status === 401) {
+        alert("You are unauthenticated");
+      } else if (error.response.status === 403) {
+        alert("You are unauthorized");
+      } else if (error.response.status === 404) {
+        alert("Statistics is not found");
       } else {
-        console.error("Error fetching statistics:", error);
+        alert("Internal Server Error");
       }
     }
   };
@@ -104,11 +110,20 @@ const userData = () => {
         );
         alert("Staff deleted successfully");
       } else {
-        alert("Failed to delete staff");
+        alert("Unexpected Status Code");
       }
     } catch (error) {
-      console.error("Error deleting staff:", error);
-      alert("An error occurred while deleting the staff");
+      if (error.response.status === 400) {
+        alert("Bad request. Staff Id is missing.");
+      } else if (error.response.status === 401) {
+        alert("You are unauthenticated");
+      } else if (error.response.status === 403) {
+        alert("You are unauthorized");
+      } else if (error.response.status === 404) {
+        alert("Staff is not found");
+      } else {
+        alert("Internal Server Error");
+      }
     }
   };
 

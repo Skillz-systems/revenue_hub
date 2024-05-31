@@ -32,8 +32,7 @@ function ConfirmAccount(): JSX.Element {
     } catch (error) {
       if (error.response.status === 403) {
         setErrorState("You don't have permission!");
-      }
-      if (error.response.status === 404) {
+      } else if (error.response.status === 404) {
         setErrorState("No Staff Found");
       } else {
         setErrorState("Internal Server Error. Please try again later.");
@@ -81,8 +80,7 @@ function ConfirmAccount(): JSX.Element {
     } catch (error) {
       if (error.response.status === 400) {
         setErrorState("Bad request. All Fields are required!");
-      }
-      if (error.response.status === 401) {
+      } else if (error.response.status === 401) {
         setErrorState("Credential error: You are not authorized");
       } else {
         setErrorState("Internal Server Error. Please try again later.");

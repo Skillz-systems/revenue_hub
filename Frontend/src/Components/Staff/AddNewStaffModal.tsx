@@ -88,8 +88,6 @@ const AddNewStaffModal: React.FC<AddNewStaffModalProps> = ({
           role_id: selectedRoleId,
         };
 
-        console.log("requestData", requestData);
-
         // Get the bearer token from cookies
         const token = Cookies.get("userToken");
 
@@ -105,19 +103,19 @@ const AddNewStaffModal: React.FC<AddNewStaffModalProps> = ({
         );
 
         if (response.status === 200 || 201) {
-          console.log("Success:", response.data);
           alert("Form submitted successfully!");
         } else {
-          console.error("Unexpected status code:", response.status);
           alert("Unexpected status code. Please try again.");
         }
       } catch (error) {
-        if (error.response && error.response.status === 401) {
-          console.error("Unauthorized:", error.response.data);
-          alert("Unauthorized. Please login again.");
+        if (error.response.status === 400) {
+          alert("Bad request. All fields are required");
+        } else if (error.response.status === 401) {
+          alert("You are unauthenticated");
+        } else if (error.response.status === 403) {
+          alert("You are unauthorized");
         } else {
-          console.error("Error submitting form:", error);
-          alert("An error occurred while submitting the form.");
+          alert("Internal Server Error");
         }
       }
       setIsLoading(false);
