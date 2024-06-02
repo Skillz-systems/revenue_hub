@@ -58,7 +58,7 @@ function ConfirmAccount(): JSX.Element {
       if (error.response) {
         switch (error.response.status) {
           case 403:
-            message = "You don't have permission!";
+            message = "You are forbidden!";
             break;
           case 404:
             message = "No Staff Found";

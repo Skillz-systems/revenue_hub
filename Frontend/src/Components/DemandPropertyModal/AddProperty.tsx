@@ -121,10 +121,10 @@ const AddProperty: React.FC<AddPropertyProps> = ({
               message = "Bad request. Fill in the required fields";
               break;
             case 401:
-              message = "You are unauthenticated";
+              message = "You are unauthorized";
               break;
             case 403:
-              message = "You are unauthorized";
+              message = "You are forbidden";
               break;
             default:
               break;

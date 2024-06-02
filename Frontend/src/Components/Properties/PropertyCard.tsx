@@ -75,10 +75,10 @@ const PropertiesTable: React.FC<PropertiesTableProps> = ({
             message = "Bad request. Property Id is missing.";
             break;
           case 401:
-            message = "You are unauthenticated";
+            message = "You are unauthorized";
             break;
           case 403:
-            message = "You are unauthorized";
+            message = "You are forbidden";
             break;
           case 404:
             message = "Demand notice not found";
@@ -124,9 +124,6 @@ const PropertiesTable: React.FC<PropertiesTableProps> = ({
             message = "Bad request. Property Id is missing.";
             break;
           case 401:
-            message = "You are unauthenticated";
-            break;
-          case 403:
             message = "You are unauthorized";
             break;
           default:

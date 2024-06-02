@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, ChangeEvent, FormEvent } from "react";
 import { MdCancel } from "react-icons/md";
 import { BiSolidEditAlt } from "react-icons/bi";
 import { PiBuildingsFill } from "react-icons/pi";
@@ -8,31 +8,15 @@ import { BsCalendar2EventFill } from "react-icons/bs";
 import { formatNumberWithCommas } from "../../Utils/client";
 import { HiOutlineDotsHorizontal } from "react-icons/hi";
 import { FaPeopleRoof } from "react-icons/fa6";
-import { DemandPropertyModal, DemandInvoiceDocument } from "../Index";
-
-// export type PropertyData = {
-//   active: string;
-//   annual_value: string;
-//   asset_no: string;
-//   cadastral_zone: string;
-//   category: string | null;
-//   demand_notice: any[];
-//   grand_total: string;
-//   group: string;
-//   id: number;
-//   occupant: string;
-//   pid: string;
-//   prop_addr: string;
-//   prop_type: string;
-//   prop_use: string;
-//   rate_payable: number;
-//   rating_dist: string;
-//   status: string;
-//   street_name: string;
-//   arrears: number;
-//   penalty: number;
-//   demand_notice_status: string;
-// };
+import {
+  DemandPropertyModal,
+  DemandInvoiceDocument,
+  InputComponent,
+  SelectComponent,
+  CustomAlert,
+} from "../Index";
+import axios from "axios";
+import { useTokens } from "../../Utils/client";
 
 interface ViewPropertyModalProps {
   hideViewPropertyModal: () => void;
@@ -49,7 +33,121 @@ const ViewPropertyModal: React.FC<ViewPropertyModalProps> = ({
   const [editModal, setEditModal] = useState<boolean>(false);
   const [demandInvoiceDocument, setDemandInvoiceDocument] =
     useState<boolean>(false);
-  console.log("DATA", customTableData);
+  const [editProperty, setEditProperty] = useState<boolean>(false);
+  const [displaySave, setDisplaySave] = useState<boolean>(false);
+  const [formData, setFormData] = useState<any>(customTableData);
+  const [snackbar, setSnackbar] = useState({
+    open: false,
+    message: "",
+    severity: "success",
+  });
+
+  const handleSnackbarClose = () => {
+    setSnackbar({ ...snackbar, open: false });
+  };
+  const { token } = useTokens();
+
+  const handleInputChange = (
+    event: ChangeEvent<HTMLInputElement | HTMLSelectElement>
+  ) => {
+    const { name, value } = event.target;
+    setFormData((prevState) => ({
+      ...prevState,
+      [name]: value,
+    }));
+    // Check if any form data has changed
+    if (customTableData[name as keyof typeof customTableData] !== value) {
+      setDisplaySave(true);
+    } else {
+      setDisplaySave(false);
+    }
+  };
+
+  const handleCancelEdit = () => {
+    alert("Cancel changes without saving?");
+    setFormData(customTableData);
+    setEditProperty(false);
+    setDisplaySave(false);
+  };
+
+  const handleFormSubmit = async (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    if (!displaySave) return;
+
+    const requestData = {
+      pid: formData.pid,
+      asset_no: formData.asset_no,
+      cadastral_zone: formData.cadastral_zone,
+      prop_addr: formData.prop_addr,
+      prop_use: formData.prop_use,
+      category: formData.category,
+      group: formData.group,
+      prop_type: formData.prop_type,
+      occupant: formData.occupant,
+      annual_value: formData.annual_value,
+      rate_payable: formData.rate_payable,
+      arrears: formData.arrears,
+      penalty: formData.penalty,
+      grand_total: formData.grand_total,
+    };
+
+    try {
+      setSnackbar({
+        open: true,
+        message: "Updating Property",
+        severity: "info",
+      });
+
+      const response = await axios.put(
+        `https://api.revenuehub.skillzserver.com/api/property/${formData.pid}`,
+        requestData,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      if (response.status === 200) {
+        setSnackbar({
+          open: true,
+          message: "Property updated successfully",
+          severity: "success",
+        });
+      } else {
+        setSnackbar({
+          open: true,
+          message: "Unexpected status code",
+          severity: "warning",
+        });
+      }
+      setEditProperty(false);
+      setDisplaySave(false);
+    } catch (error) {
+      let message = "Internal Server Error";
+      if (error.response) {
+        switch (error.response.status) {
+          case 400:
+            message = "Bad request. All Fields are required";
+            break;
+          case 401:
+            message = "You are unauthorized";
+            break;
+          case 403:
+            message = "You are forbidden";
+            break;
+          default:
+            break;
+        }
+      }
+      setSnackbar({ open: true, message, severity: "error" });
+    }
+  };
+
+  useEffect(() => {
+    setFormData(customTableData);
+  }, [editProperty, customTableData]);
+
   return (
     <>
       <div
@@ -115,13 +213,35 @@ const ViewPropertyModal: React.FC<ViewPropertyModalProps> = ({
               </span>
             </div>
             <div className="flex items-center gap-2">
-              <span
-                className="flex items-center justify-center w-[24px] h-[24px] text-xs text-primary-color font-lexend font-medium px-0.5 border border-primary-color rounded hover:cursor-pointer"
-                onClick={() => alert("Edit Property")}
-                title="Edit Property"
-              >
-                <BiSolidEditAlt />
-              </span>
+              {editProperty ? (
+                <div className="flex items-center justify-center gap-2">
+                  <span
+                    className="flex items-center justify-center text-color-dark-red gap-1 border rounded border-color-dark-red h-[24px] px-1"
+                    title="Cancel Changes"
+                    onClick={handleCancelEdit}
+                  >
+                    <MdCancel />
+                    Cancel Changes
+                  </span>
+                  {displaySave && (
+                    <button
+                      type="submit"
+                      className="flex items-center justify-center bg-primary-color text-white h-[24px] px-2 rounded"
+                      title="Save Property Details"
+                    >
+                      Save
+                    </button>
+                  )}
+                </div>
+              ) : (
+                <span
+                  className="flex items-center justify-center w-[24px] h-[24px] text-xs text-primary-color font-lexend font-medium px-0.5 border border-primary-color rounded hover:cursor-pointer"
+                  onClick={() => setEditProperty((prevState) => !prevState)}
+                  title="Edit Property"
+                >
+                  <BiSolidEditAlt />
+                </span>
+              )}
               <span
                 className="flex items-center justify-center w-[24px] h-[24px] text-xs text-color-dark-red font-lexend font-medium px-0.5 border border-color-dark-red rounded hover:cursor-pointer"
                 onClick={hideViewPropertyModal}
@@ -596,6 +716,12 @@ const ViewPropertyModal: React.FC<ViewPropertyModalProps> = ({
           />
         </DemandPropertyModal>
       ) : null}
+      <CustomAlert
+        isOpen={snackbar.open}
+        message={snackbar.message}
+        severity={snackbar.severity}
+        handleClose={handleSnackbarClose}
+      />
     </>
   );
 };

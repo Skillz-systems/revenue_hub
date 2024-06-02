@@ -6,6 +6,7 @@ import {
   ViewPropertyModal,
   userData,
   LoadingSpinner,
+  CustomAlert,
 } from "../Components/Index";
 import { BsCaretDownFill } from "react-icons/bs";
 import { HiOutlineDotsHorizontal } from "react-icons/hi";
@@ -47,6 +48,15 @@ export default function Properties() {
     PropertyArray | any
   >();
   const { staticInformation } = userData();
+  const [snackbar, setSnackbar] = useState({
+    open: false,
+    message: "",
+    severity: "success",
+  });
+
+  const handleSnackbarClose = () => {
+    setSnackbar({ ...snackbar, open: false });
+  };
 
   const { data, error } = useSWR(
     token ? "https://api.revenuehub.skillzserver.com/api/property" : null, // Only fetch if token exists
@@ -56,12 +66,21 @@ export default function Properties() {
   useEffect(() => {
     if (data) {
       setPropertyInformation(data.data);
+      setSnackbar({
+        open: true,
+        message: "Properties fetched successfully",
+        severity: "success",
+      });
     }
   }, [data]);
 
   useEffect(() => {
     if (error) {
-      alert(`Error fetching Property Data: ${error}`);
+      setSnackbar({
+        open: true,
+        message: `Error fetching Property Data: ${error}`,
+        severity: "warning",
+      });
     }
   }, [data]);
 
@@ -410,6 +429,12 @@ export default function Properties() {
       ) : (
         <LoadingSpinner title="Loading Properties" />
       )}
+      <CustomAlert
+        isOpen={snackbar.open}
+        message={snackbar.message}
+        severity={snackbar.severity}
+        handleClose={handleSnackbarClose}
+      />
     </div>
   );
 }

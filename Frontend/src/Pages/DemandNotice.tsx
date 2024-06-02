@@ -56,10 +56,10 @@ export const DemandNotice: React.FC = () => {
             message = "Bad request";
             break;
           case 401:
-            message = "You are unauthenticated";
+            message = "You are unauthorized";
             break;
           case 403:
-            message = "You are unauthorized";
+            message = "You are forbidden";
             break;
           default:
             break;
