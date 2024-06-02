@@ -302,7 +302,7 @@ const ProjectLayout: React.FC = () => {
               </div>
             ) : accountsPasswordState === "Password" ? (
               <div className="flex items-center justify-center ">
-                <Password />
+                <Password userEmail={accountInformation?.email} />
               </div>
             ) : (
               activeComponent

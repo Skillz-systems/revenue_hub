@@ -11,8 +11,6 @@ import { FaPeopleRoof } from "react-icons/fa6";
 import {
   DemandPropertyModal,
   DemandInvoiceDocument,
-  InputComponent,
-  SelectComponent,
   CustomAlert,
 } from "../Index";
 import axios from "axios";
@@ -46,22 +44,6 @@ const ViewPropertyModal: React.FC<ViewPropertyModalProps> = ({
     setSnackbar({ ...snackbar, open: false });
   };
   const { token, userRoleId } = useTokens();
-
-  const handleInputChange = (
-    event: ChangeEvent<HTMLInputElement | HTMLSelectElement>
-  ) => {
-    const { name, value } = event.target;
-    setFormData((prevState) => ({
-      ...prevState,
-      [name]: value,
-    }));
-    // Check if any form data has changed
-    if (customTableData[name as keyof typeof customTableData] !== value) {
-      setDisplaySave(true);
-    } else {
-      setDisplaySave(false);
-    }
-  };
 
   const handleCancelEdit = () => {
     setSnackbar({
@@ -201,21 +183,20 @@ const ViewPropertyModal: React.FC<ViewPropertyModalProps> = ({
               </span>
               <span
                 className={`rounded-md px-2 py-0.5 font-light text-[10px] text-white font-lexend
-                ${
-                  customTableData?.demand_notice_status ||
-                  customTableData?.property?.demand_notice_status ===
-                    "Ungenerated"
-                    ? "bg-primary-color"
-                    : customTableData?.demand_notice_status ||
-                      customTableData?.property?.demand_notice_status ===
-                        "Unpaid"
-                    ? "bg-color-bright-orange"
-                    : customTableData?.demand_notice_status ||
-                      customTableData?.property?.demand_notice_status ===
-                        "Expired"
-                    ? "bg-color-bright-red"
-                    : "bg-color-bright-green"
-                }
+                  ${
+                    customTableData?.demand_notice_status === "Paid" ||
+                    customTableData?.property?.demand_notice_status === "Paid"
+                      ? "bg-color-bright-green"
+                      : customTableData?.demand_notice_status === "Unpaid" ||
+                        customTableData?.property?.demand_notice_status ===
+                          "Unpaid"
+                      ? "bg-color-bright-orange"
+                      : customTableData?.demand_notice_status === "Expired" ||
+                        customTableData?.property?.demand_notice_status ===
+                          "Expired"
+                      ? "bg-color-bright-red"
+                      : "bg-primary-color"
+                  }
                 `}
               >
                 {customTableData?.demand_notice_status ||
@@ -279,7 +260,7 @@ const ViewPropertyModal: React.FC<ViewPropertyModalProps> = ({
                   >
                     {item}
                     {item === "Invoices" ? (
-                      customTableData?.demand_notice_status ||
+                      customTableData?.demand_notice_status === "Ungenerated" ||
                       customTableData?.property?.demand_notice_status ===
                         "Ungenerated" ? (
                         <span className="px-1.5 text-xs border rounded text-color-text-three font-lexend bg-custom-blue-200 border-custom-color-two">
@@ -287,7 +268,9 @@ const ViewPropertyModal: React.FC<ViewPropertyModalProps> = ({
                         </span>
                       ) : (
                         <span className="px-1.5 text-xs border rounded text-color-text-three font-lexend bg-custom-blue-200 border-custom-color-two">
-                          1
+                          {customTableData?.demand_notice
+                            ? customTableData?.demand_notice.length
+                            : 1}
                         </span>
                       )
                     ) : null}
@@ -559,22 +542,22 @@ const ViewPropertyModal: React.FC<ViewPropertyModalProps> = ({
                 <div className="flex items-center gap-1.5 text-color-dark-red">
                   <BsCalendar2EventFill />
                   <p className="text-xs">
-                    {customTableData?.demand_notice_status ||
+                    {customTableData?.demand_notice_status === "Ungenerated" ||
                     customTableData?.property?.demand_notice_status ===
                       "Ungenerated"
                       ? "No Invoice has been generated on this property"
-                      : customTableData?.demand_notice_status ||
+                      : customTableData?.demand_notice_status === "Expired" ||
                         customTableData?.property?.demand_notice_status ===
                           "Expired"
                       ? "DEMAND INVOICE HAS EXPIRED"
-                      : customTableData?.demand_notice_status ||
+                      : customTableData?.demand_notice_status === "Paid" ||
                         customTableData?.property?.demand_notice_status ===
                           "Paid"
                       ? "DEMAND INOICE HAS BEEN PAID"
                       : "DAYS TO NEXT INVOICE"}
                   </p>
                 </div>
-                {customTableData?.demand_notice_status ||
+                {customTableData?.demand_notice_status === "Unpaid" ||
                 customTableData?.property?.demand_notice_status === "Unpaid" ? (
                   <span className="px-2 py-0.5 rounded text-xs bg-color-light-red text-darkerblueberry">
                     {365}
@@ -584,150 +567,298 @@ const ViewPropertyModal: React.FC<ViewPropertyModalProps> = ({
             ) : null}
 
             {activateState === 2 &&
-            (customTableData?.demand_notice_status ||
-              customTableData?.property?.demand_notice_status) ===
-              "Ungenerated" ? (
+            (customTableData?.demand_notice_status === "Ungenerated" ||
+              customTableData?.property?.demand_notice_status ===
+                "Ungenerated") ? (
               <p className="text-sm text-color-text-black font-lexend">
                 No Invoice has been generated on this property.
               </p>
             ) : null}
 
-            {activateState === 2 &&
-            (customTableData?.demand_notice_status ||
-              customTableData?.property?.demand_notice_status) !==
-              "Ungenerated" ? (
-              <div className="flex items-center justify-between gap-3 text-xs group">
-                <span className="flex flex-wrap items-center justify-center w-20 h-8 px-2 py-1 text-xs font-medium rounded text-color-text-three bg-custom-blue-400">
-                  {customTableData?.pid || customTableData?.property?.pid}
-                </span>
-                <span className="flex flex-wrap items-center text-[10px] font-lexend text-color-text-black">
-                  {customTableData?.prop_addr ||
-                    customTableData?.property?.prop_addr}
-                </span>
-                <span className="flex flex-wrap items-center text-color-text-black font-lexend text-[10px]">
-                  {`24/5/2024`}
-                </span>
-                <span
-                  className={`flex-wrap hidden items-center px-1 py-0.5 justify-center rounded-xl font-light font-lexend text-color-text-black text-[10px] border-0.6 border-custom-grey-100 group-hover:flex
-                  ${
-                    customTableData?.prop_use ||
-                    customTableData?.property?.prop_use === "Commercial"
-                      ? "bg-color-light-red"
-                      : customTableData?.prop_use ||
-                        customTableData?.property?.prop_use === "Residential"
-                      ? "bg-color-light-yellow"
-                      : "bg-custom-blue-200"
-                  }
-               `}
-                >
-                  {customTableData?.prop_use ||
-                    customTableData?.property?.prop_use}
-                </span>
-                <span className="flex flex-wrap items-center justify-center text-sm text-color-text-black font-chonburi">
-                  {formatNumberWithCommas(
-                    customTableData?.rate_payable ||
-                      customTableData?.property?.rate_payable
-                  )}
-                </span>
-                <div className="flex items-center justify-center">
-                  <span
-                    className={`flex flex-wrap items-center justify-center px-1 p-0.5 font-light text-white rounded font-lexend text-[10px]
-                 ${
-                   customTableData?.demand_notice_status ||
-                   customTableData?.property?.demand_notice_status ===
-                     "Ungenerated"
-                     ? "bg-primary-color"
-                     : customTableData?.demand_notice_status ||
-                       customTableData?.property?.demand_notice_status ===
-                         "Unpaid"
-                     ? "bg-color-bright-orange"
-                     : customTableData?.demand_notice_status ||
-                       customTableData?.property?.demand_notice_status ===
-                         "Expired"
-                     ? "bg-color-bright-red"
-                     : "bg-color-bright-green"
-                 }
-                 `}
-                  >
-                    {customTableData?.demand_notice_status ||
-                      customTableData?.property?.demand_notice_status}
-                  </span>
-                </div>
-                <span className="flex flex-wrap items-center gap-1">
-                  <span className="border-0.6 relative border-custom-grey-100 text-custom-grey-300 px-1 py-1 rounded text-base">
-                    <span
-                      title="Edit Invoice"
-                      className="hover:cursor-pointer"
-                      onClick={() => setEditModal(!editModal)}
-                    >
-                      <HiOutlineDotsHorizontal />
-                    </span>
-                    {editModal && (
-                      <span
-                        className="absolute space-y-2 top-0 z-10 flex-col w-40 p-4 text-xs bg-white rounded shadow-md -left-44 border-0.6 border-custom-grey-100 text-color-text-black font-lexend"
-                        onMouseLeave={() => setEditModal(!editModal)}
+            {customTableData?.demand_notice ? (
+              <div className="flex flex-col space-y-1">
+                {customTableData?.demand_notice.map(
+                  (demand_notice) =>
+                    activateState === 2 &&
+                    customTableData?.demand_notice_status !== "Ungenerated" &&
+                    customTableData?.property?.demand_notice_status !==
+                      "Ungenerated" && (
+                      <div
+                        key={demand_notice.id}
+                        className="flex items-center justify-between gap-3 text-xs group"
                       >
-                        <p
-                          className="hover:cursor-pointer"
-                          title="View Demand Notice"
-                          onClick={() => setDemandInvoiceDocument(true)}
+                        <span className="flex flex-wrap items-center justify-center w-20 h-8 px-2 py-1 text-xs font-medium rounded text-color-text-three bg-custom-blue-400">
+                          {customTableData?.pid ||
+                            customTableData?.property?.pid}
+                        </span>
+                        <span className="flex flex-wrap items-center text-[10px] font-lexend text-color-text-black">
+                          {customTableData?.prop_addr ||
+                            customTableData?.property?.prop_addr}
+                        </span>
+                        <span className="flex flex-wrap items-center text-color-text-black font-lexend text-[10px]">
+                          {`24/5/2024`}
+                        </span>
+                        <span
+                          className={`flex-wrap hidden items-center px-1 py-0.5 justify-center rounded-xl font-light font-lexend text-color-text-black text-[10px] border-0.6 border-custom-grey-100 group-hover:flex
+                          ${
+                            customTableData?.prop_use ||
+                            customTableData?.property?.prop_use === "Commercial"
+                              ? "bg-color-light-red"
+                              : customTableData?.prop_use ||
+                                customTableData?.property?.prop_use ===
+                                  "Residential"
+                              ? "bg-color-light-yellow"
+                              : "bg-custom-blue-200"
+                          }
+                      `}
                         >
-                          View Demand Notice
-                        </p>
-                        <p
-                          className="hover:cursor-pointer"
-                          title="View Property"
-                          onClick={() => setActiveState(0)}
+                          {customTableData?.prop_use ||
+                            customTableData?.property?.prop_use}
+                        </span>
+                        <span className="flex flex-wrap items-center justify-center text-sm text-color-text-black font-chonburi">
+                          {formatNumberWithCommas(
+                            demand_notice.amount || customTableData?.amount
+                          )}
+                        </span>
+                        <div className="flex items-center justify-center">
+                          <span
+                            className={`flex flex-wrap items-center justify-center px-1 p-0.5 font-light text-white rounded font-lexend text-[10px]
+                    ${
+                      customTableData?.demand_notice_status === "Paid" ||
+                      customTableData?.property?.demand_notice_status === "Paid"
+                        ? "bg-color-bright-green"
+                        : customTableData?.demand_notice_status === "Unpaid" ||
+                          customTableData?.property?.demand_notice_status ===
+                            "Unpaid"
+                        ? "bg-color-bright-orange"
+                        : customTableData?.demand_notice_status === "Expired" ||
+                          customTableData?.property?.demand_notice_status ===
+                            "Expired"
+                        ? "bg-color-bright-red"
+                        : "bg-primary-color"
+                    }
+                 `}
+                          >
+                            {customTableData?.demand_notice_status ||
+                              customTableData?.property?.demand_notice_status}
+                          </span>
+                        </div>
+                        <span className="flex flex-wrap items-center gap-1">
+                          <span className="border-0.6 relative border-custom-grey-100 text-custom-grey-300 px-1 py-1 rounded text-base">
+                            <span
+                              title="Edit Invoice"
+                              className="hover:cursor-pointer"
+                              onClick={() => setEditModal(!editModal)}
+                            >
+                              <HiOutlineDotsHorizontal />
+                            </span>
+                            {editModal && (
+                              <span
+                                className="absolute space-y-2 top-0 z-10 flex-col w-40 p-4 text-xs bg-white rounded shadow-md -left-44 border-0.6 border-custom-grey-100 text-color-text-black font-lexend"
+                                onMouseLeave={() => setEditModal(!editModal)}
+                              >
+                                <p
+                                  className="hover:cursor-pointer"
+                                  title="View Demand Notice"
+                                  onClick={() => setDemandInvoiceDocument(true)}
+                                >
+                                  View Demand Notice
+                                </p>
+                                <p
+                                  className="hover:cursor-pointer"
+                                  title="View Property"
+                                  onClick={() => setActiveState(0)}
+                                >
+                                  View Property
+                                </p>
+                                {customTableData?.demand_notice_status ===
+                                  "Expired" ||
+                                customTableData?.property
+                                  ?.demand_notice_status === "Expired" ? (
+                                  <p
+                                    className="hover:cursor-pointer"
+                                    title="Generate Reminder"
+                                    onClick={() => {
+                                      if (userRoleId > 1) {
+                                        setSnackbar({
+                                          open: true,
+                                          message: "You don't have permission",
+                                          severity: "error",
+                                        });
+                                        return;
+                                      }
+                                      setSnackbar({
+                                        open: true,
+                                        message: "Generating Reminder",
+                                        severity: "info",
+                                      });
+                                    }}
+                                  >
+                                    Generate Reminder
+                                  </p>
+                                ) : customTableData?.demand_notice_status ===
+                                    "Unpaid" ||
+                                  customTableData?.property
+                                    ?.demand_notice_status === "Unpaid" ? (
+                                  <p
+                                    className="hover:cursor-pointer"
+                                    title="View Reminder"
+                                    onClick={() => {
+                                      setSnackbar({
+                                        open: true,
+                                        message: "View Reminder?",
+                                        severity: "info",
+                                      });
+                                    }}
+                                  >
+                                    View Reminder
+                                  </p>
+                                ) : null}
+                              </span>
+                            )}
+                          </span>
+                        </span>
+                      </div>
+                    )
+                )}
+              </div>
+            ) : (
+              activateState === 2 &&
+              customTableData?.demand_notice_status !== "Ungenerated" &&
+              customTableData?.property?.demand_notice_status !==
+                "Ungenerated" && (
+                <div className="flex items-center justify-between gap-3 text-xs group">
+                  <span className="flex flex-wrap items-center justify-center w-20 h-8 px-2 py-1 text-xs font-medium rounded text-color-text-three bg-custom-blue-400">
+                    {customTableData?.pid || customTableData?.property?.pid}
+                  </span>
+                  <span className="flex flex-wrap items-center text-[10px] font-lexend text-color-text-black">
+                    {customTableData?.prop_addr ||
+                      customTableData?.property?.prop_addr}
+                  </span>
+                  <span className="flex flex-wrap items-center text-color-text-black font-lexend text-[10px]">
+                    {`24/5/2024`}
+                  </span>
+                  <span
+                    className={`flex-wrap hidden items-center px-1 py-0.5 justify-center rounded-xl font-light font-lexend text-color-text-black text-[10px] border-0.6 border-custom-grey-100 group-hover:flex
+                          ${
+                            customTableData?.prop_use ||
+                            customTableData?.property?.prop_use === "Commercial"
+                              ? "bg-color-light-red"
+                              : customTableData?.prop_use ||
+                                customTableData?.property?.prop_use ===
+                                  "Residential"
+                              ? "bg-color-light-yellow"
+                              : "bg-custom-blue-200"
+                          }
+                      `}
+                  >
+                    {customTableData?.prop_use ||
+                      customTableData?.property?.prop_use}
+                  </span>
+                  <span className="flex flex-wrap items-center justify-center text-sm text-color-text-black font-chonburi">
+                    {formatNumberWithCommas(customTableData?.amount)}
+                  </span>
+                  <div className="flex items-center justify-center">
+                    <span
+                      className={`flex flex-wrap items-center justify-center px-1 p-0.5 font-light text-white rounded font-lexend text-[10px]
+                    ${
+                      customTableData?.demand_notice_status === "Paid" ||
+                      customTableData?.property?.demand_notice_status === "Paid"
+                        ? "bg-color-bright-green"
+                        : customTableData?.demand_notice_status === "Unpaid" ||
+                          customTableData?.property?.demand_notice_status ===
+                            "Unpaid"
+                        ? "bg-color-bright-orange"
+                        : customTableData?.demand_notice_status === "Expired" ||
+                          customTableData?.property?.demand_notice_status ===
+                            "Expired"
+                        ? "bg-color-bright-red"
+                        : "bg-primary-color"
+                    }
+                 `}
+                    >
+                      {customTableData?.demand_notice_status ||
+                        customTableData?.property?.demand_notice_status}
+                    </span>
+                  </div>
+                  <span className="flex flex-wrap items-center gap-1">
+                    <span className="border-0.6 relative border-custom-grey-100 text-custom-grey-300 px-1 py-1 rounded text-base">
+                      <span
+                        title="Edit Invoice"
+                        className="hover:cursor-pointer"
+                        onClick={() => setEditModal(!editModal)}
+                      >
+                        <HiOutlineDotsHorizontal />
+                      </span>
+                      {editModal && (
+                        <span
+                          className="absolute space-y-2 top-0 z-10 flex-col w-40 p-4 text-xs bg-white rounded shadow-md -left-44 border-0.6 border-custom-grey-100 text-color-text-black font-lexend"
+                          onMouseLeave={() => setEditModal(!editModal)}
                         >
-                          View Property
-                        </p>
-                        {customTableData?.demand_notice_status ||
-                        customTableData?.property?.demand_notice_status ===
-                          "Expired" ? (
                           <p
                             className="hover:cursor-pointer"
-                            title="Generate Reminder"
-                            onClick={() => {
-                              if (userRoleId > 1) {
+                            title="View Demand Notice"
+                            onClick={() => setDemandInvoiceDocument(true)}
+                          >
+                            View Demand Notice
+                          </p>
+                          <p
+                            className="hover:cursor-pointer"
+                            title="View Property"
+                            onClick={() => setActiveState(0)}
+                          >
+                            View Property
+                          </p>
+                          {customTableData?.demand_notice_status ===
+                            "Expired" ||
+                          customTableData?.property?.demand_notice_status ===
+                            "Expired" ? (
+                            <p
+                              className="hover:cursor-pointer"
+                              title="Generate Reminder"
+                              onClick={() => {
+                                if (userRoleId > 1) {
+                                  setSnackbar({
+                                    open: true,
+                                    message: "You don't have permission",
+                                    severity: "error",
+                                  });
+                                  return;
+                                }
                                 setSnackbar({
                                   open: true,
-                                  message: "You don't have permission",
-                                  severity: "error",
+                                  message: "Generating Reminder",
+                                  severity: "info",
                                 });
-                                return;
-                              }
-                              setSnackbar({
-                                open: true,
-                                message: "Generating Reminder",
-                                severity: "info",
-                              });
-                            }}
-                          >
-                            Generate Reminder
-                          </p>
-                        ) : customTableData?.demand_notice_status ||
-                          customTableData?.property?.demand_notice_status ===
-                            "Unpaid" ? (
-                          <p
-                            className="hover:cursor-pointer"
-                            title="View Reminder"
-                            onClick={() => {
-                              setSnackbar({
-                                open: true,
-                                message: "View Reminder?",
-                                severity: "info",
-                              });
-                            }}
-                          >
-                            View Reminder
-                          </p>
-                        ) : null}
-                      </span>
-                    )}
+                              }}
+                            >
+                              Generate Reminder
+                            </p>
+                          ) : customTableData?.demand_notice_status ===
+                              "Unpaid" ||
+                            customTableData?.property?.demand_notice_status ===
+                              "Unpaid" ? (
+                            <p
+                              className="hover:cursor-pointer"
+                              title="View Reminder"
+                              onClick={() => {
+                                setSnackbar({
+                                  open: true,
+                                  message: "View Reminder?",
+                                  severity: "info",
+                                });
+                              }}
+                            >
+                              View Reminder
+                            </p>
+                          ) : null}
+                        </span>
+                      )}
+                    </span>
                   </span>
-                </span>
-              </div>
-            ) : null}
+                </div>
+              )
+            )}
           </div>
         </div>
       </div>

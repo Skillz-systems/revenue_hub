@@ -19,7 +19,24 @@ type PropertyData = {
   asset_no: string;
   cadastral_zone: string;
   category: string | null;
-  demand_notice: any[];
+  demand_notice: {
+    id: number;
+    payments: {
+      tx_ref: string;
+      pin: string;
+      actual_amount: number;
+      charged_amount: number;
+      app_fee: number;
+      merchant_fee: number;
+      status: string;
+    }[];
+    amount: string;
+    arrears_amount: string;
+    penalty: string;
+    status: number;
+    property: string;
+    date_created: string;
+  }[];
   grand_total: string;
   group: string;
   id: number;
