@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import useSWR from "swr";
-import Cookies from "js-cookie";
-import { fetcher } from "../Utils/client";
+import { fetcher, useTokens } from "../Utils/client";
 import { StatisticsData } from "./types";
 
 const userData = () => {
@@ -15,25 +14,11 @@ const userData = () => {
     severity: "success",
   });
 
+  const { token, userId, userRoleId } = useTokens();
+
   const handleStaffSnackbarClose = () => {
     setStaffSnackbar({ ...staffSnackbar, open: false });
   };
-
-  // Safely get and parse userData from cookies
-  const userData = Cookies.get("userData");
-  let token: string | undefined;
-  let userId: string | undefined;
-
-  try {
-    const parsedData = userData ? JSON.parse(userData) : null;
-    // Safely access token
-    token = parsedData?.token;
-    userId = parsedData?.user?.id;
-  } catch (error) {
-    console.error("Error parsing userData cookie:", error);
-    token = undefined;
-    userId = undefined;
-  }
 
   const { data: staff, error: staffError } = useSWR(
     token && userId
@@ -120,11 +105,6 @@ const userData = () => {
 
   const deleteStaffById = async (staffId: number) => {
     try {
-      setStaffSnackbar({
-        open: true,
-        message: "Deleting staff",
-        severity: "info",
-      });
       const response = await axios.delete(
         `https://api.revenuehub.skillzserver.com/api/staff/${staffId}`,
         {

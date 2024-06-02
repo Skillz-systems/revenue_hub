@@ -13,7 +13,11 @@ import {
   CustomAlert,
   paginationStyles,
 } from "../Index";
-import { filterStaffRecordsByRoleName, ScrollToTop } from "../../Utils/client";
+import {
+  filterStaffRecordsByRoleName,
+  ScrollToTop,
+  useTokens,
+} from "../../Utils/client";
 
 interface StaffRecord {
   id: number;
@@ -45,6 +49,7 @@ export default function StaffTable({
   const [viewStaffModal, setViewStaffModal] = useState<any>(null);
   const [propertyModalTransition, setPropertyModalTransition] = useState(false);
   const { deleteStaffById } = userData();
+  const { userRoleId } = useTokens();
 
   // PAGINATION LOGIC
   const [currentPage, setCurrentPage] = useState(0);
@@ -177,7 +182,17 @@ export default function StaffTable({
                 <p
                   className="hover:cursor-pointer"
                   title="Remove Staff"
-                  onClick={() => deleteStaffById(staffInformation?.id)}
+                  onClick={() => {
+                    if (userRoleId > 1) {
+                      setStaffSnackbar({
+                        open: true,
+                        message: "You don't have permission",
+                        severity: "error",
+                      });
+                      return;
+                    }
+                    deleteStaffById(staffInformation?.id);
+                  }}
                 >
                   Remove Staff
                 </p>
@@ -278,6 +293,15 @@ export default function StaffTable({
               style={{ width: "35%" }}
               title="New Staff"
               onClick={() => {
+                if (userRoleId >= 3) {
+                  setStaffSnackbar({
+                    open: true,
+                    message: "You don't have permission",
+                    severity: "error",
+                  });
+                  setNewStaffModal(false);
+                  return;
+                }
                 setNewStaffModal(true);
                 setTimeout(() => {
                   setPropertyModalTransition(true);

@@ -39,7 +39,7 @@ export default function Accounts({ currentUserData }: AccountsProps) {
     },
     zone: currentUserData.zone,
   });
-  const { token, userId } = useTokens();
+  const { token, userId, userRoleId } = useTokens();
   const { staticInformation } = userData();
   const [snackbar, setSnackbar] = useState({
     open: false,
@@ -220,7 +220,18 @@ export default function Accounts({ currentUserData }: AccountsProps) {
                 <span
                   className="flex items-center justify-center text-primary-color border border-primary-color rounded w-[24px] h-[24px] px-0.5"
                   title="Edit Staff"
-                  onClick={() => setEditStaff((prevState) => !prevState)}
+                  onClick={() => {
+                    if (userRoleId === 1 || 2) {
+                      setEditStaff((prevState) => !prevState);
+                    } else {
+                      setSnackbar({
+                        open: true,
+                        message: "You don't have permission",
+                        severity: "error",
+                      });
+                      return;
+                    }
+                  }}
                 >
                   <BiSolidEditAlt />
                 </span>

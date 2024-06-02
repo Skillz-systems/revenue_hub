@@ -45,7 +45,7 @@ const ViewPropertyModal: React.FC<ViewPropertyModalProps> = ({
   const handleSnackbarClose = () => {
     setSnackbar({ ...snackbar, open: false });
   };
-  const { token } = useTokens();
+  const { token, userRoleId } = useTokens();
 
   const handleInputChange = (
     event: ChangeEvent<HTMLInputElement | HTMLSelectElement>
@@ -688,9 +688,17 @@ const ViewPropertyModal: React.FC<ViewPropertyModalProps> = ({
                             className="hover:cursor-pointer"
                             title="Generate Reminder"
                             onClick={() => {
+                              if (userRoleId > 1) {
+                                setSnackbar({
+                                  open: true,
+                                  message: "You don't have permission",
+                                  severity: "error",
+                                });
+                                return;
+                              }
                               setSnackbar({
                                 open: true,
-                                message: "Generate Reminder",
+                                message: "Generating Reminder",
                                 severity: "info",
                               });
                             }}

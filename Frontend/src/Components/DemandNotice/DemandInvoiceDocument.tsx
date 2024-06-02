@@ -5,7 +5,8 @@ import { TbCurrencyNaira } from "react-icons/tb";
 import { HiOutlinePrinter } from "react-icons/hi2";
 import { MdCancel } from "react-icons/md";
 import QRCode from "react-qr-code";
-import { formatNumberWithCommas } from "../../Utils/client";
+import { CustomAlert } from "../Index";
+import { formatNumberWithCommas, useTokens } from "../../Utils/client";
 import html2canvas from "html2canvas";
 import jsPDF from "jspdf";
 import { DemandNotice } from "../../Data/types";
@@ -25,6 +26,8 @@ const DemandInvoiceDocument = ({
   demandInvoiceInfo?: DemandNotice;
   hideDemandInvoiceModal: () => any;
 }) => {
+  const { userRoleId } = useTokens();
+  
   const demandInvoiceData = {
     Occupant: `THE OCCUPIER/${
       customTableData?.pid || demandInvoiceInfo?.property.pid
@@ -69,9 +72,7 @@ const DemandInvoiceDocument = ({
     billInfoData: [
       {
         label: "Bill Ref",
-        value: `2024/${
-          customTableData?.id || demandInvoiceInfo?.id
-        }`,
+        value: `2024/${customTableData?.id || demandInvoiceInfo?.id}`,
       },
       { label: "Agency Code", value: 2000300 },
       { label: "Revenue Code", value: 1002 },

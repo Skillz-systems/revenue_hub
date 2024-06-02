@@ -43,7 +43,7 @@ const DemandInvoiceTable = ({
     undefined
   );
   const [demandInvoiceDocument, setDemandInvoiceDocument] = useState<any>(null);
-  const { token } = useTokens();
+  const { token, userRoleId } = useTokens();
   const [snackbar, setSnackbar] = useState({
     open: false,
     message: "",
@@ -55,6 +55,15 @@ const DemandInvoiceTable = ({
   };
 
   const deleteDemandNotice = async (id: number) => {
+    if (userRoleId > 1) {
+      setSnackbar({
+        open: true,
+        message: "You don't have permission",
+        severity: "error",
+      });
+      return;
+    }
+
     try {
       const response = await axios.delete(
         `https://api.revenuehub.skillzserver.com/api/demand-notice/delete/${id}`,
@@ -244,7 +253,20 @@ const DemandInvoiceTable = ({
                   View Property
                 </p>
                 {lastPaymentStatus === "Expired" ? (
-                  <p className="hover:cursor-pointer" title="Generate Reminder">
+                  <p
+                    className="hover:cursor-pointer"
+                    title="Generate Reminder"
+                    onClick={() => {
+                      if (userRoleId > 1) {
+                        setSnackbar({
+                          open: true,
+                          message: "You don't have permission",
+                          severity: "error",
+                        });
+                        return;
+                      }
+                    }}
+                  >
                     Generate Reminder
                   </p>
                 ) : lastPaymentStatus === "Unpaid" ? (

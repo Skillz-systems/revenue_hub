@@ -32,7 +32,7 @@ const PropertiesTable: React.FC<PropertiesTableProps> = ({
   setViewPropertyModal,
   occupationStatus,
 }) => {
-  const { token } = useTokens();
+  const { token, userRoleId } = useTokens();
   const [settingsModal, setSettingsModal] = useState<boolean>(false);
   const [snackbar, setSnackbar] = useState({
     open: false,
@@ -45,6 +45,15 @@ const PropertiesTable: React.FC<PropertiesTableProps> = ({
   };
 
   const deleteProperty = async (pid: number) => {
+    if (userRoleId > 1) {
+      setSnackbar({
+        open: true,
+        message: "You don't have permission",
+        severity: "error",
+      });
+      return;
+    }
+
     try {
       const response = await axios.delete(
         `https://api.revenuehub.skillzserver.com/api/property/${pid}`,
@@ -100,6 +109,15 @@ const PropertiesTable: React.FC<PropertiesTableProps> = ({
     }
   };
   const generateDemandNotice = async (pid: number) => {
+    if (userRoleId > 1) {
+      setSnackbar({
+        open: true,
+        message: "You don't have permission",
+        severity: "error",
+      });
+      return;
+    }
+
     try {
       const response = await axios.post(
         "https://api.revenuehub.skillzserver.com/api/demand-notice/create",

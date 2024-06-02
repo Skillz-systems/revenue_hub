@@ -10,12 +10,13 @@ import {
   ViewTransactionModal,
   TransactionsType,
   CustomAlert,
-  paginationStyles
+  paginationStyles,
 } from "../Index";
 import {
   formatNumberWithCommas,
   formatDate,
   ScrollToTop,
+  useTokens,
 } from "../../Utils/client";
 
 const TransactionsTable = ({
@@ -38,12 +39,21 @@ const TransactionsTable = ({
     message: "",
     severity: "success",
   });
+  const { userRoleId } = useTokens();
 
   const handleSnackbarClose = () => {
     setSnackbar({ ...snackbar, open: false });
   };
 
   const handleViewTransactionModal = (transactionData: any) => {
+    if (userRoleId !== 1) {
+      setSnackbar({
+        open: true,
+        message: "You don't have permission",
+        severity: "error",
+      });
+      return;
+    }
     setViewTransactionModal(transactionData);
     setTimeout(() => {
       setPropertyModalTransition(true);
@@ -329,23 +339,25 @@ const TransactionsTable = ({
           </p>
         </div>
       </div>
-      {viewTransactionModal ? (
-        <DemandPropertyModal
-          modalStyle={
-            "absolute top-0 left-0 z-20 flex items-start justify-end w-full h-screen p-4 overflow-hidden bg-black bg-opacity-40"
-          }
-        >
-          <ViewTransactionModal
-            hideViewPropertyModal={() => {
-              setViewTransactionModal(false);
-              setTimeout(() => {
-                setPropertyModalTransition(false);
-              }, 300);
-            }}
-            propertyModalTransition={propertyModalTransition}
-            customTableData={viewTransactionModal}
-          />
-        </DemandPropertyModal>
+      {userRoleId === 1 ? (
+        viewTransactionModal ? (
+          <DemandPropertyModal
+            modalStyle={
+              "absolute top-0 left-0 z-20 flex items-start justify-end w-full h-screen p-4 overflow-hidden bg-black bg-opacity-40"
+            }
+          >
+            <ViewTransactionModal
+              hideViewPropertyModal={() => {
+                setViewTransactionModal(false);
+                setTimeout(() => {
+                  setPropertyModalTransition(false);
+                }, 300);
+              }}
+              propertyModalTransition={propertyModalTransition}
+              customTableData={viewTransactionModal}
+            />
+          </DemandPropertyModal>
+        ) : null
       ) : null}
       <CustomAlert
         isOpen={snackbar.open}
