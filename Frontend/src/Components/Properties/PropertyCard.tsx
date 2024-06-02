@@ -60,6 +60,9 @@ const PropertiesTable: React.FC<PropertiesTableProps> = ({
           message: "Successfully removed property",
           severity: "success",
         });
+        setTimeout(() => {
+          window.location.reload();
+        }, 3000);
       } else {
         setSnackbar({
           open: true,
@@ -82,6 +85,12 @@ const PropertiesTable: React.FC<PropertiesTableProps> = ({
             break;
           case 404:
             message = "Demand notice not found";
+            break;
+          case 429:
+            message = "Too many requests made. Refreshing in 3 seconds";
+            setTimeout(() => {
+              window.location.reload();
+            }, 3000);
             break;
           default:
             break;
@@ -125,6 +134,12 @@ const PropertiesTable: React.FC<PropertiesTableProps> = ({
             break;
           case 401:
             message = "You are unauthorized";
+            break;
+          case 429:
+            message = "Too many requests made. Refreshing in 3 seconds";
+            setTimeout(() => {
+              window.location.reload();
+            }, 3000);
             break;
           default:
             break;

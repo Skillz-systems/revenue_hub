@@ -94,6 +94,12 @@ function AccountPassword(): JSX.Element {
           case 401:
             message = "Invalid Password Token";
             break;
+          case 429:
+            message = "Too many requests made. Refreshing in 3 seconds";
+            setTimeout(() => {
+              window.location.reload();
+            }, 3000);
+            break;
           default:
             break;
         }

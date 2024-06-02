@@ -70,6 +70,9 @@ const DemandInvoiceTable = ({
           message: "Successfully removed demand notice",
           severity: "success",
         });
+        setTimeout(() => {
+          window.location.reload();
+        }, 3000);
       } else {
         setSnackbar({
           open: true,
@@ -92,6 +95,12 @@ const DemandInvoiceTable = ({
             break;
           case 404:
             message = "Demand notice not found";
+            break;
+          case 429:
+            message = "Too many requests made. Refreshing in 3 seconds";
+            setTimeout(() => {
+              window.location.reload();
+            }, 3000);
             break;
           default:
             break;

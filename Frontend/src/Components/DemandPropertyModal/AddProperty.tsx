@@ -108,6 +108,9 @@ const AddProperty: React.FC<AddPropertyProps> = ({
             message: "Property created successfully",
             severity: "success",
           });
+          setTimeout(() => {
+            window.location.reload();
+          }, 3000);
         } else {
           setSnackbar({
             open: true,

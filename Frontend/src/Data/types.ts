@@ -89,6 +89,7 @@ export interface DemandNotice {
         category: string;
         group: string;
         active: string;
+        occupant: string;
         created_at: string;
         updated_at: string;
     };

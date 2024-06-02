@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import MenuItemAlt from "../MenuItem/MenuItemAlt";
 import { GiHamburgerMenu } from "react-icons/gi";
 import { FiSearch } from "react-icons/fi";
@@ -17,6 +17,7 @@ import {
   userData,
   Card,
   CardData,
+  CustomAlert,
 } from "../Index";
 
 const ProjectLayout: React.FC = () => {
@@ -39,6 +40,15 @@ const ProjectLayout: React.FC = () => {
   const menuItems = MenuItemData();
   const { accountInformation, statistics } = userData();
   const cardData = CardData();
+  const [snackbar, setSnackbar] = useState({
+    open: false,
+    message: "",
+    severity: "success",
+  });
+
+  const handleSnackbarClose = () => {
+    setSnackbar({ ...snackbar, open: false });
+  };
 
   const handleMenuItemClick = (component: string) => {
     setActiveMenuItem(component);
@@ -60,6 +70,22 @@ const ProjectLayout: React.FC = () => {
     showSideBar();
     setSearchClicked(true);
   };
+
+  const showSnackBar = () => {
+    setSnackbar({
+      open: true,
+      message: "Disabled Feature. Statistics Coming soon.",
+      severity: "warning",
+    });
+  };
+
+  useEffect(() => {
+    if (activeMenuItem === "Statistic Component") {
+      showSnackBar();
+    } else {
+      return;
+    }
+  }, [activeMenuItem]);
 
   return (
     <>
@@ -263,9 +289,13 @@ const ProjectLayout: React.FC = () => {
                 ))}
               </div>
             )}
-            
+
             {activeComponent ? (
-              activeComponent
+              activeMenuItem === "Statistic Component" ? (
+                <div></div>
+              ) : (
+                activeComponent
+              )
             ) : accountsPasswordState === "Accounts" ? (
               <div className="flex items-center justify-center">
                 <Accounts currentUserData={accountInformation} />
@@ -309,6 +339,12 @@ const ProjectLayout: React.FC = () => {
               )}
             </DemandPropertyModal>
           )}
+          <CustomAlert
+            isOpen={snackbar.open}
+            message={snackbar.message}
+            severity={snackbar.severity}
+            handleClose={handleSnackbarClose}
+          />
         </div>
       )}
     </>

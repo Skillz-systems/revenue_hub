@@ -1,8 +1,7 @@
 import React, { useRef } from "react";
-import { Link } from "react-router-dom";
 import { TbCurrencyNaira } from "react-icons/tb";
-import { LiaDownloadSolid } from "react-icons/lia";
-import { TfiEmail } from "react-icons/tfi";
+// import { LiaDownloadSolid } from "react-icons/lia";
+// import { TfiEmail } from "react-icons/tfi";
 import { HiOutlinePrinter } from "react-icons/hi2";
 import { MdCancel } from "react-icons/md";
 import QRCode from "react-qr-code";
@@ -22,7 +21,7 @@ const DemandInvoiceDocument = ({
   demandInvoiceInfo,
   hideDemandInvoiceModal,
 }: {
-  customTableData?: PropertyData;
+  customTableData?: any;
   demandInvoiceInfo?: DemandNotice;
   hideDemandInvoiceModal: () => any;
 }) => {

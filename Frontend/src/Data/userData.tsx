@@ -144,6 +144,9 @@ const userData = () => {
           message: "Staff deleted successfully",
           severity: "success",
         });
+        setTimeout(() => {
+          window.location.reload();
+        }, 3000);
       } else {
         setStaffSnackbar({
           open: true,
@@ -166,6 +169,12 @@ const userData = () => {
             break;
           case 404:
             message = "Staff is not found";
+            break;
+          case 429:
+            message = "Too many requests made. Refreshing in 3 seconds";
+            setTimeout(() => {
+              window.location.reload();
+            }, 3000);
             break;
           default:
             break;

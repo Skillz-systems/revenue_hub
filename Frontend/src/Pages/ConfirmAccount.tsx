@@ -63,6 +63,12 @@ function ConfirmAccount(): JSX.Element {
           case 404:
             message = "No Staff Found";
             break;
+          case 429:
+            message = "Too many requests made. Refreshing in 3 seconds";
+            setTimeout(() => {
+              window.location.reload();
+            }, 3000);
+            break;
           default:
             break;
         }
@@ -124,6 +130,12 @@ function ConfirmAccount(): JSX.Element {
             break;
           case 401:
             message = "You are unauthorized";
+            break;
+          case 429:
+            message = "Too many requests made. Refreshing in 3 seconds";
+            setTimeout(() => {
+              window.location.reload();
+            }, 3000);
             break;
           default:
             break;
