@@ -48,10 +48,7 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
     return <Navigate to="/login" replace />;
   }
 
-  useEffect(() => {
-    console.log("Token:", token);
-    console.log("UserRoleId:", userRoleId);
-  }, [token, userRoleId]);
+  useEffect(() => {}, [token, userRoleId]);
 
   return (
     <>

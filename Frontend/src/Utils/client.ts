@@ -1,6 +1,8 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
 import Cookies from "js-cookie";
+import { useContext } from "react";
+import { ErrorContext } from "../Context/ErrorContext";
 
 // WRONG
 export const useOnlineStatus = () => {
@@ -139,4 +141,15 @@ export const useTokens = () => {
     console.error("Error parsing userData cookie:", error);
     return { token: undefined, userId: undefined, userRoleId: undefined };
   }
+};
+
+export const useTriggerError = () => {
+  const { setHasError } = useContext(ErrorContext);
+
+  const triggerError = (error) => {
+    console.error("Error Boundary:", error);
+    setHasError(error);
+  };
+
+  return triggerError;
 };
