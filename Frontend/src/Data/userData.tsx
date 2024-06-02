@@ -183,6 +183,7 @@ const userData = () => {
     cadestralZones,
     staticInformation,
     staffSnackbar,
+    setStaffSnackbar,
     handleStaffSnackbarClose,
   };
 };
@@ -238,6 +239,25 @@ const cadestralZones = [
   "Zuba",
 ];
 
+const paginationStyles = {
+  containerClassName: "flex flex-wrap font-lexend space-x-2",
+  activeClassName:
+    "flex items-center justify-center px-2.5 w-[32px] h-[32px] bg-custom-blue-200 border border-primary-color rounded ",
+  activeLinkClassName: "text-sm text-primary-color font-mulish font-bold",
+  previousClassName:
+    "flex items-center justify-center h-[32px] px-2.5 border border-divider-grey rounded",
+  previousLinkClassName: "text-sm text-color-text-one",
+  nextClassName:
+    "flex items-center justify-center h-[32px] px-2.5 border border-divider-grey rounded",
+  nextLinkClassName: "text-sm text-color-text-one",
+  pageClassName:
+    "flex items-center justify-center w-[32px] h-[32px] px-2.5 border border-divider-grey rounded",
+  pageLinkClassName: "text-sm text-color-text-two font-mulish",
+  breakClassName:
+    "flex items-center justify-center h-[32px] px-2 border border-divider-grey rounded",
+  breakLinkClassName: "text-base text-color-text-two font-mulish",
+};
+
 const propertyUse = ["Commercial", "Residential", "School"];
 
 const staticInformation = {
@@ -281,7 +301,7 @@ const staticInformation = {
       },
       {
         id: 2,
-        name: "Manually confirmed Transactions",
+        name: "Manually Confirmed Transactions",
       },
     ],
     columns: [
@@ -320,4 +340,4 @@ const staticInformation = {
   },
 };
 
-export { userData, staticInformation };
+export { userData, staticInformation, paginationStyles };

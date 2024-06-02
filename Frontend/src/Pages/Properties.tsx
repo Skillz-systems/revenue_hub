@@ -7,9 +7,9 @@ import {
   userData,
   LoadingSpinner,
   CustomAlert,
+  paginationStyles,
 } from "../Components/Index";
 import { BsCaretDownFill } from "react-icons/bs";
-import { HiOutlineDotsHorizontal } from "react-icons/hi";
 import { ScrollToTop, fetcher, useTokens } from "../Utils/client";
 import useSWR from "swr";
 
@@ -148,69 +148,10 @@ export default function Properties() {
     offset + propertiesPerPage
   );
 
-  const paginationStyles = {
-    containerClassName: "flex flex-wrap font-lexend space-x-2",
-    activeClassName:
-      "flex items-center justify-center px-2.5 w-[32px] h-[32px] bg-custom-blue-200 border border-primary-color rounded ",
-    activeLinkClassName: "text-sm text-primary-color font-mulish font-bold",
-    previousClassName:
-      "flex items-center justify-center h-[32px] px-2.5 border border-divider-grey rounded",
-    previousLinkClassName: "text-sm text-color-text-one",
-    nextClassName:
-      "flex items-center justify-center h-[32px] px-2.5 border border-divider-grey rounded",
-    nextLinkClassName: "text-sm text-color-text-one",
-    pageClassName:
-      "flex items-center justify-center w-[32px] h-[32px] px-2.5 border border-divider-grey rounded",
-    pageLinkClassName: "text-sm text-color-text-two font-mulish",
-    breakLabel: <HiOutlineDotsHorizontal />,
-    breakClassName:
-      "flex items-center justify-center h-[32px] px-2 border border-divider-grey rounded",
-    breakLinkClassName: "text-base text-color-text-two font-mulish",
-  };
   // PAGINATION LOGIC END
 
-  const filteredDistrictResults = districtState
-    ? propertyInformation.filter((record) =>
-        Object.values(record).some((value) => {
-          if (typeof value === "string") {
-            return value.toLowerCase().includes(districtState.toLowerCase());
-          }
-          return false;
-        })
-      )
-    : [];
-
-  const filteredPropertyUseResults = propertyUseState
-    ? propertyInformation.filter((record) =>
-        Object.values(record).some((value) => {
-          if (typeof value === "string") {
-            return value.toLowerCase().includes(propertyUseState.toLowerCase());
-          }
-          return false;
-        })
-      )
-    : [];
-
-  //RUN MORE TESTS ON DATA SWITCH
-  const filteredCombinedResults =
-    districtState !== "" && propertyUseState !== ""
-      ? filteredPropertyUseResults.filter((propertyRecord) =>
-          filteredDistrictResults.some(
-            (districtRecord) => propertyRecord === districtRecord
-          )
-        )
-      : [];
-
   const LengthByFilterState = (): number => {
-    return districtState !== ""
-      ? filteredDistrictResults.length > 0
-        ? filteredDistrictResults.length
-        : 0
-      : propertyUseState !== ""
-      ? filteredPropertyUseResults.length > 0
-        ? filteredPropertyUseResults.length
-        : 0
-      : propertyInformation?.length;
+    return propertyInformation?.length;
   };
 
   const pageCount = Math.ceil(LengthByFilterState() / propertiesPerPage);
@@ -290,8 +231,9 @@ export default function Properties() {
             {/* DATA AREA START */}
             <div className="flex flex-wrap items-center justify-start p-4 gap-y-4 gap-x-4">
               {districtState && propertyUseState ? (
-                filteredCombinedResults.length > 0 ? (
-                  filteredCombinedResults.map((property) => (
+                propertyInformation.length > 0 ? (
+                  propertyInformation.map((property) => (
+                    // SHOW ALL PROPERTIES
                     <PropertyCard
                       id={property.id}
                       personalIdentificationNumber={property.pid}
@@ -313,8 +255,9 @@ export default function Properties() {
                   </p>
                 )
               ) : districtState !== "" ? (
-                filteredDistrictResults.length > 0 ? (
-                  filteredDistrictResults.map((property) => (
+                propertyInformation.length > 0 ? (
+                  propertyInformation.map((property) => (
+                    // SHOW ALL DISTRICTS
                     <PropertyCard
                       id={property.id}
                       personalIdentificationNumber={property.pid}
@@ -336,8 +279,9 @@ export default function Properties() {
                   </p>
                 )
               ) : propertyUseState !== "" ? (
-                filteredPropertyUseResults.length > 0 ? (
-                  filteredPropertyUseResults.map((property) => (
+                propertyInformation.length > 0 ? (
+                  propertyInformation.map((property) => (
+                    // SHOW ALL PROPERTY USE
                     <PropertyCard
                       id={property.id}
                       personalIdentificationNumber={property.pid}
@@ -360,6 +304,7 @@ export default function Properties() {
                 )
               ) : currentProperties.length > 0 ? (
                 currentProperties.map((property) => (
+                  // SHOW CURRENT FILTER DATA
                   <PropertyCard
                     id={property.id}
                     personalIdentificationNumber={property.pid}

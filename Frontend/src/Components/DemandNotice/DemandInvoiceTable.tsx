@@ -11,6 +11,7 @@ import {
   ViewPropertyModal,
   DemandInvoiceDocument,
   CustomAlert,
+  paginationStyles,
 } from "../Index";
 import { DemandNotice } from "../../Data/types";
 import {
@@ -126,26 +127,10 @@ const DemandInvoiceTable = ({
   };
 
   const currentProperties = (data: any) => {
+    if (!data) {
+      return [];
+    }
     return data?.slice(offset, offset + propertiesPerPage);
-  };
-
-  const paginationStyles = {
-    containerClassName: "flex flex-wrap font-lexend space-x-2",
-    activeClassName:
-      "flex items-center justify-center px-2.5 w-[32px] h-[32px] bg-custom-blue-200 border border-primary-color rounded ",
-    activeLinkClassName: "text-sm text-primary-color font-mulish font-bold",
-    previousClassName:
-      "flex items-center justify-center h-[32px] px-2.5 border border-divider-grey rounded",
-    previousLinkClassName: "text-sm text-color-text-one",
-    nextClassName:
-      "flex items-center justify-center h-[32px] px-2.5 border border-divider-grey rounded",
-    nextLinkClassName: "text-sm text-color-text-one",
-    pageClassName: `flex items-center justify-center w-[32px] h-[32px] px-2.5 border border-divider-grey rounded`,
-    pageLinkClassName: "text-sm text-color-text-two font-mulish",
-    breakLabel: <HiOutlineDotsHorizontal />,
-    breakClassName:
-      "flex items-center justify-center h-[32px] px-2 border border-divider-grey rounded",
-    breakLinkClassName: "text-base text-color-text-two font-mulish",
   };
 
   const handleEditModal = (recordId: number) => {
@@ -160,42 +145,6 @@ const DemandInvoiceTable = ({
   const handleQueryChange = (event) => {
     setQuery(event.target.value);
   };
-
-  const filteredRecords =
-    activeMenu === 1
-      ? currentProperties(demandNoticeInformation)
-      : activeMenu === 2
-      ? currentProperties(
-          demandNoticeInformation.filter((record) =>
-            record.payments.some((payment) => payment.status === "Paid")
-          )
-        )
-      : activeMenu === 3
-      ? currentProperties(
-          demandNoticeInformation.filter((record) =>
-            record.payments.some((payment) => payment.status === "Unpaid")
-          )
-        )
-      : activeMenu === 4
-      ? currentProperties(
-          demandNoticeInformation.filter((record) =>
-            record.payments.some((payment) => payment.status === "Expired")
-          )
-        )
-      : [];
-
-  const filteredResults = query
-    ? demandNoticeInformation.filter((record) =>
-        Object.values(record).some((value) => {
-          if (typeof value === "string") {
-            return value.toLowerCase().includes(query.toLowerCase());
-          } else if (typeof value === "number" || Number.isInteger(value)) {
-            return String(value).toLowerCase().includes(query.toLowerCase());
-          }
-          return false;
-        })
-      )
-    : [];
 
   const pageCount = Math.ceil(LengthByActiveMenu() / propertiesPerPage);
 
@@ -303,19 +252,7 @@ const DemandInvoiceTable = ({
   };
 
   function LengthByActiveMenu() {
-    return activeMenu === 1
-      ? demandNoticeInformation.length
-      : activeMenu === 2
-      ? demandNoticeInformation.filter((record) =>
-          record.payments.some((payment) => payment.status === "Paid")
-        ).length
-      : activeMenu === 3
-      ? demandNoticeInformation.filter((record) =>
-          record.payments.some((payment) => payment.status === "Unpaid")
-        ).length
-      : demandNoticeInformation.filter((record) =>
-          record.payments.some((payment) => payment.status === "Expired")
-        ).length;
+    return demandNoticeInformation.length;
   }
 
   return (
@@ -336,7 +273,15 @@ const DemandInvoiceTable = ({
                       : "bg-inherit"
                   }`}
                   onClick={() => {
-                    setActiveMenu(menu.id);
+                    if (menu.id > 1) {
+                      setSnackbar({
+                        open: true,
+                        message: "Disabled Feature. Coming soon.",
+                        severity: "warning",
+                      });
+                    } else {
+                      setActiveMenu(menu.id);
+                    }
                     setCurrentPage(0);
                     setCurrentStyle(0);
                   }}
@@ -350,27 +295,11 @@ const DemandInvoiceTable = ({
                   >
                     {menu.name}
                   </span>
-                  <span className="px-1 border rounded text-color-text-three bg-custom-blue-200 border-custom-color-two">
-                    {menu.id === 1
-                      ? demandNoticeInformation.length
-                      : menu.id === 2
-                      ? demandNoticeInformation.filter((record) =>
-                          record.payments.some(
-                            (payment) => payment.status === "Paid"
-                          )
-                        ).length
-                      : menu.id === 3
-                      ? demandNoticeInformation.filter((record) =>
-                          record.payments.some(
-                            (payment) => payment.status === "Unpaid"
-                          )
-                        ).length
-                      : demandNoticeInformation.filter((record) =>
-                          record.payments.some(
-                            (payment) => payment.status === "Expired"
-                          )
-                        ).length}
-                  </span>
+                  {menu.id === 1 ? (
+                    <span className="px-1 border rounded text-color-text-three bg-custom-blue-200 border-custom-color-two">
+                      {menu.id === 1 ? demandNoticeInformation.length : 0}
+                    </span>
+                  ) : null}
                 </div>
               )
             )}
@@ -394,6 +323,7 @@ const DemandInvoiceTable = ({
             displaySearchIcon={displaySearchIcon}
             query={query}
             handleQueryChange={handleQueryChange}
+            setSnackBar={setSnackbar}
           />
         </div>
 
@@ -424,17 +354,21 @@ const DemandInvoiceTable = ({
           </div>
           <div className="flex-col space-y-4">
             {query === "" ? (
-              filteredRecords.length > 0 ? (
-                filteredRecords.map((record: DemandNotice) =>
-                  recordField(record)
+              // FILTER BY QUERY
+              demandNoticeInformation.length > 0 ? (
+                currentProperties(demandNoticeInformation).map(
+                  (record: DemandNotice) => recordField(record)
                 )
               ) : (
                 <p className="text-sm font-medium font-lexend text-color-text-black">
                   No results found.
                 </p>
               )
-            ) : filteredResults.length > 0 ? (
-              filteredResults.map((record: any) => recordField(record))
+            ) : demandNoticeInformation.length > 0 ? (
+              // FILTER EVERYTHING ELSE
+              currentProperties(demandNoticeInformation).map((record: any) =>
+                recordField(record)
+              )
             ) : (
               <p className="text-sm font-medium font-lexend text-color-text-black">
                 No results found.
