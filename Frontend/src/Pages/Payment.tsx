@@ -9,7 +9,6 @@ import { CustomAlert } from "../Components/Index";
 const Payment = () => {
   const { pid } = useParams();
   const [paymentAccount, setPaymentAccount] = useState<any>(null);
-  const [buttonInfo, setButtonInfo] = useState<boolean | string>(false);
   const [snackbar, setSnackbar] = useState({
     open: false,
     message: "",
