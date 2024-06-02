@@ -7,6 +7,7 @@ use Illuminate\Support\Str;
 use App\Service\AuthService;
 use Illuminate\Http\Request;
 use App\Service\StaffService;
+use Illuminate\Support\Carbon;
 use App\Mail\ForgotPasswordMail;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
@@ -180,7 +181,8 @@ class AuthController extends Controller
                 "data" => $validator->errors()
             ], 403);
         }
-
+        $verityEmail = ["email_verified_at" => Carbon::now()];
+        $request->merge($verityEmail);
         $savePassword = (new StaffService)->storePassword($request);
 
         if ($savePassword) {

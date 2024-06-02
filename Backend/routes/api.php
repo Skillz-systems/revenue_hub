@@ -24,6 +24,7 @@ use Illuminate\Support\Facades\Route;
 
 // Staff login route
 Route::post('auth/login', [AuthController::class, 'login']);
+Route::post('payment/webhook', [PaymentController::class, 'webhook']);
 
 // staff store new password route
 Route::post('auth/store-password/', [AuthController::class, 'storePassword']);

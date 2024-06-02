@@ -2,19 +2,26 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Resources\PaymentResource;
+use App\Models\Payment;
+use App\Models\DemandNotice;
+use Illuminate\Http\Request;
 use App\Service\PaymentService;
 use App\Service\PropertyService;
-use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
+use App\Service\DemandNoticeService;
+use App\Http\Resources\PaymentResource;
 
 class PaymentController extends Controller
 {
     protected $paymentService;
     protected $propertyService;
-    public function __construct(PaymentService $paymentService, PropertyService $propertyService)
+    protected $demandNoticeService;
+    public function __construct(PaymentService $paymentService, PropertyService $propertyService, DemandNoticeService $demandNoticeService)
     {
         $this->paymentService = $paymentService;
         $this->propertyService = $propertyService;
+        $this->demandNoticeService = $demandNoticeService;
     }
 
     /**
@@ -280,5 +287,50 @@ class PaymentController extends Controller
         $generateAccount = $this->paymentService->createAccountNumber($id);
         $getProperty = $this->propertyService->getProperty($id);
         return response()->json(["status" => "success", "data" => $generateAccount, "property" => $getProperty], 200);
+    }
+
+    public function webhook(Request $request)
+    {
+        DB::beginTransaction();
+        try {
+            if ($request->has('status') && $request->status == "successful") {
+                // get account 
+                $getAccount = $this->paymentService->getAccountNumberByTxRef($request->txRef);
+                if ($getAccount) {
+                    // save Payment
+                    $paymentData = [
+                        "tx_ref" => $request->txRef,
+                        "flw_ref" => $request->flwRef,
+                        "demand_notice_id" => $getAccount->demand_notice_id,
+                        "actual_amount" => $request->amount,
+                        "charged_amount" => $request->charged_amount,
+                        "app_fee" => $request->appfee,
+                        "merchant_fee" => $request->merchantfee,
+                        "status" => Payment::STATUS_COMPLETED,
+                        "webhook_string" => json_encode($request->all()),
+                    ];
+                    $payment = $this->paymentService->createPayment($paymentData);
+                    // update demand notice status
+                    if ($payment) {
+                        $this->demandNoticeService->updateDemandNotice($getAccount->demand_notice_id, ["status" => DemandNotice::PAID]);
+                        //return response()->json(["status" => "success", "data" => $request->all(), "message" => "Payment received"], 200);
+                    }
+                }
+                DB::commit();
+                return response()->json(["status" => "success", "data" => "", "message" => "Payment received"], 200);
+            }
+            Log::error('Failed to update payment data', ['error' => "No status key or status not successful"]);
+            return response()->json(["status" => "error", "data" => "", "message" => "Payment not saved"], 400);
+        } catch (\Exception $e) {
+            DB::rollBack();
+
+            // Log the error or handle it accordingly
+            Log::error('Failed to update payment data', ['error' => $e->getMessage()]);
+
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Failed to update payment',
+            ], 400);
+        }
     }
 }

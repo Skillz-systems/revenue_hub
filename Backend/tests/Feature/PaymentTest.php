@@ -3,12 +3,14 @@
 namespace Tests\Feature;
 
 use App\Models\DemandNotice;
+use App\Models\DemandNoticeAccount;
 use App\Models\Payment;
 use App\Models\Property;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Http\Request;
 
 class PaymentTest extends TestCase
 {
@@ -124,4 +126,65 @@ class PaymentTest extends TestCase
     //         ]
     //     ]);
     // }
+
+
+    public function test_to_see_if_a_demand_notice_payment_can_be_created(): void
+    {
+        $data =
+            [
+                "id" => 1415777651,
+                "txRef" => "19398114_1717176169",
+                "flwRef" => "100006240531182421257424789154",
+                "orderRef" => "URF_1717176169673_30835",
+                "paymentPlan" => null,
+                "paymentPage" => null,
+                "createdAt" => "2024-05-31T17:24:39.000Z",
+                "amount" => 50,
+                "charged_amount" => 50,
+                "status" => "successful",
+                "IP" => "::ffff:172.16.30.14",
+                "currency" => "NGN",
+                "appfee" => 0.7,
+                "merchantfee" => 0,
+                "merchantbearsfee" => 1,
+                "customer" => [
+                    "id" => 889141038,
+                    "phone" => "08012345678",
+                    "fullName" => "Anonymous customer",
+                    "customertoken" => null,
+                    "email" => "19398114@revenuhub.ng",
+                    "createdAt" => "2024-05-31T07:34:26.000Z",
+                    "updatedAt" => "2024-05-31T07:34:26.000Z",
+                    "deletedAt" => null,
+                    "AccountId" => 22129,
+                ],
+                "entity" => [
+                    "account_number" => "7070173013",
+                    "first_name" => "KINGSLEY CHIBUIKE",
+                    "last_name" => "ACHUMIE",
+                    "createdAt" => "2024-05-31T17:01:02.000Z",
+                ],
+            ];
+
+
+        $property = Property::factory()->create();
+        $demandNotice = DemandNotice::factory()->create([
+            "property_id" => $property->id
+        ]);
+        DemandNoticeAccount::factory()->create([
+            "demand_notice_id" => $demandNotice->id,
+            "amount" => "30020",
+            "tx_ref" => "19398114_1717176169",
+        ]);
+        $response = $this->postJson("/api/payment/webhook", $data);
+
+        $this->assertDatabaseHas('payments', [
+            "demand_notice_id" => $demandNotice->id
+        ]);
+        $response->assertStatus(200)->assertJsonStructure([
+            "status",
+            "message",
+            "data"
+        ]);
+    }
 }

@@ -58,7 +58,7 @@ class PropertyControllerTest extends TestCase
     {
         // Arrange: Prepare valid property data
         $data = [
-            'pid' => 1,
+            'pid' => "1",
             'occupant' => 'John Doe',
             'prop_addr' => '123 Main St',
             'street_name' => 'Main St',
