@@ -19,6 +19,7 @@ import {
   formatDate,
   ScrollToTop,
   useTokens,
+  useTriggerError,
 } from "../../Utils/client";
 import axios from "axios";
 
@@ -49,6 +50,7 @@ const DemandInvoiceTable = ({
     message: "",
     severity: "success",
   });
+  const triggerError = useTriggerError();
 
   const handleSnackbarClose = () => {
     setSnackbar({ ...snackbar, open: false });
@@ -112,6 +114,11 @@ const DemandInvoiceTable = ({
             }, 3000);
             break;
           default:
+            const errorData = {
+              status: error.response.status,
+              message: error.response.statusText,
+            };
+            triggerError(errorData);
             break;
         }
       }

@@ -5,7 +5,7 @@ import {
   userData,
   CustomAlert,
 } from "../Components/Index";
-import { useTokens } from "../Utils/client";
+import { useTokens, useTriggerError } from "../Utils/client";
 import axios from "axios";
 
 const Transactions: React.FC = () => {
@@ -18,6 +18,7 @@ const Transactions: React.FC = () => {
     message: "",
     severity: "success",
   });
+  const triggerError = useTriggerError();
 
   const handleSnackbarClose = () => {
     setSnackbar({ ...snackbar, open: false });
@@ -72,6 +73,11 @@ const Transactions: React.FC = () => {
             }, 3000);
             break;
           default:
+            const errorData = {
+              status: error.response.status,
+              message: error.response.statusText,
+            };
+            triggerError(errorData);
             break;
         }
       }

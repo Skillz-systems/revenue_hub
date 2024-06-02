@@ -3,6 +3,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import images from "../assets";
 import { InputComponent, CustomAlert } from "../Components/Index";
 import axios from "axios";
+import { useTriggerError } from "../Utils/client";
 
 function ConfirmAccount(): JSX.Element {
   const [isLoading, setIsLoading] = useState(false);
@@ -20,6 +21,7 @@ function ConfirmAccount(): JSX.Element {
     message: "",
     severity: "success",
   });
+  const triggerError = useTriggerError();
 
   const handleSnackbarClose = () => {
     setSnackbar({ ...snackbar, open: false });
@@ -70,6 +72,11 @@ function ConfirmAccount(): JSX.Element {
             }, 3000);
             break;
           default:
+            const errorData = {
+              status: error.response.status,
+              message: error.response.statusText,
+            };
+            triggerError(errorData);
             break;
         }
       }
@@ -138,6 +145,11 @@ function ConfirmAccount(): JSX.Element {
             }, 3000);
             break;
           default:
+            const errorData = {
+              status: error.response.status,
+              message: error.response.statusText,
+            };
+            triggerError(errorData);
             break;
         }
       }

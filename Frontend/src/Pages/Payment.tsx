@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useParams } from "react-router-dom";
 import QRCode from "react-qr-code";
-import { formatNumberWithCommas } from "../Utils/client";
+import { formatNumberWithCommas, useTriggerError } from "../Utils/client";
 import axios from "axios";
 import images from "../assets";
 import { CustomAlert } from "../Components/Index";
@@ -14,6 +14,7 @@ const Payment = () => {
     message: "",
     severity: "success",
   });
+  const triggerError = useTriggerError();
 
   const handleSnackbarClose = () => {
     setSnackbar({ ...snackbar, open: false });
@@ -67,6 +68,11 @@ const Payment = () => {
             }, 3000);
             break;
           default:
+            const errorData = {
+              status: error.response.status,
+              message: error.response.statusText,
+            };
+            triggerError(errorData);
             break;
         }
       }

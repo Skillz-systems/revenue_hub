@@ -10,7 +10,12 @@ import {
   paginationStyles,
 } from "../Components/Index";
 import { BsCaretDownFill } from "react-icons/bs";
-import { ScrollToTop, fetcher, useTokens } from "../Utils/client";
+import {
+  ScrollToTop,
+  fetcher,
+  useTokens,
+  useTriggerError,
+} from "../Utils/client";
 import useSWR from "swr";
 
 type PropertyData = {
@@ -70,6 +75,7 @@ export default function Properties() {
     message: "",
     severity: "success",
   });
+  const triggerError = useTriggerError();
 
   const handleSnackbarClose = () => {
     setSnackbar({ ...snackbar, open: false });
@@ -98,6 +104,11 @@ export default function Properties() {
         message: `Error fetching Property Data: ${error}`,
         severity: "warning",
       });
+      const errorData = {
+        status: error.response.status,
+        message: error.response.statusText,
+      };
+      triggerError(errorData);
     }
   }, [data]);
 

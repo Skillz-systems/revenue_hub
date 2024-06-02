@@ -5,6 +5,7 @@ import { InputComponent, CustomAlert } from "../Components/Index";
 import { GrFormViewHide, GrFormView } from "react-icons/gr";
 import axios from "axios";
 import Cookies from "js-cookie";
+import { useTriggerError } from "../Utils/client";
 
 function LoginPage(): JSX.Element {
   const [passwordDisplay, setPasswordDisplay] = useState(false);
@@ -26,6 +27,7 @@ function LoginPage(): JSX.Element {
     message: "",
     severity: "success",
   });
+  const triggerError = useTriggerError();
 
   const handleSnackbarClose = () => {
     setSnackbar({ ...snackbar, open: false });
@@ -84,6 +86,11 @@ function LoginPage(): JSX.Element {
       } else if (error.response.status === 401) {
         setErrorState("Invalid email or password. Please try again.");
       } else {
+        const errorData = {
+          status: error.response.status,
+          message: error.response.statusText,
+        };
+        triggerError(errorData);
         setErrorState("Internal Server Error. Please report the issue");
       }
     }
@@ -96,7 +103,7 @@ function LoginPage(): JSX.Element {
     event.preventDefault();
 
     if (!forgotPasswordEmail) {
-      return  setSnackbar({
+      return setSnackbar({
         open: true,
         message: "Please enter your email",
         severity: "warning",

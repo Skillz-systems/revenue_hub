@@ -4,6 +4,7 @@ import images from "../assets";
 import { InputComponent, CustomAlert } from "../Components/Index";
 import { GrFormViewHide, GrFormView } from "react-icons/gr";
 import axios from "axios";
+import { useTriggerError } from "../Utils/client";
 
 function AccountPassword(): JSX.Element {
   const [passwordDisplay, setPasswordDisplay] = useState(false);
@@ -20,6 +21,7 @@ function AccountPassword(): JSX.Element {
     message: "",
     severity: "success",
   });
+  const triggerError = useTriggerError();
 
   const handleSnackbarClose = () => {
     setSnackbar({ ...snackbar, open: false });
@@ -101,6 +103,11 @@ function AccountPassword(): JSX.Element {
             }, 3000);
             break;
           default:
+            const errorData = {
+              status: error.response.status,
+              message: error.response.statusText,
+            };
+            triggerError(errorData);
             break;
         }
       }

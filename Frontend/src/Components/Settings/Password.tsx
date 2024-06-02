@@ -2,10 +2,12 @@ import React, { useState, useEffect, ChangeEvent, FormEvent } from "react";
 import { GrFormViewHide, GrFormView } from "react-icons/gr";
 import { InputComponent, CustomAlert } from "../Index";
 import axios from "axios";
+import { useTriggerError } from "../../Utils/client";
 
 export default function Password({ userEmail }) {
   const [isLoading, setIsLoading] = useState(false);
   const [forgotPasswordEmail, setForgotPasswordEmail] = useState<string>("");
+  const triggerError = useTriggerError();
 
   useEffect(() => {
     if (userEmail) {
@@ -64,6 +66,11 @@ export default function Password({ userEmail }) {
             message = "Bad request.";
             break;
           default:
+            const errorData = {
+              status: error.response.status,
+              message: error.response.statusText,
+            };
+            triggerError(errorData);
             break;
         }
       }

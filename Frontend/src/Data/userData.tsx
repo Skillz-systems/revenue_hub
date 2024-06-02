@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import useSWR from "swr";
-import { fetcher, useTokens } from "../Utils/client";
+import { fetcher, useTokens, useTriggerError } from "../Utils/client";
 import { StatisticsData } from "./types";
 
 const userData = () => {
@@ -13,8 +13,9 @@ const userData = () => {
     message: "",
     severity: "success",
   });
+  const triggerError = useTriggerError();
 
-  const { token, userId, userRoleId } = useTokens();
+  const { token, userId } = useTokens();
 
   const handleStaffSnackbarClose = () => {
     setStaffSnackbar({ ...staffSnackbar, open: false });
@@ -45,21 +46,13 @@ const userData = () => {
       );
       if (response.status === 200) {
         setStatistics(response.data.data);
-      } else {
-        return;
       }
     } catch (error) {
-      if (error.response.status === 400) {
-        console.error(error);
-      } else if (error.response.status === 401) {
-        console.error(error);
-      } else if (error.response.status === 403) {
-        console.error(error);
-      } else if (error.response.status === 404) {
-        console.error(error);
-      } else {
-        console.error(error);
-      }
+      const errorData = {
+        status: staffError.response.status,
+        message: staffError.response.statusText,
+      };
+      triggerError(errorData);
     }
   };
 
@@ -89,6 +82,11 @@ const userData = () => {
         message: "Error fetching staff information",
         severity: "error",
       });
+      const errorData = {
+        status: staffError.response.status,
+        message: staffError.response.statusText,
+      };
+      triggerError(errorData);
     }
     if (allStaffError) {
       setStaffSnackbar({
@@ -96,6 +94,11 @@ const userData = () => {
         message: "Error fetching All Staff information",
         severity: "error",
       });
+      const errorData = {
+        status: allStaffError.response.status,
+        message: allStaffError.response.statusText,
+      };
+      triggerError(errorData);
     }
   }, [staffError, allStaffError]);
 
@@ -157,6 +160,11 @@ const userData = () => {
             }, 3000);
             break;
           default:
+            const errorData = {
+              status: error.response.status,
+              message: error.response.statusText,
+            };
+            triggerError(errorData);
             break;
         }
       }

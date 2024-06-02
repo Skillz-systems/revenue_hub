@@ -7,7 +7,6 @@ import { GrPowerShutdown } from "react-icons/gr";
 import { GiHamburgerMenu } from "react-icons/gi";
 import Cookies from "js-cookie";
 import { CustomAlert } from "../Index";
-import { useTriggerError } from "../../Utils/client";
 
 interface TopNavigationProps {
   userName: string;

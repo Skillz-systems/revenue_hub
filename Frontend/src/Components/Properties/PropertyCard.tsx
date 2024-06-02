@@ -1,7 +1,11 @@
 import React, { useState } from "react";
 import { GoDotFill } from "react-icons/go";
 import { TbCurrencyNaira } from "react-icons/tb";
-import { formatNumberWithCommas, useTokens } from "../../Utils/client";
+import {
+  formatNumberWithCommas,
+  useTokens,
+  useTriggerError,
+} from "../../Utils/client";
 import { BiSolidEditAlt } from "react-icons/bi";
 import { HiOutlineDotsHorizontal } from "react-icons/hi";
 import axios from "axios";
@@ -39,6 +43,7 @@ const PropertiesTable: React.FC<PropertiesTableProps> = ({
     message: "",
     severity: "success",
   });
+  const triggerError = useTriggerError();
 
   const handleSnackbarClose = () => {
     setSnackbar((prev) => ({ ...prev, open: false }));
@@ -102,6 +107,11 @@ const PropertiesTable: React.FC<PropertiesTableProps> = ({
             }, 3000);
             break;
           default:
+            const errorData = {
+              status: error.response.status,
+              message: error.response.statusText,
+            };
+            triggerError(errorData);
             break;
         }
       }
@@ -160,6 +170,11 @@ const PropertiesTable: React.FC<PropertiesTableProps> = ({
             }, 3000);
             break;
           default:
+            const errorData = {
+              status: error.response.status,
+              message: error.response.statusText,
+            };
+            triggerError(errorData);
             break;
         }
       }

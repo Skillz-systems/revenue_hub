@@ -5,7 +5,7 @@ import { PiBuildingsFill } from "react-icons/pi";
 import { GiStarFormation } from "react-icons/gi";
 import { TbCurrencyNaira } from "react-icons/tb";
 import { BsCalendar2EventFill } from "react-icons/bs";
-import { formatNumberWithCommas } from "../../Utils/client";
+import { formatNumberWithCommas, useTriggerError } from "../../Utils/client";
 import { HiOutlineDotsHorizontal } from "react-icons/hi";
 import { FaPeopleRoof } from "react-icons/fa6";
 import {
@@ -39,6 +39,7 @@ const ViewPropertyModal: React.FC<ViewPropertyModalProps> = ({
     message: "",
     severity: "success",
   });
+  const triggerError = useTriggerError();
 
   const handleSnackbarClose = () => {
     setSnackbar({ ...snackbar, open: false });
@@ -129,6 +130,11 @@ const ViewPropertyModal: React.FC<ViewPropertyModalProps> = ({
             }, 3000);
             break;
           default:
+            const errorData = {
+              status: error.response.status,
+              message: error.response.statusText,
+            };
+            triggerError(errorData);
             break;
         }
       }
