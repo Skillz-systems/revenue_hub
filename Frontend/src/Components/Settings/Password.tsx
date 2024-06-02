@@ -31,7 +31,7 @@ export default function Password() {
       alert("Passwords don't match");
       return;
     } else {
-      console.log("FORM DATA:", formData);
+      return;
     }
   };
 

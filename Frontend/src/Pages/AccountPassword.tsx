@@ -36,12 +36,14 @@ function AccountPassword(): JSX.Element {
 
   const handleFormSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    console.log("FORM DATA:", formData);
 
     if (!formData.password || !formData.confirmPassword) {
-      return alert("Please fill in all fields");
+      return setSnackbar({
+        open: true,
+        message: "Please fill in all required fields",
+        severity: "warning",
+      });
     }
-
     // Check if passwords match
     if (formData.password !== formData.confirmPassword) {
       setErrorState("Passwords do not match.");

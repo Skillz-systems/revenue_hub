@@ -153,7 +153,6 @@ const DemandInvoiceDocument = ({
         window.print();
         otherSections.forEach((section) => section.classList.remove("hidden"));
       } else {
-        console.log("Invalid Operation");
         return;
       }
     } catch (error) {

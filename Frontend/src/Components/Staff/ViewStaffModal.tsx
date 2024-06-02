@@ -3,18 +3,21 @@ import { GiJusticeStar } from "react-icons/gi";
 import { IoPersonCircle } from "react-icons/io5";
 import { MdCancel, MdLocationPin } from "react-icons/md";
 import { RiDeleteBin5Fill } from "react-icons/ri";
+import { userData } from "../Index";
 
 const ViewStaffModal = ({
   hideViewStaffModal,
   propertyModalTransition,
   customTableData,
 }) => {
+  const { deleteStaffById } = userData();
   return (
     <div
-      className={`flex-col relative bg-white rounded overflow-y-auto overscroll-contain scrollbar-thin scrollbar-thumb-color-text-two scrollbar-track-white ${propertyModalTransition
-        ? "w-6/12 transition-all ease-in-out duration-500"
-        : "w-32"
-        }`}
+      className={`flex-col relative bg-white rounded overflow-y-auto overscroll-contain scrollbar-thin scrollbar-thumb-color-text-two scrollbar-track-white ${
+        propertyModalTransition
+          ? "w-6/12 transition-all ease-in-out duration-500"
+          : "w-32"
+      }`}
       style={{ height: "95vh" }}
     >
       <img
@@ -36,14 +39,15 @@ const ViewStaffModal = ({
             </p>
             <span
               className={`rounded-xl px-1 py-0.5 text-[10px] font-light font-lexend text-darkerblueberry border-0.6 border-custom-grey-100
-                  ${customTableData?.role.name === "Manager"
-                  ? "bg-color-light-red"
-                  : customTableData?.role.name === "Officer"
-                    ? "bg-color-light-yellow"
-                    : customTableData?.role.name === "Admin"
+                  ${
+                    customTableData?.role.name === "Manager"
+                      ? "bg-color-light-red"
+                      : customTableData?.role.name === "Officer"
+                      ? "bg-color-light-yellow"
+                      : customTableData?.role.name === "Admin"
                       ? "bg-color-bright-green text-white"
                       : "bg-primary-color text-white"
-                }
+                  }
                       `}
             >
               {customTableData?.role.name.toUpperCase()}
@@ -52,7 +56,7 @@ const ViewStaffModal = ({
           <div className="flex items-center gap-2">
             <span
               className="flex items-center justify-center w-[24px] h-[24px] text-xs text-custom-grey-300 font-lexend font-medium px-0.5 border border-custom-grey-100 rounded hover:cursor-pointer"
-              onClick={() => alert("Delete Staff")}
+              onClick={() => deleteStaffById(customTableData.id)}
               title="Delete Staff from Record"
             >
               <RiDeleteBin5Fill />
@@ -121,14 +125,15 @@ const ViewStaffModal = ({
           </div>
           <span
             className={`px-1 py-0.5 rounded-xl text-[10px] font-light text-darkerblueberry border-[0.4px] border-divider-grey
-          ${customTableData?.role.name === "Manager"
-                ? "bg-color-light-red"
-                : customTableData?.role.name === "Officer"
-                  ? "bg-color-light-yellow"
-                  : customTableData?.role.name === "Admin"
-                    ? "bg-color-bright-green text-white"
-                    : "bg-primary-color text-white"
-              }
+          ${
+            customTableData?.role.name === "Manager"
+              ? "bg-color-light-red"
+              : customTableData?.role.name === "Officer"
+              ? "bg-color-light-yellow"
+              : customTableData?.role.name === "Admin"
+              ? "bg-color-bright-green text-white"
+              : "bg-primary-color text-white"
+          }
           `}
           >
             {customTableData?.role.name.toUpperCase()}
@@ -146,6 +151,6 @@ const ViewStaffModal = ({
       </div>
     </div>
   );
-}
+};
 
-export default ViewStaffModal
+export default ViewStaffModal;

@@ -213,7 +213,6 @@ const PropertiesTable: React.FC<PropertiesTableProps> = ({
               className="text-xl hover:cursor-pointer"
               onClick={(e) => {
                 e.stopPropagation();
-                alert("Edit Property");
               }}
             >
               <BiSolidEditAlt />

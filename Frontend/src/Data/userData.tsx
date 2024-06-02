@@ -61,19 +61,19 @@ const userData = () => {
       if (response.status === 200) {
         setStatistics(response.data.data);
       } else {
-        alert("Unexpected Status Code");
+        return;
       }
     } catch (error) {
       if (error.response.status === 400) {
-        alert("Bad request.");
+        console.error(error);
       } else if (error.response.status === 401) {
-        alert("You are unauthenticated");
+        console.error(error);
       } else if (error.response.status === 403) {
-        alert("You are unauthorized");
+        console.error(error);
       } else if (error.response.status === 404) {
-        alert("Statistics is not found");
+        console.error(error);
       } else {
-        alert("Internal Server Error");
+        console.error(error);
       }
     }
   };

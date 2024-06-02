@@ -64,7 +64,11 @@ const ViewPropertyModal: React.FC<ViewPropertyModalProps> = ({
   };
 
   const handleCancelEdit = () => {
-    alert("Cancel changes without saving?");
+    setSnackbar({
+      open: true,
+      message: "Cancel changes without saving?",
+      severity: "warning",
+    });
     setFormData(customTableData);
     setEditProperty(false);
     setDisplaySave(false);
@@ -677,7 +681,13 @@ const ViewPropertyModal: React.FC<ViewPropertyModalProps> = ({
                           <p
                             className="hover:cursor-pointer"
                             title="Generate Reminder"
-                            onClick={() => alert("Generate Reminder")}
+                            onClick={() => {
+                              setSnackbar({
+                                open: true,
+                                message: "Generate Reminder",
+                                severity: "info",
+                              });
+                            }}
                           >
                             Generate Reminder
                           </p>
@@ -687,7 +697,13 @@ const ViewPropertyModal: React.FC<ViewPropertyModalProps> = ({
                           <p
                             className="hover:cursor-pointer"
                             title="View Reminder"
-                            onClick={() => alert("View Reminder")}
+                            onClick={() => {
+                              setSnackbar({
+                                open: true,
+                                message: "View Reminder?",
+                                severity: "info",
+                              });
+                            }}
                           >
                             View Reminder
                           </p>

@@ -52,7 +52,11 @@ const AddProperty: React.FC<AddPropertyProps> = ({
 
     if (emptyFields.length > 0) {
       // Alert if any required fields are empty
-      alert("Please fill in all required fields.");
+      setSnackbar({
+        open: true,
+        message: "Please fill in all required fields.",
+        severity: "warning",
+      });
 
       // Set error state to the section containing the first empty required field
       const firstEmptyField = emptyFields[0];
@@ -83,8 +87,6 @@ const AddProperty: React.FC<AddPropertyProps> = ({
           active: "Active",
           occupant: `${formData.occupantsFirstName} ${formData.occupantsLastName}`,
         };
-
-        console.log("requestData", requestData);
 
         // Get the bearer token from cookies
         const token = Cookies.get("userToken");
@@ -139,7 +141,6 @@ const AddProperty: React.FC<AddPropertyProps> = ({
   useEffect(() => {
     if (errorState != undefined) {
       setActiveState(errorState);
-      console.log("PAGE", errorState);
     }
   }, [errorState]);
 

@@ -3,7 +3,7 @@ import { BiSolidEditAlt } from "react-icons/bi";
 import { GiJusticeStar } from "react-icons/gi";
 import { IoPersonCircle } from "react-icons/io5";
 import { MdCancel, MdLocationPin } from "react-icons/md";
-import { InputComponent, SelectComponent } from "../Index";
+import { InputComponent, SelectComponent, CustomAlert } from "../Index";
 import { userData } from "../../Data/userData";
 import axios from "axios";
 import { useTokens } from "../../Utils/client";
@@ -41,6 +41,15 @@ export default function Accounts({ currentUserData }: AccountsProps) {
   });
   const { token, userId } = useTokens();
   const { staticInformation } = userData();
+  const [snackbar, setSnackbar] = useState({
+    open: false,
+    message: "",
+    severity: "success",
+  });
+
+  const handleSnackbarClose = () => {
+    setSnackbar((prev) => ({ ...prev, open: false }));
+  };
 
   useEffect(() => {
     setFormData({
@@ -73,7 +82,11 @@ export default function Accounts({ currentUserData }: AccountsProps) {
   };
 
   const handleCancelEdit = () => {
-    alert("Cancel changes without saving?");
+    setSnackbar({
+      open: true,
+      message: "Cancel changes without saving?",
+      severity: "warning",
+    });
     setFormData({
       id: currentUserData.id,
       name: currentUserData.name,
@@ -114,21 +127,40 @@ export default function Accounts({ currentUserData }: AccountsProps) {
           }
         );
         if (response.status === 200) {
-          alert("Form submitted successfully!");
+          setSnackbar({
+            open: true,
+            message: "Updated Account Successfully",
+            severity: "success",
+          });
         } else {
-          alert("Unexpected status code. Please try again.");
+          setSnackbar({
+            open: true,
+            message: "Unexpected status code",
+            severity: "warning",
+          });
         }
         setIsLoading(false);
       } catch (error) {
-        if (error.response.status === 400) {
-          alert("Bad request. All fields are required");
-        } else if (error.response.status === 401) {
-          alert("You are unauthenticated");
-        } else if (error.response.status === 403) {
-          alert("You are unauthorized");
-        } else {
-          alert("Internal Server Error");
+        let message = "Internal Server Error";
+        if (error.response) {
+          switch (error.response.status) {
+            case 400:
+              message = "Bad request.";
+              break;
+            case 401:
+              message = "You are unauthorized";
+              break;
+            case 403:
+              message = "You are forbidden";
+              break;
+            case 404:
+              message = "Demand notice not found";
+              break;
+            default:
+              break;
+          }
         }
+        setSnackbar({ open: true, message, severity: "error" });
       }
       setIsLoading(false);
       setDisplaySave(false);
@@ -323,6 +355,12 @@ export default function Accounts({ currentUserData }: AccountsProps) {
           )}
         </div>
       </div>
+      <CustomAlert
+        isOpen={snackbar.open}
+        message={snackbar.message}
+        severity={snackbar.severity}
+        handleClose={handleSnackbarClose}
+      />
     </form>
   );
 }

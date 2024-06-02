@@ -38,7 +38,6 @@ const TopNavigation: React.FC<TopNavigationProps> = ({
 
   const handleYearChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
     setSelectedYear(parseInt(event.target.value));
-    // alert(`Retrieving ${event.target.value} Revenue Data`);
   };
 
   const getCurrentDate = () => {

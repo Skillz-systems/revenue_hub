@@ -82,10 +82,13 @@ function ConfirmAccount(): JSX.Element {
 
   const handleFormSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    console.log("FORM DATA:", formData);
 
     if (!formData.firstName || !formData.email || !formData.phoneNumber) {
-      return alert("Please fill in all fields");
+      return setSnackbar({
+        open: true,
+        message: "Please fill in all required fields",
+        severity: "warning",
+      });
     }
 
     setIsLoading(true);
