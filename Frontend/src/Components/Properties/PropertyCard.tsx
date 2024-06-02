@@ -230,7 +230,12 @@ const PropertiesTable: React.FC<PropertiesTableProps> = ({
               <HiOutlineDotsHorizontal />
             </span>
             {settingsModal && (
-              <span className="absolute space-y-2 top-0 z-10 flex-col w-40 p-4 text-xs bg-white rounded shadow-md -left-44 border-0.6 border-custom-grey-100 text-color-text-black font-lexend">
+              <span
+                className="absolute space-y-2 top-0 z-10 flex-col w-40 p-4 text-xs bg-white rounded shadow-md -left-44 border-0.6 border-custom-grey-100 text-color-text-black font-lexend"
+                onMouseLeave={() => {
+                  setSettingsModal(!settingsModal);
+                }}
+              >
                 {paymentStatus === "Ungenerated" ? (
                   <p
                     className="hover:cursor-pointer"

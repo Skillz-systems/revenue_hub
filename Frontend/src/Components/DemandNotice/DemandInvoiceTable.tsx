@@ -267,7 +267,10 @@ const DemandInvoiceTable = ({
               <HiOutlineDotsHorizontal />
             </span>
             {editModal === record?.id && (
-              <span className="absolute space-y-2 top-0 z-10 flex-col w-40 p-4 text-xs bg-white rounded shadow-md -left-44 border-0.6 border-custom-grey-100 text-color-text-black font-lexend">
+              <span
+                className="absolute space-y-2 top-0 z-10 flex-col w-40 p-4 text-xs bg-white rounded shadow-md -left-44 border-0.6 border-custom-grey-100 text-color-text-black font-lexend"
+                onMouseLeave={() => setEditModal(null)}
+              >
                 <p
                   className="hover:cursor-pointer"
                   title="View Demand Notice"
@@ -301,9 +304,7 @@ const DemandInvoiceTable = ({
 
   function LengthByActiveMenu() {
     return activeMenu === 1
-      ? filteredResults.length > 0
-        ? filteredResults.length
-        : 0
+      ? demandNoticeInformation.length
       : activeMenu === 2
       ? demandNoticeInformation.filter((record) =>
           record.payments.some((payment) => payment.status === "Paid")
@@ -351,9 +352,7 @@ const DemandInvoiceTable = ({
                   </span>
                   <span className="px-1 border rounded text-color-text-three bg-custom-blue-200 border-custom-color-two">
                     {menu.id === 1
-                      ? filteredResults.length > 0
-                        ? filteredResults.length
-                        : 0
+                      ? demandNoticeInformation.length
                       : menu.id === 2
                       ? demandNoticeInformation.filter((record) =>
                           record.payments.some(

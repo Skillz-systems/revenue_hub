@@ -161,7 +161,10 @@ const TransactionsTable = ({
               <HiOutlineDotsHorizontal />
             </span>
             {editModal === transactionInformation.demand_notice.id && (
-              <span className="absolute space-y-2 top-0 z-10 flex-col w-36 p-4 text-xs text-center bg-white rounded shadow-md -left-44 border-0.6 border-custom-grey-100 text-color-text-black font-lexend">
+              <span
+                className="absolute space-y-2 top-0 z-10 flex-col w-36 p-4 text-xs text-center bg-white rounded shadow-md -left-44 border-0.6 border-custom-grey-100 text-color-text-black font-lexend"
+                onMouseLeave={() => setEditModal(null)}
+              >
                 <p
                   className="hover:cursor-pointer"
                   title="Edit Transaction"

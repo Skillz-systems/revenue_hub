@@ -228,13 +228,22 @@ export default function Properties() {
               <p className="text-base font-bold text-color-text-two">
                 ALL PROPERTIES
               </p>
-              <div className="flex items-center justify-end gap-3">
+              <div
+                className="flex items-center justify-end gap-3"
+                onClick={() => {
+                  setSnackbar({
+                    open: true,
+                    message: "Disabled Feature. Coming soon.",
+                    severity: "warning",
+                  });
+                }}
+              >
                 <div
                   className="flex items-center justify-between gap-2 pr-1.5 border rounded border-divider-grey text-color-text-two"
                   title="Filter by District"
                 >
                   <select
-                    className="hover:cursor-pointer p-2 py-1.5 overflow-y-auto text-xs font-medium rounded outline-none appearance-none font-lexend overscroll-contain scrollbar-thin scrollbar-thumb-color-text-two scrollbar-track-white"
+                    className="hover:cursor-pointer p-2 py-1.5 overflow-y-auto text-xs font-medium rounded outline-none appearance-none font-lexend overscroll-contain scrollbar-thin scrollbar-thumb-color-text-two scrollbar-track-white pointer-events-none"
                     onChange={handleSelectDistrict}
                     value={districtState}
                   >
@@ -254,7 +263,7 @@ export default function Properties() {
                   title="Filter by Property Use"
                 >
                   <select
-                    className="hover:cursor-pointer p-2 py-1.5 overflow-y-auto text-xs font-medium rounded outline-none appearance-none font-lexend overscroll-contain scrollbar-thin scrollbar-thumb-color-text-two scrollbar-track-white"
+                    className="hover:cursor-pointer p-2 py-1.5 overflow-y-auto text-xs font-medium rounded outline-none appearance-none font-lexend overscroll-contain scrollbar-thin scrollbar-thumb-color-text-two scrollbar-track-white pointer-events-none"
                     onChange={handleSelectPropertyUse}
                     value={propertyUseState}
                   >
@@ -270,7 +279,7 @@ export default function Properties() {
                   </span>
                 </div>
                 <p
-                  className="text-xs font-semi-bold font-lexend text-color-bright-red hover:cursor-pointer"
+                  className="text-xs font-semi-bold font-lexend text-color-bright-red hover:cursor-pointer pointer-events-none"
                   onClick={ResetFilters}
                 >
                   Reset Filters

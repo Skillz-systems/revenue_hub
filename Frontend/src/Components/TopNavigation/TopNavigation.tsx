@@ -6,6 +6,7 @@ import { IoPersonCircle } from "react-icons/io5";
 import { GrPowerShutdown } from "react-icons/gr";
 import { GiHamburgerMenu } from "react-icons/gi";
 import Cookies from "js-cookie";
+import { CustomAlert } from "../Index";
 
 interface TopNavigationProps {
   userName: string;
@@ -21,6 +22,15 @@ const TopNavigation: React.FC<TopNavigationProps> = ({
   const [selectedYear, setSelectedYear] = useState<number>(2024);
   const [menuState, setMenuState] = useState<boolean>(false);
   const navigate = useNavigate();
+  const [snackbar, setSnackbar] = useState({
+    open: false,
+    message: "",
+    severity: "success",
+  });
+
+  const handleSnackbarClose = () => {
+    setSnackbar({ ...snackbar, open: false });
+  };
 
   const displayMenu = () => {
     setMenuState(!menuState);
@@ -28,7 +38,7 @@ const TopNavigation: React.FC<TopNavigationProps> = ({
 
   const handleYearChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
     setSelectedYear(parseInt(event.target.value));
-    alert(`Retrieving ${event.target.value} Revenue Data`);
+    // alert(`Retrieving ${event.target.value} Revenue Data`);
   };
 
   const getCurrentDate = () => {
@@ -62,9 +72,9 @@ const TopNavigation: React.FC<TopNavigationProps> = ({
   };
 
   const handleLogout = () => {
-    Cookies.remove("userToken")
-    navigate("/login")
-  }
+    Cookies.remove("userToken");
+    navigate("/login");
+  };
 
   return (
     <div
@@ -80,9 +90,18 @@ const TopNavigation: React.FC<TopNavigationProps> = ({
         <GiHamburgerMenu />
       </div>
       <div className="hidden w-auto gap-4 lg:flex">
-        <div className="relative flex">
+        <div
+          className="relative flex"
+          onClick={() => {
+            setSnackbar({
+              open: true,
+              message: "Disabled Feature. Coming soon.",
+              severity: "warning",
+            });
+          }}
+        >
           <select
-            className="w-24 p-2 font-lexend appearance-none outline-none bg-custom-blue-100 border-0.6 border-custom-border shadow leading-tight rounded overflow-y-auto overscroll-contain scrollbar-thin scrollbar-thumb-color-text-two scrollbar-track-white"
+            className="w-24 p-2 font-lexend appearance-none outline-none bg-custom-blue-100 border-0.6 border-custom-border shadow leading-tight rounded overflow-y-auto overscroll-contain scrollbar-thin scrollbar-thumb-color-text-two scrollbar-track-white pointer-events-none"
             onChange={handleYearChange}
             value={selectedYear}
           >
@@ -104,7 +123,10 @@ const TopNavigation: React.FC<TopNavigationProps> = ({
             <FaChevronDown />
           </span>
           {menuState ? (
-            <span className="absolute space-y-2 top-0 z-10 flex-col w-36 p-4 text-xs bg-white rounded shadow-md -left-40 border-0.6 border-custom-grey-100 text-color-text-black font-lexend">
+            <span
+              className="absolute space-y-2 top-0 z-10 flex-col w-36 p-4 text-xs bg-white rounded shadow-md -left-40 border-0.6 border-custom-grey-100 text-color-text-black font-lexend"
+              onMouseLeave={displayMenu}
+            >
               <p
                 className="flex items-center justify-between hover:cursor-pointer"
                 title="View Profile"
@@ -129,6 +151,12 @@ const TopNavigation: React.FC<TopNavigationProps> = ({
           ) : null}
         </span>
       </div>
+      <CustomAlert
+        isOpen={snackbar.open}
+        message={snackbar.message}
+        severity={snackbar.severity}
+        handleClose={handleSnackbarClose}
+      />
     </div>
   );
 };
