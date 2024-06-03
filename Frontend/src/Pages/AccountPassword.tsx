@@ -4,6 +4,7 @@ import images from "../assets";
 import { InputComponent, CustomAlert } from "../Components/Index";
 import { GrFormViewHide, GrFormView } from "react-icons/gr";
 import axios from "axios";
+import { useTriggerError } from "../Utils/client";
 
 function AccountPassword(): JSX.Element {
   const [passwordDisplay, setPasswordDisplay] = useState(false);
@@ -20,6 +21,7 @@ function AccountPassword(): JSX.Element {
     message: "",
     severity: "success",
   });
+  const triggerError = useTriggerError();
 
   const handleSnackbarClose = () => {
     setSnackbar({ ...snackbar, open: false });
@@ -36,12 +38,14 @@ function AccountPassword(): JSX.Element {
 
   const handleFormSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    console.log("FORM DATA:", formData);
 
     if (!formData.password || !formData.confirmPassword) {
-      return alert("Please fill in all fields");
+      return setSnackbar({
+        open: true,
+        message: "Please fill in all required fields",
+        severity: "warning",
+      });
     }
-
     // Check if passwords match
     if (formData.password !== formData.confirmPassword) {
       setErrorState("Passwords do not match.");
@@ -92,7 +96,18 @@ function AccountPassword(): JSX.Element {
           case 401:
             message = "Invalid Password Token";
             break;
+          case 429:
+            message = "Too many requests made. Refreshing in 3 seconds";
+            setTimeout(() => {
+              window.location.reload();
+            }, 3000);
+            break;
           default:
+            const errorData = {
+              status: error?.response?.status,
+              message: error?.response?.statusText,
+            };
+            triggerError(errorData);
             break;
         }
       }

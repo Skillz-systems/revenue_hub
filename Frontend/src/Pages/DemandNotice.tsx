@@ -5,7 +5,7 @@ import {
   userData,
   CustomAlert,
 } from "../Components/Index";
-import { useTokens } from "../Utils/client";
+import { useTokens, useTriggerError } from "../Utils/client";
 import axios from "axios";
 
 export const DemandNotice: React.FC = () => {
@@ -18,6 +18,7 @@ export const DemandNotice: React.FC = () => {
     message: "",
     severity: "success",
   });
+  const triggerError = useTriggerError();
 
   const handleSnackbarClose = () => {
     setSnackbar({ ...snackbar, open: false });
@@ -56,12 +57,29 @@ export const DemandNotice: React.FC = () => {
             message = "Bad request";
             break;
           case 401:
-            message = "You are unauthenticated";
-            break;
-          case 403:
             message = "You are unauthorized";
             break;
+          case 403:
+            message = "You are forbidden";
+            break;
+          case 429:
+            message = "Too many requests made. Refreshing in 3 seconds";
+            setTimeout(() => {
+              window.location.reload();
+            }, 3000);
+            break;
+          case 429:
+            message = "Too many requests made. Refreshing in 3 seconds";
+            setTimeout(() => {
+              window.location.reload();
+            }, 3000);
+            break;
           default:
+            const errorData = {
+              status: error?.response?.status,
+              message: error?.response?.statusText,
+            };
+            triggerError(errorData);
             break;
         }
       }

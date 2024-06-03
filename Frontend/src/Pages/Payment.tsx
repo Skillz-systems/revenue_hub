@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useParams } from "react-router-dom";
 import QRCode from "react-qr-code";
-import { formatNumberWithCommas } from "../Utils/client";
+import { formatNumberWithCommas, useTriggerError } from "../Utils/client";
 import axios from "axios";
 import images from "../assets";
 import { CustomAlert } from "../Components/Index";
@@ -9,12 +9,12 @@ import { CustomAlert } from "../Components/Index";
 const Payment = () => {
   const { pid } = useParams();
   const [paymentAccount, setPaymentAccount] = useState<any>(null);
-  const [buttonInfo, setButtonInfo] = useState<boolean | string>(false);
   const [snackbar, setSnackbar] = useState({
     open: false,
     message: "",
     severity: "success",
   });
+  const triggerError = useTriggerError();
 
   const handleSnackbarClose = () => {
     setSnackbar({ ...snackbar, open: false });
@@ -53,15 +53,26 @@ const Payment = () => {
             message = "Bad request. Property Id is missing.";
             break;
           case 401:
-            message = "You are unauthenticated";
+            message = "You are unauthorized";
             break;
           case 403:
-            message = "You are unauthorized";
+            message = "You are forbidden";
             break;
           case 404:
             message = "Payment not found";
             break;
+          case 429:
+            message = "Too many requests made. Refreshing in 3 seconds";
+            setTimeout(() => {
+              window.location.reload();
+            }, 3000);
+            break;
           default:
+            const errorData = {
+              status: error?.response?.status,
+              message: error?.response?.statusText,
+            };
+            triggerError(errorData);
             break;
         }
       }
@@ -100,7 +111,7 @@ const Payment = () => {
       {!paymentAccount ? (
         <div className="flex flex-col items-center justify-center space-y-4">
           <h1 className="font-lexend text-color-text-black">
-            You are about to make payment for your AMAC Demand Notice for
+            You are about to make payment for your AMAC Tenement Rate for
             Property with <b>PID-{pid}</b>.
           </h1>
           <div className="flex flex-col items-center justify-center space-y-4 w-[300px] bg-white border border-grey rounded shadow-md px-4 py-4">

@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import useSWR from "swr";
-import Cookies from "js-cookie";
-import { fetcher } from "../Utils/client";
+import { fetcher, useTokens, useTriggerError } from "../Utils/client";
 import { StatisticsData } from "./types";
 
 const userData = () => {
@@ -14,26 +13,13 @@ const userData = () => {
     message: "",
     severity: "success",
   });
+  const triggerError = useTriggerError();
+
+  const { token, userId } = useTokens();
 
   const handleStaffSnackbarClose = () => {
     setStaffSnackbar({ ...staffSnackbar, open: false });
   };
-
-  // Safely get and parse userData from cookies
-  const userData = Cookies.get("userData");
-  let token: string | undefined;
-  let userId: string | undefined;
-
-  try {
-    const parsedData = userData ? JSON.parse(userData) : null;
-    // Safely access token
-    token = parsedData?.token;
-    userId = parsedData?.user?.id;
-  } catch (error) {
-    console.error("Error parsing userData cookie:", error);
-    token = undefined;
-    userId = undefined;
-  }
 
   const { data: staff, error: staffError } = useSWR(
     token && userId
@@ -60,21 +46,14 @@ const userData = () => {
       );
       if (response.status === 200) {
         setStatistics(response.data.data);
-      } else {
-        alert("Unexpected Status Code");
       }
     } catch (error) {
-      if (error.response.status === 400) {
-        alert("Bad request.");
-      } else if (error.response.status === 401) {
-        alert("You are unauthenticated");
-      } else if (error.response.status === 403) {
-        alert("You are unauthorized");
-      } else if (error.response.status === 404) {
-        alert("Statistics is not found");
-      } else {
-        alert("Internal Server Error");
-      }
+      const errorData = {
+        status: error?.response?.status,
+        message: error?.response?.statusText,
+      };
+      triggerError(errorData);
+  
     }
   };
 
@@ -104,6 +83,11 @@ const userData = () => {
         message: "Error fetching staff information",
         severity: "error",
       });
+      const errorData = {
+        status: staffError?.response?.status,
+        message: staffError?.response?.statusText,
+      };
+      triggerError(errorData);
     }
     if (allStaffError) {
       setStaffSnackbar({
@@ -111,6 +95,11 @@ const userData = () => {
         message: "Error fetching All Staff information",
         severity: "error",
       });
+      const errorData = {
+        status: allStaffError?.response?.status,
+        message: allStaffError?.response?.statusText,
+      };
+      triggerError(errorData);
     }
   }, [staffError, allStaffError]);
 
@@ -120,11 +109,6 @@ const userData = () => {
 
   const deleteStaffById = async (staffId: number) => {
     try {
-      setStaffSnackbar({
-        open: true,
-        message: "Deleting staff",
-        severity: "info",
-      });
       const response = await axios.delete(
         `https://api.revenuehub.skillzserver.com/api/staff/${staffId}`,
         {
@@ -144,6 +128,9 @@ const userData = () => {
           message: "Staff deleted successfully",
           severity: "success",
         });
+        setTimeout(() => {
+          window.location.reload();
+        }, 3000);
       } else {
         setStaffSnackbar({
           open: true,
@@ -159,15 +146,26 @@ const userData = () => {
             message = "Bad request. Staff Id is missing.";
             break;
           case 401:
-            message = "You are unauthenticated";
+            message = "You are unauthorized";
             break;
           case 403:
-            message = "You are unauthorized";
+            message = "You are forbidden";
             break;
           case 404:
             message = "Staff is not found";
             break;
+          case 429:
+            message = "Too many requests made. Refreshing in 3 seconds";
+            setTimeout(() => {
+              window.location.reload();
+            }, 3000);
+            break;
           default:
+            const errorData = {
+              status: error?.response?.status,
+              message: error?.response?.statusText,
+            };
+            triggerError(errorData);
             break;
         }
       }
@@ -183,6 +181,7 @@ const userData = () => {
     cadestralZones,
     staticInformation,
     staffSnackbar,
+    setStaffSnackbar,
     handleStaffSnackbarClose,
   };
 };
@@ -238,6 +237,25 @@ const cadestralZones = [
   "Zuba",
 ];
 
+const paginationStyles = {
+  containerClassName: "flex flex-wrap font-lexend space-x-2",
+  activeClassName:
+    "flex items-center justify-center px-2.5 w-[32px] h-[32px] bg-custom-blue-200 border border-primary-color rounded ",
+  activeLinkClassName: "text-sm text-primary-color font-mulish font-bold",
+  previousClassName:
+    "flex items-center justify-center h-[32px] px-2.5 border border-divider-grey rounded",
+  previousLinkClassName: "text-sm text-color-text-one",
+  nextClassName:
+    "flex items-center justify-center h-[32px] px-2.5 border border-divider-grey rounded",
+  nextLinkClassName: "text-sm text-color-text-one",
+  pageClassName:
+    "flex items-center justify-center w-[32px] h-[32px] px-2.5 border border-divider-grey rounded",
+  pageLinkClassName: "text-sm text-color-text-two font-mulish",
+  breakClassName:
+    "flex items-center justify-center h-[32px] px-2 border border-divider-grey rounded",
+  breakLinkClassName: "text-base text-color-text-two font-mulish",
+};
+
 const propertyUse = ["Commercial", "Residential", "School"];
 
 const staticInformation = {
@@ -281,7 +299,7 @@ const staticInformation = {
       },
       {
         id: 2,
-        name: "Manually confirmed Transactions",
+        name: "Manually Confirmed Transactions",
       },
     ],
     columns: [
@@ -320,4 +338,4 @@ const staticInformation = {
   },
 };
 
-export { userData, staticInformation };
+export { userData, staticInformation, paginationStyles };

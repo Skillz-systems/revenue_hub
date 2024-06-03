@@ -1,5 +1,6 @@
 import React from "react";
 import ReactPaginate from "react-paginate";
+import { HiOutlineDotsHorizontal } from "react-icons/hi";
 
 interface PaginationProps {
   pageCount: number;
@@ -16,7 +17,7 @@ interface PaginationProps {
     nextLinkClassName: string,
     pageClassName: string,
     pageLinkClassName: string,
-    breakLabel: string | JSX.Element,
+    // breakLabel: string | JSX.Element,
     breakClassName: string,
     breakLinkClassName: string,
   };
@@ -41,7 +42,7 @@ const Pagination: React.FC<PaginationProps> = ({
     nextLinkClassName,
     pageClassName,
     pageLinkClassName,
-    breakLabel,
+    // breakLabel,
     breakClassName,
     breakLinkClassName,
   } = paginationStyles;
@@ -61,7 +62,7 @@ const Pagination: React.FC<PaginationProps> = ({
       nextLinkClassName={nextLinkClassName}
       pageClassName={pageClassName}
       pageLinkClassName={pageLinkClassName}
-      breakLabel={breakLabel}
+      breakLabel={<HiOutlineDotsHorizontal />}
       breakClassName={breakClassName}
       breakLinkClassName={breakLinkClassName}
       renderOnZeroPageCount={null}

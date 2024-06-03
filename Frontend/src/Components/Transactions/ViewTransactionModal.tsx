@@ -3,12 +3,13 @@ import { MdCancel } from "react-icons/md";
 import { TbCurrencyNaira } from "react-icons/tb";
 import { FaMoneyBillTransfer } from "react-icons/fa6";
 import { PiBuildingsFill } from "react-icons/pi";
-import { formatNumberWithCommas } from "../../Utils/client";
+import { formatNumberWithCommas, formatDate } from "../../Utils/client";
+import { TransactionsType } from "../Index";
 
 interface ViewTransactionModalProps {
   hideViewPropertyModal: () => void;
   propertyModalTransition: boolean;
-  customTableData: any
+  customTableData: TransactionsType;
 }
 
 const ViewTransactionModal: React.FC<ViewTransactionModalProps> = ({
@@ -18,10 +19,11 @@ const ViewTransactionModal: React.FC<ViewTransactionModalProps> = ({
 }) => {
   return (
     <div
-      className={`flex-col relative bg-white rounded overflow-y-auto overscroll-contain scrollbar-thin scrollbar-thumb-color-text-two scrollbar-track-white ${propertyModalTransition
+      className={`flex-col relative bg-white rounded overflow-y-auto overscroll-contain scrollbar-thin scrollbar-thumb-color-text-two scrollbar-track-white ${
+        propertyModalTransition
           ? "w-6/12 transition-all ease-in-out duration-500"
           : "w-32"
-        }`}
+      }`}
       style={{ height: "95vh" }}
     >
       <img
@@ -37,17 +39,14 @@ const ViewTransactionModal: React.FC<ViewTransactionModalProps> = ({
           <div className="flex items-center gap-2">
             <h3 className="text-base font-bold text-color-text-two">TID</h3>
             <p className="text-base font-bold text-color-text-one">
-              {customTableData.propertyDetails.personalIdentificationNumber}
+              {customTableData.demand_notice.property.pid}
             </p>
             <span
               className={`rounded px-2 py-1 font-lexend text-darkerblueberry text-xs border-0.6 border-custom-grey-100
-                  ${customTableData.transactionStatus === "Successful"
-                  ? "bg-neon-green"
-                  : "bg-[#FF3131]"
-                }
+                  ${customTableData.tx_ref ? "bg-neon-green" : "bg-[#FF3131]"}
                   `}
             >
-              {customTableData.transactionStatus}
+              {"Success"}
             </span>
           </div>
           <div className="flex items-center gap-2">
@@ -71,19 +70,23 @@ const ViewTransactionModal: React.FC<ViewTransactionModalProps> = ({
             {[
               {
                 name: "Transaction ID",
-                value: customTableData.transactionId,
+                value: customTableData.tx_ref,
               },
               {
                 name: "Transaction Type",
-                value: customTableData.transactionType.toUpperCase(),
+                value: customTableData.app_fee
+                  ? "MOBILE TRANSFER"
+                  : "BANK TRANSFER",
               },
               {
                 name: "Transaction Date",
-                value: customTableData.transactionDate,
+                value: formatDate(
+                  customTableData.demand_notice.property.updated_at
+                ),
               },
               {
                 name: "Transaction Time",
-                value: customTableData.transactionTime,
+                value: customTableData.demand_notice.property.updated_at,
               },
             ].map((item, index) => (
               <div className="flex items-center justify-between font-lexend">
@@ -92,14 +95,14 @@ const ViewTransactionModal: React.FC<ViewTransactionModalProps> = ({
                 </p>
                 <p className="flex w-[50%] justify-end text-xs font-medium text-color-text-black">
                   <span
-                    className={`${index === 1 &&
-                        customTableData.transactionType === "Mobile Transfer"
+                    className={`${
+                      index === 1 && customTableData.app_fee
                         ? "bg-color-light-red font-light text-[10px] rounded-xl px-1 py-0.5 border-[0.4px] border-divider-grey"
-                        : index === 1 &&
-                          customTableData.transactionType === "Bank Transfer"
-                          ? "bg-color-light-yellow font-light text-[10px] rounded-xl px-1 py-0.5 border-[0.4px] border-divider-grey"
-                          : ""
-                      }`}
+                        : (index === 1 && customTableData?.app_fee === null) ||
+                          ""
+                        ? "bg-color-light-yellow font-light text-[10px] rounded-xl px-1 py-0.5 border-[0.4px] border-divider-grey"
+                        : ""
+                    }`}
                   >
                     {item.value}
                   </span>
@@ -118,25 +121,24 @@ const ViewTransactionModal: React.FC<ViewTransactionModalProps> = ({
           {[
             {
               name: "Property ID",
-              value:
-                customTableData.propertyDetails.personalIdentificationNumber,
+              value: customTableData.demand_notice.property.pid,
             },
             {
               name: "Asset Number",
-              value: customTableData.propertyDetails.assetNumber,
+              value: customTableData.demand_notice.property.asset_no,
             },
             {
               name: "Cadastral Zone",
-              value: customTableData.propertyDetails.cadastralZone,
+              value: customTableData.demand_notice.property.cadastral_zone,
             },
             {
               name: "Address",
-              value: customTableData.propertyDetails.address,
+              value: customTableData.demand_notice.property.prop_addr,
             },
             {
               name: "Rating District",
               value:
-                customTableData.propertyDetails.ratingDistrict.toUpperCase(),
+                customTableData.demand_notice.property.rating_dist.toUpperCase(),
             },
           ].map((item, index) => (
             <div
@@ -160,7 +162,7 @@ const ViewTransactionModal: React.FC<ViewTransactionModalProps> = ({
             <p className="text-xs text-darkerblueberry">Amount</p>
           </div>
           <span className="px-2 py-0.5 rounded text-xs bg-custom-grey-100 text-darkerblueberry">
-            {formatNumberWithCommas(customTableData.transactionAmount)}
+            {formatNumberWithCommas(customTableData.actual_amount)}
           </span>
         </div>
         <div className="flex items-center justify-between p-2 space-y-2 border-0.6 rounded bg-light-neon-green border-neon-green font-lexend">
@@ -169,12 +171,12 @@ const ViewTransactionModal: React.FC<ViewTransactionModalProps> = ({
             <p className="text-xs">Transaction Status</p>
           </div>
           <span className="px-2 py-0.5 rounded text-xs bg-neon-green text-darkerblueberry">
-            {customTableData.transactionStatus}
+            {"SUCCESS"}
           </span>
         </div>
       </div>
     </div>
   );
-}
+};
 
-export default ViewTransactionModal
+export default ViewTransactionModal;

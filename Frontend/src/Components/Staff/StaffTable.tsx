@@ -11,8 +11,13 @@ import {
   ViewStaffModal,
   userData,
   CustomAlert,
+  paginationStyles,
 } from "../Index";
-import { filterStaffRecordsByRoleName, ScrollToTop } from "../../Utils/client";
+import {
+  filterStaffRecordsByRoleName,
+  ScrollToTop,
+  useTokens,
+} from "../../Utils/client";
 
 interface StaffRecord {
   id: number;
@@ -32,6 +37,7 @@ export default function StaffTable({
   staticInformation,
   staffInformation,
   staffSnackbar,
+  setStaffSnackbar,
   handleStaffSnackbarClose,
 }) {
   const [displaySearchIcon, setDisplaySearchIcon] = useState(true);
@@ -43,6 +49,7 @@ export default function StaffTable({
   const [viewStaffModal, setViewStaffModal] = useState<any>(null);
   const [propertyModalTransition, setPropertyModalTransition] = useState(false);
   const { deleteStaffById } = userData();
+  const { userRoleId } = useTokens();
 
   // PAGINATION LOGIC
   const [currentPage, setCurrentPage] = useState(0);
@@ -69,25 +76,6 @@ export default function StaffTable({
       return [];
     }
     return data?.slice(offset, offset + propertiesPerPage);
-  };
-
-  const paginationStyles = {
-    containerClassName: "flex flex-wrap font-lexend space-x-2",
-    activeClassName:
-      "flex items-center justify-center px-2.5 w-[32px] h-[32px] bg-custom-blue-200 border border-primary-color rounded ",
-    activeLinkClassName: "text-sm text-primary-color font-mulish font-bold",
-    previousClassName:
-      "flex items-center justify-center h-[32px] px-2.5 border border-divider-grey rounded",
-    previousLinkClassName: "text-sm text-color-text-one",
-    nextClassName:
-      "flex items-center justify-center h-[32px] px-2.5 border border-divider-grey rounded",
-    nextLinkClassName: "text-sm text-color-text-one",
-    pageClassName: `flex items-center justify-center w-[32px] h-[32px] px-2.5 border border-divider-grey rounded`,
-    pageLinkClassName: "text-sm text-color-text-two font-mulish",
-    breakLabel: <HiOutlineDotsHorizontal />,
-    breakClassName:
-      "flex items-center justify-center h-[32px] px-2 border border-divider-grey rounded",
-    breakLinkClassName: "text-base text-color-text-two font-mulish",
   };
 
   const handleEditModal = (recordId: number) => {
@@ -175,7 +163,10 @@ export default function StaffTable({
               <HiOutlineDotsHorizontal />
             </span>
             {editModal === staffInformation?.id && (
-              <span className="absolute space-y-2 top-0 z-10 flex-col w-36 p-4 text-xs bg-white rounded shadow-md -left-44 border-0.6 border-custom-grey-100 text-color-text-black font-lexend">
+              <span
+                className="absolute space-y-2 top-0 z-10 flex-col w-36 p-4 text-xs bg-white rounded shadow-md -left-44 border-0.6 border-custom-grey-100 text-color-text-black font-lexend"
+                onMouseLeave={() => setEditModal(null)}
+              >
                 <p
                   className="hover:cursor-pointer"
                   title="View Staff Details"
@@ -191,7 +182,22 @@ export default function StaffTable({
                 <p
                   className="hover:cursor-pointer"
                   title="Remove Staff"
-                  onClick={() => deleteStaffById(staffInformation?.id)}
+                  onClick={() => {
+                    if (userRoleId > 1) {
+                      setStaffSnackbar({
+                        open: true,
+                        message: "You don't have permission",
+                        severity: "error",
+                      });
+                      return;
+                    }
+                    setStaffSnackbar({
+                      open: true,
+                      message: "Deleting staff",
+                      severity: "info",
+                    });
+                    deleteStaffById(staffInformation?.id);
+                  }}
                 >
                   Remove Staff
                 </p>
@@ -233,7 +239,15 @@ export default function StaffTable({
                       : "bg-inherit"
                   }`}
                   onClick={() => {
-                    setActiveMenu(menu.id);
+                    if (menu.id > 1) {
+                      setStaffSnackbar({
+                        open: true,
+                        message: "Disabled Feature. Coming soon.",
+                        severity: "warning",
+                      });
+                    } else {
+                      setActiveMenu(menu.id);
+                    }
                     setCurrentPage(0);
                     setCurrentStyle(0);
                   }}
@@ -247,25 +261,11 @@ export default function StaffTable({
                   >
                     {menu.name}
                   </span>
-                  <span className="px-1 border rounded text-color-text-three bg-custom-blue-200 border-custom-color-two">
-                    {menu.id === 1
-                      ? filteredResults?.length > 0
-                        ? filteredResults?.length
-                        : filteredResults < 1 && query !== ""
-                        ? 0
-                        : staffInformation
-                        ? staffInformation?.length
-                        : 0
-                      : menu.id === 2
-                      ? filterStaffRecordsByRoleName(
-                          staffInformation,
-                          "Manager" || "MD"
-                        ).length
-                      : filterStaffRecordsByRoleName(
-                          staffInformation,
-                          "Officer"
-                        ).length}
-                  </span>
+                  {menu.id === 1 ? (
+                    <span className="px-1 border rounded text-color-text-three bg-custom-blue-200 border-custom-color-two">
+                      {menu.id === 1 ? staffInformation.length : 0}
+                    </span>
+                  ) : null}
                 </div>
               )
             )}
@@ -290,6 +290,7 @@ export default function StaffTable({
               displaySearchIcon={displaySearchIcon}
               query={query}
               handleQueryChange={handleQueryChange}
+              setSnackBar={setStaffSnackbar}
             />
             <button
               type="button"
@@ -297,6 +298,15 @@ export default function StaffTable({
               style={{ width: "35%" }}
               title="New Staff"
               onClick={() => {
+                if (userRoleId >= 3) {
+                  setStaffSnackbar({
+                    open: true,
+                    message: "You don't have permission",
+                    severity: "error",
+                  });
+                  setNewStaffModal(false);
+                  return;
+                }
                 setNewStaffModal(true);
                 setTimeout(() => {
                   setPropertyModalTransition(true);
