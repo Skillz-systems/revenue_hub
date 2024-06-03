@@ -111,7 +111,7 @@ const Payment = () => {
       {!paymentAccount ? (
         <div className="flex flex-col items-center justify-center space-y-4">
           <h1 className="font-lexend text-color-text-black">
-            You are about to make payment for your AMAC Demand Notice for
+            You are about to make payment for your AMAC Tenement Rate for
             Property with <b>PID-{pid}</b>.
           </h1>
           <div className="flex flex-col items-center justify-center space-y-4 w-[300px] bg-white border border-grey rounded shadow-md px-4 py-4">
