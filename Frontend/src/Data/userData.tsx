@@ -13,6 +13,7 @@ const userData = () => {
     message: "",
     severity: "success",
   });
+  const triggerError = useTriggerError();
 
   const { token, userId } = useTokens();
 
@@ -46,7 +47,14 @@ const userData = () => {
       if (response.status === 200) {
         setStatistics(response.data.data);
       }
-    } catch (error) {}
+    } catch (error) {
+      const errorData = {
+        status: error?.response?.status,
+        message: error?.response?.statusText,
+      };
+      triggerError(errorData);
+  
+    }
   };
 
   useEffect(() => {
@@ -75,6 +83,11 @@ const userData = () => {
         message: "Error fetching staff information",
         severity: "error",
       });
+      const errorData = {
+        status: staffError?.response?.status,
+        message: staffError?.response?.statusText,
+      };
+      triggerError(errorData);
     }
     if (allStaffError) {
       setStaffSnackbar({
@@ -82,6 +95,11 @@ const userData = () => {
         message: "Error fetching All Staff information",
         severity: "error",
       });
+      const errorData = {
+        status: allStaffError?.response?.status,
+        message: allStaffError?.response?.statusText,
+      };
+      triggerError(errorData);
     }
   }, [staffError, allStaffError]);
 
@@ -143,6 +161,11 @@ const userData = () => {
             }, 3000);
             break;
           default:
+            const errorData = {
+              status: error?.response?.status,
+              message: error?.response?.statusText,
+            };
+            triggerError(errorData);
             break;
         }
       }

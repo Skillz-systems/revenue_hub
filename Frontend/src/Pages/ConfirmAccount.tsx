@@ -73,8 +73,8 @@ function ConfirmAccount(): JSX.Element {
             break;
           default:
             const errorData = {
-              status: error.response.status,
-              message: error.response.statusText,
+              status: error?.response?.status,
+              message: error?.response?.statusText,
             };
             triggerError(errorData);
             break;
@@ -146,8 +146,8 @@ function ConfirmAccount(): JSX.Element {
             break;
           default:
             const errorData = {
-              status: error.response.status,
-              message: error.response.statusText,
+              status: error?.response?.status,
+              message: error?.response?.statusText,
             };
             triggerError(errorData);
             break;

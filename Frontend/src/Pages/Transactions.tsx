@@ -74,8 +74,8 @@ const Transactions: React.FC = () => {
             break;
           default:
             const errorData = {
-              status: error.response.status,
-              message: error.response.statusText,
+              status: error?.response?.status,
+              message: error?.response?.statusText,
             };
             triggerError(errorData);
             break;

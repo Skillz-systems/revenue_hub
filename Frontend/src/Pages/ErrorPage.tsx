@@ -6,9 +6,11 @@ const ErrorPage = ({ errorInformation }) => {
       <h1 className="text-4xl font-bold">Oops. Something went wrong</h1>
       <div className="flex items-center justify-center w-[60%]">
         <p className="text-right w-[40%] font-bold text-4xl py-4 pr-6 mr-[0.75em] border-r border-gray-600">
-          {errorInformation?.status}
+          {errorInformation?.status || 500}
         </p>
-        <p className="text-left w-[60%] text-sm">{errorInformation?.message}</p>
+        <p className="text-left w-[60%] text-sm">
+          {errorInformation?.message || "Internal Server Error"}
+        </p>
       </div>
       <p className="text-sm w-[50%] text-center leading-7">
         Kindly refresh and perform your operation again. If the error persists.

@@ -105,8 +105,8 @@ export default function Properties() {
         severity: "warning",
       });
       const errorData = {
-        status: error.response.status,
-        message: error.response.statusText,
+        status: error?.response?.status,
+        message: error?.response?.statusText,
       };
       triggerError(errorData);
     }
@@ -248,7 +248,7 @@ export default function Properties() {
                   </span>
                 </div>
                 <p
-                  className="text-xs font-semi-bold font-lexend text-color-bright-red hover:cursor-pointer pointer-events-none"
+                  className="text-xs pointer-events-none font-semi-bold font-lexend text-color-bright-red hover:cursor-pointer"
                   onClick={ResetFilters}
                 >
                   Reset Filters

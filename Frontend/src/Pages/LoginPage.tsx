@@ -87,8 +87,8 @@ function LoginPage(): JSX.Element {
         setErrorState("Invalid email or password. Please try again.");
       } else {
         const errorData = {
-          status: error.response.status,
-          message: error.response.statusText,
+          status: error?.response?.status,
+          message: error?.response?.statusText,
         };
         triggerError(errorData);
         setErrorState("Internal Server Error. Please report the issue");
