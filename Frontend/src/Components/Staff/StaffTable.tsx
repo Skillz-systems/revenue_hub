@@ -191,6 +191,11 @@ export default function StaffTable({
                       });
                       return;
                     }
+                    setStaffSnackbar({
+                      open: true,
+                      message: "Deleting staff",
+                      severity: "info",
+                    });
                     deleteStaffById(staffInformation?.id);
                   }}
                 >
