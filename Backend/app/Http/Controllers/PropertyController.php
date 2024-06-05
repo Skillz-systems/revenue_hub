@@ -481,7 +481,7 @@ class PropertyController extends Controller
         ]);
         if ($validator->fails()) {
             return response()->json([
-                'status' => 'error',
+                'status' => 'errorss',
                 'message' => "All fields are required ",
                 "data" => $validator->errors()
             ], 400);
