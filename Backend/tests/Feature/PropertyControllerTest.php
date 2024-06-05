@@ -2,12 +2,14 @@
 
 namespace Tests\Feature;
 
+use App\Jobs\CsvExtractorJob;
 use App\Models\DemandNotice;
 use App\Models\Property;
 use App\Models\User;
-use App\Service\PropertyService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
+use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Queue;
+use Illuminate\Support\Facades\Storage;
 use Tests\TestCase;
 
 class PropertyControllerTest extends TestCase
@@ -17,7 +19,7 @@ class PropertyControllerTest extends TestCase
     public function test_it_returns_properties_successfully()
     {
         // Arrange: Create some properties
-        DemandNotice::factory()->create(["property_id" => 1,]);
+        DemandNotice::factory()->create(["property_id" => 1]);
 
         DemandNotice::factory()->create(["property_id" => 3, "status" => 1]);
         Property::factory()->count(3)->create();
@@ -39,7 +41,6 @@ class PropertyControllerTest extends TestCase
                 ],
             ]);
     }
-
 
     public function test_it_returns_no_properties_found_when_no_properties_exist()
     {
@@ -88,7 +89,6 @@ class PropertyControllerTest extends TestCase
         $this->assertDatabaseHas('properties', ['pid' => 1, 'occupant' => 'John Doe']);
     }
 
-
     public function test_it_returns_validation_error_when_required_fields_are_missing()
     {
         // Act: Call the store route with incomplete data
@@ -101,7 +101,6 @@ class PropertyControllerTest extends TestCase
                 'message' => 'All fields are required ',
             ]);
     }
-
 
     public function test_it_returns_error_when_pid_is_not_unique()
     {
@@ -196,7 +195,7 @@ class PropertyControllerTest extends TestCase
         $response->assertStatus(200)
             ->assertJson([
                 'status' => 'success',
-                'message' => 'Updated property successfully'
+                'message' => 'Updated property successfully',
             ]);
     }
 
@@ -225,7 +224,7 @@ class PropertyControllerTest extends TestCase
                 'message',
                 'data' => [
                     // Assert error messages for each field
-                ]
+                ],
             ]);
     }
 
@@ -267,7 +266,6 @@ class PropertyControllerTest extends TestCase
         $this->assertDatabaseMissing('properties', ['id' => $property->id]);
     }
 
-
     public function test_non_admin_cannot_delete_a_property()
     {
         $user = User::factory()->create(['role_id' => User::ROLE_ENFORCERS]);
@@ -284,5 +282,48 @@ class PropertyControllerTest extends TestCase
             ]);
 
         $this->assertDatabaseHas('properties', ['id' => $property->id]);
+    }
+
+    public function test_to_see_if_csv_file_can_be_extracted_for_other_columns(): void
+    {
+        Storage::fake('local');
+        Queue::fake();
+        // Create a fake CSV file
+        $csvContent = "header0,header1,header2,header3,header4,header5,header6,header7,header8,header9,header10,header11,header12,header13,header14,header15,header16\n
+value0,value1,value2,value3,value4,value5,value6,value7,value8,value9,value10,value11,value12,value13,value14,value15,header11\n";
+        $file = UploadedFile::fake()->createWithContent('test.csv', $csvContent);
+
+        // Perform the request
+        $response = $this->post('/api/property/process-csv', [
+            'csv_file' => $file,
+            'extraction_type' => "others",
+        ]);
+
+        Queue::assertPushed(CsvExtractorJob::class, 7);
+
+        // Assert the response status
+        $response->assertStatus(200);
+        $response->assertJson(['message' => 'CSV file processed successfully']);
+    }
+    public function test_to_see_if_csv_file_can_be_extracted_for_properties(): void
+    {
+        Storage::fake('local');
+        Queue::fake();
+        // Create a fake CSV file
+        $csvContent = "header0,header1,header2,header3,header4,header5,header6,header7,header8,header9,header10,header11,header12,header13,header14,header15,header16\n
+value0,value1,value2,value3,value4,value5,value6,value7,value8,value9,value10,value11,value12,value13,value14,value15,header11\n";
+        $file = UploadedFile::fake()->createWithContent('test.csv', $csvContent);
+
+        // Perform the request
+        $response = $this->post('/api/property/process-csv', [
+            'csv_file' => $file,
+            'extraction_type' => "property",
+        ]);
+
+        Queue::assertPushed(CsvExtractorJob::class, 4);
+
+        // Assert the response status
+        $response->assertStatus(200);
+        $response->assertJson(['message' => 'CSV file processed successfully']);
     }
 }

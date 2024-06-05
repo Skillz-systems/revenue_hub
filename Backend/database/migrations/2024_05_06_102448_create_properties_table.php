@@ -28,6 +28,7 @@ return new class extends Migration
             $table->string('category')->nullable();
             $table->string('group');
             $table->string('active');
+            $table->integer('status')->default(1);
             $table->timestamps();
         });
     }

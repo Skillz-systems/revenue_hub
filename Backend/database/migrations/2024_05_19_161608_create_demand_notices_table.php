@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->integer("property_id")->comment("the property of he demand notice ");
             $table->string("arrears_amount")->default(0)->comment("the arrears amount if any");
-            $table->string("amount")->comment("the final amount to be payed ");
+            $table->string("amount")->comment("the final amount to be paid ");
             $table->string("penalty")->default(0)->comment("the penalty amount to be payed if any ");
             $table->integer("status")->default(0)->comment("the status of the demand notice ");
             $table->timestamps();

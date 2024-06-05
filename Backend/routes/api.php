@@ -23,6 +23,7 @@ use Illuminate\Support\Facades\Route;
 
 
 // Staff login route
+Route::post('property/process-csv', [PropertyController::class, 'processCsv']);
 Route::post('auth/login', [AuthController::class, 'login']);
 Route::post('payment/webhook', [PaymentController::class, 'webhook']);
 
