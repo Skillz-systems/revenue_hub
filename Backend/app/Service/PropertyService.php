@@ -53,8 +53,11 @@ class PropertyService
         return Property::where('pid', $request->pid)->first();
     }
 
-    public function getAllProperties()
+    public function getAllProperties($zone)
     {
-        return Property::all();
+        //return Property::where(["status" => Property::STATUS_Regular])->all();
+        return Property::whereHas('ratingDistrict', function ($query) use ($zone) {
+            $query->where('zone_id', $zone);
+        })->get();
     }
 }
