@@ -3,6 +3,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import images from "../assets";
 import { InputComponent, CustomAlert } from "../Components/Index";
 import axios from "axios";
+import { useTriggerError } from "../Utils/client";
 
 function ConfirmAccount(): JSX.Element {
   const [isLoading, setIsLoading] = useState(false);
@@ -20,6 +21,7 @@ function ConfirmAccount(): JSX.Element {
     message: "",
     severity: "success",
   });
+  const triggerError = useTriggerError();
 
   const handleSnackbarClose = () => {
     setSnackbar({ ...snackbar, open: false });
@@ -58,12 +60,23 @@ function ConfirmAccount(): JSX.Element {
       if (error.response) {
         switch (error.response.status) {
           case 403:
-            message = "You don't have permission!";
+            message = "You are forbidden!";
             break;
           case 404:
             message = "No Staff Found";
             break;
+          case 429:
+            message = "Too many requests made. Refreshing in 3 seconds";
+            setTimeout(() => {
+              window.location.reload();
+            }, 3000);
+            break;
           default:
+            const errorData = {
+              status: error?.response?.status,
+              message: error?.response?.statusText,
+            };
+            triggerError(errorData);
             break;
         }
       }
@@ -82,10 +95,13 @@ function ConfirmAccount(): JSX.Element {
 
   const handleFormSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    console.log("FORM DATA:", formData);
 
     if (!formData.firstName || !formData.email || !formData.phoneNumber) {
-      return alert("Please fill in all fields");
+      return setSnackbar({
+        open: true,
+        message: "Please fill in all required fields",
+        severity: "warning",
+      });
     }
 
     setIsLoading(true);
@@ -122,7 +138,18 @@ function ConfirmAccount(): JSX.Element {
           case 401:
             message = "You are unauthorized";
             break;
+          case 429:
+            message = "Too many requests made. Refreshing in 3 seconds";
+            setTimeout(() => {
+              window.location.reload();
+            }, 3000);
+            break;
           default:
+            const errorData = {
+              status: error?.response?.status,
+              message: error?.response?.statusText,
+            };
+            triggerError(errorData);
             break;
         }
       }

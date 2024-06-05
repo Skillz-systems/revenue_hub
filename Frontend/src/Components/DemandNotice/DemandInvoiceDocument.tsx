@@ -1,12 +1,12 @@
 import React, { useRef } from "react";
-import { Link } from "react-router-dom";
 import { TbCurrencyNaira } from "react-icons/tb";
-import { LiaDownloadSolid } from "react-icons/lia";
-import { TfiEmail } from "react-icons/tfi";
+// import { LiaDownloadSolid } from "react-icons/lia";
+// import { TfiEmail } from "react-icons/tfi";
 import { HiOutlinePrinter } from "react-icons/hi2";
 import { MdCancel } from "react-icons/md";
 import QRCode from "react-qr-code";
-import { formatNumberWithCommas } from "../../Utils/client";
+import { CustomAlert } from "../Index";
+import { formatNumberWithCommas, useTokens } from "../../Utils/client";
 import html2canvas from "html2canvas";
 import jsPDF from "jspdf";
 import { DemandNotice } from "../../Data/types";
@@ -22,10 +22,12 @@ const DemandInvoiceDocument = ({
   demandInvoiceInfo,
   hideDemandInvoiceModal,
 }: {
-  customTableData?: PropertyData;
+  customTableData?: any;
   demandInvoiceInfo?: DemandNotice;
   hideDemandInvoiceModal: () => any;
 }) => {
+  const { userRoleId } = useTokens();
+  
   const demandInvoiceData = {
     Occupant: `THE OCCUPIER/${
       customTableData?.pid || demandInvoiceInfo?.property.pid
@@ -70,9 +72,7 @@ const DemandInvoiceDocument = ({
     billInfoData: [
       {
         label: "Bill Ref",
-        value: `2024/${
-          customTableData?.id || demandInvoiceInfo?.id
-        }`,
+        value: `2024/${customTableData?.id || demandInvoiceInfo?.id}`,
       },
       { label: "Agency Code", value: 2000300 },
       { label: "Revenue Code", value: 1002 },
@@ -153,7 +153,6 @@ const DemandInvoiceDocument = ({
         window.print();
         otherSections.forEach((section) => section.classList.remove("hidden"));
       } else {
-        console.log("Invalid Operation");
         return;
       }
     } catch (error) {

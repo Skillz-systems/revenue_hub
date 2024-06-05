@@ -75,7 +75,11 @@ const AddNewStaffModal: React.FC<AddNewStaffModalProps> = ({
 
     if (emptyFields.length > 0) {
       // Alert if any required fields are empty
-      alert("Please fill in all required fields.");
+      setSnackbar({
+        open: true,
+        message: "Please fill in all required fields.",
+        severity: "warning",
+      });
     } else {
       setIsLoading(true);
       try {
@@ -103,7 +107,6 @@ const AddNewStaffModal: React.FC<AddNewStaffModalProps> = ({
           role_id: selectedRoleId,
         };
 
-        console.log("Request Data:", requestData);
         // Get the bearer token from cookies
         const token = Cookies.get("userToken");
 
@@ -140,10 +143,10 @@ const AddNewStaffModal: React.FC<AddNewStaffModalProps> = ({
               message = "Bad request. Fill in the required fields";
               break;
             case 401:
-              message = "You are unauthenticated";
+              message = "You are unauthorized";
               break;
             case 403:
-              message = "You are unauthorized";
+              message = "You are forbidden";
               break;
             default:
               break;

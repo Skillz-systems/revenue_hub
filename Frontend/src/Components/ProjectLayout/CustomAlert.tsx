@@ -11,7 +11,7 @@ const CustomAlert = ({ isOpen, message, severity, handleClose }) => {
       onClose={handleClose}
       message={message}
     >
-      <Alert onClose={handleClose} severity={severity} sx={{ width: "100%" }}>
+      <Alert onClose={handleClose} variant={"filled"} severity={severity} sx={{ width: "100%" }}>
         {message}
       </Alert>
     </Snackbar>

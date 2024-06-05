@@ -6,10 +6,16 @@ import {
   ViewPropertyModal,
   userData,
   LoadingSpinner,
+  CustomAlert,
+  paginationStyles,
 } from "../Components/Index";
 import { BsCaretDownFill } from "react-icons/bs";
-import { HiOutlineDotsHorizontal } from "react-icons/hi";
-import { ScrollToTop, fetcher, useTokens } from "../Utils/client";
+import {
+  ScrollToTop,
+  fetcher,
+  useTokens,
+  useTriggerError,
+} from "../Utils/client";
 import useSWR from "swr";
 
 type PropertyData = {
@@ -18,7 +24,24 @@ type PropertyData = {
   asset_no: string;
   cadastral_zone: string;
   category: string | null;
-  demand_notice: any[];
+  demand_notice: {
+    id: number;
+    payments: {
+      tx_ref: string;
+      pin: string;
+      actual_amount: number;
+      charged_amount: number;
+      app_fee: number;
+      merchant_fee: number;
+      status: string;
+    }[];
+    amount: string;
+    arrears_amount: string;
+    penalty: string;
+    status: number;
+    property: string;
+    date_created: string;
+  }[];
   grand_total: string;
   group: string;
   id: number;
@@ -47,6 +70,16 @@ export default function Properties() {
     PropertyArray | any
   >();
   const { staticInformation } = userData();
+  const [snackbar, setSnackbar] = useState({
+    open: false,
+    message: "",
+    severity: "success",
+  });
+  const triggerError = useTriggerError();
+
+  const handleSnackbarClose = () => {
+    setSnackbar({ ...snackbar, open: false });
+  };
 
   const { data, error } = useSWR(
     token ? "https://api.revenuehub.skillzserver.com/api/property" : null, // Only fetch if token exists
@@ -56,12 +89,26 @@ export default function Properties() {
   useEffect(() => {
     if (data) {
       setPropertyInformation(data.data);
+      setSnackbar({
+        open: true,
+        message: "Properties fetched successfully",
+        severity: "success",
+      });
     }
   }, [data]);
 
   useEffect(() => {
     if (error) {
-      alert(`Error fetching Property Data: ${error}`);
+      setSnackbar({
+        open: true,
+        message: `Error fetching Property Data: ${error}`,
+        severity: "warning",
+      });
+      const errorData = {
+        status: error?.response?.status,
+        message: error?.response?.statusText,
+      };
+      triggerError(errorData);
     }
   }, [data]);
 
@@ -129,69 +176,10 @@ export default function Properties() {
     offset + propertiesPerPage
   );
 
-  const paginationStyles = {
-    containerClassName: "flex flex-wrap font-lexend space-x-2",
-    activeClassName:
-      "flex items-center justify-center px-2.5 w-[32px] h-[32px] bg-custom-blue-200 border border-primary-color rounded ",
-    activeLinkClassName: "text-sm text-primary-color font-mulish font-bold",
-    previousClassName:
-      "flex items-center justify-center h-[32px] px-2.5 border border-divider-grey rounded",
-    previousLinkClassName: "text-sm text-color-text-one",
-    nextClassName:
-      "flex items-center justify-center h-[32px] px-2.5 border border-divider-grey rounded",
-    nextLinkClassName: "text-sm text-color-text-one",
-    pageClassName:
-      "flex items-center justify-center w-[32px] h-[32px] px-2.5 border border-divider-grey rounded",
-    pageLinkClassName: "text-sm text-color-text-two font-mulish",
-    breakLabel: <HiOutlineDotsHorizontal />,
-    breakClassName:
-      "flex items-center justify-center h-[32px] px-2 border border-divider-grey rounded",
-    breakLinkClassName: "text-base text-color-text-two font-mulish",
-  };
   // PAGINATION LOGIC END
 
-  const filteredDistrictResults = districtState
-    ? propertyInformation.filter((record) =>
-        Object.values(record).some((value) => {
-          if (typeof value === "string") {
-            return value.toLowerCase().includes(districtState.toLowerCase());
-          }
-          return false;
-        })
-      )
-    : [];
-
-  const filteredPropertyUseResults = propertyUseState
-    ? propertyInformation.filter((record) =>
-        Object.values(record).some((value) => {
-          if (typeof value === "string") {
-            return value.toLowerCase().includes(propertyUseState.toLowerCase());
-          }
-          return false;
-        })
-      )
-    : [];
-
-  //RUN MORE TESTS ON DATA SWITCH
-  const filteredCombinedResults =
-    districtState !== "" && propertyUseState !== ""
-      ? filteredPropertyUseResults.filter((propertyRecord) =>
-          filteredDistrictResults.some(
-            (districtRecord) => propertyRecord === districtRecord
-          )
-        )
-      : [];
-
   const LengthByFilterState = (): number => {
-    return districtState !== ""
-      ? filteredDistrictResults.length > 0
-        ? filteredDistrictResults.length
-        : 0
-      : propertyUseState !== ""
-      ? filteredPropertyUseResults.length > 0
-        ? filteredPropertyUseResults.length
-        : 0
-      : propertyInformation?.length;
+    return propertyInformation?.length;
   };
 
   const pageCount = Math.ceil(LengthByFilterState() / propertiesPerPage);
@@ -209,13 +197,22 @@ export default function Properties() {
               <p className="text-base font-bold text-color-text-two">
                 ALL PROPERTIES
               </p>
-              <div className="flex items-center justify-end gap-3">
+              <div
+                className="flex items-center justify-end gap-3"
+                onClick={() => {
+                  setSnackbar({
+                    open: true,
+                    message: "Disabled Feature. Coming soon.",
+                    severity: "warning",
+                  });
+                }}
+              >
                 <div
                   className="flex items-center justify-between gap-2 pr-1.5 border rounded border-divider-grey text-color-text-two"
                   title="Filter by District"
                 >
                   <select
-                    className="hover:cursor-pointer p-2 py-1.5 overflow-y-auto text-xs font-medium rounded outline-none appearance-none font-lexend overscroll-contain scrollbar-thin scrollbar-thumb-color-text-two scrollbar-track-white"
+                    className="hover:cursor-pointer p-2 py-1.5 overflow-y-auto text-xs font-medium rounded outline-none appearance-none font-lexend overscroll-contain scrollbar-thin scrollbar-thumb-color-text-two scrollbar-track-white pointer-events-none"
                     onChange={handleSelectDistrict}
                     value={districtState}
                   >
@@ -235,7 +232,7 @@ export default function Properties() {
                   title="Filter by Property Use"
                 >
                   <select
-                    className="hover:cursor-pointer p-2 py-1.5 overflow-y-auto text-xs font-medium rounded outline-none appearance-none font-lexend overscroll-contain scrollbar-thin scrollbar-thumb-color-text-two scrollbar-track-white"
+                    className="hover:cursor-pointer p-2 py-1.5 overflow-y-auto text-xs font-medium rounded outline-none appearance-none font-lexend overscroll-contain scrollbar-thin scrollbar-thumb-color-text-two scrollbar-track-white pointer-events-none"
                     onChange={handleSelectPropertyUse}
                     value={propertyUseState}
                   >
@@ -251,7 +248,7 @@ export default function Properties() {
                   </span>
                 </div>
                 <p
-                  className="text-xs font-semi-bold font-lexend text-color-bright-red hover:cursor-pointer"
+                  className="text-xs pointer-events-none font-semi-bold font-lexend text-color-bright-red hover:cursor-pointer"
                   onClick={ResetFilters}
                 >
                   Reset Filters
@@ -262,8 +259,9 @@ export default function Properties() {
             {/* DATA AREA START */}
             <div className="flex flex-wrap items-center justify-start p-4 gap-y-4 gap-x-4">
               {districtState && propertyUseState ? (
-                filteredCombinedResults.length > 0 ? (
-                  filteredCombinedResults.map((property) => (
+                propertyInformation.length > 0 ? (
+                  propertyInformation.map((property) => (
+                    // SHOW ALL PROPERTIES
                     <PropertyCard
                       id={property.id}
                       personalIdentificationNumber={property.pid}
@@ -285,8 +283,9 @@ export default function Properties() {
                   </p>
                 )
               ) : districtState !== "" ? (
-                filteredDistrictResults.length > 0 ? (
-                  filteredDistrictResults.map((property) => (
+                propertyInformation.length > 0 ? (
+                  propertyInformation.map((property) => (
+                    // SHOW ALL DISTRICTS
                     <PropertyCard
                       id={property.id}
                       personalIdentificationNumber={property.pid}
@@ -308,8 +307,9 @@ export default function Properties() {
                   </p>
                 )
               ) : propertyUseState !== "" ? (
-                filteredPropertyUseResults.length > 0 ? (
-                  filteredPropertyUseResults.map((property) => (
+                propertyInformation.length > 0 ? (
+                  propertyInformation.map((property) => (
+                    // SHOW ALL PROPERTY USE
                     <PropertyCard
                       id={property.id}
                       personalIdentificationNumber={property.pid}
@@ -332,6 +332,7 @@ export default function Properties() {
                 )
               ) : currentProperties.length > 0 ? (
                 currentProperties.map((property) => (
+                  // SHOW CURRENT FILTER DATA
                   <PropertyCard
                     id={property.id}
                     personalIdentificationNumber={property.pid}
@@ -410,6 +411,12 @@ export default function Properties() {
       ) : (
         <LoadingSpinner title="Loading Properties" />
       )}
+      <CustomAlert
+        isOpen={snackbar.open}
+        message={snackbar.message}
+        severity={snackbar.severity}
+        handleClose={handleSnackbarClose}
+      />
     </div>
   );
 }
