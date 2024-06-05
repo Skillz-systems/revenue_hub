@@ -7,6 +7,7 @@ const Staff: React.FC = () => {
     staticInformation,
     staffSnackbar,
     handleStaffSnackbarClose,
+    setStaffSnackbar,
   } = userData();
 
   return (
@@ -17,6 +18,7 @@ const Staff: React.FC = () => {
           staticInformation={staticInformation}
           staffInformation={staffInformation}
           staffSnackbar={staffSnackbar}
+          setStaffSnackbar={setStaffSnackbar}
           handleStaffSnackbarClose={handleStaffSnackbarClose}
         />
       ) : (

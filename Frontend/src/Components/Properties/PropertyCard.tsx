@@ -1,7 +1,11 @@
 import React, { useState } from "react";
 import { GoDotFill } from "react-icons/go";
 import { TbCurrencyNaira } from "react-icons/tb";
-import { formatNumberWithCommas, useTokens } from "../../Utils/client";
+import {
+  formatNumberWithCommas,
+  useTokens,
+  useTriggerError,
+} from "../../Utils/client";
 import { BiSolidEditAlt } from "react-icons/bi";
 import { HiOutlineDotsHorizontal } from "react-icons/hi";
 import axios from "axios";
@@ -32,19 +36,29 @@ const PropertiesTable: React.FC<PropertiesTableProps> = ({
   setViewPropertyModal,
   occupationStatus,
 }) => {
-  const { token } = useTokens();
+  const { token, userRoleId } = useTokens();
   const [settingsModal, setSettingsModal] = useState<boolean>(false);
   const [snackbar, setSnackbar] = useState({
     open: false,
     message: "",
     severity: "success",
   });
+  const triggerError = useTriggerError();
 
   const handleSnackbarClose = () => {
     setSnackbar((prev) => ({ ...prev, open: false }));
   };
 
   const deleteProperty = async (pid: number) => {
+    if (userRoleId > 1) {
+      setSnackbar({
+        open: true,
+        message: "You don't have permission",
+        severity: "error",
+      });
+      return;
+    }
+
     try {
       const response = await axios.delete(
         `https://api.revenuehub.skillzserver.com/api/property/${pid}`,
@@ -60,6 +74,9 @@ const PropertiesTable: React.FC<PropertiesTableProps> = ({
           message: "Successfully removed property",
           severity: "success",
         });
+        setTimeout(() => {
+          window.location.reload();
+        }, 3000);
       } else {
         setSnackbar({
           open: true,
@@ -75,15 +92,26 @@ const PropertiesTable: React.FC<PropertiesTableProps> = ({
             message = "Bad request. Property Id is missing.";
             break;
           case 401:
-            message = "You are unauthenticated";
+            message = "You are unauthorized";
             break;
           case 403:
-            message = "You are unauthorized";
+            message = "You are forbidden";
             break;
           case 404:
             message = "Demand notice not found";
             break;
+          case 429:
+            message = "Too many requests made. Refreshing in 3 seconds";
+            setTimeout(() => {
+              window.location.reload();
+            }, 3000);
+            break;
           default:
+            const errorData = {
+              status: error.response.status,
+              message: error.response.statusText,
+            };
+            triggerError(errorData);
             break;
         }
       }
@@ -91,6 +119,15 @@ const PropertiesTable: React.FC<PropertiesTableProps> = ({
     }
   };
   const generateDemandNotice = async (pid: number) => {
+    if (userRoleId > 1) {
+      setSnackbar({
+        open: true,
+        message: "You don't have permission",
+        severity: "error",
+      });
+      return;
+    }
+
     try {
       const response = await axios.post(
         "https://api.revenuehub.skillzserver.com/api/demand-notice/create",
@@ -124,12 +161,20 @@ const PropertiesTable: React.FC<PropertiesTableProps> = ({
             message = "Bad request. Property Id is missing.";
             break;
           case 401:
-            message = "You are unauthenticated";
-            break;
-          case 403:
             message = "You are unauthorized";
             break;
+          case 429:
+            message = "Too many requests made. Refreshing in 3 seconds";
+            setTimeout(() => {
+              window.location.reload();
+            }, 3000);
+            break;
           default:
+            const errorData = {
+              status: error?.response?.status,
+              message: error?.response?.statusText,
+            };
+            triggerError(errorData);
             break;
         }
       }
@@ -216,7 +261,6 @@ const PropertiesTable: React.FC<PropertiesTableProps> = ({
               className="text-xl hover:cursor-pointer"
               onClick={(e) => {
                 e.stopPropagation();
-                alert("Edit Property");
               }}
             >
               <BiSolidEditAlt />
@@ -233,7 +277,12 @@ const PropertiesTable: React.FC<PropertiesTableProps> = ({
               <HiOutlineDotsHorizontal />
             </span>
             {settingsModal && (
-              <span className="absolute space-y-2 top-0 z-10 flex-col w-40 p-4 text-xs bg-white rounded shadow-md -left-44 border-0.6 border-custom-grey-100 text-color-text-black font-lexend">
+              <span
+                className="absolute space-y-2 top-0 z-10 flex-col w-40 p-4 text-xs bg-white rounded shadow-md -left-44 border-0.6 border-custom-grey-100 text-color-text-black font-lexend"
+                onMouseLeave={() => {
+                  setSettingsModal(!settingsModal);
+                }}
+              >
                 {paymentStatus === "Ungenerated" ? (
                   <p
                     className="hover:cursor-pointer"

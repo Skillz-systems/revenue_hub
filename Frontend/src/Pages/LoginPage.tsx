@@ -1,10 +1,11 @@
 import React, { useState, FormEvent, ChangeEvent } from "react";
 import { useNavigate } from "react-router-dom";
 import images from "../assets";
-import { InputComponent } from "../Components/Index";
+import { InputComponent, CustomAlert } from "../Components/Index";
 import { GrFormViewHide, GrFormView } from "react-icons/gr";
 import axios from "axios";
 import Cookies from "js-cookie";
+import { useTriggerError } from "../Utils/client";
 
 function LoginPage(): JSX.Element {
   const [passwordDisplay, setPasswordDisplay] = useState(false);
@@ -21,6 +22,16 @@ function LoginPage(): JSX.Element {
   const [forgotPasswordEmail, setForgotPasswordEmail] = useState<string>("");
   const [resetSucess, setResetSuccess] = useState<string>("");
   const navigate = useNavigate();
+  const [snackbar, setSnackbar] = useState({
+    open: false,
+    message: "",
+    severity: "success",
+  });
+  const triggerError = useTriggerError();
+
+  const handleSnackbarClose = () => {
+    setSnackbar({ ...snackbar, open: false });
+  };
 
   const handleForgotPasswordEmailChange = (
     event: ChangeEvent<HTMLInputElement>
@@ -40,7 +51,11 @@ function LoginPage(): JSX.Element {
     event.preventDefault();
 
     if (!formData) {
-      return alert("Please fill in all fields");
+      return setSnackbar({
+        open: true,
+        message: "Please fill in all required fields",
+        severity: "warning",
+      });
     }
 
     setIsLoading(true);
@@ -71,6 +86,11 @@ function LoginPage(): JSX.Element {
       } else if (error.response.status === 401) {
         setErrorState("Invalid email or password. Please try again.");
       } else {
+        const errorData = {
+          status: error?.response?.status,
+          message: error?.response?.statusText,
+        };
+        triggerError(errorData);
         setErrorState("Internal Server Error. Please report the issue");
       }
     }
@@ -83,7 +103,11 @@ function LoginPage(): JSX.Element {
     event.preventDefault();
 
     if (!forgotPasswordEmail) {
-      return alert("Please enter your email");
+      return setSnackbar({
+        open: true,
+        message: "Please enter your email",
+        severity: "warning",
+      });
     }
 
     setIsLoading(true);
@@ -226,6 +250,12 @@ function LoginPage(): JSX.Element {
           <img src={images.logo} alt="Logo" className="w-32 md:w-[100px]" />
         </div>
       </div>
+      <CustomAlert
+        isOpen={snackbar.open}
+        message={snackbar.message}
+        severity={snackbar.severity}
+        handleClose={handleSnackbarClose}
+      />
     </div>
   );
 }

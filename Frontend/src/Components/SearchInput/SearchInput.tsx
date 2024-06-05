@@ -1,4 +1,5 @@
 import React, { useState, ChangeEvent } from "react";
+import { CustomAlert } from "../Index";
 
 type DummyDataItem = {
   id: number;
@@ -38,13 +39,32 @@ export default function SearchInput({
     result.name.toLowerCase().includes(query.toLowerCase())
   );
 
+  const [snackbar, setSnackbar] = useState({
+    open: false,
+    message: "",
+    severity: "success",
+  });
+
+  const handleSnackbarClose = () => {
+    setSnackbar({ ...snackbar, open: false });
+  };
+
   return (
     <>
-      <div className={parentBoxStyle}>
+      <div
+        className={parentBoxStyle}
+        onClick={() => {
+          setSnackbar({
+            open: true,
+            message: "Disabled Feature. Coming soon.",
+            severity: "warning",
+          });
+        }}
+      >
         <input
           type="search"
           value={query}
-          className={inputBoxStyle}
+          className={`${inputBoxStyle} pointer-events-none`}
           placeholder={placeholder}
           onInput={handleOnInput}
           onChange={handleChange}
@@ -72,6 +92,12 @@ export default function SearchInput({
           )}
         </div>
       )}
+      <CustomAlert
+        isOpen={snackbar.open}
+        message={snackbar.message}
+        severity={snackbar.severity}
+        handleClose={handleSnackbarClose}
+      />
     </>
   );
 }

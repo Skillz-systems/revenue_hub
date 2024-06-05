@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import MenuItemAlt from "../MenuItem/MenuItemAlt";
 import { GiHamburgerMenu } from "react-icons/gi";
 import { FiSearch } from "react-icons/fi";
@@ -17,6 +17,7 @@ import {
   userData,
   Card,
   CardData,
+  CustomAlert,
 } from "../Index";
 
 const ProjectLayout: React.FC = () => {
@@ -39,6 +40,15 @@ const ProjectLayout: React.FC = () => {
   const menuItems = MenuItemData();
   const { accountInformation, statistics } = userData();
   const cardData = CardData();
+  const [snackbar, setSnackbar] = useState({
+    open: false,
+    message: "",
+    severity: "success",
+  });
+
+  const handleSnackbarClose = () => {
+    setSnackbar({ ...snackbar, open: false });
+  };
 
   const handleMenuItemClick = (component: string) => {
     setActiveMenuItem(component);
@@ -61,10 +71,28 @@ const ProjectLayout: React.FC = () => {
     setSearchClicked(true);
   };
 
+  const showSnackBar = () => {
+    setSnackbar({
+      open: true,
+      message: "Disabled Feature. Statistics Coming soon.",
+      severity: "warning",
+    });
+  };
+
+  useEffect(() => {
+    if (activeMenuItem === "Statistic Component") {
+      showSnackBar();
+    } else {
+      return;
+    }
+  }, [activeMenuItem]);
+
   return (
     <>
       {!accountInformation && !statistics ? (
-        <div className="flex flex-col items-center justify-center h-screen gap-2 bg-custom-blue-100">
+        <div
+          className="flex flex-col items-center justify-center h-screen gap-2 bg-custom-blue-100"
+        >
           <h1 className="text-lg font-lexend">Loading Dashboard</h1>
           <div role="status">
             <svg
@@ -263,16 +291,20 @@ const ProjectLayout: React.FC = () => {
                 ))}
               </div>
             )}
-            
+
             {activeComponent ? (
-              activeComponent
+              activeMenuItem === "Statistic Component" ? (
+                <div></div>
+              ) : (
+                activeComponent
+              )
             ) : accountsPasswordState === "Accounts" ? (
               <div className="flex items-center justify-center">
                 <Accounts currentUserData={accountInformation} />
               </div>
             ) : accountsPasswordState === "Password" ? (
               <div className="flex items-center justify-center ">
-                <Password />
+                <Password userEmail={accountInformation?.email} />
               </div>
             ) : (
               activeComponent
@@ -309,6 +341,12 @@ const ProjectLayout: React.FC = () => {
               )}
             </DemandPropertyModal>
           )}
+          <CustomAlert
+            isOpen={snackbar.open}
+            message={snackbar.message}
+            severity={snackbar.severity}
+            handleClose={handleSnackbarClose}
+          />
         </div>
       )}
     </>
