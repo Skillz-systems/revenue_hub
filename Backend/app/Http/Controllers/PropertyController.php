@@ -52,7 +52,7 @@ class PropertyController extends Controller
      */
     public function index()
     {
-        if (Auth::user()->role != User::ROLE_ADMIN) {
+        if (Auth::user()->role_id != User::ROLE_ADMIN) {
             $properties = Property::all();
         } else {
             $properties = $this->propertyService->getAllProperties(Auth::user()->zone);
