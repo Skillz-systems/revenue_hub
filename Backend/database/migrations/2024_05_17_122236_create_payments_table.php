@@ -21,7 +21,7 @@ return new class extends Migration
             $table->string("app_fee")->comment("This is another amount that was charged on the actual amount from payment vendor");
             $table->string("merchant_fee")->comment("This is another amount that was charged on the actual amount from payment vendor");
             $table->integer("status")->default(1)->comment("This is a status to indicate if the payment is approved or not and 1 stands for approve while 0 indicate a pending state ");
-            $table->string("webhook_string")->comment("This is the payload sent by the payment vendor powered by json_encode");
+            $table->text("webhook_string")->comment("This is the payload sent by the payment vendor powered by json_encode");
             $table->timestamps();
         });
     }

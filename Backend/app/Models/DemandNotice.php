@@ -16,6 +16,8 @@ class DemandNotice extends Model
         "arrears_amount",
         "penalty",
         "status",
+        "created_at",
+        "updated_at",
     ];
 
     public function property()
