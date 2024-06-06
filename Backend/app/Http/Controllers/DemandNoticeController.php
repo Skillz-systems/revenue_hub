@@ -2,11 +2,13 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Resources\DemandNoticeResource;
+use App\Models\User;
 use App\Models\DemandNotice;
-use App\Service\DemandNoticeService;
 use Illuminate\Http\Request;
+use App\Service\DemandNoticeService;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
+use App\Http\Resources\DemandNoticeResource;
 
 class DemandNoticeController extends Controller
 {
@@ -18,10 +20,17 @@ class DemandNoticeController extends Controller
 
 
     /**
-     * @OA\Get(
+     * @OA\Post(
      *     path="/demand-notice",
      *     summary="Get paginated list of demand notices",
      *     tags={"Demand Notice"},
+     *      @OA\Parameter(
+     *         name="date_filter",
+     *         in="query",
+     *         description="Optional. The year for which to retrieve data. Defaults to the current year if not provided.",
+     *         required=false,
+     *         @OA\Schema(type="string")
+     *     ),
      *     @OA\Response(
      *         response=200,
      *         description="Successful operation",
@@ -498,16 +507,22 @@ class DemandNoticeController extends Controller
      */
     public function destroy(DemandNotice $demandNotice)
     {
-        $deleteDemandNotice = $this->demandNoticeService->deleteDemandNotice($demandNotice->id);
+        if (Auth::user()->role_id == User::ROLE_ADMIN) {
+            $deleteDemandNotice = $this->demandNoticeService->deleteDemandNotice($demandNotice->id);
 
-        if ($deleteDemandNotice) {
+            if ($deleteDemandNotice) {
+                return response()->json([
+                    'status' => 'success',
+                ], 200);
+            }
             return response()->json([
-                'status' => 'success',
-            ], 200);
+                'status' => 'error',
+                'message' => "Something went wrong",
+            ], 400);
         }
         return response()->json([
-            'status' => 'error',
-            'message' => "Something went wrong",
-        ], 400);
+            "status" => "error",
+            "message" => "You dont Have Permission",
+        ], 401);
     }
 }

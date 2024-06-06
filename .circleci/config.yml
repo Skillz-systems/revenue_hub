@@ -107,6 +107,14 @@ jobs:
 
       - run: sudo apt update
       - run: sudo apt-get install rsync
+      - run:
+          name: test environment variable for MAILERSEND_API_KEY 
+          command: |
+            echo ${MAILERSEND_API_KEY}
+      - run:
+          name: test environment variable for MAILERSEND_API_KEY second
+          command: |
+            echo $MAILERSEND_API_KEY
 
       # - run:
       #     name: Update known hosts
@@ -114,7 +122,17 @@ jobs:
       - run:
           name: find and replace in document
           command: |
-            sed -i -e 's:/public/index.php:/index.php:g' Backend/public/index.php && sed -i -e 's:/../vendor/autoload.php:/vendor/autoload.php:g' Backend/public/index.php && sed -i -e 's:DB_DATABASE=forge:DB_DATABASE=skillz_revenuehub:g' Backend/.env && sed -i -e 's:DB_USERNAME=forge:DB_USERNAME=skillz_revenuehub:g' Backend/.env  && sed -i -e 's:/../bootstrap/app.php:/bootstrap/app.php:g' Backend/public/index.php && sed -i -e 's:DB_PASSWORD=forge:DB_PASSWORD="Ubuxa##99":g' Backend/.env 
+            sed -i -e 's:/public/index.php:/index.php:g' Backend/public/index.php
+            sed -i -e 's:/../vendor/autoload.php:/vendor/autoload.php:g' Backend/public/index.php
+            sed -i -e 's:DB_DATABASE=forge:DB_DATABASE=skillz_revenuehub:g' Backend/.env
+            sed -i -e 's:DB_USERNAME=forge:DB_USERNAME=skillz_revenuehub:g' Backend/.env
+            sed -i -e 's:/../bootstrap/app.php:/bootstrap/app.php:g' Backend/public/index.php
+            sed -i -e 's:DB_PASSWORD=forge:DB_PASSWORD="Ubuxa##99":g' Backend/.env
+            sed -i -e "s:BVN=forge:BVN=${BVN}:g" Backend/.env
+            sed -i -e "s:PUBLIC_KEY=forge:PUBLIC_KEY=${PUBLIC_KEY}:g" Backend/.env
+            sed -i -e "s:SECRET_KEY=forge:SECRET_KEY=${SECRET_KEY}:g" Backend/.env
+            sed -i -e "s:ENCRYPTION_KEY=forge:ENCRYPTION_KEY=${ENCRYPTION_KEY}:g" Backend/.env
+            sed -i -e "s:MAILERSEND_API_KEY=forge:MAILERSEND_API_KEY=${MAILERSEND_API_KEY}:g" Backend/.env
 
       
       - run:
@@ -125,6 +143,60 @@ jobs:
           name: ssh and effect migration  
           command: |
              ssh -p 7822 -t skillz@185.160.67.60 "cd revenuehub/api && php artisan migrate && php artisan l5-swagger:generate"
+             
+  deploy-backend-production:
+    docker:
+        - image: cimg/php:8.3
+    working_directory: ~/repo
+    steps:
+      - add_ssh_keys:
+          fingerprints: 
+          - "SHA256:XM+2xRjrCCSH/Frn3FMhEbTaB4RS9hNa9Wm54+iINww"
+      - checkout
+      # install dependencies
+      - setup_remote_docker:
+          version: 20.10.12
+          docker_layer_caching: true
+      - run:
+          name: rename .env.example file to .env 
+          command: |
+            mv Backend/.env.example Backend/.env
+
+      - run:
+          name: Install dependencies
+          command:  cd Backend && CI=false composer clear-cache && CI=false  composer install &&  CI=false php artisan key:generate
+
+      - run: sudo apt update
+      - run: sudo apt-get install rsync
+      # - run:
+      #     name: Update known hosts
+      #     command:  CI=false ssh-keyscan -H 185.160.67.60 >> ~/.ssh/known_hosts && cat ~/.ssh/known_hosts
+      - run:
+          name: find and replace in document
+          command: |
+            sed -i -e 's:/public/index.php:/index.php:g' Backend/public/index.php
+            sed -i -e 's:/../vendor/autoload.php:/vendor/autoload.php:g' Backend/public/index.php
+            sed -i -e 's:DB_DATABASE=forge:DB_DATABASE=revenuehub_database:g' Backend/.env
+            sed -i -e 's:DB_USERNAME=forge:DB_USERNAME=revenuehub_database:g' Backend/.env
+            sed -i -e 's:/../bootstrap/app.php:/bootstrap/app.php:g' Backend/public/index.php
+            sed -i -e 's:DB_PASSWORD=forge:DB_PASSWORD="Ubuxa##99":g' Backend/.env
+            sed -i -e "s:BVN=forge:BVN=${BVN}:g" Backend/.env
+            sed -i -e "s:PUBLIC_KEY=forge:PUBLIC_KEY=${PUBLIC_KEY}:g" Backend/.env
+            sed -i -e "s:SECRET_KEY=forge:SECRET_KEY=${SECRET_KEY}:g" Backend/.env
+            sed -i -e "s:ENCRYPTION_KEY=forge:ENCRYPTION_KEY=${ENCRYPTION_KEY}:g" Backend/.env
+            sed -i -e "s:MAILERSEND_API_KEY=forge:MAILERSEND_API_KEY=${MAILERSEND_API_KEY}:g" Backend/.env
+
+      
+      - run:
+          name: ssh login  
+          command: |
+             rsync --delete -va -e 'ssh -p 7822 -o StrictHostKeyChecking=no'   Backend/app Backend/database Backend/phpunit.xml Backend/storage Backend/vendor Backend/artisan Backend/.env Backend/tests Backend/bootstrap Backend/composer.json Backend/resources Backend/composer.lock Backend/routes Backend/config Backend/package.json Backend/public/ Backend/public revenuehub@185.160.67.6:api
+      - run:
+          name: ssh and effect migration  
+          command: |
+             ssh -p 7822 -t skillz@185.160.67.60 "cd api && php artisan migrate && php artisan l5-swagger:generate"
+
+
 workflows:
   version: 2
   revenue_hub_deploy:
@@ -137,10 +209,11 @@ workflows:
           filters:
             branches:
               only: staging
-      - deploy-hub-production: # Use the pre-configured job, deploy-via-git
+
+      - deploy-backend-production: # Use the pre-configured job, deploy-via-git
           filters:
             branches:
-              only: production
+              only: main
      
       # - deploy-nest: # Use the pre-configured job, deploy-via-git
       #     filters:

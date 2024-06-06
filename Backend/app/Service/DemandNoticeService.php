@@ -32,9 +32,11 @@ class DemandNoticeService
                     $penalty = ($getDemandNotice->amount * Property::PENALTY) / 100;
                     $data["arrears_amount"] = $getDemandNotice->amount + $penalty;
                     $data["penalty"] =  $penalty;
+                    $data["amount"] =  $getProperty->rate_payable + $getDemandNotice->amount + $penalty;
+                    return  $this->model()->create($data);
                 }
                 $data["amount"] =  $getProperty->rate_payable;
-                return  $this->model()->create($data);
+                return $this->model()->create($data);
             }
             return false;
         }

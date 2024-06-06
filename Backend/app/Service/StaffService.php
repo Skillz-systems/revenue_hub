@@ -16,7 +16,6 @@ class StaffService
 {
     public function RegisterStaff($request)
     {
-        $request->all()['remember_token'] = Str::random(60);
         $user = User::create($request->all());
         return $user;
     }
@@ -58,10 +57,10 @@ class StaffService
 
     public function deleteStaff($user)
     {
-        if ($deleteUser = $user->delete()) {
-            return $deleteUser;
-        };
-
+        $getStaff = $this->viewStaff($user);
+        if ($getStaff) {
+            return $getStaff->delete();
+        }
         return false;
     }
 

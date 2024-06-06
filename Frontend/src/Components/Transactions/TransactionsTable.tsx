@@ -8,16 +8,23 @@ import {
   Pagination,
   DemandPropertyModal,
   ViewTransactionModal,
+  TransactionsType,
+  CustomAlert,
+  paginationStyles,
 } from "../Index";
 import {
   formatNumberWithCommas,
-  filterRecordsByKeyAndValue,
+  formatDate,
   ScrollToTop,
+  useTokens,
 } from "../../Utils/client";
 
 const TransactionsTable = ({
   staticInformation,
-  transactionInformation
+  transactionInformation,
+}: {
+  staticInformation: any;
+  transactionInformation: TransactionsType[];
 }) => {
   const [displaySearchIcon, setDisplaySearchIcon] = useState(true);
   const [activeMenu, setActiveMenu] = useState<number>(1);
@@ -25,9 +32,28 @@ const TransactionsTable = ({
   const [editModal, setEditModal] = useState<number | null>(null);
   const [displayColumn, setDisplayColumn] = useState<boolean>(true);
   const [viewTransactionModal, setViewTransactionModal] = useState<any>(null);
-  const [propertyModalTransition, setPropertyModalTransition] = useState<boolean>(false);
+  const [propertyModalTransition, setPropertyModalTransition] =
+    useState<boolean>(false);
+  const [snackbar, setSnackbar] = useState({
+    open: false,
+    message: "",
+    severity: "success",
+  });
+  const { userRoleId } = useTokens();
+
+  const handleSnackbarClose = () => {
+    setSnackbar({ ...snackbar, open: false });
+  };
 
   const handleViewTransactionModal = (transactionData: any) => {
+    if (userRoleId !== 1) {
+      setSnackbar({
+        open: true,
+        message: "You don't have permission",
+        severity: "error",
+      });
+      return;
+    }
     setViewTransactionModal(transactionData);
     setTimeout(() => {
       setPropertyModalTransition(true);
@@ -46,33 +72,16 @@ const TransactionsTable = ({
     ScrollToTop("top-container");
   };
 
-  const handlePropertiesPerPageChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+  const handlePropertiesPerPageChange = (
+    e: React.ChangeEvent<HTMLSelectElement>
+  ) => {
     setPropertiesPerPage(parseInt(e.target.value));
     setCurrentPage(0);
     ScrollToTop("top-container");
   };
 
-  const currentProperties = (data: any[]) => {
-    return data.slice(offset, offset + propertiesPerPage);
-  };
-
-  const paginationStyles = {
-    containerClassName: "flex flex-wrap font-lexend space-x-2",
-    activeClassName:
-      "flex items-center justify-center px-2.5 w-[32px] h-[32px] bg-custom-blue-200 border border-primary-color rounded ",
-    activeLinkClassName: "text-sm text-primary-color font-mulish font-bold",
-    previousClassName:
-      "flex items-center justify-center h-[32px] px-2.5 border border-divider-grey rounded",
-    previousLinkClassName: "text-sm text-color-text-one",
-    nextClassName:
-      "flex items-center justify-center h-[32px] px-2.5 border border-divider-grey rounded",
-    nextLinkClassName: "text-sm text-color-text-one",
-    pageClassName: `flex items-center justify-center w-[32px] h-[32px] px-2.5 border border-divider-grey rounded`,
-    pageLinkClassName: "text-sm text-color-text-two font-mulish",
-    breakLabel: <HiOutlineDotsHorizontal />,
-    breakClassName:
-      "flex items-center justify-center h-[32px] px-2 border border-divider-grey rounded",
-    breakLinkClassName: "text-base text-color-text-two font-mulish",
+  const currentProperties = (data: TransactionsType[]) => {
+    return data?.slice(offset, offset + propertiesPerPage);
   };
 
   const handleEditModal = (recordId: number) => {
@@ -89,78 +98,74 @@ const TransactionsTable = ({
   };
 
   const filteredRecords =
-    activeMenu === 1
-      ? currentProperties(transactionInformation)
-      : activeMenu === 2
-        ? currentProperties(
-          filterRecordsByKeyAndValue(
-            transactionInformation,
-            "transactionType",
-            "Bank Transfer"
-          )
-        )
-        : [];
+    activeMenu === 1 ? currentProperties(transactionInformation) : [];
 
   const filteredResults = query
-    ? transactionInformation.filter((record) =>
-      Object.values(record).some((value) => {
-        if (typeof value === "string") {
-          // For string values, perform case-insensitive comparison
-          return value.toLowerCase().includes(query.toLowerCase());
-        } else if (typeof value === "number" || Number.isInteger(value)) {
-          // For numeric values, stringify and compare
-          return String(value).toLowerCase().includes(query.toLowerCase());
-        }
-        return false; // Ignore other data types
-      })
-    )
+    ? transactionInformation?.filter((record) =>
+        Object.values(record).some((value) => {
+          if (typeof value === "string") {
+            // For string values, perform case-insensitive comparison
+            return value.toLowerCase().includes(query.toLowerCase());
+          } else if (typeof value === "number" || Number.isInteger(value)) {
+            // For numeric values, stringify and compare
+            return String(value).toLowerCase().includes(query.toLowerCase());
+          }
+          return false; // Ignore other data types
+        })
+      )
     : [];
 
   const pageCount = Math.ceil(LengthByActiveMenu() / propertiesPerPage);
 
-  const recordField = (transactionInformation) => {
+  const recordField = (transactionInformation: TransactionsType) => {
     return (
       <div
-        key={transactionInformation.id}
+        key={transactionInformation.demand_notice.id}
         className="flex items-center justify-between gap-1 text-xs"
       >
         <span className="flex flex-wrap items-center justify-center w-2/12 h-10 px-2 py-1 text-sm font-medium rounded text-color-text-three bg-custom-blue-400">
-          {transactionInformation.propertyDetails.demandNoticeNumber}
+          {transactionInformation.demand_notice.id}
         </span>
         <span className="flex flex-wrap items-center justify-center w-20 p-1 text-xs font-medium rounded text-color-text-black bg-custom-blue-100 border-0.6 border-custom-color-one">
-          {transactionInformation.propertyDetails.personalIdentificationNumber}
+          {transactionInformation.demand_notice.property.pid}
         </span>
         <span className="flex flex-wrap items-center w-2/12 font-lexend text-color-text-black">
-          {transactionInformation.propertyDetails.address}
+          {transactionInformation.demand_notice.property.prop_addr}
         </span>
         <span
-          className={`flex flex-wrap text-center items-center px-2 py-1 justify-center rounded-xl w-[12%] font-light font-lexend text-color-text-black text-[10px] border-0.6 border-custom-grey-100
-            ${transactionInformation.transactionType === "Mobile Transfer"
-              ? "bg-color-light-red"
-              : "bg-color-light-yellow"
+          className={`flex flex-wrap text-center items-center px-2 py-1 uppercase justify-center rounded-xl w-[12%] font-light font-lexend text-color-text-black text-[10px] border-0.6 border-custom-grey-100
+            ${
+              transactionInformation.app_fee
+                ? "bg-color-light-red"
+                : "bg-color-light-yellow"
             }`}
         >
-          {transactionInformation.transactionType.toUpperCase()}
+          {transactionInformation.app_fee ? "MOBILE TRANSFER" : "BANK TRANSFER"}
         </span>
         <span className="flex flex-wrap items-center justify-center text-sm w-[12%] text-color-text-black font-chonburi">
           {formatNumberWithCommas(
-            transactionInformation.propertyDetails.ratePayable
+            transactionInformation.demand_notice.property.rate_payable
           )}
         </span>
         <span className="flex flex-wrap items-center justify-center w-1/12 text-color-text-black font-lexend text-[10px]">
-          {transactionInformation.transactionDate}
+          {formatDate(transactionInformation.demand_notice.property.updated_at)}
         </span>
         <span className="flex flex-wrap items-center justify-center gap-1 w-[12%]">
           <span className="border-0.6 relative border-custom-grey-100 text-custom-grey-300 px-2 py-2.5 rounded text-base hover:cursor-pointer">
             <span
               title="Edit Transaction"
               className="hover:cursor-pointer"
-              onClick={() => handleEditModal(transactionInformation.id)}
+              onClick={() =>
+                handleEditModal(transactionInformation.demand_notice.id)
+              }
             >
               <HiOutlineDotsHorizontal />
             </span>
-            {editModal === transactionInformation.id && (
-              <span className="absolute space-y-2 top-0 z-10 flex-col w-36 p-4 text-xs text-center bg-white rounded shadow-md -left-44 border-0.6 border-custom-grey-100 text-color-text-black font-lexend">
+            {editModal === transactionInformation.demand_notice.id && (
+              <span
+                className="absolute space-y-2 top-0 z-10 flex-col w-36 p-4 text-xs text-center bg-white rounded shadow-md -left-44 border-0.6 border-custom-grey-100 text-color-text-black font-lexend"
+                onMouseLeave={() => setEditModal(null)}
+              >
                 <p
                   className="hover:cursor-pointer"
                   title="Edit Transaction"
@@ -182,14 +187,8 @@ const TransactionsTable = ({
     return activeMenu === 1
       ? filteredResults.length > 0
         ? filteredResults.length
-        : filteredResults < 1 && query != ""
-          ? 0
-          : transactionInformation.length
-      : filterRecordsByKeyAndValue(
-        transactionInformation,
-        "transactionType",
-        "Bank Transfer"
-      ).length;
+        : transactionInformation.length
+      : 0;
   }
 
   return (
@@ -204,45 +203,48 @@ const TransactionsTable = ({
               displayColumn === false && query !== "" && menu.id > 1 ? null : (
                 <div
                   key={menu.id}
-                  className={`flex items-start justify-between gap-2 px-2 py-1 text-xs font-lexend hover:cursor-pointer ${activeMenu === menu.id
-                    ? "bg-primary-color rounded"
-                    : "bg-inherit"
-                    }`}
+                  className={`flex items-start justify-between gap-2 px-2 py-1 text-xs font-lexend hover:cursor-pointer ${
+                    activeMenu === menu.id
+                      ? "bg-primary-color rounded"
+                      : "bg-inherit"
+                  }`}
                   onClick={() => {
-                    setActiveMenu(menu.id);
+                    if (menu.id > 1) {
+                      setSnackbar({
+                        open: true,
+                        message: "Disabled Feature. Coming soon.",
+                        severity: "warning",
+                      });
+                    } else {
+                      setActiveMenu(menu.id);
+                    }
                     setCurrentPage(0);
                     setCurrentStyle(0);
                   }}
                 >
                   <span
-                    className={`${activeMenu === menu.id
-                      ? "font-medium text-white"
-                      : "text-color-text-two"
-                      }`}
+                    className={`${
+                      activeMenu === menu.id
+                        ? "font-medium text-white"
+                        : "text-color-text-two"
+                    }`}
                   >
                     {menu.name}
                   </span>
-                  <span className="px-1 border rounded text-color-text-three bg-custom-blue-200 border-custom-color-two">
-                    {menu.id === 1
-                      ? filteredResults.length > 0
-                        ? filteredResults.length
-                        : filteredResults < 1 && query != ""
-                          ? 0
-                          : transactionInformation.length
-                      : filterRecordsByKeyAndValue(
-                        transactionInformation,
-                        "transactionType",
-                        "Bank Transfer"
-                      ).length}
-                  </span>
+                  {menu.id === 1 ? (
+                    <span className="px-1 border rounded text-color-text-three bg-custom-blue-200 border-custom-color-two">
+                      {menu.id === 1 ? transactionInformation.length : 0}
+                    </span>
+                  ) : null}
                 </div>
               )
             )}
           </div>
           <TableSearchInput
             parentBoxStyle="flex items-center justify-between p-2 bg-custom-grey-100 rounded-3xl border border-custom-color-one"
-            inputBoxStyle={` ${displaySearchIcon ? "w-10/12" : "w-full"
-              } text-xs outline-none bg-inherit font-lexend text-color-text-two`}
+            inputBoxStyle={` ${
+              displaySearchIcon ? "w-10/12" : "w-full"
+            } text-xs outline-none bg-inherit font-lexend text-color-text-two`}
             iconBoxStyle={"text-base text-primary-color hover:cursor-pointer"}
             placeholder={"Search records"}
             searchIcon={<FiSearch />}
@@ -257,35 +259,34 @@ const TransactionsTable = ({
             displaySearchIcon={displaySearchIcon}
             query={query}
             handleQueryChange={handleQueryChange}
+            setSnackBar={setSnackbar}
           />
         </div>
 
         <div className="flex-col space-y-6 ">
           <div className="flex items-center justify-between gap-1">
-            {staticInformation.transactions.columns.map(
-              (column) => (
-                <div
-                  key={column.id}
-                  className={`flex items-center gap-1 w-1/12 text-color-text-two text-[10px] font-lexend
+            {staticInformation.transactions.columns.map((column) => (
+              <div
+                key={column.id}
+                className={`flex items-center gap-1 w-1/12 text-color-text-two text-[10px] font-lexend
                 ${[1, 3].includes(column.id) && "w-2/12"}
                 ${[2].includes(column.id) && "w-20"}
                 ${[4, 5, 7].includes(column.id) && "w-[12%]"}
                 ${column.id === 6 && "w-1/12"}
                 ${[5, 6, 7].includes(column.id) && "justify-center"}
                 `}
-                >
-                  <GoDotFill />
-                  <span className="flex items-center justify-center gap-1">
-                    {column.name}
-                    {column.name === "RATE PAYABLE" ? (
-                      <span className="text-base text-color-bright-green">
-                        <TbCurrencyNaira />
-                      </span>
-                    ) : null}
-                  </span>
-                </div>
-              )
-            )}
+              >
+                <GoDotFill />
+                <span className="flex items-center justify-center gap-1">
+                  {column.name}
+                  {column.name === "RATE PAYABLE" ? (
+                    <span className="text-base text-color-bright-green">
+                      <TbCurrencyNaira />
+                    </span>
+                  ) : null}
+                </span>
+              </div>
+            ))}
           </div>
           <div className="flex-col space-y-4">
             {query === "" ? (
@@ -338,26 +339,34 @@ const TransactionsTable = ({
           </p>
         </div>
       </div>
-      {viewTransactionModal ? (
-        <DemandPropertyModal
-          modalStyle={
-            "absolute top-0 left-0 z-20 flex items-start justify-end w-full h-screen p-4 overflow-hidden bg-black bg-opacity-40"
-          }
-        >
-          <ViewTransactionModal
-            hideViewPropertyModal={() => {
-              setViewTransactionModal(false);
-              setTimeout(() => {
-                setPropertyModalTransition(false);
-              }, 300);
-            }}
-            propertyModalTransition={propertyModalTransition}
-            customTableData={viewTransactionModal}
-          />
-        </DemandPropertyModal>
+      {userRoleId === 1 ? (
+        viewTransactionModal ? (
+          <DemandPropertyModal
+            modalStyle={
+              "absolute top-0 left-0 z-20 flex items-start justify-end w-full h-screen p-4 overflow-hidden bg-black bg-opacity-40"
+            }
+          >
+            <ViewTransactionModal
+              hideViewPropertyModal={() => {
+                setViewTransactionModal(false);
+                setTimeout(() => {
+                  setPropertyModalTransition(false);
+                }, 300);
+              }}
+              propertyModalTransition={propertyModalTransition}
+              customTableData={viewTransactionModal}
+            />
+          </DemandPropertyModal>
+        ) : null
       ) : null}
+      <CustomAlert
+        isOpen={snackbar.open}
+        message={snackbar.message}
+        severity={snackbar.severity}
+        handleClose={handleSnackbarClose}
+      />
     </div>
   );
-}
+};
 
-export default TransactionsTable
+export default TransactionsTable;

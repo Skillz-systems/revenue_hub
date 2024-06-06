@@ -1,38 +1,82 @@
-import React, { useState, ChangeEvent, FormEvent } from "react";
+import React, { useState, useEffect, ChangeEvent, FormEvent } from "react";
 import { GrFormViewHide, GrFormView } from "react-icons/gr";
-import { InputComponent } from "../Index";
+import { InputComponent, CustomAlert } from "../Index";
+import axios from "axios";
+import { useTriggerError } from "../../Utils/client";
 
-type FormData = {
-  oldPassword: string;
-  newPassword: string;
-  confirmPassword: string;
-};
+export default function Password({ userEmail }) {
+  const [isLoading, setIsLoading] = useState(false);
+  const [forgotPasswordEmail, setForgotPasswordEmail] = useState<string>("");
+  const triggerError = useTriggerError();
 
-export default function Password() {
-  const [passwordDisplay, setPasswordDisplay] = useState<boolean>(false);
-  const [confirmPasswordDisplay, setConfirmPasswordDisplay] = useState<boolean>(false);
-  const [formData, setFormData] = useState<FormData>({
-    oldPassword: "",
-    newPassword: "",
-    confirmPassword: "",
+  useEffect(() => {
+    if (userEmail) {
+      setForgotPasswordEmail(userEmail);
+    }
+  }, [userEmail]);
+  const [snackbar, setSnackbar] = useState({
+    open: false,
+    message: "",
+    severity: "success",
   });
 
-  const handleInputChange = (event: ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = event.target;
-    setFormData((prevState) => ({
-      ...prevState,
-      [name]: value,
-    }));
+  const handleSnackbarClose = () => {
+    setSnackbar({ ...snackbar, open: false });
   };
 
-  const handleFormSubmit = (event: FormEvent<HTMLFormElement>) => {
+  const handleFormSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    if (formData.newPassword !== formData.confirmPassword) {
-      alert("Passwords don't match");
-      return;
-    } else {
-      console.log("FORM DATA:", formData);
+
+    if (!forgotPasswordEmail) {
+      return setSnackbar({
+        open: true,
+        message: "Please enter your email",
+        severity: "warning",
+      });
     }
+
+    setIsLoading(true);
+
+    try {
+      const response = await axios.post(
+        "https://api.revenuehub.skillzserver.com/api/auth/forgot-password",
+        {
+          email: forgotPasswordEmail,
+        }
+      );
+
+      if (response.status === 200) {
+        setSnackbar({
+          open: true,
+          message: "Password reset link has been sent to your email",
+          severity: "success",
+        });
+      } else {
+        setSnackbar({
+          open: true,
+          message: "Unexpected status code",
+          severity: "warning",
+        });
+      }
+    } catch (error) {
+      let message = "Internal Server Error";
+      if (error.response) {
+        switch (error.response.status) {
+          case 400:
+            message = "Bad request.";
+            break;
+          default:
+            const errorData = {
+              status: error?.response?.status,
+              message: error?.response?.statusText,
+            };
+            triggerError(errorData);
+            break;
+        }
+      }
+      setSnackbar({ open: true, message, severity: "error" });
+    }
+    setIsLoading(false);
   };
 
   return (
@@ -57,7 +101,7 @@ export default function Password() {
         </div>
         <div className="flex items-center">
           <p className="px-2 py-1 rounded text-xs text-color-text-two font-lexend border-0.6 border-custom-color-one">
-            Click any field below to make changes
+            Click change password below to receive email instructions
           </p>
         </div>
         <InputComponent
@@ -65,66 +109,32 @@ export default function Password() {
             "flex items-center justify-between border border-custom-color-one rounded"
           }
           inputType={"text"}
-          inputName={"oldPassword"}
-          inputValue={formData.oldPassword}
-          handleInputChange={handleInputChange}
-          placeholder={"OLD PASSWORD"}
+          inputName={"forgotPasswordEmail"}
+          inputValue={forgotPasswordEmail}
+          placeholder={"Email"}
           required={true}
           inputStyle={
-            "text-color-text-two h-[48px] bg-white rounded outline-none px-4 py-2 w-full font-lexend text-xs"
+            "text-color-text-two h-[48px] bg-white rounded outline-none px-4 py-2 w-full font-lexend text-xs pointer-events-none"
           }
-        />
-        <InputComponent
-          inputContainer={
-            "flex items-center justify-between border border-custom-color-one rounded"
-          }
-          inputType={passwordDisplay ? "text" : "password"}
-          inputName={"newPassword"}
-          inputValue={formData.newPassword}
-          handleInputChange={handleInputChange}
-          placeholder={"ENTER NEW PASSWORD"}
-          required={true}
-          inputStyle={
-            "text-color-text-two h-[48px] bg-white rounded-l outline-none px-4 py-2 w-full font-lexend text-xs"
-          }
-          iconStyle={
-            "flex items-center justify-center text-color-text-two bg-white pr-[4%] h-[48px] text-[20px] rounded-r"
-          }
-          onIconClick={() => setPasswordDisplay(!passwordDisplay)}
-          inputIcon={passwordDisplay ? <GrFormView /> : <GrFormViewHide />}
-        />
-        <InputComponent
-          inputContainer={
-            "flex items-center justify-between border border-custom-color-one rounded"
-          }
-          inputType={confirmPasswordDisplay ? "text" : "password"}
-          inputName={"confirmPassword"}
-          inputValue={formData.confirmPassword}
-          handleInputChange={handleInputChange}
-          placeholder={"CONFIRM NEW PASSWORD"}
-          required={true}
-          inputStyle={
-            "text-color-text-two h-[48px] bg-white rounded-l outline-none px-4 py-2 w-full font-lexend text-xs"
-          }
-          iconStyle={
-            "flex items-center justify-center text-color-text-two bg-white pr-[4%] h-[48px] text-[20px] rounded-r"
-          }
-          onIconClick={() => setConfirmPasswordDisplay(!confirmPasswordDisplay)}
-          inputIcon={
-            confirmPasswordDisplay ? <GrFormView /> : <GrFormViewHide />
-          }
+          readOnly={true}
         />
         <InputComponent
           inputContainer={
             "flex items-center justify-between gap-1 bg-primary-color rounded"
           }
           inputType={"submit"}
-          inputValue={"Change Password"}
+          inputValue={`${isLoading ? "Sending Email..." : "Change Password"}`}
           inputStyle={
             "h-[48px] rounded outline-none px-2 py-1 w-full font-lexend text-base font-medium text-white hover:cursor-pointer"
           }
         />
       </form>
+      <CustomAlert
+        isOpen={snackbar.open}
+        message={snackbar.message}
+        severity={snackbar.severity}
+        handleClose={handleSnackbarClose}
+      />
     </div>
   );
 }

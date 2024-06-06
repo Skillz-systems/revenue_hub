@@ -1,42 +1,110 @@
-import React from "react";
-import { TransactionsTable, useAppData, Card, CardData } from "../Components/Index";
+import React, { useState, useEffect } from "react";
+import {
+  LoadingSpinner,
+  TransactionsTable,
+  userData,
+  CustomAlert,
+} from "../Components/Index";
+import { useTokens, useTriggerError } from "../Utils/client";
+import axios from "axios";
 
 const Transactions: React.FC = () => {
-  const cardData = CardData();
-  const { staticInformation, transactionInformation } = useAppData();
+  const { token } = useTokens();
+  const { staticInformation } = userData();
+  const [transactionInformation, setTransactionInformation] =
+    useState<any>(null);
+  const [snackbar, setSnackbar] = useState({
+    open: false,
+    message: "",
+    severity: "success",
+  });
+  const triggerError = useTriggerError();
+
+  const handleSnackbarClose = () => {
+    setSnackbar({ ...snackbar, open: false });
+  };
+
+  const fetchTransactions = async (dateFilter = "") => {
+    try {
+      const response = await axios.post(
+        "https://api.revenuehub.skillzserver.com/api/payment",
+        { date_filter: dateFilter },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      if (response.status === 200) {
+        setTransactionInformation(response.data.data);
+        setSnackbar({
+          open: true,
+          message: "Successfuly fetched all transactions",
+          severity: "success",
+        });
+      } else {
+        setSnackbar({
+          open: true,
+          message:
+            "Unexpected status code. Something went wrong please try again.",
+          severity: "warning",
+        });
+      }
+    } catch (error) {
+      let message = "Internal Server Error";
+      if (error.response) {
+        switch (error.response.status) {
+          case 400:
+            message = "Bad request. Property Id is missing.";
+            break;
+          case 401:
+            message = "You are unauthorized";
+            break;
+          case 403:
+            message = "You are forbidden";
+            break;
+          case 404:
+            message = "Payment not found";
+            break;
+          case 429:
+            message = "Too many requests made. Refreshing in 3 seconds";
+            setTimeout(() => {
+              window.location.reload();
+            }, 3000);
+            break;
+          default:
+            const errorData = {
+              status: error?.response?.status,
+              message: error?.response?.statusText,
+            };
+            triggerError(errorData);
+            break;
+        }
+      }
+      setSnackbar({ open: true, message, severity: "error" });
+    }
+  };
+
+  useEffect(() => {
+    fetchTransactions();
+  }, []);
 
   return (
     <div className="flex-col space-y-8">
-      <div className="grid grid-cols-2 gap-x-3 gap-y-3 md:grid-cols-3 md:gap-x-4 md:gap-y-8">
-        {cardData.map((card) => (
-          <Card
-            id={card.id}
-            icon={card.icon}
-            description={card.description}
-            name={card.name}
-            value={card.value}
-            containerStyle={`flex flex-col items-start p-2 space-y-4 lg:p-4 lg:space-y-8 border-0.6 w-full border-custom-color-one shadow rounded
-                ${card.id === 1 && "bg-custom-grey-200"}`}
-            iconStyle={`flex items-center justify-center w-6 lg:w-10 h-6 lg:h-10 lg:p-2 text-base lg:text-2xl rounded 
-                ${[1, 2, 3].includes(card.id) &&
-              "bg-custom-blue-200 text-primary-color"
-              }
-                ${card.id === 4 && "bg-color-light-green text-color-dark-green"}
-                ${[5, 6].includes(card.id) &&
-              "bg-color-light-yellow text-color-bright-orange"
-              }
-              `}
-            descriptionStyle={"text-[10px] lg:text-xs text-color-text-two font-lexend"}
-            nameStyle={"text-xs lg:text-sm font-medium lg:font-semibold text-color-text-one font-lexend"}
-            currencyStyle={"text-sm lg:text-2xl text-color-bright-green"}
-            valueStyle={"text-lg lg:text-3xl"}
-          />
-        ))}
-      </div>
       <hr className="border-0.5 mb-8 border-custom-grey-100" />
-      <TransactionsTable
-        staticInformation={staticInformation}
-        transactionInformation={transactionInformation}
+      {transactionInformation ? (
+        <TransactionsTable
+          staticInformation={staticInformation}
+          transactionInformation={transactionInformation}
+        />
+      ) : (
+        <LoadingSpinner title="Loading Transactions" />
+      )}
+      <CustomAlert
+        isOpen={snackbar.open}
+        message={snackbar.message}
+        severity={snackbar.severity}
+        handleClose={handleSnackbarClose}
       />
     </div>
   );

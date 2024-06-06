@@ -1,23 +1,31 @@
-import React from "react";
+import React, { useState } from "react";
 import { GoDotFill } from "react-icons/go";
 import { TbCurrencyNaira } from "react-icons/tb";
-import { formatNumberWithCommas } from "../../Utils/client";
+import {
+  formatNumberWithCommas,
+  useTokens,
+  useTriggerError,
+} from "../../Utils/client";
 import { BiSolidEditAlt } from "react-icons/bi";
 import { HiOutlineDotsHorizontal } from "react-icons/hi";
+import axios from "axios";
+import { CustomAlert } from "../Index";
 
 type PropertiesTableProps = {
-  personalIdentificationNumber: string,
-  propertyUse: string,
-  paymentStatus: string,
-  propertyAddress: string,
-  group: string,
-  cadestralZone: string,
-  ratePaybale: number,
-  setViewPropertyModal: () => void,
-  occupationStatus: string,
+  id: number;
+  personalIdentificationNumber: string;
+  propertyUse: string;
+  paymentStatus: string;
+  propertyAddress: string;
+  group: string;
+  cadestralZone: string;
+  ratePaybale: number;
+  setViewPropertyModal: () => void;
+  occupationStatus: string;
 };
 
 const PropertiesTable: React.FC<PropertiesTableProps> = ({
+  id,
   personalIdentificationNumber,
   propertyUse,
   paymentStatus,
@@ -28,11 +36,154 @@ const PropertiesTable: React.FC<PropertiesTableProps> = ({
   setViewPropertyModal,
   occupationStatus,
 }) => {
+  const { token, userRoleId } = useTokens();
+  const [settingsModal, setSettingsModal] = useState<boolean>(false);
+  const [snackbar, setSnackbar] = useState({
+    open: false,
+    message: "",
+    severity: "success",
+  });
+  const triggerError = useTriggerError();
+
+  const handleSnackbarClose = () => {
+    setSnackbar((prev) => ({ ...prev, open: false }));
+  };
+
+  const deleteProperty = async (pid: number) => {
+    if (userRoleId > 1) {
+      setSnackbar({
+        open: true,
+        message: "You don't have permission",
+        severity: "error",
+      });
+      return;
+    }
+
+    try {
+      const response = await axios.delete(
+        `https://api.revenuehub.skillzserver.com/api/property/${pid}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`, // Headers
+          },
+        }
+      );
+      if (response.status === 200) {
+        setSnackbar({
+          open: true,
+          message: "Successfully removed property",
+          severity: "success",
+        });
+        setTimeout(() => {
+          window.location.reload();
+        }, 3000);
+      } else {
+        setSnackbar({
+          open: true,
+          message: "Unexpected status code",
+          severity: "warning",
+        });
+      }
+    } catch (error) {
+      let message = "Internal Server Error";
+      if (error.response) {
+        switch (error.response.status) {
+          case 400:
+            message = "Bad request. Property Id is missing.";
+            break;
+          case 401:
+            message = "You are unauthorized";
+            break;
+          case 403:
+            message = "You are forbidden";
+            break;
+          case 404:
+            message = "Demand notice not found";
+            break;
+          case 429:
+            message = "Too many requests made. Refreshing in 3 seconds";
+            setTimeout(() => {
+              window.location.reload();
+            }, 3000);
+            break;
+          default:
+            const errorData = {
+              status: error.response.status,
+              message: error.response.statusText,
+            };
+            triggerError(errorData);
+            break;
+        }
+      }
+      setSnackbar({ open: true, message, severity: "error" });
+    }
+  };
+  const generateDemandNotice = async (pid: number) => {
+    if (userRoleId > 1) {
+      setSnackbar({
+        open: true,
+        message: "You don't have permission",
+        severity: "error",
+      });
+      return;
+    }
+
+    try {
+      const response = await axios.post(
+        "https://api.revenuehub.skillzserver.com/api/demand-notice/create",
+        {
+          property_id: pid,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`, // Headers
+          },
+        }
+      );
+      if (response.status === 200 || response.status === 201) {
+        setSnackbar({
+          open: true,
+          message: `Successfully created demand notice`,
+          severity: "success",
+        });
+      } else {
+        setSnackbar({
+          open: true,
+          message: "Unexpected status code",
+          severity: "warning",
+        });
+      }
+    } catch (error) {
+      let message = "Internal Server Error";
+      if (error.response) {
+        switch (error.response.status) {
+          case 400:
+            message = "Bad request. Property Id is missing.";
+            break;
+          case 401:
+            message = "You are unauthorized";
+            break;
+          case 429:
+            message = "Too many requests made. Refreshing in 3 seconds";
+            setTimeout(() => {
+              window.location.reload();
+            }, 3000);
+            break;
+          default:
+            const errorData = {
+              status: error?.response?.status,
+              message: error?.response?.statusText,
+            };
+            triggerError(errorData);
+            break;
+        }
+      }
+      setSnackbar({ open: true, message, severity: "error" });
+    }
+  };
+
   return (
-    <div
-      className="flex-col border border-divider-grey w-[32%] rounded hover:cursor-pointer"
-      onClick={setViewPropertyModal}
-    >
+    <div className="flex-col border border-divider-grey w-[32%] rounded">
       <div className="flex items-center justify-between px-2.5 py-3 gap-1 border-b border-divider-grey">
         <div className="flex items-center justify-between gap-2">
           <span className="text-xs font-bold text-color-text-one">
@@ -68,7 +219,10 @@ const PropertiesTable: React.FC<PropertiesTableProps> = ({
           {paymentStatus}
         </span>
       </div>
-      <div className="fle-col px-2.5 py-3 space-y-2">
+      <div
+        className="fle-col px-2.5 py-3 space-y-2 hover:cursor-pointer"
+        onClick={setViewPropertyModal}
+      >
         <div className="text-xs font-lexend text-color-text-black">
           {propertyAddress}
         </div>
@@ -107,26 +261,62 @@ const PropertiesTable: React.FC<PropertiesTableProps> = ({
               className="text-xl hover:cursor-pointer"
               onClick={(e) => {
                 e.stopPropagation();
-                alert("Edit Property");
               }}
             >
               <BiSolidEditAlt />
             </span>
           </span>
-          <span className="text-blueberry flex items-center justify-center rounded w-[30px] h-[30px] p-0.5 border-0.6 border-custom-grey-100">
+          <span className="relative text-blueberry flex items-center justify-center rounded w-[30px] h-[30px] p-0.5 border-0.6 border-custom-grey-100">
             <span
               title="More Options"
               className="text-xl hover:cursor-pointer text-custom-grey-300"
-              onClick={(e) => {
-                e.stopPropagation();
-                alert("Options Modal");
+              onClick={() => {
+                setSettingsModal(!settingsModal);
               }}
             >
               <HiOutlineDotsHorizontal />
             </span>
+            {settingsModal && (
+              <span
+                className="absolute space-y-2 top-0 z-10 flex-col w-40 p-4 text-xs bg-white rounded shadow-md -left-44 border-0.6 border-custom-grey-100 text-color-text-black font-lexend"
+                onMouseLeave={() => {
+                  setSettingsModal(!settingsModal);
+                }}
+              >
+                {paymentStatus === "Ungenerated" ? (
+                  <p
+                    className="hover:cursor-pointer"
+                    title="View Demand Notice"
+                    onClick={() => generateDemandNotice(id)}
+                  >
+                    Generate Demand Notice
+                  </p>
+                ) : null}
+                <p
+                  className="hover:cursor-pointer"
+                  title="View Demand Notice"
+                  onClick={setViewPropertyModal}
+                >
+                  View Property
+                </p>
+                <p
+                  className="hover:cursor-pointer"
+                  title="View Demand Notice"
+                  onClick={() => deleteProperty(id)}
+                >
+                  Delete Property
+                </p>
+              </span>
+            )}
           </span>
         </div>
       </div>
+      <CustomAlert
+        isOpen={snackbar.open}
+        message={snackbar.message}
+        severity={snackbar.severity}
+        handleClose={handleSnackbarClose}
+      />
     </div>
   );
 };
