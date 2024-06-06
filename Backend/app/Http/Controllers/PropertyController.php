@@ -476,12 +476,12 @@ class PropertyController extends Controller
     public function processCsv(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'csv_file' => ['required', 'file'],
+            'csv_file' => ['required', 'file',],
             'extraction_type' => ['required'],
         ]);
         if ($validator->fails()) {
             return response()->json([
-                'status' => 'errorss',
+                'status' => 'error',
                 'message' => "All fields are required ",
                 "data" => $validator->errors()
             ], 400);
