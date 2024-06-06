@@ -82,7 +82,7 @@ class CsvExtractorJob implements ShouldQueue
     {
         $data = $data["data"];
         foreach ($data as $propertyType) {
-            // check if the district already exists
+            // check if the property type already exists
             $checkExistingPropertyType = (new PropertyTypeService())->getPropertyTypeFromPropertyTypeName($propertyType["property_type"]);
 
             if (!$checkExistingPropertyType) {
@@ -191,8 +191,8 @@ class CsvExtractorJob implements ShouldQueue
             "annual_value" => $getAnnualValue,
             "rate_payable" =>  $getRatePayable,
             "grand_total" =>  $getGrandTotal,
-            "category" => $getCategory,
-            "group" => $getGroup,
+            "category" => $getCategory ? $getCategory->id : 0,
+            "group" => $getGroup ? $getGroup->id : 0,
             "active" => $getActive,
         ];
         $createProperty = (new PropertyService())->storeProperty(new Request($propertyData));
