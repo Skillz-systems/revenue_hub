@@ -1,4 +1,4 @@
-import { staticInformation } from "../../Data/appData"
+import { staticInformation } from "../../Data/userData";
 
 interface Option {
   id: number;
@@ -57,9 +57,9 @@ const data: Data = {
           inputName: "cadestralZone",
           placeholder: "Cadestral Zone",
           inputType: "select",
-          options: staticInformation.cadestralZones.map((zone, index) => ({
+          options: staticInformation?.cadestralZones.map((zone, index) => ({
             id: index + 1,
-            name: zone
+            name: zone,
           })),
           required: true,
         },
@@ -91,7 +91,7 @@ const data: Data = {
           inputType: "select",
           options: staticInformation.cadestralZones.map((zone, index) => ({
             id: index + 1,
-            name: zone
+            name: zone,
           })),
           required: true,
         },

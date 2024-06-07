@@ -55,6 +55,9 @@ return [
             //     'timeout' => 5,
             // ],
         ],
+        'mailersend' => [
+            'transport' => 'mailersend',
+        ],
 
         'postmark' => [
             'transport' => 'postmark',

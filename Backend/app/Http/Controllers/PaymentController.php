@@ -2,23 +2,41 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Resources\PaymentResource;
-use App\Service\PaymentService;
+use App\Models\Payment;
+use App\Models\DemandNotice;
 use Illuminate\Http\Request;
+use App\Service\PaymentService;
+use App\Service\PropertyService;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
+use App\Service\DemandNoticeService;
+use App\Http\Resources\PaymentResource;
+use Illuminate\Support\Carbon;
 
 class PaymentController extends Controller
 {
     protected $paymentService;
-    public function __construct(PaymentService $paymentService)
+    protected $propertyService;
+    protected $demandNoticeService;
+    public function __construct(PaymentService $paymentService, PropertyService $propertyService, DemandNoticeService $demandNoticeService)
     {
         $this->paymentService = $paymentService;
+        $this->propertyService = $propertyService;
+        $this->demandNoticeService = $demandNoticeService;
     }
 
     /**
-     * @OA\Get(
+     * @OA\Post(
      *     path="/payment",
      *     summary="Get a list of payments",
      *     tags={"Payment"},
+     *      @OA\Parameter(
+     *         name="date_filter",
+     *         in="query",
+     *         description="Optional. The year for which to retrieve data. Defaults to the current year if not provided.",
+     *         required=false,
+     *         @OA\Schema(type="string")
+     *     ),
      *     @OA\Response(
      *         response=200,
      *         description="Successful operation",
@@ -172,13 +190,59 @@ class PaymentController extends Controller
      *                 type="string",
      *                 example="success"
      *             ),
+     * 
      *             @OA\Property(
      *                 property="data",
      *                 type="object",
      *                 @OA\Property(
-     *                     property="account_number",
+     *                     property="response_message",
      *                     type="string",
-     *                     example="1234567890"
+     *                     example="Transaction in progress"
+     *                 ),
+     *                 @OA\Property(
+     *                     property="response_code",
+     *                     type="string",
+     *                     example="02"
+     *                 ),
+     *                 @OA\Property(
+     *                     property="flw_ref",
+     *                     type="string",
+     *                     example="GPCY5711171682908639919735"
+     *                 ),
+     *                 @OA\Property(
+     *                     property="order_ref",
+     *                     type="string",
+     *                     example="URF_1716829079964_1906235"
+     *                 ),
+     *                 @OA\Property(
+     *                     property="frequency",
+     *                     type="string",
+     *                     example="NA"
+     *                 ),
+     *                 @OA\Property(
+     *                     property="bank_name",
+     *                     type="string",
+     *                     example="Sterling Bank"
+     *                 ),
+     *                 @OA\Property(
+     *                     property="created_at",
+     *                     type="string",
+     *                     example="2024-05-27 17:58:06"
+     *                 ),
+     *                 @OA\Property(
+     *                     property="expiry_date",
+     *                     type="string",
+     *                     example="2024-05-27 18:58:06"
+     *                 ),
+     *                 @OA\Property(
+     *                     property="note",
+     *                     type="string",
+     *                     example="Please make a bank transfer to ICT FLW"
+     *                 ),
+     *                 @OA\Property(
+     *                     property="amount",
+     *                     type="string",
+     *                     example="48625.00"
      *                 )
      *             )
      *         )
@@ -222,6 +286,53 @@ class PaymentController extends Controller
     public function generateAccount($id)
     {
         $generateAccount = $this->paymentService->createAccountNumber($id);
-        return response()->json(["status" => "success", "data" => $generateAccount], 200);
+        $getProperty = $this->propertyService->getProperty($id);
+        return response()->json(["status" => "success", "data" => $generateAccount, "property" => $getProperty], 200);
+    }
+
+    public function webhook(Request $request)
+    {
+        Log::error('I came at webhook on ' . Carbon::now(), ['data' => $request->all()]);
+        DB::beginTransaction();
+        try {
+            if ($request->has('status') && $request->status == "successful") {
+                // get account 
+                $getAccount = $this->paymentService->getAccountNumberByTxRef($request->txRef);
+                if ($getAccount) {
+                    // save Payment
+                    $paymentData = [
+                        "tx_ref" => $request->txRef,
+                        "flw_ref" => $request->flwRef,
+                        "demand_notice_id" => $getAccount->demand_notice_id,
+                        "actual_amount" => $request->amount,
+                        "charged_amount" => $request->charged_amount,
+                        "app_fee" => $request->appfee,
+                        "merchant_fee" => $request->merchantfee,
+                        "status" => Payment::STATUS_COMPLETED,
+                        "webhook_string" => json_encode($request->all()),
+                    ];
+                    $payment = $this->paymentService->createPayment($paymentData);
+                    // update demand notice status
+                    if ($payment) {
+                        $this->demandNoticeService->updateDemandNotice($getAccount->demand_notice_id, ["status" => DemandNotice::PAID]);
+                        //return response()->json(["status" => "success", "data" => $request->all(), "message" => "Payment received"], 200);
+                    }
+                }
+                DB::commit();
+                return response()->json(["status" => "success", "data" => "", "message" => "Payment received"], 200);
+            }
+            Log::error('Failed to update payment data', ['error' => "No status key or status not successful"]);
+            return response()->json(["status" => "error", "data" => "", "message" => "Payment not saved"], 400);
+        } catch (\Exception $e) {
+            DB::rollBack();
+
+            // Log the error or handle it accordingly
+            Log::error('Failed to update payment data', ['error' => $e->getMessage()]);
+
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Failed to update payment',
+            ], 400);
+        }
     }
 }

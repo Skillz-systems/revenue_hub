@@ -3,7 +3,7 @@
 namespace App\Service;
 
 use App\Http\Resources\StoreUserResource;
-use App\Models\demandNoticeAccount;
+use App\Models\DemandNoticeAccount;
 use App\Models\Payment;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
@@ -57,15 +57,16 @@ class PaymentService
         if ($response) {
             // check if record exist 
 
-            $checkAccount = demandNoticeAccount::where(["demand_notice_id" => $getDemandNotice->id])->first();
+            $checkAccount = DemandNoticeAccount::where(["demand_notice_id" => $getDemandNotice->id])->first();
             if ($checkAccount) {
                 $accountNumberCreated = $checkAccount->update([
                     "account_number" => $response->data->account_number,
                     "account_name" => $response->data->note,
                     "account_bank_name" => $response->data->bank_name,
+                    "tx_ref" => $tx_ref,
                 ]);
             } else {
-                $accountNumberCreated = demandNoticeAccount::create([
+                $accountNumberCreated = DemandNoticeAccount::create([
                     "demand_notice_id" => $getDemandNotice->id,
                     "tx_ref" => $tx_ref,
                     "account_number" => $response->data->account_number,
@@ -88,6 +89,11 @@ class PaymentService
     public function totalNumberOfPaymentByYear($data)
     {
         return $this->model()->whereYear('created_at', $data)->count();
+    }
+
+    public function getAccountNumberByTxRef($txRef)
+    {
+        return DemandNoticeAccount::where("tx_ref", $txRef)->first();
     }
 
     public function model()

@@ -7,7 +7,7 @@ interface CardProps {
   icon: React.ReactNode;
   description: string;
   name: string;
-  value: number;
+  value: number | undefined;
   containerStyle: string;
   iconStyle: string;
   descriptionStyle: string;

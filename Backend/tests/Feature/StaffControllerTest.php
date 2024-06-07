@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Mail\ForgotPasswordMail;
 use Mockery;
 use Tests\TestCase;
 use App\Models\Role;
@@ -91,6 +92,7 @@ class StaffControllerTest extends TestCase
             'phone' => '12345678901',
             'role_id' => "1",
             'zone' => 'Zone 1',
+
         ];
 
         $response = $this->actingAsTestUser()->postJson('/api/staff', $data);
@@ -109,6 +111,7 @@ class StaffControllerTest extends TestCase
         // Assert that the user was registered
         $this->assertDatabaseHas('users', [
             'email' => $data['email'],
+
         ]);
     }
 
@@ -452,5 +455,150 @@ class StaffControllerTest extends TestCase
                 'status' => 'error',
                 'message' => 'Something went wrong',
             ]);
+    }
+
+    public function test_forgot_password_email_sent_successfully()
+    {
+        // Disable actual email sending during the test
+        Mail::fake();
+
+        // Arrange: Create a test user
+        $user = User::factory()->create([
+            'email' => 'test@example.com',
+        ]);
+
+        // Act: Make a POST request to the forgot password endpoint
+        $response = $this->postJson('/api/auth/forgot-password', [
+            'email' => 'test@example.com',
+        ]);
+
+        // Assert: Check the response
+        $response->assertStatus(200)
+            ->assertJson([
+                'status' => 'success',
+                'message' => 'Password Reset Email Sent Successfully',
+            ]);
+
+        // Assert: Verify that an email was sent to the correct user
+        Mail::assertSent(ForgotPasswordMail::class, function ($mail) use ($user) {
+            return $mail->hasTo($user->email);
+        });
+    }
+
+    public function test_forgot_password_with_invalid_email()
+    {
+        // Act: Make a POST request to the forgot password endpoint with an invalid email
+        $response = $this->postJson('/api/auth/forgot-password', [
+            'email' => 'invalid-email',
+        ]);
+
+        // Assert: Check the response
+        $response->assertStatus(400)
+            ->assertJson([
+                'status' => 'error',
+                'message' => 'All fields are required ',
+            ]);
+    }
+
+    public function test_forgot_password_with_nonexistent_email()
+    {
+        // Act: Make a POST request to the forgot password endpoint with a nonexistent email
+        $response = $this->postJson('/api/auth/forgot-password', [
+            'email' => 'nonexistent@example.com',
+        ]);
+
+        // Assert: Check the response
+        $response->assertStatus(400)
+            ->assertJson([
+                'status' => 'error',
+                'message' => 'Something went wrong',
+            ]);
+    }
+
+    public function test_that_staff_details_can_be_updated_with_token()
+    {
+        $staff = User::factory()->create(["remember_token" => "abc-1234567"]);
+
+        $response = $this->putJson("/api/staff/update-staff-details/{$staff->id}", [
+            'name' => 'Updated Name',
+            'email' => 'updated@example.com',
+            'phone' => '12345678901',
+            'role_id' => 'new-role',
+            'zone' => 'new-zone',
+            'remember_token' => 'abc-1234567',
+        ]);
+
+        $response->assertStatus(200)
+            ->assertJson([
+                'status' => 'success',
+                'message' => 'Update Successfully',
+            ]);
+
+        $this->assertDatabaseHas('users', [
+            'id' => $staff->id,
+            'name' => 'Updated Name',
+            'email' => 'updated@example.com',
+            'phone' => '12345678901',
+            'role_id' => 'new-role',
+            'zone' => 'new-zone',
+        ]);
+    }
+
+
+    /** @test */
+    public function it_returns_user_with_token_successfully()
+    {
+        // Arrange
+        $staff = User::factory()->create(['remember_token' => 'valid_token']);
+
+        // Act
+        $response = $this->postJson('/api/user-with-token/' . $staff->id, [
+            'token' => 'valid_token',
+        ]);
+
+        // Assert
+        $response->assertStatus(200)
+            ->assertJson([
+                'status' => 'success',
+            ]);
+    }
+
+    /** @test */
+    public function it_returns_no_staff_found_error()
+    {
+        // Arrange
+        $staff = User::factory()->create(['remember_token' => 'valid_token']);
+        // Act
+        $response = $this->postJson('/api/user-with-token/' . 33, [
+            'token' => 'valid_token',
+        ]);
+
+        // Assert
+        $response->assertStatus(404)
+            ->assertJson([
+                'status' => 'error',
+                'message' => 'No Staff Found',
+            ]);
+    }
+
+    /** @test */
+    public function user_can_update_their_own_profile_password()
+    {
+        $user = User::factory()->create(['role_id' => User::ROLE_ENFORCERS]);
+
+        $this->actingAs($user);
+
+        $response = $this->putJson("/api/staff/{$user->id}", [
+            'password' => '12345678901',
+        ]);
+
+
+        $response->assertStatus(200)
+            ->assertJson([
+                'status' => 'success',
+                'message' => 'Update Successfully',
+            ]);
+        $user->refresh();
+        $this->assertTrue(Hash::check('12345678901', $user->password));
     }
 }

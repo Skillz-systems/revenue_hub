@@ -3,8 +3,10 @@ import { BiSolidEditAlt } from "react-icons/bi";
 import { GiJusticeStar } from "react-icons/gi";
 import { IoPersonCircle } from "react-icons/io5";
 import { MdCancel, MdLocationPin } from "react-icons/md";
-import { InputComponent, SelectComponent } from "../Index";
-import { staticInformation } from "../../Data/appData"
+import { InputComponent, SelectComponent, CustomAlert } from "../Index";
+import { userData } from "../../Data/userData";
+import axios from "axios";
+import { useTokens } from "../../Utils/client";
 
 type CurrentUserData = {
   id: string;
@@ -16,7 +18,7 @@ type CurrentUserData = {
     name: string;
   };
   zone: string;
-}
+};
 
 type AccountsProps = {
   currentUserData: CurrentUserData;
@@ -25,6 +27,7 @@ type AccountsProps = {
 export default function Accounts({ currentUserData }: AccountsProps) {
   const [editStaff, setEditStaff] = useState<boolean>(false);
   const [displaySave, setDisplaySave] = useState<boolean>(false);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   const [formData, setFormData] = useState<CurrentUserData>({
     id: currentUserData.id,
     name: currentUserData.name,
@@ -36,6 +39,17 @@ export default function Accounts({ currentUserData }: AccountsProps) {
     },
     zone: currentUserData.zone,
   });
+  const { token, userId, userRoleId } = useTokens();
+  const { staticInformation } = userData();
+  const [snackbar, setSnackbar] = useState({
+    open: false,
+    message: "",
+    severity: "success",
+  });
+
+  const handleSnackbarClose = () => {
+    setSnackbar((prev) => ({ ...prev, open: false }));
+  };
 
   useEffect(() => {
     setFormData({
@@ -51,7 +65,9 @@ export default function Accounts({ currentUserData }: AccountsProps) {
     });
   }, [editStaff, currentUserData]);
 
-  const handleInputChange = (event: ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+  const handleInputChange = (
+    event: ChangeEvent<HTMLInputElement | HTMLSelectElement>
+  ) => {
     const { name, value } = event.target;
     setFormData((prevState) => ({
       ...prevState,
@@ -66,7 +82,11 @@ export default function Accounts({ currentUserData }: AccountsProps) {
   };
 
   const handleCancelEdit = () => {
-    alert("Cancel changes without saving?");
+    setSnackbar({
+      open: true,
+      message: "Cancel changes without saving?",
+      severity: "warning",
+    });
     setFormData({
       id: currentUserData.id,
       name: currentUserData.name,
@@ -82,10 +102,67 @@ export default function Accounts({ currentUserData }: AccountsProps) {
     setDisplaySave(false);
   };
 
-  const handleFormSubmit = (event: FormEvent<HTMLFormElement>) => {
+  const handleFormSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     if (displaySave) {
-      console.log("FORM DATA:", formData);
+      // Prepare the request data
+      const requestData = {
+        name: formData.name,
+        email: formData.email,
+        phone: formData.phone,
+        role_id: formData.role.id.toString(),
+        zone: formData.zone,
+      };
+
+      setIsLoading(true);
+
+      try {
+        const response = await axios.put(
+          `https://api.revenuehub.skillzserver.com/api/staff/${userId}`,
+          requestData,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+        if (response.status === 200) {
+          setSnackbar({
+            open: true,
+            message: "Updated Account Successfully",
+            severity: "success",
+          });
+        } else {
+          setSnackbar({
+            open: true,
+            message: "Unexpected status code",
+            severity: "warning",
+          });
+        }
+        setIsLoading(false);
+      } catch (error) {
+        let message = "Internal Server Error";
+        if (error.response) {
+          switch (error.response.status) {
+            case 400:
+              message = "Bad request.";
+              break;
+            case 401:
+              message = "You are unauthorized";
+              break;
+            case 403:
+              message = "You are forbidden";
+              break;
+            case 404:
+              message = "Demand notice not found";
+              break;
+            default:
+              break;
+          }
+        }
+        setSnackbar({ open: true, message, severity: "error" });
+      }
+      setIsLoading(false);
       setDisplaySave(false);
       setEditStaff(false);
     } else {
@@ -135,7 +212,7 @@ export default function Accounts({ currentUserData }: AccountsProps) {
                       title="Save Staff Details"
                       disabled={!displaySave}
                     >
-                      Save
+                      {isLoading ? "Submitting..." : "Save"}
                     </button>
                   ) : null}
                 </div>
@@ -143,7 +220,18 @@ export default function Accounts({ currentUserData }: AccountsProps) {
                 <span
                   className="flex items-center justify-center text-primary-color border border-primary-color rounded w-[24px] h-[24px] px-0.5"
                   title="Edit Staff"
-                  onClick={() => setEditStaff((prevState) => !prevState)}
+                  onClick={() => {
+                    if (userRoleId === 1 || 2) {
+                      setEditStaff((prevState) => !prevState);
+                    } else {
+                      setSnackbar({
+                        open: true,
+                        message: "You don't have permission",
+                        severity: "error",
+                      });
+                      return;
+                    }
+                  }}
                 >
                   <BiSolidEditAlt />
                 </span>
@@ -162,13 +250,13 @@ export default function Accounts({ currentUserData }: AccountsProps) {
             {[
               {
                 label: "Staff ID",
-                name: "staffId",
+                name: "id",
                 type: "text",
                 value: formData.id,
               },
               {
                 label: "Full Name",
-                name: "fullName",
+                name: "name",
                 type: "text",
                 value: formData.name,
               },
@@ -180,7 +268,7 @@ export default function Accounts({ currentUserData }: AccountsProps) {
               },
               {
                 label: "Phone Number",
-                name: "phoneNumber",
+                name: "phone",
                 type: "tel",
                 value: formData.phone,
               },
@@ -192,7 +280,7 @@ export default function Accounts({ currentUserData }: AccountsProps) {
                 <p className="px-1 py-0.5 text-darkblueberry rounded bg-lightblue text-xs">
                   {item.label}
                 </p>
-                <p className="flex w-[50%] justify-end">
+                <div className="flex w-[50%] justify-end">
                   <InputComponent
                     inputContainer={""}
                     inputId={index}
@@ -202,14 +290,15 @@ export default function Accounts({ currentUserData }: AccountsProps) {
                     handleInputChange={handleInputChange}
                     placeholder={`Enter your ${item.label}`}
                     required={true}
-                    inputStyle={`flex items-center justify-end text-xs font-medium text-darkerblueberry outline-none ${editStaff
-                      ? "px-2 py-1 text-left border-0.6 border-custom-color-one rounded"
-                      : "border-none text-right"
-                      } `}
+                    inputStyle={`flex items-center justify-end text-xs font-medium text-darkerblueberry outline-none ${
+                      editStaff
+                        ? "px-2 py-1 text-left border-0.6 border-custom-color-one rounded"
+                        : "border-none text-right"
+                    } `}
                     readOnly={!editStaff}
                     iconStyle=""
                   />
-                </p>
+                </div>
               </div>
             ))}
           </div>
@@ -219,7 +308,9 @@ export default function Accounts({ currentUserData }: AccountsProps) {
             <GiJusticeStar />
             <p className="text-xs text-darkerblueberry">Designation</p>
           </div>
-          {editStaff && (currentUserData.role.name === "Admin" || currentUserData.role.id === 2) ? (
+          {editStaff &&
+          (currentUserData.role.name === "Admin" ||
+            currentUserData.role.id === 2) ? (
             <SelectComponent
               selectContainer=""
               selectId="role"
@@ -233,20 +324,21 @@ export default function Accounts({ currentUserData }: AccountsProps) {
               readOnly={!editStaff}
             />
           ) : (
-            <span className={`px-1 py-0.5 rounded-xl text-[10px] font-light text-darkerblueberry border-[0.4px] border-divider-grey
-                ${currentUserData.role.id === 1
-                ? "bg-color-light-red"
-                : currentUserData.role.id === 4
-                  ? "bg-color-light-yellow"
-                  : currentUserData.role.id === 2
+            <span
+              className={`px-1 py-0.5 rounded-xl text-[10px] font-light text-darkerblueberry border-[0.4px] border-divider-grey
+                ${
+                  currentUserData.role.id === 1
+                    ? "bg-color-light-red"
+                    : currentUserData.role.id === 4
+                    ? "bg-color-light-yellow"
+                    : currentUserData.role.id === 2
                     ? "bg-color-bright-green text-white"
                     : "bg-primary-color text-white"
-              }
+                }
                 `}
             >
               {currentUserData.role.name.toUpperCase()}
             </span>
-
           )}
         </div>
         <div className="flex items-center justify-between p-2 space-y-2 border-0.6 rounded bg-white border-custom-color-one font-lexend">
@@ -257,8 +349,8 @@ export default function Accounts({ currentUserData }: AccountsProps) {
           {editStaff ? (
             <SelectComponent
               selectContainer=""
-              selectId="staffZone"
-              selectName="staffZone"
+              selectId="zone"
+              selectName="zone"
               selectValue={formData.zone}
               handleSelectChange={handleInputChange}
               options={staticInformation.cadestralZones}
@@ -274,6 +366,12 @@ export default function Accounts({ currentUserData }: AccountsProps) {
           )}
         </div>
       </div>
+      <CustomAlert
+        isOpen={snackbar.open}
+        message={snackbar.message}
+        severity={snackbar.severity}
+        handleClose={handleSnackbarClose}
+      />
     </form>
   );
 }
