@@ -1,27 +1,22 @@
 import React, { useState, useEffect } from "react";
-import { Navigate, useLocation } from "react-router-dom";
+import { Navigate } from "react-router-dom";
 import { useTokens } from "../Utils/client";
 import { CustomAlert } from "../Components/Index";
 
-interface ProtectedRouteProps {
-  children: JSX.Element;
-}
-
-const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
+const ProtectedRouteTest = ({ children }) => {
   const [snackbar, setSnackbar] = useState({
     open: false,
     message: "",
     severity: "warning",
   });
-  const [countdown, setCountdown] = useState<number>(3);
-  const [redirect, setRedirect] = useState<boolean>(false);
+  const [countdown, setCountdown] = useState(3);
+  const [redirect, setRedirect] = useState(false);
 
   const handleSnackbarClose = () => {
     setSnackbar({ ...snackbar, open: false });
   };
 
   const { token } = useTokens();
-  const location = useLocation();
 
   useEffect(() => {
     if (!token) {
@@ -46,7 +41,7 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
   }, [token, countdown]);
 
   if (redirect) {
-    return <Navigate to="/login" state={{ from: location }} replace />;
+    return <Navigate to="/login" replace />;
   }
 
   return (
@@ -62,4 +57,4 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
   );
 };
 
-export default ProtectedRoute;
+export default ProtectedRouteTest;
