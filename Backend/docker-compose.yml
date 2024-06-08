@@ -11,6 +11,7 @@ services:
             # Re-use local composer cache via host-volume
             #- ~/.composer-docker/cache:/root/.composer/cache:delegated
             - .:/app
+            - ./custom-php.ini:/usr/local/etc/php/conf.d/custom-php.ini
         networks:
             - revenuehubnetwork
 

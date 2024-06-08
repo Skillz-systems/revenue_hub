@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class Property extends Model
 {
     use HasFactory;
-
+    const STATUS_Regular = 1;
     protected $fillable = [
         'pid',
         'occupant',
@@ -35,5 +35,10 @@ class Property extends Model
     public function demandNotices()
     {
         return $this->hasMany(DemandNotice::class);
+    }
+
+    public function ratingDistrict()
+    {
+        return $this->belongsTo(RatingDistrict::class);
     }
 }
