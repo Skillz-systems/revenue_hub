@@ -85,13 +85,11 @@ function LoginPage(): JSX.Element {
         );
       } else if (error.response.status === 401) {
         setErrorState("Invalid email or password. Please try again.");
+      } else if (error.response.status === 500) {
+        triggerError(error);
       } else {
-        const errorData = {
-          status: error?.response?.status,
-          message: error?.response?.statusText,
-        };
-        triggerError(errorData);
         setErrorState("Internal Server Error. Please report the issue");
+        console.error(error);
       }
     }
     setIsLoading(false);

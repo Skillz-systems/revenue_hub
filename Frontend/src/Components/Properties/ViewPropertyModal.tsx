@@ -129,12 +129,10 @@ const ViewPropertyModal: React.FC<ViewPropertyModalProps> = ({
               window.location.reload();
             }, 3000);
             break;
+          case 500:
+            triggerError(error);
+            break;
           default:
-            const errorData = {
-              status: error?.response?.status,
-              message: error?.response?.statusText,
-            };
-            triggerError(errorData);
             break;
         }
       }
