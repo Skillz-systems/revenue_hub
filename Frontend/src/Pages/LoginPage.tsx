@@ -5,7 +5,6 @@ import { InputComponent, CustomAlert } from "../Components/Index";
 import { GrFormViewHide, GrFormView } from "react-icons/gr";
 import axios from "axios";
 import Cookies from "js-cookie";
-import { useTriggerError } from "../Utils/client";
 
 function LoginPage(): JSX.Element {
   const [passwordDisplay, setPasswordDisplay] = useState(false);
@@ -27,7 +26,6 @@ function LoginPage(): JSX.Element {
     message: "",
     severity: "success",
   });
-  const triggerError = useTriggerError();
 
   const handleSnackbarClose = () => {
     setSnackbar({ ...snackbar, open: false });
@@ -70,11 +68,10 @@ function LoginPage(): JSX.Element {
       );
 
       if (response.status === 200) {
-        Cookies.set("userToken", response.data.data.token, { expires: 7 }); // Token expires in 7 days
         Cookies.set("userData", JSON.stringify(response.data.data), {
           expires: 7,
         }); // Token expires in 7 days
-        navigate("/");
+        navigate("/dashboard");
       } else {
         setErrorState(response.data.message);
       }
@@ -86,12 +83,8 @@ function LoginPage(): JSX.Element {
       } else if (error.response.status === 401) {
         setErrorState("Invalid email or password. Please try again.");
       } else {
-        const errorData = {
-          status: error?.response?.status,
-          message: error?.response?.statusText,
-        };
-        triggerError(errorData);
         setErrorState("Internal Server Error. Please report the issue");
+        console.error(error);
       }
     }
     setIsLoading(false);
