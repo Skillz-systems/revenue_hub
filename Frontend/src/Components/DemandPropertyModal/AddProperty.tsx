@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { data } from "./inputFieldData";
 import axios from "axios";
-import Cookies from "js-cookie";
+import { useTokens } from "../../Utils/client";
 import { CustomAlert } from "../Index";
 
 interface AddPropertyProps {
@@ -88,8 +88,7 @@ const AddProperty: React.FC<AddPropertyProps> = ({
           occupant: `${formData.occupantsFirstName} ${formData.occupantsLastName}`,
         };
 
-        // Get the bearer token from cookies
-        const token = Cookies.get("userToken");
+        const { token } = useTokens();
 
         // Make the POST request
         const response = await axios.post(

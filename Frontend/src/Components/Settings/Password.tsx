@@ -65,12 +65,10 @@ export default function Password({ userEmail }) {
           case 400:
             message = "Bad request.";
             break;
+          case 500:
+            triggerError(error);
+            break;
           default:
-            const errorData = {
-              status: error?.response?.status,
-              message: error?.response?.statusText,
-            };
-            triggerError(errorData);
             break;
         }
       }

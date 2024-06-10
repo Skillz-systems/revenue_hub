@@ -113,12 +113,10 @@ const DemandInvoiceTable = ({
               window.location.reload();
             }, 3000);
             break;
+          case 500:
+            triggerError(error);
+            break;
           default:
-            const errorData = {
-              status: error?.response?.status,
-              message: error?.response?.statusText,
-            };
-            triggerError(errorData);
             break;
         }
       }
@@ -207,7 +205,7 @@ const DemandInvoiceTable = ({
           {record?.property?.cadastral_zone}
         </span>
         <span className="flex flex-wrap items-center justify-center text-sm w-[12%] text-color-text-black font-chonburi">
-          {formatNumberWithCommas(record?.property?.rate_payable)}
+          {formatNumberWithCommas(record?.amount)}
         </span>
         <div className="flex items-center justify-center w-[12%]">
           <span
