@@ -381,7 +381,7 @@ class StreetController extends Controller
                 ], 400);
             }
 
-            $updatestreet = $this->streetService->updateStreet($request, $street);
+            $updatestreet = $this->streetService->updateStreet($request->all(), $street);
             if ($updatestreet) {
                 return response()->json([
                     "status" => "success",

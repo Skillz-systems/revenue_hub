@@ -33,32 +33,16 @@ class StreetService
         return Street::where('id', $id)->first();
     }
 
-    public function updateStreet($request, $street)
+    public function updateStreet($data, $id)
     {
-        if ($update = $this->getStreetById($street)) {
-
-            if ($update->update($request->all())) {
-                return $street;
-            }
-
-            return false;
-        }
-
-        return false;
+        $updateData = $this->getStreetById($id);
+        return $updateData->update($data);
     }
 
-    public function deleteStreet($street)
+    public function deleteStreet($id)
     {
-        if ($delete = $this->getStreetById($street)) {
-
-            if ($delete->delete()) {
-                return true;
-            }
-
-            return false;
-        }
-
-        return false;
+        $delete = $this->getStreetById($id);
+        return $delete->delete();
     }
 
 
@@ -67,5 +51,7 @@ class StreetService
         if (Auth::user()->role_id == User::ROLE_ADMIN || Auth::user()->role_id == User::ROLE_MD) {
             return true;
         }
+
+        return false;
     }
 }
