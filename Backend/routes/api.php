@@ -3,6 +3,7 @@
 use App\Models\User;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\DemandNoticeController;
+use App\Http\Controllers\PropertyTypeController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\PropertyController;
 use App\Http\Controllers\StatisticController;
@@ -47,6 +48,12 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/property', [PropertyController::class, "index"]);
     Route::post('/property/create', [PropertyController::class, "store"]);
     Route::apiResource('/property', PropertyController::class);
+
+    Route::get('/property-type', [PropertyTypeController::class, "index"]);
+    Route::post('/property-type/create', [PropertyTypeController::class, "store"]);
+    Route::get('/property-type/view/{propertyType}', [PropertyTypeController::class, "show"]);
+    Route::put('/property-type/update/{propertyType}', [PropertyTypeController::class, "update"]);
+    Route::delete('/property-type/delete/{propertyType}', [PropertyTypeController::class, "destroy"]);
 });
 
 Route::get('/payment/generate-account/{id}', [PaymentController::class, 'generateAccount']);
