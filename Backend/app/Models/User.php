@@ -2,15 +2,16 @@
 
 namespace App\Models;
 
-use Illuminate\Contracts\Auth\MustVerifyEmail;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Relations\HasOne;
-use Illuminate\Foundation\Auth\User as Authenticatable;
-use Illuminate\Notifications\Notifiable;
-use Laravel\Sanctum\HasApiTokens;
-use App\Notifications\ResetPasswordNotification;
-use Illuminate\Support\Facades\Request;
 use OpenApi\Annotations as OA;
+use Laravel\Sanctum\HasApiTokens;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Request;
+use Illuminate\Notifications\Notifiable;
+use Illuminate\Contracts\Auth\MustVerifyEmail;
+use App\Notifications\ResetPasswordNotification;
+use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Foundation\Auth\User as Authenticatable;
 
 
 /**
@@ -34,8 +35,10 @@ class User extends Authenticatable
      *
      * @var array<int, string>
      */
-    public const ROLE_ADMIN = 1;
-    public const ROLE_ENFORCERS = 2;
+    public const ROLE_MD = 1;
+    public const ROLE_ADMIN = 2;
+    public const ROLE_ENFORCERS = 3;
+    public const ROLE_OTHERS = 4;
 
     protected $fillable = [
         'name',
@@ -76,5 +79,10 @@ class User extends Authenticatable
         $url = Request::url() . '/reset-password?token=' . $token;
 
         $this->notify(new ResetPasswordNotification($url));
+    }
+
+    public function checkIsAdminOrMd()
+    {
+        return $this->role_id == 1;
     }
 }
