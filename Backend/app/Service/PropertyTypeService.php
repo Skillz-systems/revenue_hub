@@ -35,13 +35,21 @@ class PropertyTypeService
     public function updatePropertyType($data, $id)
     {
         $updateData = $this->getPropertyTypeById($id);
-        return $updateData->update($data);
+        if ($updateData) {
+            return $updateData->update($data);
+        } else {
+            throw new \Exception("Property type not found with ID: $id");
+        }
     }
-
+    
     public function deletePropertyType($id)
     {
         $delete = $this->getPropertyTypeById($id);
-        return $delete->delete();
+        if ($delete){
+            return $delete->delete();
+        } else {
+            throw new \Exception("Property type not found with ID: $id");
+        }
     }
 
 

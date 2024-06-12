@@ -170,7 +170,6 @@ class PropertyTypeController extends Controller
         if ($this->propertyTypeService->checkIsAdminOrMd()) {
             $validator = Validator::make($request->all(), [
                 'name' => ['required', 'string', 'max:255'],
-                'property_type_id' => ['required', 'string', 'max:255'],
             ]);
 
             if ($validator->fails()) {
@@ -375,7 +374,6 @@ class PropertyTypeController extends Controller
         if ($this->propertyTypeService->checkIsAdminOrMd()) {
             $validator = Validator::make($request->all(), [
                 'name' => ['required', 'string', 'max:255'],
-                'property_type_id' => ['required', 'string', 'max:255'],
             ]);
 
             if ($validator->fails()) {
