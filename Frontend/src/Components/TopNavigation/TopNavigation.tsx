@@ -71,7 +71,7 @@ const TopNavigation: React.FC<TopNavigationProps> = ({
   };
 
   const handleLogout = () => {
-    Cookies.remove("userToken");
+    Cookies.remove("userData");
     navigate("/login");
   };
 

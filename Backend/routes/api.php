@@ -6,6 +6,7 @@ use App\Http\Controllers\DemandNoticeController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\PropertyController;
 use App\Http\Controllers\StatisticController;
+use App\Http\Controllers\StreetController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
@@ -47,6 +48,12 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/property', [PropertyController::class, "index"]);
     Route::post('/property/create', [PropertyController::class, "store"]);
     Route::apiResource('/property', PropertyController::class);
+
+    Route::get('/street', [StreetController::class, "index"]);
+    Route::post('/street/create', [StreetController::class, "store"]);
+    Route::get('/street/view/{street}', [StreetController::class, "show"]);
+    Route::put('/street/update/{street}', [StreetController::class, "update"]);
+    Route::delete('/street/delete/{street}', [StreetController::class, "destroy"]);
 });
 
 Route::get('/payment/generate-account/{id}', [PaymentController::class, 'generateAccount']);

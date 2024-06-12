@@ -1,19 +1,25 @@
-import React, { useState, useEffect, ChangeEvent, FormEvent } from "react";
+import React, { useState, ChangeEvent, FormEvent } from "react";
 import { GrFormViewHide, GrFormView } from "react-icons/gr";
 import { InputComponent, CustomAlert } from "../Index";
 import axios from "axios";
-import { useTriggerError } from "../../Utils/client";
+import { useTokens, useTriggerError } from "../../Utils/client";
 
-export default function Password({ userEmail }) {
+type FormData = {
+  oldPassword: string;
+  newPassword: string;
+  confirmPassword: string;
+};
+
+export default function Password() {
   const [isLoading, setIsLoading] = useState(false);
-  const [forgotPasswordEmail, setForgotPasswordEmail] = useState<string>("");
-  const triggerError = useTriggerError();
-
-  useEffect(() => {
-    if (userEmail) {
-      setForgotPasswordEmail(userEmail);
-    }
-  }, [userEmail]);
+  const [passwordDisplay, setPasswordDisplay] = useState<boolean>(false);
+  const [confirmPasswordDisplay, setConfirmPasswordDisplay] =
+    useState<boolean>(false);
+  const [formData, setFormData] = useState<FormData>({
+    oldPassword: "",
+    newPassword: "",
+    confirmPassword: "",
+  });
   const [snackbar, setSnackbar] = useState({
     open: false,
     message: "",
@@ -24,13 +30,24 @@ export default function Password({ userEmail }) {
     setSnackbar({ ...snackbar, open: false });
   };
 
+  const { token, userId } = useTokens();
+  const triggerError = useTriggerError();
+
+  const handleInputChange = (event: ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = event.target;
+    setFormData((prevState) => ({
+      ...prevState,
+      [name]: value,
+    }));
+  };
+
   const handleFormSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
-    if (!forgotPasswordEmail) {
+    if (formData.newPassword !== formData.confirmPassword) {
       return setSnackbar({
         open: true,
-        message: "Please enter your email",
+        message: "Passwords don't match",
         severity: "warning",
       });
     }
@@ -38,17 +55,20 @@ export default function Password({ userEmail }) {
     setIsLoading(true);
 
     try {
-      const response = await axios.post(
-        "https://api.revenuehub.skillzserver.com/api/auth/forgot-password",
+      const response = await axios.put(
+        `https://api.revenuehub.skillzserver.com/api/staff/${userId}`,
+        { password: formData.newPassword },
         {
-          email: forgotPasswordEmail,
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
         }
       );
 
       if (response.status === 200) {
         setSnackbar({
           open: true,
-          message: "Password reset link has been sent to your email",
+          message: "Your password has been successfully updated",
           severity: "success",
         });
       } else {
@@ -65,12 +85,10 @@ export default function Password({ userEmail }) {
           case 400:
             message = "Bad request.";
             break;
+          case 500:
+            triggerError(error);
+            break;
           default:
-            const errorData = {
-              status: error?.response?.status,
-              message: error?.response?.statusText,
-            };
-            triggerError(errorData);
             break;
         }
       }
@@ -101,29 +119,71 @@ export default function Password({ userEmail }) {
         </div>
         <div className="flex items-center">
           <p className="px-2 py-1 rounded text-xs text-color-text-two font-lexend border-0.6 border-custom-color-one">
-            Click change password below to receive email instructions
+            Click any field below to make changes
           </p>
         </div>
-        <InputComponent
+        {/* <InputComponent
           inputContainer={
             "flex items-center justify-between border border-custom-color-one rounded"
           }
           inputType={"text"}
-          inputName={"forgotPasswordEmail"}
-          inputValue={forgotPasswordEmail}
-          placeholder={"Email"}
+          inputName={"oldPassword"}
+          inputValue={formData.oldPassword}
+          handleInputChange={handleInputChange}
+          placeholder={"OLD PASSWORD"}
           required={true}
           inputStyle={
-            "text-color-text-two h-[48px] bg-white rounded outline-none px-4 py-2 w-full font-lexend text-xs pointer-events-none"
+            "text-color-text-two h-[48px] bg-white rounded outline-none px-4 py-2 w-full font-lexend text-xs"
           }
-          readOnly={true}
+        /> */}
+        <InputComponent
+          inputContainer={
+            "flex items-center justify-between border border-custom-color-one rounded"
+          }
+          inputType={passwordDisplay ? "text" : "password"}
+          inputName={"newPassword"}
+          inputValue={formData.newPassword}
+          handleInputChange={handleInputChange}
+          placeholder={"ENTER NEW PASSWORD"}
+          required={true}
+          inputStyle={
+            "text-color-text-two h-[48px] bg-white rounded-l outline-none px-4 py-2 w-full font-lexend text-xs"
+          }
+          iconStyle={
+            "flex items-center justify-center text-color-text-two bg-white pr-[4%] h-[48px] text-[20px] rounded-r"
+          }
+          onIconClick={() => setPasswordDisplay(!passwordDisplay)}
+          inputIcon={passwordDisplay ? <GrFormView /> : <GrFormViewHide />}
+        />
+        <InputComponent
+          inputContainer={
+            "flex items-center justify-between border border-custom-color-one rounded"
+          }
+          inputType={confirmPasswordDisplay ? "text" : "password"}
+          inputName={"confirmPassword"}
+          inputValue={formData.confirmPassword}
+          handleInputChange={handleInputChange}
+          placeholder={"CONFIRM NEW PASSWORD"}
+          required={true}
+          inputStyle={
+            "text-color-text-two h-[48px] bg-white rounded-l outline-none px-4 py-2 w-full font-lexend text-xs"
+          }
+          iconStyle={
+            "flex items-center justify-center text-color-text-two bg-white pr-[4%] h-[48px] text-[20px] rounded-r"
+          }
+          onIconClick={() => setConfirmPasswordDisplay(!confirmPasswordDisplay)}
+          inputIcon={
+            confirmPasswordDisplay ? <GrFormView /> : <GrFormViewHide />
+          }
         />
         <InputComponent
           inputContainer={
             "flex items-center justify-between gap-1 bg-primary-color rounded"
           }
           inputType={"submit"}
-          inputValue={`${isLoading ? "Sending Email..." : "Change Password"}`}
+          inputValue={`${
+            isLoading ? "Updating Password..." : "Change Password"
+          }`}
           inputStyle={
             "h-[48px] rounded outline-none px-2 py-1 w-full font-lexend text-base font-medium text-white hover:cursor-pointer"
           }
