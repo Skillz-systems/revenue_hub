@@ -6,6 +6,7 @@ use App\Http\Controllers\CadastralZoneController;
 use App\Http\Controllers\DemandNoticeController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\PropertyController;
+use App\Http\Controllers\PropertyUseController;
 use App\Http\Controllers\StatisticController;
 use App\Http\Controllers\StreetController;
 use App\Http\Controllers\UserController;
@@ -61,6 +62,12 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/cadastral-zone/view/{cadastralZone}', [CadastralZoneController::class, "show"]);
     Route::put('/cadastral-zone/update/{cadastralZone}', [CadastralZoneController::class, "update"]);
     Route::delete('/cadastral-zone/delete/{cadastralZone}', [CadastralZoneController::class, "destroy"]);
+
+    Route::get('/property-use', [PropertyUseController::class, "index"]);
+    Route::post('/property-use/create', [PropertyUseController::class, "store"]);
+    Route::get('/property-use/view/{propertyUse}', [PropertyUseController::class, "show"]);
+    Route::put('/property-use/update/{propertyUse}', [PropertyUseController::class, "update"]);
+    Route::delete('/property-use/delete/{propertyUse}', [PropertyUseController::class, "destroy"]);
 });
 
 Route::get('/payment/generate-account/{id}', [PaymentController::class, 'generateAccount']);
