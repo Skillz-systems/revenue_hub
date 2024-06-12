@@ -57,7 +57,7 @@ class PaymentTest extends TestCase
         $defaultDate = date("Y");
         Payment::factory(50)->create();
         $getAllPayment = (new PaymentService())->allPayment($defaultDate);
-        $this->assertEquals(10, count($getAllPayment));
+        $this->assertEquals(50, count($getAllPayment));
     }
 
     public function test_to_see_if_a_new_payment_can_be_created()

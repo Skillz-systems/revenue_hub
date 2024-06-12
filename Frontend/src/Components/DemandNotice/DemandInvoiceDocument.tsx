@@ -35,7 +35,7 @@ const DemandInvoiceDocument = ({
     PropertyIdentificationNumber: `PID-${
       customTableData?.pid || demandInvoiceInfo?.property.pid
     }`,
-    QrCodePayment: `{https://revenuehub.com/invoice/${
+    QrCodePayment: `{https://revenuehub.ng/invoice/${
       customTableData?.pid || demandInvoiceInfo?.property.pid
     }`,
     propertyData: [
@@ -417,7 +417,7 @@ const DemandInvoiceDocument = ({
                         target="_blank"
                         className="underline text-color-dark-red"
                       >
-                        https://revenuehub.com/invoice/
+                        https://revenuehub.ng/invoice/
                         {customTableData?.pid ||
                           demandInvoiceInfo?.property.pid}
                       </a>
@@ -493,7 +493,8 @@ const DemandInvoiceDocument = ({
           <p className="font-medium text-[9px] leading-[11px] text-faint-grey text-center font-red-hat">
             <span className="font-bold text-color-dark-red">NOTE:</span> Ensure
             you collect Electronic and Treasury reciepts(s) at Annex Office:
-            Suite 411, 4th Floor MKK, Plaza Gudu.
+            Suite 301, 3rd floor, Kano House, Ralph Shodeinde Street, Central
+            Business District, Abuja, FCT.
           </p>
         </div>
 

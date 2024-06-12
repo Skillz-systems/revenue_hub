@@ -10,7 +10,7 @@ class DemandNoticeService
 {
     public function allDemandNotice($date)
     {
-        return $this->model()->whereYear('created_at', $date)->paginate(10);
+        return $this->model()->whereYear('created_at', $date)->paginate(100);
     }
     public function viewDemandNotice($id)
     {
@@ -73,12 +73,12 @@ class DemandNoticeService
 
     public function getAllPaidDemandNoticeByYear($date)
     {
-        return $this->model()->whereYear('created_at', $date)->where('status', DemandNotice::PAID)->paginate(10);
+        return $this->model()->whereYear('created_at', $date)->where('status', DemandNotice::PAID)->paginate(100);
     }
 
     public function getAllPendingDemandNoticeByYearPaginated($date)
     {
-        return $this->model()->whereYear('created_at', $date)->where('status', DemandNotice::PENDING)->paginate(10);
+        return $this->model()->whereYear('created_at', $date)->where('status', DemandNotice::PENDING)->paginate(100);
     }
     public function totalGeneratedDemandNoticeByYear($date)
     {
