@@ -96,6 +96,12 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/group/view/{group}', [GroupController::class, "show"]);
     Route::put('/group/update/{group}', [GroupController::class, "update"]);
     Route::delete('/group/delete/{group}', [GroupController::class, "destroy"]);
+
+    Route::get('/category', [CategoryController::class, "index"]);
+    Route::post('/category/create', [CategoryController::class, "store"]);
+    Route::get('/category/view/{category}', [CategoryController::class, "show"]);
+    Route::put('/category/update/{category}', [CategoryController::class, "update"]);
+    Route::delete('/category/delete/{category}', [CategoryController::class, "destroy"]);
 });
 
 Route::get('/payment/generate-account/{id}', [PaymentController::class, 'generateAccount']);
