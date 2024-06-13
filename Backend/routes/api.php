@@ -3,6 +3,7 @@
 use App\Models\User;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\DemandNoticeController;
+use App\Http\Controllers\RatingDistrictController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\PropertyController;
 use App\Http\Controllers\StatisticController;
@@ -54,6 +55,12 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/street/view/{street}', [StreetController::class, "show"]);
     Route::put('/street/update/{street}', [StreetController::class, "update"]);
     Route::delete('/street/delete/{street}', [StreetController::class, "destroy"]);
+
+    Route::get('/rating-district', [RatingDistrictController::class, "index"]);
+    Route::post('/rating-district/create', [RatingDistrictController::class, "store"]);
+    Route::get('/rating-district/view/{ratingDistrict}', [RatingDistrictController::class, "show"]);
+    Route::put('/rating-district/update/{ratingDistrict}', [RatingDistrictController::class, "update"]);
+    Route::delete('/rating-district/delete/{ratingDistrict}', [RatingDistrictController::class, "destroy"]);
 });
 
 Route::get('/payment/generate-account/{id}', [PaymentController::class, 'generateAccount']);

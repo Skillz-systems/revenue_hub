@@ -17,7 +17,8 @@ class RatingDistrictFactory extends Factory
     public function definition(): array
     {
         return [
-            //
+            'name' => fake()->name(),
+            'office_zone_id' => fake()->randomDigit(),
         ];
     }
 }
