@@ -17,7 +17,7 @@ const ErrorBoundary = ({ children }) => {
   };
 
   if (hasError) {
-    return <ErrorPage errorInformation={hasError} />;
+    return <ErrorPage errorInformation={error} />;
   }
 
   return (
@@ -27,11 +27,10 @@ const ErrorBoundary = ({ children }) => {
   );
 };
 
-// Helper component to catch errors in functional ErrorBoundary
 const ErrorBoundaryWrapper = ({ children, componentDidCatch }) => {
   useEffect(() => {
-    const handleError = (error) => {
-      componentDidCatch(error);
+    const handleError = (event) => {
+      componentDidCatch(event.error || new Error(event.reason));
     };
 
     window.addEventListener("error", handleError);

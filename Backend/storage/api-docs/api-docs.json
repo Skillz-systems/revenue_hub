@@ -4080,10 +4080,22 @@
                         "type": "string",
                         "example": "Johnson Kay Steert"
                     },
-                    "rating_district_id": {
-                        "description": "The rating district id",
-                        "type": "string",
-                        "example": "2"
+                    "rating_district": {
+                        "properties": {
+                            "id": {
+                                "type": "integer",
+                                "example": 1
+                            },
+                            "name": {
+                                "type": "string",
+                                "example": "OBIDINI"
+                            },
+                            "office_zone_id": {
+                                "type": "integer",
+                                "example": 2
+                            }
+                        },
+                        "type": "object"
                     },
                     "created_at": {
                         "description": "The creation timestamp of the street",
