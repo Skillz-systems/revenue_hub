@@ -48,12 +48,11 @@ const userData = () => {
         setStatistics(response.data.data);
       }
     } catch (error) {
-      const errorData = {
-        status: error?.response?.status,
-        message: error?.response?.statusText,
-      };
-      triggerError(errorData);
-  
+      if (error.response.status === 500) {
+        triggerError(error);
+      } else {
+        console.error(error);
+      }
     }
   };
 
@@ -83,11 +82,6 @@ const userData = () => {
         message: "Error fetching staff information",
         severity: "error",
       });
-      const errorData = {
-        status: staffError?.response?.status,
-        message: staffError?.response?.statusText,
-      };
-      triggerError(errorData);
     }
     if (allStaffError) {
       setStaffSnackbar({
@@ -95,11 +89,6 @@ const userData = () => {
         message: "Error fetching All Staff information",
         severity: "error",
       });
-      const errorData = {
-        status: allStaffError?.response?.status,
-        message: allStaffError?.response?.statusText,
-      };
-      triggerError(errorData);
     }
   }, [staffError, allStaffError]);
 
@@ -160,12 +149,10 @@ const userData = () => {
               window.location.reload();
             }, 3000);
             break;
+          case 500:
+            triggerError(error);
+            break;
           default:
-            const errorData = {
-              status: error?.response?.status,
-              message: error?.response?.statusText,
-            };
-            triggerError(errorData);
             break;
         }
       }

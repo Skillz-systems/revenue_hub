@@ -144,7 +144,7 @@ const TransactionsTable = ({
         </span>
         <span className="flex flex-wrap items-center justify-center text-sm w-[12%] text-color-text-black font-chonburi">
           {formatNumberWithCommas(
-            transactionInformation.demand_notice.property.rate_payable
+            transactionInformation.demand_notice.amount
           )}
         </span>
         <span className="flex flex-wrap items-center justify-center w-1/12 text-color-text-black font-lexend text-[10px]">

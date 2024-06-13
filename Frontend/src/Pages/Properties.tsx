@@ -104,11 +104,6 @@ export default function Properties() {
         message: `Error fetching Property Data: ${error}`,
         severity: "warning",
       });
-      const errorData = {
-        status: error?.response?.status,
-        message: error?.response?.statusText,
-      };
-      triggerError(errorData);
     }
   }, [data]);
 
