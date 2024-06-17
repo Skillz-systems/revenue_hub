@@ -118,28 +118,39 @@ const DemandInvoiceDocument = ({
     if (!firstInput || !secondInput) return;
 
     try {
-      const firstCanvas = await html2canvas(firstInput);
-      const secondCanvas = await html2canvas(secondInput);
+      const options = {
+        scale: 2, // Increase the scale for better quality
+        useCORS: true, // Allow cross-origin images
+      };
+
+      const firstCanvas = await html2canvas(firstInput, options);
+      const secondCanvas = await html2canvas(secondInput, options);
 
       const pdf = new jsPDF({
         orientation: "portrait",
         unit: "px",
-        format: [595, 842], // A4 size
+        format: [595, 840], // A4 size
         compress: true,
       });
 
-      const imgDataFirst = firstCanvas.toDataURL("image/png");
-      pdf.addImage(imgDataFirst, "WEBP", 0, 0, 595, 835);
+      // Calculate the height of the first canvas dynamically
+      const firstInputHeight = firstInput.offsetHeight;
+      const imgWidth1 = 595;
+      const imgHeight1 =
+         (firstInputHeight / firstInput.offsetWidth) * imgWidth1;
+ 
+      const imgDataFirst = firstCanvas.toDataURL("image/png", 1.0);
+      pdf.addImage(imgDataFirst, "WEBP", 0, 0, imgWidth1, imgHeight1);
 
       // Calculate the height of the second canvas dynamically
       const secondInputHeight = secondInput.offsetHeight;
-      const imgWidth = 595;
-      const imgHeight =
-        (secondInputHeight / secondInput.offsetWidth) * imgWidth;
+      const imgWidth2 = 595;
+      const imgHeight2 =
+        (secondInputHeight / secondInput.offsetWidth) * imgWidth2;
 
       pdf.addPage();
-      const imgDataSecond = secondCanvas.toDataURL("image/webp");
-      pdf.addImage(imgDataSecond, "WEBP", 0, 0, imgWidth, imgHeight);
+      const imgDataSecond = secondCanvas.toDataURL("image/webp", 1.0);
+      pdf.addImage(imgDataSecond, "WEBP", 0, 0, imgWidth2, imgHeight2);
 
       if (operation === "download") {
         pdf.save(
@@ -175,18 +186,18 @@ const DemandInvoiceDocument = ({
 
   const SectionDetails: React.FC<SectionProps> = ({ title, data }) => {
     return (
-      <div className="flex flex-col py-2 space-y-1 border-b border-custom-color-one">
-        <p className="text-color-text-two text-[11px] text-center font-lexend leading-[13.75px]">
+      <div className="flex flex-col py-1 space-y-0.5 border-b border-custom-color-one">
+        <p className="text-color-text-two text-[10px] text-center font-lexend leading-[12px]">
           {title}
         </p>
         {data.map((item, index) => (
           <div key={index} className="flex items-center justify-between">
             <p
-              className={`text-metal pl-2 font-lexend text-[11px] leading-[13.75px] font-medium ${item.width}`}
+              className={`text-metal pl-2 font-lexend text-[10px] leading-[12px] font-medium ${item.width}`}
             >
               {item.label}:
             </p>
-            <div className="w-[60%] p-1.5 mr-2 border-b border-dashed border-b-custom-teal"></div>
+            <div className="w-[60%] px-1.5 py-1 mr-2 border-b border-dashed border-b-custom-teal"></div>
           </div>
         ))}
       </div>
@@ -202,11 +213,11 @@ const DemandInvoiceDocument = ({
       <div className="flex flex-col items-center w-full">
         <img
           src={signature}
-          className="w-[82px] h-[35px] object-contain"
+          className="w-[80px] h-[30px] object-contain"
           alt="Signature"
         />
         <div className="flex flex-col items-center w-full p-2 font-bold border-t font-mulish text-dark-green border-t-dark-green">
-          <p className="text-[11px] leading-[13.75px] text-center">{title}</p>
+          <p className="text-[10px] leading-[12px] text-center">{title}</p>
           <p className="text-[8px] text-document-grey pt-1 italic text-center leading-[10px] w-[80%]">
             {subtitle}
           </p>
@@ -231,7 +242,7 @@ const DemandInvoiceDocument = ({
       <div className="overflow-y-auto overscroll-contain scrollbar-thin scrollbar-thumb-color-text-two scrollbar-track-white">
         <div
           ref={pdfRef}
-          className="bg-white print-section flex flex-col items-center justify-center px-4 py-2 space-y-2 w-[100%] border border-custom-color-100 rounded"
+          className="bg-white print-section flex flex-col items-center justify-center px-4 py-4 space-y-4 w-[100%]"
         >
           {/* 1ST SECTION */}
           <div className="flex items-center justify-center w-full">
@@ -239,20 +250,20 @@ const DemandInvoiceDocument = ({
               <img src={"/abujalogo.png"} alt="Abuja Logo" className="w-55px" />
             </div>
             <div className="flex flex-col text-center w-[64%] ">
-              <h1 className="text-sm font-bold leading-4 text-primary-color font-work-sans">
+              <h1 className="text-sm font-bold leading-[16px] text-primary-color font-work-sans">
                 ABUJA MUNICIPAL AREA COUNCIL
               </h1>
-              <h2 className="text-[11px] font-bold leading-[13px] text-color-dark-red font-work-sans">
+              <h2 className="text-[10px] font-bold leading-[13px] text-color-dark-red font-work-sans">
                 TENEMENT RATE & VALUATION OFFICE
               </h2>
-              <p className="text-document-grey font-lexend text-[11px] leading-[13.75px]">
+              <p className="text-document-grey font-lexend text-[10px] leading-[12px]">
                 Secreteriat: No 1 Olusegun Obasanjo Way, Area 10 Garki - Abuja.
               </p>
-              <p className="text-document-grey font-lexend text-[11px] leading-[13.75px]">
-                Annex Office: Suite 411, 4th Floor, MKK Plaza, Gudu District,
-                Abuja, FCT, Nigeria.
+              <p className="text-document-grey font-lexend text-[10px] leading-[12px]">
+                Annex Office: Suite 301, 3rd floor Kano House, Ralph Shodeinde
+                street, CBD, Abuja
               </p>
-              <p className="text-color-dark-red font-lexend text-[11px] leading-[13.75px]">
+              <p className="text-color-dark-red font-lexend text-[10px] leading-[12px]">
                 TEL: +2348037809941, +2348057912241
               </p>
             </div>
@@ -267,22 +278,22 @@ const DemandInvoiceDocument = ({
           {/* 2ND SECTION */}
           <div className="flex flex-col w-full space-y-1 border rounded border-custom-color-one">
             <div className="flex items-center justify-between p-1 rounded-t bg-document-bg-grey">
-              <p className="text-document-grey font-lexend text-[11px] font-bold leading-[13.75px] w-[50%]">
+              <p className="text-document-grey font-lexend text-[10px] font-bold leading-[12px] w-[50%]">
                 Demand Notice is hereby given to
               </p>
-              <p className="text-document-grey text-right font-lexend text-[11px] leading-[13.75px] w-[50%]">
+              <p className="text-document-grey text-right font-lexend text-[10px] leading-[12px] w-[50%]">
                 {demandInvoiceData.Occupant}
               </p>
             </div>
             <div className="flex items-center justify-center gap-1 p-1">
               <div className="flex flex-col items-start space-y-1 font-lexend w-[70%]">
-                <p className="text-document-grey text-right font-lexend text-[11px] leading-[13.75px]">
+                <p className="text-document-grey text-right font-lexend text-[10px] leading-[12px]">
                   In respect of the property below:
                 </p>
                 {demandInvoiceData.propertyData.map((item, index) => (
                   <div
                     key={index}
-                    className="flex w-full items-center justify-start text-metal font-lexend text-[11px] leading-[13.75px]"
+                    className="flex w-full items-center justify-start text-metal font-lexend text-[10px] leading-[12px]"
                   >
                     <p className="text-left font-bold w-[30%]">{item.label}</p>
                     <p className="text-left w-[5%]">:</p>
@@ -296,7 +307,7 @@ const DemandInvoiceDocument = ({
                   style={{ height: "auto", maxWidth: "72px", width: "100%" }}
                   value={demandInvoiceData.PropertyIdentificationNumber}
                 />
-                <p className="text-color-dark-red text-center font-mulish font-bold italic text-[11px] leading-[13.75px]">
+                <p className="text-color-dark-red text-center font-mulish font-bold italic text-[10px] leading-[12px]">
                   {demandInvoiceData.PropertyIdentificationNumber}
                 </p>
               </div>
@@ -304,15 +315,15 @@ const DemandInvoiceDocument = ({
           </div>
           {/* 3RD SECTION */}
           <div className="flex items-center justify-between w-full gap-2">
-            <div className="flex flex-col space-y-3 w-[50%]">
-              <p className="text-color-text-two text-left font-lexend text-[11px] leading-[13.75px] ">
+            <div className="flex flex-col gap-y-2 w-[50%] align-center justify-center">
+              <p className="text-color-text-two text-left font-lexend text-[10px] leading-[12px] ">
                 BILL INFORMATION
               </p>
-              <div className="flex flex-col space-y-1 border rounded border-custom-color-100">
+              <div className="flex flex-col gap-0 border rounded border-custom-color-100">
                 {demandInvoiceData.billInfoData.map((item, index) => (
                   <div
                     key={index}
-                    className="flex p-1 text-metal font-lexend text-[11px] leading-[13.75px]"
+                    className="flex p-1 text-metal font-lexend text-[10px] leading-[12px]"
                   >
                     <p className="font-medium text-left w-[50%]">
                       {item.label} :
@@ -322,12 +333,12 @@ const DemandInvoiceDocument = ({
                 ))}
               </div>
             </div>
-            <div className="flex flex-col space-y-1 border rounded border-custom-color-100 w-[50%]">
+            <div className="flex flex-col gap-0 border rounded border-custom-color-100 w-[50%]">
               {demandInvoiceData.billDetailsData.map((item, index) => (
                 <div
                   key={index}
-                  className={`flex items-center p-1 text-metal font-lexend text-[11px] leading-[13.75px] ${
-                    item.isTotal ? "py-2 bg-custom-blue-100 rounded-b" : ""
+                  className={`flex items-center px-1 py-0.5 text-metal font-lexend text-[10px] leading-[12px] ${
+                    item.isTotal ? "py-1 bg-custom-blue-100 rounded-b" : ""
                   }`}
                 >
                   <p className="font-medium text-left w-[130px]">
@@ -350,8 +361,8 @@ const DemandInvoiceDocument = ({
               the 1999 constitution of the Federal Republic Of Nigeria; Federal
               Capital Territory Act Cap 503, LPN 2004 (vol. 3) as amended: Taxes
               and Levies (Approved list of Collection ) Act 2015 (as amended and
-              AMAC Tenement Rate bye-Laws of 2014. We forwarded herewith your
-              bill for the year 2024, totaling{" "}
+              AMAC Tenement Rate bye-Laws of 2014. We forward herewith your bill
+              for the year 2024, totaling{" "}
               <span className="font-normal text-color-dark-red">
                 NGN
                 {formatNumberWithCommas(
@@ -389,8 +400,8 @@ const DemandInvoiceDocument = ({
                 <p className="flex items-start justify-center gap-1 font-lexend text-[10px] text-document-grey leading-[12.5px]">
                   <span>2.</span>
                   <span>
-                    Pay by Scanning the QRCode on the right hand which will
-                    redirect you to the your unique payment page.
+                    Pay by Scanning the QRCode on the right hand which will redirect
+                    you to the your unique payment page.
                   </span>
                 </p>
                 <p className="flex items-start justify-center gap-1 font-lexend text-[10px] text-document-grey leading-[12.5px]">
@@ -423,7 +434,7 @@ const DemandInvoiceDocument = ({
           </div>
           {/* 5TH SECTION */}
           <div className="flex items-center justify-between w-full gap-6">
-            <div className="flex flex-col space-y-1 w-[50%]">
+            <div className="flex flex-col w-[50%]">
               <p className="text-document-grey text-[8px] font-lexend leading-[10px]">
                 Your early compliance will be highly appreciated
               </p>
@@ -450,7 +461,7 @@ const DemandInvoiceDocument = ({
             </div>
           </div>
           {/* 6TH SECTION */}
-          <p className="font-medium text-[8px] leading-[11px] text-faint-grey text-center font-red-hat">
+          <p className="font-medium text-[8px] leading-[10px] text-faint-grey text-center font-red-hat">
             <span className="font-bold text-color-dark-red">NOTE:</span> Ensure
             you collect Electronic and Treasury reciepts(s) at Annex Office:
             Suite 411, 4th Floor MKK, Plaza Gudu.
@@ -461,22 +472,51 @@ const DemandInvoiceDocument = ({
 
         <div
           ref={secondPdfRef}
-          className="bg-white print-section flex flex-col px-4 py-2 space-y-2 w-[100%] border border-custom-color-100 rounded"
+          className="bg-white print-section flex flex-col px-4 py-2 space-y-4 w-[100%] border border-custom-color-100 rounded"
         >
           {/* 7TH SECTION */}
           <div className="flex flex-col w-full p-1 border rounded font-lexend border-custom-color-one">
-            <h3 className="text-center text-[12px] text-metal font-semibold">
+            <h3 className="text-center text-[11px] text-metal font-semibold">
+              Annex Offices:
+            </h3>
+            <div className="flex flex-col flex-wrap w-full h-auto">
+              <p className="flex items-start just gap-1 text-[10px] text-metal leading-[18px]">
+                <span>1.</span>
+                <span>
+                  Suite 301, 3rd floor, Kano House, Ralph Shodeinde Street,
+                  Central Business District, Abuja, FCT.
+                </span>
+              </p>
+              <p className="flex items-start just gap-1 text-[10px] text-metal leading-[18px]">
+                <span>2.</span>
+                <span>
+                  Suite 112, 1st Floor, MKK Plaza Gudu, Gudu District, Abuja,
+                  FCT.
+                </span>
+              </p>
+              <p className="flex items-start just gap-1 text-[10px] text-metal leading-[18px]">
+                <span>3.</span>
+                <span>
+                  Suite 24, First floor, Nyanya Plaza, along Karu Jikwoyi Road,
+                  Nyanya, Abuja, FCT.
+                </span>
+              </p>
+            </div>
+          </div>
+          {/* 8TH SECTION */}
+          <div className="flex flex-col w-full p-1 border rounded font-lexend border-custom-color-one">
+            <h3 className="text-center text-[11px] text-metal font-semibold">
               Notes:
             </h3>
             <div className="flex flex-col flex-wrap w-full h-auto">
-              <p className="flex items-start just gap-1 text-[11px] text-metal leading-[18px]">
+              <p className="flex items-start just gap-1 text-[10px] text-metal leading-[18px]">
                 <span>1.</span>
                 <span>
                   Primary Liability lies on the occupier, while owner/agent of
                   such tenement(s) shall be secondarily liable.
                 </span>
               </p>
-              <p className="flex items-start just gap-1 text-[11px] text-metal leading-[18px]">
+              <p className="flex items-start just gap-1 text-[10px] text-metal leading-[18px]">
                 <span>2.</span>
                 <span>
                   Failure to pay Tenement Rate is a punishable offence and upon
@@ -485,14 +525,14 @@ const DemandInvoiceDocument = ({
                   premises in accordance with the law.
                 </span>
               </p>
-              <p className="flex items-start just gap-1 text-[11px] text-metal leading-[18px]">
+              <p className="flex items-start just gap-1 text-[10px] text-metal leading-[18px]">
                 <span>3.</span>
                 <span>Your prompt payment is hereby solicited.</span>
               </p>
             </div>
           </div>
-          {/* 8TH SECTION */}
-          <div className="flex flex-col w-full p-1 font-lexend text-[11px] text-metal leading-[18px]">
+          {/* 9TH SECTION */}
+          <div className="flex flex-col w-full p-1 font-lexend text-[10px] text-metal leading-[18px]">
             <b>
               It is illegal to pay cash to anyone EXCEPT through the payment
               options as specified.
@@ -503,13 +543,13 @@ const DemandInvoiceDocument = ({
               the date this <b>DEMAND NOTICE</b> is served on you.
             </p>
           </div>
-          {/* 9TH SECTION */}
+          {/* 10TH SECTION */}
           <div className="flex flex-col w-full p-1 border rounded font-lexend border-custom-color-one">
-            <h3 className="text-center text-[12px] text-metal font-semibold">
+            <h3 className="text-center text-[11px] text-metal font-semibold">
               HOW TO ASSESS YOUR PROPERTY:
             </h3>
             <div className="flex flex-col flex-wrap w-full h-auto">
-              <p className="flex items-start gap-1 text-[11px] text-metal leading-[18px]">
+              <p className="flex items-start gap-1 text-[10px] text-metal leading-[18px]">
                 <span>1.</span>
                 <span>
                   Note that RATE NAIRAGE is 4 Kobo for every 100 Kobo;
@@ -517,7 +557,7 @@ const DemandInvoiceDocument = ({
                   <b>ANNUAL VALUE * 0.04.</b>
                 </span>
               </p>
-              <p className="flex items-start just gap-1 text-[11px] text-metal leading-[18px]">
+              <p className="flex items-start just gap-1 text-[10px] text-metal leading-[18px]">
                 <span>2.</span>
                 <span>
                   <b>PENALTY ON ARREARS</b> is calculated at the rate of 10% of
@@ -526,10 +566,10 @@ const DemandInvoiceDocument = ({
               </p>
             </div>
           </div>
-          {/* 10TH SECTION */}
+          {/* 11TH SECTION */}
 
           <div className="flex flex-col w-full p-1 border rounded font-lexend border-custom-color-one">
-            <b className="text-[11px] text-metal leading-[18px]">
+            <b className="text-[10px] text-metal leading-[18px]">
               Note: A change of the use of property from residential to
               commericial without notifying the council in writing shall attract
               a penalty of ₦5,000,000.000
@@ -538,7 +578,7 @@ const DemandInvoiceDocument = ({
         </div>
       </div>
 
-      {/* 11TH SECTION */}
+      {/* 12TH SECTION */}
       <div className="flex flex-col items-center justify-end flex-1 w-full hide-on-print">
         <div className="flex items-end justify-center w-full gap-6 p-2">
           <span
