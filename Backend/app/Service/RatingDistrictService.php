@@ -61,4 +61,8 @@ class RatingDistrictService
 
         return false;
     }
+<<<<<<< Updated upstream
 }
+=======
+}
+>>>>>>> Stashed changes

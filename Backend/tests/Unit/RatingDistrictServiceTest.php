@@ -4,52 +4,130 @@ namespace Tests\Unit;
 
 use Tests\TestCase;
 use App\Models\RatingDistrict;
+use App\Models\User;
 use App\Service\RatingDistrictService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Auth;
 
 class RatingDistrictServiceTest extends TestCase
 {
     use RefreshDatabase;
 
-    protected $service;
+    protected $ratingDistrictService;
 
     protected function setUp(): void
     {
         parent::setUp();
-        $this->service = new RatingDistrictService();
+        $this->ratingDistrictService = new RatingDistrictService();
     }
 
-    public function test_new_rating_district_can_be_created()
+    /** @test */
+    public function it_can_get_all_rating_districts()
+    {
+        $ratingDistricts = RatingDistrict::factory()->count(3)->create();
+
+        $result = $this->ratingDistrictService->getAllRatingDistrict();
+
+        $this->assertCount(3, $result);
+    }
+
+    /** @test */
+    public function it_can_create_a_rating_district()
     {
         $data = [
-            'name' => 'District 1',
+            'name' => 'Test District',
+            'office_zone_id' => '1',
         ];
 
-        $ratingDistrict = $this->service->create($data);
+        $ratingDistrict = $this->ratingDistrictService->create($data);
 
-        $this->assertInstanceOf(RatingDistrict::class, $ratingDistrict);
-        $this->assertDatabaseHas('rating_districts', [
-            'name' => 'District 1',
-        ]);
+        $this->assertDatabaseHas('rating_districts', $data);
     }
 
-    public function test_get__rating_district_from_district_name()
+    /** @test */
+    public function it_can_get_a_rating_district_by_id()
     {
-        $data = [
-            'name' => 'District 1',
-        ];
+        $ratingDistrict = RatingDistrict::factory()->create();
 
-        RatingDistrict::create($data);
+        $result = $this->ratingDistrictService->getRatingDistrictById($ratingDistrict->id);
 
-        $ratingDistrict = $this->service->geRatingDistrictFromDistrictName('District 1');
-
-        $this->assertInstanceOf(RatingDistrict::class, $ratingDistrict);
-        $this->assertEquals('District 1', $ratingDistrict->name);
+        $this->assertNotNull($result);
+        $this->assertEquals($ratingDistrict->id, $result->id);
     }
 
-    public function test_get_rating_district_from_district_name_when_not_found()
+    /** @test */
+    public function it_returns_null_if_rating_district_not_found_by_id()
     {
-        $ratingDistrict = $this->service->geRatingDistrictFromDistrictName('Nonexistent District');
-        $this->assertNull($ratingDistrict);
+        $result = $this->ratingDistrictService->getRatingDistrictById(999);
+
+        $this->assertNull($result);
+    }
+
+    /** @test */
+    public function it_can_update_a_rating_district()
+    {
+        $ratingDistrict = RatingDistrict::factory()->create();
+        $data = ['name' => 'Updated District'];
+
+        $result = $this->ratingDistrictService->updateRatingDistrict($data, $ratingDistrict->id);
+
+        $this->assertTrue($result);
+        $this->assertDatabaseHas('rating_districts', ['id' => $ratingDistrict->id, 'name' => 'Updated District']);
+    }
+
+    /** @test */
+    public function it_throws_exception_if_rating_district_not_found_for_update()
+    {
+        $this->expectException(\Exception::class);
+
+        $this->ratingDistrictService->updateRatingDistrict(['name' => 'Updated District'], 999);
+    }
+
+    /** @test */
+    public function it_can_delete_a_rating_district()
+    {
+        $ratingDistrict = RatingDistrict::factory()->create();
+
+        $result = $this->ratingDistrictService->deleteRatingDistrict($ratingDistrict->id);
+
+        $this->assertTrue($result);
+        $this->assertDatabaseMissing('rating_districts', ['id' => $ratingDistrict->id]);
+    }
+
+    /** @test */
+    public function it_throws_exception_if_rating_district_not_found_for_delete()
+    {
+        $this->expectException(\Exception::class);
+
+        $this->ratingDistrictService->deleteRatingDistrict(999);
+    }
+
+    /** @test */
+    public function it_can_check_if_user_is_admin_or_md()
+    {
+        $adminUser = User::factory()->create(['role_id' => User::ROLE_ADMIN]);
+        Auth::shouldReceive('user')->andReturn($adminUser);
+
+        $result = $this->ratingDistrictService->checkIsAdminOrMd();
+
+        $this->assertTrue($result);
+
+        $mdUser = User::factory()->create(['role_id' => User::ROLE_MD]);
+        Auth::shouldReceive('user')->andReturn($mdUser);
+
+        $result = $this->ratingDistrictService->checkIsAdminOrMd();
+
+        $this->assertTrue($result);
+    }
+
+    /** @test */
+    public function it_returns_false_if_user_is_not_admin_or_md()
+    {
+        $normalUser = User::factory()->create(['role_id' => User::ROLE_USER]);
+        Auth::shouldReceive('user')->andReturn($normalUser);
+
+        $result = $this->ratingDistrictService->checkIsAdminOrMd();
+
+        $this->assertFalse($result);
     }
 }

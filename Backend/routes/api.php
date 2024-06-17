@@ -56,11 +56,24 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::put('/street/update/{street}', [StreetController::class, "update"]);
     Route::delete('/street/delete/{street}', [StreetController::class, "destroy"]);
 
+<<<<<<< Updated upstream
+=======
+    Route::get('/cadastral-zone', [CadastralZoneController::class, "index"]);
+    Route::post('/cadastral-zone/create', [CadastralZoneController::class, "store"]);
+    Route::get('/cadastral-zone/view/{cadastralZone}', [CadastralZoneController::class, "show"]);
+    Route::put('/cadastral-zone/update/{cadastralZone}', [CadastralZoneController::class, "update"]);
+    Route::delete('/cadastral-zone/delete/{cadastralZone}', [CadastralZoneController::class, "destroy"]);
+
+>>>>>>> Stashed changes
     Route::get('/rating-district', [RatingDistrictController::class, "index"]);
     Route::post('/rating-district/create', [RatingDistrictController::class, "store"]);
     Route::get('/rating-district/view/{ratingDistrict}', [RatingDistrictController::class, "show"]);
     Route::put('/rating-district/update/{ratingDistrict}', [RatingDistrictController::class, "update"]);
     Route::delete('/rating-district/delete/{ratingDistrict}', [RatingDistrictController::class, "destroy"]);
+<<<<<<< Updated upstream
+=======
+
+>>>>>>> Stashed changes
 });
 
 Route::get('/payment/generate-account/{id}', [PaymentController::class, 'generateAccount']);
