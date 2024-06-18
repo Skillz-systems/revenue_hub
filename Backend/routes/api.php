@@ -5,6 +5,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CadastralZoneController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\DemandNoticeController;
+use App\Http\Controllers\PropertyTypeController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\PropertyController;
 use App\Http\Controllers\PropertyUseController;
@@ -69,6 +70,12 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/property-use/view/{propertyUse}', [PropertyUseController::class, "show"]);
     Route::put('/property-use/update/{propertyUse}', [PropertyUseController::class, "update"]);
     Route::delete('/property-use/delete/{propertyUse}', [PropertyUseController::class, "destroy"]);
+
+    Route::get('/property-type', [PropertyTypeController::class, "index"]);
+    Route::post('/property-type/create', [PropertyTypeController::class, "store"]);
+    Route::get('/property-type/view/{propertyType}', [PropertyTypeController::class, "show"]);
+    Route::put('/property-type/update/{propertyType}', [PropertyTypeController::class, "update"]);
+    Route::delete('/property-type/delete/{propertyType}', [PropertyTypeController::class, "destroy"]);
 
     Route::get('/category', [CategoryController::class, "index"]);
     Route::post('/category/create', [CategoryController::class, "store"]);

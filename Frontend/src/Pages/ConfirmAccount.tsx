@@ -71,12 +71,10 @@ function ConfirmAccount(): JSX.Element {
               window.location.reload();
             }, 3000);
             break;
+          case 500:
+            triggerError(error);
+            break;
           default:
-            const errorData = {
-              status: error?.response?.status,
-              message: error?.response?.statusText,
-            };
-            triggerError(errorData);
             break;
         }
       }
@@ -144,12 +142,10 @@ function ConfirmAccount(): JSX.Element {
               window.location.reload();
             }, 3000);
             break;
+          case 500:
+            triggerError(error);
+            break;
           default:
-            const errorData = {
-              status: error?.response?.status,
-              message: error?.response?.statusText,
-            };
-            triggerError(errorData);
             break;
         }
       }

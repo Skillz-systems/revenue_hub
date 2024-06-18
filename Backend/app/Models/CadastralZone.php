@@ -13,4 +13,10 @@ class CadastralZone extends Model
         "name",
         "rating_district_id",
     ];
+
+
+    public function rating_district()
+    {
+        return $this->belongsTo(RatingDistrict::class, 'rating_district_id');
+    }
 }
