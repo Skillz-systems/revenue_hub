@@ -18,7 +18,6 @@ class CategoryFactory extends Factory
     {
         return [
             'name' => fake()->name(),
-            'rating_district_id' => fake()->randomDigit(),
         ];
     }
 }
