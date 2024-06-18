@@ -4,6 +4,7 @@ use App\Models\User;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CadastralZoneController;
 use App\Http\Controllers\DemandNoticeController;
+use App\Http\Controllers\PropertyTypeController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\PropertyController;
 use App\Http\Controllers\PropertyUseController;
