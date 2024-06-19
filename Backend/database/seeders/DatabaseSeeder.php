@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 
+use App\Models\OfficeZone;
 use App\Models\Property;
 use App\Models\Role;
 use App\Models\User;
@@ -36,5 +37,7 @@ class DatabaseSeeder extends Seeder
 
         User::factory(3)->create();
         Property::factory(10)->create();
+
+        OfficeZone::factory(10)->create();
     }
 }
