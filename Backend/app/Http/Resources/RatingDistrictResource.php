@@ -19,7 +19,7 @@ use Illuminate\Http\Resources\Json\JsonResource;
  *     @OA\Property(property="updated_at", type="string", format="date-time", example="2023-01-02T12:00:00Z", description="The last update timestamp of the street"),
  * )
  */
-class StreetResource extends JsonResource
+class RatingDistrictResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
