@@ -5,9 +5,9 @@ namespace Database\Factories;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\PropertyType>
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\OfficeZone>
  */
-class PropertyTypeFactory extends Factory
+class OfficeZoneFactory extends Factory
 {
     /**
      * Define the model's default state.
@@ -18,7 +18,7 @@ class PropertyTypeFactory extends Factory
     {
         return [
             'name' => fake()->name(),
-            'property_type_id' => fake()->RandomDigits(),
+            'address' => fake()->address(),
         ];
     }
 }

@@ -34,6 +34,8 @@ class RatingDistrictResource extends JsonResource
             "office_zone_id" => $this->office_zone_id,
             "created_at" => $this->created_at,
             "updated_at" => $this->updated_at,
+            "office_zone_id" => $this->rating_district,
+            
         ];
     }
 }
