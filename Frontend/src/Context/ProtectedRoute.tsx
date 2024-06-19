@@ -22,6 +22,7 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
 
   const { token } = useTokens();
   const location = useLocation();
+  console.log(token)
 
   useEffect(() => {
     if (!token) {
