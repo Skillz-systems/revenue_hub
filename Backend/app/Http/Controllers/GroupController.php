@@ -1,5 +1,4 @@
 <?php
-<?php
 
 namespace App\Http\Controllers;
 
@@ -92,13 +91,6 @@ class GroupController extends Controller
      *         required=true,
      *         @OA\Schema(type="string")
      *     ),
-     *     @OA\Parameter(
-     *         name="group_id",
-     *         in="query",
-     *         description="ID of the Group.",
-     *         required=true,
-     *         @OA\Schema(type="string")
-     *     ),
      *     @OA\Response(
      *         response=200,
      *         description="Successful operation",
@@ -171,7 +163,6 @@ class GroupController extends Controller
         if ($this->groupService->checkIsAdminOrMd()) {
             $validator = Validator::make($request->all(), [
                 'name' => ['required', 'string', 'max:255'],
-                'group_id' => ['required', 'string', 'max:255'],
             ]);
 
             if ($validator->fails()) {
@@ -300,12 +291,6 @@ class GroupController extends Controller
      *                 description="Name of the group",
      *                 example="Duplex"
      *             ),
-     *             @OA\Property(
-     *                 property="group_id",
-     *                 type="string",
-     *                 description="ID of the group",
-     *                 example="2"
-     *             )
      *         )
      *     ),
      *     @OA\Response(
@@ -376,7 +361,6 @@ class GroupController extends Controller
         if ($this->groupService->checkIsAdminOrMd()) {
             $validator = Validator::make($request->all(), [
                 'name' => ['required', 'string', 'max:255'],
-                'group_id' => ['required', 'string', 'max:255'],
             ]);
 
             if ($validator->fails()) {
