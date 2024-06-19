@@ -4,7 +4,9 @@ FROM php:8.2.4
 RUN apt-get update && \
     apt-get install -y openssl zip unzip git libpng-dev zlib1g-dev libjpeg-dev && \
     docker-php-ext-configure gd --with-jpeg && \
-    docker-php-ext-install pdo_mysql gd
+    docker-php-ext-install pdo_mysql gd && \
+    docker-php-ext-install zip && \
+    docker-php-ext-enable zip
 
 # Install Composer
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer

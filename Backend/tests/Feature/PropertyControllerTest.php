@@ -284,46 +284,26 @@ class PropertyControllerTest extends TestCase
         $this->assertDatabaseHas('properties', ['id' => $property->id]);
     }
 
-    public function test_to_see_if_csv_file_can_be_extracted_for_other_columns(): void
+    public function test_to_see_if_csv_file_can_be_extracted_and_updated_on_the_database(): void
     {
-        Storage::fake('local');
+        //Storage::fake('local');
         Queue::fake();
         // Create a fake CSV file
-        $csvContent = "header0,header1,header2,header3,header4,header5,header6,header7,header8,header9,header10,header11,header12,header13,header14,header15,header16\n
-value0,value1,value2,value3,value4,value5,value6,value7,value8,value9,value10,value11,value12,value13,value14,value15,header11\n";
+        $csvContent = "header0,header1,header2,header3,header4,header5,header6,header7,header8,header9,header10,header11,header12,header13,header14,header15,header16\nvalue0,value1,value2,value3,value4,value5,value6,value7,value8,value9,value10,value11,value12,value13,value14,value15,header11";
         $file = UploadedFile::fake()->createWithContent('test.csv', $csvContent);
 
         // Perform the request
         $response = $this->post('/api/property/process-csv', [
-            'csv_file' => $file,
-            'extraction_type' => "others",
+            'file' => $file,
+            'chunk_number' => 1,
+            'total_chunks' => 1,
+            'file_name' => "test.csv",
         ]);
 
-        Queue::assertPushed(CsvExtractorJob::class, 7);
+        Queue::assertPushed(CsvExtractorJob::class, 9);
 
         // Assert the response status
         $response->assertStatus(200);
-        $response->assertJson(['message' => 'CSV file processed successfully']);
-    }
-    public function test_to_see_if_csv_file_can_be_extracted_for_properties(): void
-    {
-        Storage::fake('local');
-        Queue::fake();
-        // Create a fake CSV file
-        $csvContent = "header0,header1,header2,header3,header4,header5,header6,header7,header8,header9,header10,header11,header12,header13,header14,header15,header16\n
-value0,value1,value2,value3,value4,value5,value6,value7,value8,value9,value10,value11,value12,value13,value14,value15,header11\n";
-        $file = UploadedFile::fake()->createWithContent('test.csv', $csvContent);
-
-        // Perform the request
-        $response = $this->post('/api/property/process-csv', [
-            'csv_file' => $file,
-            'extraction_type' => "property",
-        ]);
-
-        Queue::assertPushed(CsvExtractorJob::class, 4);
-
-        // Assert the response status
-        $response->assertStatus(200);
-        $response->assertJson(['message' => 'CSV file processed successfully']);
+        $response->assertJson(['message' => 'File uploaded successfully and merged']);
     }
 }
