@@ -17,7 +17,8 @@ class CadastralZoneFactory extends Factory
     public function definition(): array
     {
         return [
-            //
+            'name' => fake()->name(),
+            'rating_district_id' => fake()->numberBetween(1, 10),
         ];
     }
 }

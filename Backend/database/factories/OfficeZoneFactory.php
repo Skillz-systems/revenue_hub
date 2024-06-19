@@ -5,9 +5,9 @@ namespace Database\Factories;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Street>
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\OfficeZone>
  */
-class StreetFactory extends Factory
+class OfficeZoneFactory extends Factory
 {
     /**
      * Define the model's default state.
@@ -18,7 +18,7 @@ class StreetFactory extends Factory
     {
         return [
             'name' => fake()->name(),
-            'cadastral_zone_id' => fake()->randomDigit(),
+            'address' => fake()->address(),
         ];
     }
 }

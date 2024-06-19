@@ -3,31 +3,30 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\CadastralZone;
-use Illuminate\Support\Facades\Auth;
-use App\Service\CadastralZoneService;
+use App\Service\OfficeZoneService;
 use Illuminate\Support\Facades\Validator;
-use App\Http\Resources\CadastralZoneResource;
+use App\Http\Resources\OfficeZoneResource;
 
-class CadastralZoneController extends Controller
+class OfficeZoneController extends Controller
 {
-    protected $cadastralZoneService;
-    public function __construct(CadastralZoneService $cadastralZoneService)
+
+    protected $officeZone;
+    public function __construct(OfficeZoneService $officeZone)
     {
-        $this->cadastralZoneService = $cadastralZoneService;
+        $this->officeZone = $officeZone;
     }
 
     /**
      * @OA\Get(
-     *     path="/api/cadastral-zone",
-     *     summary="Get the list of cadastral-zone",
-     *     tags={"Cadastral Zone"},
+     *     path="/api/office-zone",
+     *     summary="Get the list of office-zone",
+     *     tags={"Office Zone"},
      *     @OA\Response(
      *         response=200,
      *         description="Successful operation",
      *         @OA\JsonContent(
      *             type="array",
-     *             @OA\Items(ref="#/components/schemas/CadastralZoneResource")
+     *             @OA\Items(ref="#/components/schemas/OfficeZoneResource")
      *         ),
      *     ),
      *     @OA\Response(
@@ -59,19 +58,19 @@ class CadastralZoneController extends Controller
     public function index()
     {
 
-        if ($this->cadastralZoneService->checkIsAdminOrMd()) {
+        if ($this->officeZone->checkIsAdminOrMd()) {
 
-            $cadastralZone = $this->cadastralZoneService->getAllCadastralZone();
+            $officeZones = $this->officeZone->getAllOfficeZone();
 
-            if ($cadastralZone) {
-                return CadastralZoneResource::collection($cadastralZone)->additional([
+            if ($officeZones) {
+                return OfficeZoneResource::collection($officeZones)->additional([
                     "status" => "success",
                 ]);
             }
 
             return response()->json([
                 "status" => "error",
-                "message" => "No Cadastral Zone found",
+                "message" => "No Office Zone found",
             ], 404);
         }
 
@@ -83,20 +82,20 @@ class CadastralZoneController extends Controller
 
     /**
      * @OA\POST(
-     *     path="/api/cadastral-zone/create",
+     *     path="/api/office-zone/create",
      *     summary="Add new cadastral Zone",
-     *     tags={"Cadastral Zone"},
+     *     tags={"Office Zone"},
      *      @OA\Parameter(
      *         name="name",
      *         in="query",
-     *         description="The name of the cadastral-zone.",
+     *         description="The name of the office-zone.",
      *         required=true,
      *         @OA\Schema(type="string")
      *     ),
      *      @OA\Parameter(
-     *         name="rating_district_id",
+     *         name="address",
      *         in="query",
-     *         description="ID of the Rating district.",
+     *         description="Address of the office zone.",
      *         required=true,
      *         @OA\Schema(type="string")
      *     ),
@@ -105,7 +104,7 @@ class CadastralZoneController extends Controller
      *         description="Successful operation",
      *         @OA\JsonContent(
      *             type="array",
-     *             @OA\Items(ref="#/components/schemas/CadastralZoneResource")
+     *             @OA\Items(ref="#/components/schemas/OfficeZoneResource")
      *         ),
      *     ),
      *     @OA\Response(
@@ -157,11 +156,11 @@ class CadastralZoneController extends Controller
      */
     public function store(Request $request)
     {
-        if ($this->cadastralZoneService->checkIsAdminOrMd()) {
+        if ($this->officeZone->checkIsAdminOrMd()) {
 
             $validator = Validator::make($request->all(), [
                 'name' => ['required', 'string', 'max:255'],
-                'rating_district_id' => ['required', 'integer'],
+                'address' => ['required', 'string', 'max:255'],
             ]);
 
 
@@ -173,13 +172,13 @@ class CadastralZoneController extends Controller
                 ], 400);
             }
 
-            $addCadastralZone = $this->cadastralZoneService->create($request->all());
-
-            if ($addCadastralZone) {
-                return response()->json([
-                    "status" => "success",
-                    "message" => "Cadastral zone created successfully",
-                ], 200);
+            $addOfficeZone = $this->officeZone->create($request->all());
+            if ($addOfficeZone) {
+                $returnOfficeZone = new OfficeZoneResource($addOfficeZone);
+                $returnOfficeZone->additional([
+                    'status' => 'success',
+                ]);
+                return $returnOfficeZone;
             }
 
             return response()->json([
@@ -197,20 +196,20 @@ class CadastralZoneController extends Controller
 
     /**
      * @OA\Get(
-     *     path="/api/cadastral-zone/view/{cadastralZone}",
-     *     summary="Get a specific cadastral-zone",
-     *     tags={"Cadastral Zone"},
+     *     path="/api/office-zone/view/{officeZone}",
+     *     summary="Get a specific office-zone",
+     *     tags={"Office Zone"},
      *     @OA\Parameter(
-     *         name="cadastralZone",
+     *         name="officeZone",
      *         in="path",
      *         required=true,
-     *         description="The ID of the cadastral-zone to view",
+     *         description="The ID of the office-zone to view",
      *         @OA\Schema(type="integer")
      *     ),
      *     @OA\Response(
      *         response=200,
      *         description="Successful operation",
-     *         @OA\JsonContent(ref="#/components/schemas/CadastralZoneResource")
+     *         @OA\JsonContent(ref="#/components/schemas/OfficeZoneResource")
      *     ),
      *     @OA\Response(
      *         response=401,
@@ -236,51 +235,52 @@ class CadastralZoneController extends Controller
      *     ),
      *     @OA\Response(
      *         response=404,
-     *         description="No Cadastral Zone Found",
+     *         description="No Office Zone Found",
      *         @OA\JsonContent(
      *             @OA\Property(
      *                 property="message",
      *                 type="string",
-     *                 example="No Cadastral Zone Found"
+     *                 example="No Office Zone Found"
      *             )
      *         )
      *     ),
      *     security={{"api_key":{}}}
      * )
      */
-    public function show($cadastralZone)
+    public function show($officeZone)
     {
-        if ($this->cadastralZoneService->checkIsAdminOrMd()) {
-            $getZone = $this->cadastralZoneService->getCadastralZoneById($cadastralZone);
+        if ($this->officeZone->checkIsAdminOrMd()) {
+
+            $getZone = $this->officeZone->getOfficeZoneById($officeZone);
+
             if ($getZone) {
-                $returnCadastralZone = new CadastralZoneResource($getZone);
-                $returnCadastralZone->additional([
+                $returnOfficeZone = new OfficeZoneResource($getZone);
+                $returnOfficeZone->additional([
                     'status' => 'success',
                 ]);
-                return  $returnCadastralZone;
+                return  $returnOfficeZone;
             }
 
             return response()->json([
                 "status" => "error",
-                "message" => "No Cadastral Zone Found",
+                "message" => "No Office Zone Found",
             ], 404);
         }
         return response()->json([
             "status" => "error",
             "message" => "You dont Have Permission",
-            "data" => $this->cadastralZoneService->checkIsAdminOrMd(),
         ], 403);
     }
 
     /**
      * @OA\PUT(
-     *     path="/api/cadastral-zone/update/{cadastralZone}",
-     *     summary="update cadastral-zone details",
-     *     tags={"Cadastral Zone"},
+     *     path="/api/office-zone/update/{officeZone}",
+     *     summary="update office-zone details",
+     *     tags={"Office Zone"},
      *      @OA\Parameter(
-     *         name="cadastralZone",
+     *         name="officeZone",
      *         in="path",
-     *         description="The ID of the cadastral-zone to update.",
+     *         description="The ID of the office-zone to update.",
      *         required=true,
      *         @OA\Schema(type="string")
      *     ),
@@ -290,14 +290,14 @@ class CadastralZoneController extends Controller
      *             @OA\Property(
      *                 property="name",
      *                 type="string",
-     *                 description="Name of the cadastral-zone",
-     *                 example="Odoko cadastral-zone"
+     *                 description="Name of the office-zone",
+     *                 example="Durumi"
      *             ),
      *             @OA\Property(
-     *                 property="rating_district_id",
+     *                 property="address",
      *                 type="string",
-     *                 description="ID of the Rating district",
-     *                 example="2"
+     *                 description="Address of the office zone",
+     *                 example="Office 2, wuse plaza"
      *             ),
      *         )
      *     ),
@@ -313,7 +313,7 @@ class CadastralZoneController extends Controller
      *             @OA\Property(
      *                 property="message",
      *                 type="string",
-     *                 example="Cadastral Zone updated successfully"
+     *                 example="Office Zone updated successfully"
      *             )
      *         )
      *     ),
@@ -365,12 +365,12 @@ class CadastralZoneController extends Controller
      * )
      */
 
-    public function update(Request $request,  $cadastralZone)
+    public function update(Request $request,  $officeZone)
     {
-        if ($this->cadastralZoneService->checkIsAdminOrMd()) {
+        if ($this->officeZone->checkIsAdminOrMd()) {
             $validator = Validator::make($request->all(), [
                 'name' => ['required', 'string', 'max:255'],
-                'rating_district_id' => ['required', 'string', 'max:255'],
+                'address' => ['required', 'string', 'max:255'],
             ]);
 
 
@@ -382,11 +382,11 @@ class CadastralZoneController extends Controller
                 ], 400);
             }
 
-            $updateCadastralZone = $this->cadastralZoneService->updateCadastralZone($request->all(), $cadastralZone);
-            if ($updateCadastralZone) {
+            $updateOfficeZone = $this->officeZone->updateOfficeZone($request->all(), $officeZone);
+            if ($updateOfficeZone) {
                 return response()->json([
                     "status" => "success",
-                    "message" => "Cadastral Zone Updated successfully",
+                    "message" => "Office Zone Updated successfully",
                 ], 200);
             }
 
@@ -404,14 +404,14 @@ class CadastralZoneController extends Controller
 
     /**
      * @OA\Delete(
-     *     path="/api/cadastral-zone/delete/{cadastralZone}",
-     *     summary="Delete a specific cadastral-zone",
-     *     tags={"Cadastral Zone"},
+     *     path="/api/office-zone/delete/{officeZone}",
+     *     summary="Delete a specific office-zone",
+     *     tags={"Office Zone"},
      *     @OA\Parameter(
-     *         name="cadastralZone",
+     *         name="officeZone",
      *         in="path",
      *         required=true,
-     *         description="The ID of the cadastral-zone to update",
+     *         description="The ID of the office-zone to update",
      *         @OA\Schema(type="integer")
      *     ),
      *     @OA\Response(
@@ -426,7 +426,7 @@ class CadastralZoneController extends Controller
      *             @OA\Property(
      *                 property="message",
      *                 type="string",
-     *                 example="Cadastral Zone deleted successfully"
+     *                 example="Office Zone deleted successfully"
      *             )
      *         )
      *     ),
@@ -470,12 +470,12 @@ class CadastralZoneController extends Controller
      *     ),
      *     @OA\Response(
      *         response=404,
-     *         description="No Cadastral Zone Found",
+     *         description="No Office Zone Found",
      *         @OA\JsonContent(
      *             @OA\Property(
      *                 property="message",
      *                 type="string",
-     *                 example="No Cadastral Zone Found"
+     *                 example="No Office Zone Found"
      *             )
      *         )
      *     ),
@@ -483,15 +483,15 @@ class CadastralZoneController extends Controller
      * )
      */
 
-    public function destroy($cadastralZone)
+    public function destroy($officeZone)
     {
-        if ($this->cadastralZoneService->checkIsAdminOrMd()) {
+        if ($this->officeZone->checkIsAdminOrMd()) {
 
-            $cadastralZoneDelete = $this->cadastralZoneService->deleteCadastralZone($cadastralZone);
-            if ($cadastralZoneDelete) {
+            $officeZoneDelete = $this->officeZone->deleteOfficeZone($officeZone);
+            if ($officeZoneDelete) {
                 return response()->json([
                     "status" => "success",
-                    "message" => "Cadastral Zone deleted successfully",
+                    "message" => "Office Zone deleted successfully",
                 ], 200);
             }
 
