@@ -17,7 +17,8 @@ class PropertyTypeFactory extends Factory
     public function definition(): array
     {
         return [
-            //
+            'name' => fake()->name(),
+            'property_type_id' => fake()->RandomDigits(),
         ];
     }
 }
