@@ -90,9 +90,7 @@ const ProjectLayout: React.FC = () => {
   return (
     <>
       {!accountInformation && !statistics ? (
-        <div
-          className="flex flex-col items-center justify-center h-screen gap-2 bg-custom-blue-100"
-        >
+        <div className="flex flex-col items-center justify-center h-screen gap-2 bg-custom-blue-100">
           <h1 className="text-lg font-lexend">Loading Dashboard</h1>
           <div role="status">
             <svg
@@ -304,7 +302,7 @@ const ProjectLayout: React.FC = () => {
               </div>
             ) : accountsPasswordState === "Password" ? (
               <div className="flex items-center justify-center ">
-                <Password userEmail={accountInformation?.email} />
+                <Password />
               </div>
             ) : (
               activeComponent
