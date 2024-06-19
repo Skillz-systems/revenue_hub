@@ -5,6 +5,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CadastralZoneController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\DemandNoticeController;
+use App\Http\Controllers\OfficeZoneController;
 use App\Http\Controllers\PropertyTypeController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\PropertyController;
@@ -82,6 +83,12 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/category/view/{category}', [CategoryController::class, "show"]);
     Route::put('/category/update/{category}', [CategoryController::class, "update"]);
     Route::delete('/category/delete/{category}', [CategoryController::class, "destroy"]);
+
+    Route::get('/office-zone', [OfficeZoneController::class, "index"]);
+    Route::post('/office-zone/create', [OfficeZoneController::class, "store"]);
+    Route::get('/office-zone/view/{officeZone}', [OfficeZoneController::class, "show"]);
+    Route::put('/office-zone/update/{officeZone}', [OfficeZoneController::class, "update"]);
+    Route::delete('/office-zone/delete/{officeZone}', [OfficeZoneController::class, "destroy"]);
 });
 
 Route::get('/payment/generate-account/{id}', [PaymentController::class, 'generateAccount']);
