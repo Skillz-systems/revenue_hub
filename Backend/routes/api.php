@@ -5,6 +5,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CadastralZoneController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\DemandNoticeController;
+use App\Http\Controllers\RatingDistrictController;
 use App\Http\Controllers\OfficeZoneController;
 use App\Http\Controllers\PropertyTypeController;
 use App\Http\Controllers\PaymentController;
