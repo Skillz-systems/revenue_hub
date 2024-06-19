@@ -83,6 +83,32 @@ jobs:
           name: ssh login  
           command: |
             rsync -va -e 'ssh  -o StrictHostKeyChecking=no'  --delete   build/  hubeei@94.72.98.194:public_html/hub
+  deploy-backend-test:
+    docker:
+        - image: cimg/php:8.3
+    working_directory: ~/repo
+    steps:
+      - add_ssh_keys:
+          fingerprints: 
+          - "SHA256:XM+2xRjrCCSH/Frn3FMhEbTaB4RS9hNa9Wm54+iINww"
+      - checkout
+      # install dependencies
+      - setup_remote_docker:
+          version: 20.10.12
+          docker_layer_caching: true
+      - run:
+          name: rename .env.example file to .env 
+          command: |
+            mv Backend/.env.example Backend/.env
+
+      - run:
+          name: Install dependencies
+          command:  cd Backend && CI=false composer clear-cache && CI=false  composer install &&  CI=false php artisan key:generate
+      - run:
+          name: run test
+          command:  cd Backend && php artisan test
+
+    
   deploy-backend-staging:
     docker:
         - image: cimg/php:8.3
@@ -143,7 +169,7 @@ jobs:
           name: ssh and effect migration  
           command: |
              ssh -p 7822 -t skillz@185.160.67.60 "cd revenuehub/api && php artisan migrate && php artisan l5-swagger:generate"
-             
+                        
   deploy-backend-production:
     docker:
         - image: cimg/php:8.3
@@ -234,11 +260,14 @@ workflows:
   version: 2
   revenue_hub_deploy:
     jobs:
+      - deploy-backend-test
       - deploy-frontend-staging: # Use the pre-configured job, deploy-via-git
           filters:
             branches:
               only: staging
       - deploy-backend-staging: # Use the pre-configured job, deploy-via-git
+          requires:
+            - deploy-backend-test
           filters:
             branches:
               only: staging
