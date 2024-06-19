@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Service;
+
 use App\Models\User;
 use App\Models\Property;
 use App\Models\PropertyType;
@@ -12,7 +13,7 @@ use Illuminate\Support\Facades\Validator;
 
 class PropertyTypeService
 {
-    public function getAllPropertyType ()
+    public function getAllPropertyType()
     {
         return PropertyType::all();
     }
@@ -41,11 +42,11 @@ class PropertyTypeService
             throw new \Exception("Property type not found with ID: $id");
         }
     }
-    
+
     public function deletePropertyType($id)
     {
         $delete = $this->getPropertyTypeById($id);
-        if ($delete){
+        if ($delete) {
             return $delete->delete();
         } else {
             throw new \Exception("Property type not found with ID: $id");
