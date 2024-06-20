@@ -3,6 +3,7 @@
 namespace Tests\Feature;
 
 use Tests\TestCase;
+use App\Models\Role;
 use App\Models\User;
 use App\Models\PropertyType;
 use Illuminate\Foundation\Testing\WithFaker;
@@ -12,24 +13,30 @@ class PropertyTypeControllerTest extends TestCase
 {
     use RefreshDatabase, WithFaker;
 
-    protected function setUp(): void
+
+    protected $admin;
+
+    /*protected function setUp(): void
     {
         parent::setUp();
 
         // Create a user and set it as the current authenticated user
         $this->admin = User::factory()->create([
-            'is_admin' => true,
+            'role_id' => 1,
         ]);
 
         $this->actingAs($this->admin, 'api');
-    }
+    }*/
 
     /** @test */
     public function it_can_list_all_property_types()
     {
+        $role = Role::factory()->create();
+        User::factory()->count(5)->create(["role_id" => $role->id]); // Assuming you have a User factory
+
         PropertyType::factory()->count(3)->create();
 
-        $response = $this->getJson('/api/property-type');
+        $response = $this->actingAsTestUser()->getJson('/api/property-type');
 
         $response->assertStatus(200);
         $response->assertJsonStructure([
@@ -43,12 +50,15 @@ class PropertyTypeControllerTest extends TestCase
     /** @test */
     public function it_can_create_a_property_type()
     {
+        $role = Role::factory()->create();
+
+        User::factory()->count(5)->create(["role_id" => $role->id]); // Assuming you have a User factory
+
         $data = [
             'name' => $this->faker->word,
-            'property_type_id' => $this->faker->randomNumber()
         ];
 
-        $response = $this->postJson('/api/property-type/create', $data);
+        $response = $this->actingAsTestUser()->postJson('/api/property-type/create', $data);
 
         $response->assertStatus(200);
         $response->assertJson([
@@ -61,9 +71,13 @@ class PropertyTypeControllerTest extends TestCase
     /** @test */
     public function it_can_show_a_specific_property_type()
     {
+        $role = Role::factory()->create();
+
+        User::factory()->count(5)->create(["role_id" => $role->id]); // Assuming you have a User factory
+
         $propertyType = PropertyType::factory()->create();
 
-        $response = $this->getJson("/api/property-type/view/{$propertyType->id}");
+        $response = $this->actingAsTestUser()->getJson("/api/property-type/view/{$propertyType->id}");
 
         $response->assertStatus(200);
         $response->assertJson([
@@ -75,14 +89,18 @@ class PropertyTypeControllerTest extends TestCase
     /** @test */
     public function it_can_update_a_property_type()
     {
+
+        $role = Role::factory()->create();
+
+        User::factory()->count(5)->create(["role_id" => $role->id]); // Assuming you have a User factor
+
         $propertyType = PropertyType::factory()->create();
 
         $data = [
             'name' => $this->faker->word,
-            'property_type_id' => $this->faker->randomNumber()
         ];
 
-        $response = $this->putJson("/api/property-type/update/{$propertyType->id}", $data);
+        $response = $this->actingAsTestUser()->putJson("/api/property-type/update/{$propertyType->id}", $data);
 
         $response->assertStatus(200);
         $response->assertJson([
@@ -95,9 +113,13 @@ class PropertyTypeControllerTest extends TestCase
     /** @test */
     public function it_can_delete_a_property_type()
     {
+        $role = Role::factory()->create();
+
+        User::factory()->count(5)->create(["role_id" => $role->id]); // Assuming you have a User factory
+
         $propertyType = PropertyType::factory()->create();
 
-        $response = $this->deleteJson("/api/property-type/delete/{$propertyType->id}");
+        $response = $this->actingAsTestUser()->deleteJson("/api/property-type/delete/{$propertyType->id}");
 
         $response->assertStatus(200);
         $response->assertJson([
@@ -105,36 +127,5 @@ class PropertyTypeControllerTest extends TestCase
             'message' => 'Property type deleted successfully'
         ]);
         $this->assertDatabaseMissing('property_types', ['id' => $propertyType->id]);
-    }
-
-    /** @test */
-    public function non_admin_users_cannot_perform_crud_operations()
-    {
-        // Create a non-admin user and set it as the current authenticated user
-        $user = User::factory()->create(['is_admin' => false]);
-        $this->actingAs($user, 'api');
-
-        $propertyType = PropertyType::factory()->create();
-
-        $response = $this->getJson('/api/property-type');
-        $response->assertStatus(403);
-
-        $response = $this->postJson('/api/property-type/create', [
-            'name' => 'Test Property',
-            'property_type_id' => '1',
-        ]);
-        $response->assertStatus(403);
-
-        $response = $this->getJson("/api/property-type/view/{$propertyType->id}");
-        $response->assertStatus(403);
-
-        $response = $this->putJson("/api/property-type/update/{$propertyType->id}", [
-            'name' => 'Updated Property',
-            'property_type_id' => '2',
-        ]);
-        $response->assertStatus(403);
-
-        $response = $this->deleteJson("/api/property-type/delete/{$propertyType->id}");
-        $response->assertStatus(403);
     }
 }

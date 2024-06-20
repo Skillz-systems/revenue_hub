@@ -507,7 +507,8 @@ class DemandNoticeController extends Controller
      */
     public function destroy(DemandNotice $demandNotice)
     {
-        if (Auth::user()->role_id == User::ROLE_ADMIN) {
+        if (Auth::user()->role_id == User::ROLE_MD) {
+
             $deleteDemandNotice = $this->demandNoticeService->deleteDemandNotice($demandNotice->id);
 
             if ($deleteDemandNotice) {

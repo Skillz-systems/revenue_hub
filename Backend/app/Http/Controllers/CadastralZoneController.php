@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\CadastralZone;
+use Illuminate\Support\Facades\Auth;
 use App\Service\CadastralZoneService;
 use Illuminate\Support\Facades\Validator;
 use App\Http\Resources\CadastralZoneResource;
@@ -160,7 +161,7 @@ class CadastralZoneController extends Controller
 
             $validator = Validator::make($request->all(), [
                 'name' => ['required', 'string', 'max:255'],
-                'rating_district_id' => ['required', 'string', 'max:255'],
+                'rating_district_id' => ['required', 'integer'],
             ]);
 
 
@@ -172,13 +173,13 @@ class CadastralZoneController extends Controller
                 ], 400);
             }
 
-            $addcadastralZone = $this->cadastralZoneService->create($request->all());
-            if ($addcadastralZone) {
-                $returnCadastralZone = new CadastralZoneResource($addcadastralZone);
-                $returnCadastralZone->additional([
-                    'status' => 'success',
-                ]);
-                return $returnCadastralZone;
+            $addCadastralZone = $this->cadastralZoneService->create($request->all());
+
+            if ($addCadastralZone) {
+                return response()->json([
+                    "status" => "success",
+                    "message" => "Cadastral zone created successfully",
+                ], 200);
             }
 
             return response()->json([
@@ -267,6 +268,7 @@ class CadastralZoneController extends Controller
         return response()->json([
             "status" => "error",
             "message" => "You dont Have Permission",
+            "data" => $this->cadastralZoneService->checkIsAdminOrMd(),
         ], 403);
     }
 
