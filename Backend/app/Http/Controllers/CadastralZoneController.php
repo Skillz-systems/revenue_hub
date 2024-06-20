@@ -273,7 +273,7 @@ class CadastralZoneController extends Controller
     }
 
     /**
-     * @OA\PUT(
+     * @OA\Put(
      *     path="/api/cadastral-zone/update/{cadastralZone}",
      *     summary="update cadastral-zone details",
      *     tags={"Cadastral Zone"},
