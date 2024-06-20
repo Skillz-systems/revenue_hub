@@ -28,11 +28,11 @@ class ProcessCSVFileInBatchJob implements ShouldQueue
      */
     public function handle(): void
     {
-        SimpleExcelReader::create(storage_path($this->data))
+        SimpleExcelReader::create($this->data)
             ->useDelimiter(',')
             ->noHeaderRow()
             ->getRows()
-            ->chunk(5000)
+            ->chunk(1000)
             ->each(
                 function ($chunk) {
                     ImportPropertyChunkJob::dispatch("others", $chunk);

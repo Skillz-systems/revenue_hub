@@ -652,7 +652,6 @@ class PropertyController extends Controller
         ]);
 
 
-
         if ($validator->fails()) {
             return response()->json([
                 'status' => 'error',
@@ -706,7 +705,7 @@ class PropertyController extends Controller
             rmdir($chunkDir);
             $updatedFile = 'uploads/' . $request->file_name;
             // $data = ["file_path" => $updatedFile, "extraction_type" => "others"];
-            ProcessCSVFileInBatchJob::dispatch($updatedFile);
+            ProcessCSVFileInBatchJob::dispatch($finalPath);
             //$this->processCsv($data);
             //$data2 = ["file_path" => $updatedFile, "extraction_type" => "property"];
             //$this->processCsv($data2);
