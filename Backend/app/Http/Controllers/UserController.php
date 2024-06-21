@@ -117,7 +117,7 @@ class UserController extends Controller
      */
     public function store(StoreUserRequest $request)
     {
-        if (Auth::user()->role_id == User::ROLE_ADMIN) {
+        if (Auth::user()->role_id == User::ROLE_MD) {
             $validator = Validator::make($request->all(), [
                 'name' => ['required', 'string', 'max:255'],
                 'email' => ['required', 'string'],

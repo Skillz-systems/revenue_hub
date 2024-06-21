@@ -1,5 +1,5 @@
 import React from "react";
-import { Route, Routes } from "react-router-dom";
+import { Route, Routes, Navigate } from "react-router-dom";
 import ProjectLayout from "./Components/ProjectLayout/ProjectLayout";
 import LoginPage from "./Pages/LoginPage";
 import ProtectedRoute from "./Context/ProtectedRoute";
@@ -13,29 +13,45 @@ import ErrorBoundary from "./Context/ErrorBoundary";
 function App() {
   return (
     <ErrorProvider>
-      <ErrorBoundary>
-        <Routes>
-          <Route path="/login" element={<LoginPage />} />
-          <Route
-            path="/confirm-account/:id/:token/"
-            element={<ConfirmAccount />}
-          />
-          <Route
-            path="/create-password/:id/:token/"
-            element={<AccountPassword />}
-          />
-          <Route path="/invoice/:pid" element={<Payment />} />
-          <Route
-            path="/"
-            element={
-              <ProtectedRoute>
+      <Routes>
+        <Route path="/login" element={<LoginPage />} />
+        <Route
+          path="/confirm-account/:id/:token/"
+          element={
+            <ErrorBoundary>
+              <ConfirmAccount />
+            </ErrorBoundary>
+          }
+        />
+        <Route
+          path="/create-password/:id/:token/"
+          element={
+            <ErrorBoundary>
+              <AccountPassword />
+            </ErrorBoundary>
+          }
+        />
+        <Route
+          path="/invoice/:pid"
+          element={
+            <ErrorBoundary>
+              <Payment />
+            </ErrorBoundary>
+          }
+        />
+        <Route path="/" element={<Navigate to="/login" replace />} />
+        <Route
+          path="/dashboard"
+          element={
+            <ProtectedRoute>
+              <ErrorBoundary>
                 <ProjectLayout />
-              </ProtectedRoute>
-            }
-          />
-          <Route path="*" element={<PageNotFound />} />
-        </Routes>
-      </ErrorBoundary>
+              </ErrorBoundary>
+            </ProtectedRoute>
+          }
+        />
+        <Route path="*" element={<PageNotFound />} />
+      </Routes>
     </ErrorProvider>
   );
 }

@@ -56,10 +56,9 @@ class PropertyController extends Controller
     {
         $perPage = $request->input('per_page', 100);
         if (Auth::user()->role_id != User::ROLE_ADMIN) {
-
-            $properties = Property::paginate($perPage);
+            $properties = Property::paginate(100);
         } else {
-            $properties = Property::all();
+            $properties = Property::paginate(100);
             //$properties = $this->propertyService->getAllProperties(Auth::user()->zone);
         }
 

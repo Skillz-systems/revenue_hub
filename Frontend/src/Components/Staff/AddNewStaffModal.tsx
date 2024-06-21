@@ -2,7 +2,7 @@ import React, { useState, ChangeEvent, FormEvent } from "react";
 import { data } from "./staffInputData";
 import { CustomAlert } from "../../Components/Index";
 import axios from "axios";
-import Cookies from "js-cookie";
+import { useTokens } from "../../Utils/client";
 
 interface FieldData {
   id: number;
@@ -107,8 +107,7 @@ const AddNewStaffModal: React.FC<AddNewStaffModalProps> = ({
           role_id: selectedRoleId,
         };
 
-        // Get the bearer token from cookies
-        const token = Cookies.get("userToken");
+        const { token } = useTokens();
 
         // Make the POST request
         const response = await axios.post(

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Navigate } from "react-router-dom";
+import { Navigate, useLocation } from "react-router-dom";
 import { useTokens } from "../Utils/client";
 import { CustomAlert } from "../Components/Index";
 
@@ -20,13 +20,14 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
     setSnackbar({ ...snackbar, open: false });
   };
 
-  const { token, userRoleId } = useTokens();
+  const { token } = useTokens();
+  const location = useLocation();
 
   useEffect(() => {
     if (!token) {
       setSnackbar({
         open: true,
-        message: `Account session has expired. Redirecting to login page in ${countdown} seconds...`,
+        message: `You are not Logged In. Redirecting to login page in ${countdown} seconds...`,
         severity: "warning",
       });
 
@@ -45,10 +46,8 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
   }, [token, countdown]);
 
   if (redirect) {
-    return <Navigate to="/login" replace />;
+    return <Navigate to="/login" state={{ from: location }} replace />;
   }
-
-  useEffect(() => {}, [token, userRoleId]);
 
   return (
     <>
