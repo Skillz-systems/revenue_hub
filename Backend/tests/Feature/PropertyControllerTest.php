@@ -2,15 +2,16 @@
 
 namespace Tests\Feature;
 
-use App\Jobs\CsvExtractorJob;
-use App\Models\DemandNotice;
-use App\Models\Property;
+use Tests\TestCase;
 use App\Models\User;
-use Illuminate\Foundation\Testing\RefreshDatabase;
+use App\Models\Property;
+use App\Models\DemandNotice;
+use App\Jobs\CsvExtractorJob;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Queue;
+use App\Jobs\ProcessCSVFileInBatchJob;
 use Illuminate\Support\Facades\Storage;
-use Tests\TestCase;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 
 class PropertyControllerTest extends TestCase
 {
@@ -300,7 +301,7 @@ class PropertyControllerTest extends TestCase
             'file_name' => "test.csv",
         ]);
 
-        Queue::assertPushed(CsvExtractorJob::class, 9);
+        Queue::assertPushed(ProcessCSVFileInBatchJob::class, 1);
 
         // Assert the response status
         $response->assertStatus(200);
