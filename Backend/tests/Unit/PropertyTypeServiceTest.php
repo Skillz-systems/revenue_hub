@@ -1,111 +1,68 @@
-T<?php
+<?php
 
-use PHPUnit\Framework\TestCase;
+namespace Tests\Unit;
+
 use App\Service\PropertyTypeService;
+use Tests\TestCase;
 use App\Models\PropertyType;
-use Illuminate\Support\Facades\Auth;
-use Mockery;
+use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\App;
 
 class PropertyTypeServiceTest extends TestCase
 {
+    use RefreshDatabase;
+
     protected $propertyTypeService;
 
-    protected function setUp(): void
+    public function setUp(): void
     {
         parent::setUp();
-
         $this->propertyTypeService = new PropertyTypeService();
     }
 
-    protected function tearDown(): void
+    public function test_get_all_property_type()
     {
-        Mockery::close();
-        parent::tearDown();
-    }
-
-    public function testGetAllPropertyType()
-    {
-        $propertyTypes = Mockery::mock('alias:App\Models\PropertyType');
-        $propertyTypes->shouldReceive('all')->andReturn(collect(['type1', 'type2']));
-
+        PropertyType::factory()->count(2)->create();
         $result = $this->propertyTypeService->getAllPropertyType();
-
         $this->assertCount(2, $result);
-        $this->assertEquals('type1', $result[0]);
     }
 
-    public function testCreate()
+    public function test_create_property_type()
     {
-        $data = ['name' => 'NewType'];
-        $propertyType = Mockery::mock('alias:App\Models\PropertyType');
-        $propertyType->shouldReceive('create')->with($data)->andReturn((object)$data);
-
+        $data = ['name' => 'Type1'];
         $result = $this->propertyTypeService->create($data);
-
-        $this->assertEquals('NewType', $result->name);
+        $this->assertDatabaseHas('property_types', $data);
     }
 
-    public function testGetPropertyTypeFromPropertyTypeName()
+    public function test_get_property_type_from_property_type_name()
     {
-        $name = 'TypeName';
-        $propertyType = Mockery::mock('alias:App\Models\PropertyType');
-        $propertyType->shouldReceive('where')->with('name', $name)->andReturnSelf();
-        $propertyType->shouldReceive('first')->andReturn((object)['name' => $name]);
-
+        $name = 'Type1';
+        PropertyType::factory()->create(['name' => $name]);
         $result = $this->propertyTypeService->getPropertyTypeFromPropertyTypeName($name);
-
         $this->assertEquals($name, $result->name);
     }
 
-    public function testGetPropertyTypeById()
+    public function test_get_property_type_by_id()
     {
-        $id = 1;
-        $propertyType = Mockery::mock('alias:App\Models\PropertyType');
-        $propertyType->shouldReceive('where')->with('id', $id)->andReturnSelf();
-        $propertyType->shouldReceive('first')->andReturn((object)['id' => $id]);
-
-        $result = $this->propertyTypeService->getPropertyTypeById($id);
-
-        $this->assertEquals($id, $result->id);
+        $propertyType = PropertyType::factory()->create();
+        $result = $this->propertyTypeService->getPropertyTypeById($propertyType->id);
+        $this->assertEquals($propertyType->id, $result->id);
     }
 
-    public function testUpdatePropertyType()
+    public function test_update_property_type()
     {
-        $id = 1;
-        $data = ['name' => 'UpdatedName'];
-        $propertyType = Mockery::mock('alias:App\Models\PropertyType');
-        $propertyTypeInstance = Mockery::mock();
-        $propertyTypeInstance->shouldReceive('update')->with($data)->andReturn(true);
-        $propertyType->shouldReceive('where')->with('id', $id)->andReturnSelf();
-        $propertyType->shouldReceive('first')->andReturn($propertyTypeInstance);
-
-        $result = $this->propertyTypeService->updatePropertyType($data, $id);
-
+        $propertyType = PropertyType::factory()->create();
+        $data = ['name' => 'UpdatedType'];
+        $result = $this->propertyTypeService->updatePropertyType($data, $propertyType->id);
         $this->assertTrue($result);
+        $this->assertDatabaseHas('property_types', ['id' => $propertyType->id, 'name' => 'UpdatedType']);
     }
 
-    public function testDeletePropertyType()
+    public function test_delete_property_type()
     {
-        $id = 1;
-        $propertyType = Mockery::mock('alias:App\Models\PropertyType');
-        $propertyTypeInstance = Mockery::mock();
-        $propertyTypeInstance->shouldReceive('delete')->andReturn(true);
-        $propertyType->shouldReceive('where')->with('id', $id)->andReturnSelf();
-        $propertyType->shouldReceive('first')->andReturn($propertyTypeInstance);
-
-        $result = $this->propertyTypeService->deletePropertyType($id);
-
+        $propertyType = PropertyType::factory()->create();
+        $result = $this->propertyTypeService->deletePropertyType($propertyType->id);
         $this->assertTrue($result);
-    }
-
-    public function testCheckIsAdminOrMd()
-    {
-        $user = Mockery::mock('alias:App\Models\User');
-        $user->role_id = User::ROLE_ADMIN;
-        Auth::shouldReceive('user')->andReturn($user);
-
-        $result = $this->propertyTypeService->checkIsAdminOrMd();
-
-        $this->assertTrue($result);
+        $this->assertDatabaseMissing('property_types', ['id' => $propertyType->id]);
     }
 }

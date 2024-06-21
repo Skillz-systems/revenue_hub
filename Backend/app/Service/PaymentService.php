@@ -13,7 +13,7 @@ class PaymentService
 {
     public function allPayment($date)
     {
-        return $this->model()->whereYear('created_at', $date)->paginate(10);
+        return $this->model()->whereYear('created_at', $date)->paginate(100);
     }
     public function viewPayment($id)
     {
@@ -50,6 +50,7 @@ class PaymentService
             "email" => $email,
             "amount" => $amount,
             "tx_ref" => $tx_ref,
+            "narration" => "Amac Skillz systems Tenement",
             "bvn" => env("BVN"),
         ];
         $response = $service->create($payload);

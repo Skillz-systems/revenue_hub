@@ -5,9 +5,9 @@ namespace Database\Factories;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\CadastraZone>
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\OfficeZone>
  */
-class CadastralZoneFactory extends Factory
+class OfficeZoneFactory extends Factory
 {
     /**
      * Define the model's default state.
@@ -18,7 +18,7 @@ class CadastralZoneFactory extends Factory
     {
         return [
             'name' => fake()->name(),
-            'rating_district_id' => fake()->numberBetween(1, 10),
+            'address' => fake()->address(),
         ];
     }
 }
