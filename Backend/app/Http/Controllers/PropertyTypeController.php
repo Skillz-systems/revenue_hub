@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
+
 use App\Models\checkIsAdminOrMd;
 use App\Models\PropertyType;
 use Illuminate\Http\Request;
@@ -176,10 +177,10 @@ class PropertyTypeController extends Controller
             $addPropertyType = $this->propertyTypeService->create($request->all());
 
             if ($addPropertyType) {
-                return (new PropertyTypeResource($addPropertyType))->additional([
+                return response()->json([
                     'status' => 'success',
                     'message' => 'Property type created successfully'
-                ]);
+                ], 200);
             }
 
             return response()->json([

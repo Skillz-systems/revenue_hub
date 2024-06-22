@@ -18,6 +18,12 @@ const Transactions: React.FC = () => {
     message: "",
     severity: "success",
   });
+  const [paginationMeta, setPaginationMeta] = useState({
+    currentPage: 0,
+    lastPage: 0,
+    total: 0,
+    perPage: 0,
+  });
   const triggerError = useTriggerError();
 
   const handleSnackbarClose = () => {
@@ -37,6 +43,12 @@ const Transactions: React.FC = () => {
       );
       if (response.status === 200) {
         setTransactionInformation(response.data.data);
+        setPaginationMeta({
+          currentPage: response.data.meta.current_page,
+          lastPage: response.data.meta.last_page,
+          total: response.data.meta.total,
+          perPage: response.data.meta.per_page,
+        });
         setSnackbar({
           open: true,
           message: "Successfuly fetched all transactions",
@@ -94,6 +106,8 @@ const Transactions: React.FC = () => {
         <TransactionsTable
           staticInformation={staticInformation}
           transactionInformation={transactionInformation}
+          paginationMeta={paginationMeta}
+          setPaginationMeta={setPaginationMeta}
         />
       ) : (
         <LoadingSpinner title="Loading Transactions" />

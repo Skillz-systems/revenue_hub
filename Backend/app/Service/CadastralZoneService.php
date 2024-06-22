@@ -99,6 +99,7 @@ class CadastralZoneService
      */
     public function checkIsAdminOrMd()
     {
+
         if (Auth::user()->role_id == User::ROLE_ADMIN || Auth::user()->role_id == User::ROLE_MD) {
             return true;
         }

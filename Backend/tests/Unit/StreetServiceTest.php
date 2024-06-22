@@ -7,8 +7,6 @@ use App\Models\User;
 use App\Models\Street;
 use Faker\Factory as Faker;
 use App\Service\StreetService;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Testing\Fakes\Fake;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 

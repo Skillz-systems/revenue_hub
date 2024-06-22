@@ -58,6 +58,6 @@ class PropertyService
         //return Property::where(["status" => Property::STATUS_Regular])->all();
         return Property::whereHas('ratingDistrict', function ($query) use ($zone) {
             $query->where('zone_id', $zone);
-        })->get();
+        })->paginate(100);
     }
 }
