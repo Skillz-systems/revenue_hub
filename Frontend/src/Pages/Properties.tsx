@@ -69,6 +69,12 @@ export default function Properties() {
   const [propertyInformation, setPropertyInformation] = useState<
     PropertyArray | any
   >();
+  const [paginationMeta, setPaginationMeta] = useState({
+    currentPage: 0,
+    lastPage: 0,
+    total: 0,
+    perPage: 0,
+  });
   const { staticInformation } = userData();
   const [snackbar, setSnackbar] = useState({
     open: false,
@@ -76,19 +82,28 @@ export default function Properties() {
     severity: "success",
   });
   const triggerError = useTriggerError();
+  const propertiesPerPage = paginationMeta.perPage;
 
   const handleSnackbarClose = () => {
     setSnackbar({ ...snackbar, open: false });
   };
 
   const { data, error } = useSWR(
-    token ? "https://api.revenuehub.skillzserver.com/api/property" : null, // Only fetch if token exists
+    token
+      ? `https://api.revenuehub.skillzserver.com/api/property?page=${paginationMeta.currentPage}`
+      : null,
     (url) => fetcher(url, token)
   );
 
   useEffect(() => {
     if (data) {
       setPropertyInformation(data.data);
+      setPaginationMeta({
+        currentPage: data.meta.current_page,
+        lastPage: data.meta.last_page,
+        total: data.meta.total,
+        perPage: data.meta.per_page,
+      });
       setSnackbar({
         open: true,
         message: "Properties fetched successfully",
@@ -147,7 +162,6 @@ export default function Properties() {
 
   // PAGINATION LOGIC START
   const [currentPage, setCurrentPage] = useState<number>(0);
-  const [propertiesPerPage, setPropertiesPerPage] = useState<number>(12);
   const [currentStyle, setCurrentStyle] = useState<number | undefined>(
     undefined
   );
@@ -155,14 +169,16 @@ export default function Properties() {
   const offset = currentPage * propertiesPerPage;
 
   const handlePageChange = ({ selected }: { selected: number }) => {
-    setCurrentPage(selected);
+    setPaginationMeta((prev) => ({
+      ...prev,
+      currentPage: selected + 1, // SWR uses 1-based index for pages
+    }));
     ScrollToTop("top-container");
   };
 
   const handlePropertiesPerPageChange = (
     e: React.ChangeEvent<HTMLSelectElement>
   ) => {
-    setPropertiesPerPage(parseInt(e.target.value));
     ScrollToTop("top-container");
   };
 
@@ -174,7 +190,7 @@ export default function Properties() {
   // PAGINATION LOGIC END
 
   const LengthByFilterState = (): number => {
-    return propertyInformation?.length;
+    return paginationMeta.total;
   };
 
   const pageCount = Math.ceil(LengthByFilterState() / propertiesPerPage);
@@ -354,30 +370,42 @@ export default function Properties() {
             <div className="flex justify-between p-4 item-center">
               <div className="flex flex-wrap w-[70%]">
                 <Pagination
-                  pageCount={pageCount}
+                  pageCount={paginationMeta.lastPage}
                   pageRangeDisplayed={2}
                   marginPagesDisplayed={0}
                   onPageChange={handlePageChange}
                   paginationStyles={paginationStyles}
-                  forcePage={currentStyle}
+                  forcePage={paginationMeta.currentPage - 1} // Pagination component uses 0-based index for pages
                 />
               </div>
               <p className="flex items-center gap-2 justify-end w-[30%] text-xs text-color-text-two font-lexend">
                 Showing
                 <select
-                  className="flex items-center outline-none justify-center w-[60px] h-[32px] px-2.5 border border-divider-grey rounded text-color-text-one"
+                  className="flex items-center outline-none justify-center w-[45px] h-[32px] px-2.5 border border-divider-grey rounded text-color-text-one appearance-none bg-transparent"
                   onChange={handlePropertiesPerPageChange}
                   value={
-                    LengthByFilterState() > propertiesPerPage
-                      ? propertiesPerPage
-                      : LengthByFilterState()
+                    paginationMeta.perPage > paginationMeta.total
+                      ? paginationMeta.total
+                      : paginationMeta.perPage
                   }
+                  disabled
+                  style={{
+                    WebkitAppearance: "none",
+                    MozAppearance: "none",
+                    appearance: "none",
+                  }}
                 >
-                  {Array.from({ length: LengthByFilterState() }, (_, index) => (
-                    <option key={index} value={1 + index}>
-                      {1 + index}
-                    </option>
-                  ))}
+                  <option
+                    value={
+                      paginationMeta.perPage > paginationMeta.total
+                        ? paginationMeta.total
+                        : paginationMeta.perPage
+                    }
+                  >
+                    {paginationMeta.perPage > paginationMeta.total
+                      ? paginationMeta.total
+                      : paginationMeta.perPage}
+                  </option>
                 </select>
                 of <span>{LengthByFilterState()}</span>
                 entries
