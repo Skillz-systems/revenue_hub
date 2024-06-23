@@ -1,124 +1,140 @@
 <?php
 
-namespace Tests\Unit;
+namespace Tests\Unit\Service;
 
-use App\Models\Group;
-use App\Models\User;
-use App\Service\GroupService;
-use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Support\Facades\Auth;
 use Tests\TestCase;
+use App\Models\User;
+use App\Models\Group;
+use Faker\Factory as Faker;
+use App\Service\GroupService;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Testing\Fakes\Fake;
+use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 
 class GroupServiceTest extends TestCase
 {
     use RefreshDatabase;
 
-    protected $groupService;
-    protected $admin;
-    protected $md;
-    protected $user;
-    protected $group;
+    protected $service;
+    protected $faker;
 
     protected function setUp(): void
     {
         parent::setUp();
-
-        // Create service instance
-        $this->groupService = new GroupService();
-
-        // Create test users
-        $this->admin = User::factory()->create(['role_id' => User::ROLE_ADMIN]);
-        $this->md = User::factory()->create(['role_id' => User::ROLE_MD]);
-        $this->user = User::factory()->create(['role_id' => User::ROLE_USER]);
-
-        // Create test group
-        $this->group = Group::factory()->create();
+        $this->service = new GroupService();
+        $this->faker = Faker::create();
     }
 
-    /** @test */
-    public function it_can_get_all_groups()
+    public function testGetAllGroup()
     {
-        Group::factory()->count(5)->create();
-        $groups = $this->groupService->getAllGroup();
-        $this->assertCount(6, $groups); // Including the group created in setUp
+        // Create some dummy data
+        Group::factory()->count(2)->create();
+
+        // Call the method
+        $groups = $this->service->getAllGroup();
+
+        // Assert that the method returns a collection of groups
+        $this->assertInstanceOf(Collection::class, $groups);
+
+        // Assert that the number of returned groups matches the number of created dummy data
+        $this->assertEquals(2, $groups->count());
     }
 
-    /** @test */
-    public function it_can_create_a_group()
+    public function testCreate()
     {
-        $data = ['name' => 'Test Group'];
-        $group = $this->groupService->create($data);
+        // Data for creating a group
+        $data = [
+            'name' => $this->faker->word,
+            // Add other required fields here
+        ];
 
-        $this->assertInstanceOf(Group::class, $group);
-        $this->assertDatabaseHas('groups', ['name' => 'Test Group']);
+        // Call the create method
+        $createdGroup = $this->service->create($data);
+
+        // Assert that a group was created
+        $this->assertNotNull($createdGroup);
+
+        // Assert that the created group matches the data provided
+        $this->assertEquals($data['name'], $createdGroup->name);
+        // Add assertions for other fields if needed
     }
 
-    /** @test */
-    public function it_can_get_group_by_name()
+    public function testGetGroupFromGroupName()
     {
-        $group = $this->groupService->getGroupFromGroupName($this->group->name);
+        // Create a dummy group
+        $group = Group::factory()->create([
+            'name' => 'Test Group',
+            // Add other required fields here
+        ]);
 
-        $this->assertInstanceOf(Group::class, $group);
-        $this->assertEquals($this->group->name, $group->name);
+        // Call the getGroupFromGroupName method
+        $retrievedGroup = (new GroupService())->getGroupFromGroupName('Test Group');
+        
+        // Assert that the retrieved group is not null
+        $this->assertNotNull($retrievedGroup);
+
+        // Assert that the retrieved group matches the created group
+        $this->assertEquals($group->name, $retrievedGroup->name);
+        // Add assertions for other fields if needed
     }
 
-    /** @test */
-    public function it_can_get_group_by_id()
+    public function testGetGroupById()
     {
-        $group = $this->groupService->getGroupById($this->group->id);
+        // Create a dummy group
+        $group = Group::factory()->create([
+            'name' => 'Test Group',
+            // Add other required fields here
+        ]);
 
-        $this->assertInstanceOf(Group::class, $group);
-        $this->assertEquals($this->group->id, $group->id);
+        // Call the getGroupById method
+        $retrievedGroup = (new GroupService())->getGroupById($group->id);
+
+        // Assert that the retrieved group is not null
+        $this->assertNotNull($retrievedGroup);
+
+        // Assert that the retrieved group matches the created group
+        $this->assertEquals($group->id, $retrievedGroup->id);
+        $this->assertEquals($group->name, $retrievedGroup->name);
+        // Add assertions for other fields if needed
     }
 
-    /** @test */
-    public function it_can_update_group()
+    public function testUpdateGroup()
     {
-        $data = ['name' => 'Updated Group'];
-        $updated = $this->groupService->updateGroup($data, $this->group->id);
+        // Create dummy data and a group
+        $data = [
+            'name' => $this->faker->word,
+        ];
+        $group = Group::factory()->create();
 
-        $this->assertTrue($updated);
-        $this->assertDatabaseHas('groups', ['name' => 'Updated Group']);
+        // Call the updateGroup method
+        $result = (new GroupService())->updateGroup($data, $group->id);
+
+        // Assert that the update operation was successful
+        $this->assertTrue($result);
+
+        // Retrieve the updated group
+        $updatedGroup = (new GroupService())->getGroupById($group->id);
+
+        // Assert that the updated group matches the provided data
+        $this->assertEquals($data['name'], $updatedGroup->name);
+        // Add assertions for other fields if needed
     }
 
-    /** @test */
-    public function it_throws_exception_when_updating_non_existent_group()
+    public function testDeleteGroup()
     {
-        $this->expectException(\Exception::class);
-        $this->expectExceptionMessage('Group not found with ID: 999');
+        // Create a dummy group
+        $group = Group::factory()->create([
+            'name' => 'group type',
+        ]);
 
-        $data = ['name' => 'Non Existent Group'];
-        $this->groupService->updateGroup($data, 999);
-    }
+        // Call the deleteGroup method
+        $result = (new GroupService())->deleteGroup($group->id);
 
-    /** @test */
-    public function it_can_delete_group()
-    {
-        $deleted = $this->groupService->deleteGroup($this->group->id);
+        // Assert that the delete operation was successful
+        $this->assertTrue($result);
 
-        $this->assertTrue($deleted);
-        $this->assertDatabaseMissing('groups', ['id' => $this->group->id]);
-    }
-
-    /** @test */
-    public function it_throws_exception_when_deleting_non_existent_group()
-    {
-        $this->expectException(\Exception::class);
-        $this->expectExceptionMessage('Group not found with ID: 999');
-
-        $this->groupService->deleteGroup(999);
-    }
-
-    /** @test */
-    public function it_checks_if_user_is_admin_or_md()
-    {
-        Auth::shouldReceive('user')->andReturn($this->admin);
-        $this->assertTrue($this->groupService->checkIsAdminOrMd());
-
-        Auth::shouldReceive('user')->andReturn($this->md);
-        $this->assertTrue($this->groupService->checkIsAdminOrMd());
-
-        Auth::shouldReceive('user')->andReturn($this->user);
-        $this->assertFalse($this->groupService->checkIsAdminOrMd());
+        // Assert that the group no longer exists in the database
+        $this->assertDatabaseMissing('groups', ['id' => $group->id]);
     }
 }

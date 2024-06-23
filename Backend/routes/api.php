@@ -12,6 +12,7 @@ use App\Http\Controllers\PropertyController;
 use App\Http\Controllers\PropertyUseController;
 use App\Http\Controllers\StatisticController;
 use App\Http\Controllers\StreetController;
+use App\Http\Controllers\GroupController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
@@ -89,6 +90,12 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/office-zone/view/{officeZone}', [OfficeZoneController::class, "show"]);
     Route::put('/office-zone/update/{officeZone}', [OfficeZoneController::class, "update"]);
     Route::delete('/office-zone/delete/{officeZone}', [OfficeZoneController::class, "destroy"]);
+
+    Route::get('/group', [GroupController::class, "index"]);
+    Route::post('/group/create', [GroupController::class, "store"]);
+    Route::get('/group/view/{group}', [GroupController::class, "show"]);
+    Route::put('/group/update/{group}', [GroupController::class, "update"]);
+    Route::delete('/group/delete/{group}', [GroupController::class, "destroy"]);
 });
 
 Route::get('/payment/generate-account/{id}', [PaymentController::class, 'generateAccount']);
