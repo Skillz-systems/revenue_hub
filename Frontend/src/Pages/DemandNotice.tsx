@@ -18,6 +18,12 @@ export const DemandNotice: React.FC = () => {
     message: "",
     severity: "success",
   });
+  const [paginationMeta, setPaginationMeta] = useState({
+    currentPage: 0,
+    lastPage: 0,
+    total: 0,
+    perPage: 0,
+  });
   const triggerError = useTriggerError();
 
   const handleSnackbarClose = () => {
@@ -37,6 +43,12 @@ export const DemandNotice: React.FC = () => {
       );
       if (response.status === 200) {
         setDemandNoticeInformation(response.data.data);
+        setPaginationMeta({
+          currentPage: response.data.meta.current_page,
+          lastPage: response.data.meta.last_page,
+          total: response.data.meta.total,
+          perPage: response.data.meta.per_page,
+        });
         setSnackbar({
           open: true,
           message: "Demand notices fetched successfully",
@@ -96,6 +108,8 @@ export const DemandNotice: React.FC = () => {
         <DemandInvoiceTable
           staticInformation={staticInformation}
           demandNoticeInformation={demandNoticeInformation}
+          paginationMeta={paginationMeta}
+          setPaginationMeta={setPaginationMeta}
         />
       ) : (
         <LoadingSpinner title="Loading Demand Notices" />
