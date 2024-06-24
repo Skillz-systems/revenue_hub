@@ -1,7 +1,10 @@
 <?php
 
 namespace App\Service;
+<<<<<<< HEAD
 
+=======
+>>>>>>> 7030308 (crud for property type)
 use App\Models\User;
 use App\Models\Property;
 use App\Models\PropertyType;
@@ -13,7 +16,11 @@ use Illuminate\Support\Facades\Validator;
 
 class PropertyTypeService
 {
+<<<<<<< HEAD
     public function getAllPropertyType()
+=======
+    public function getAllPropertyType ()
+>>>>>>> 7030308 (crud for property type)
     {
         return PropertyType::all();
     }
@@ -36,21 +43,29 @@ class PropertyTypeService
     public function updatePropertyType($data, $id)
     {
         $updateData = $this->getPropertyTypeById($id);
+<<<<<<< HEAD
         if ($updateData) {
             return $updateData->update($data);
         } else {
             throw new \Exception("Property type not found with ID: $id");
         }
+=======
+        return $updateData->update($data);
+>>>>>>> 7030308 (crud for property type)
     }
 
     public function deletePropertyType($id)
     {
         $delete = $this->getPropertyTypeById($id);
+<<<<<<< HEAD
         if ($delete) {
             return $delete->delete();
         } else {
             throw new \Exception("Property type not found with ID: $id");
         }
+=======
+        return $delete->delete();
+>>>>>>> 7030308 (crud for property type)
     }
 
 

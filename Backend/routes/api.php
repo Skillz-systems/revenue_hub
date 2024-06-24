@@ -5,7 +5,10 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CadastralZoneController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\DemandNoticeController;
+<<<<<<< HEAD
 use App\Http\Controllers\OfficeZoneController;
+=======
+>>>>>>> 7030308 (crud for property type)
 use App\Http\Controllers\PropertyTypeController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\PropertyController;
@@ -55,6 +58,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/property/create', [PropertyController::class, "store"]);
     Route::apiResource('/property', PropertyController::class);
 
+<<<<<<< HEAD
     Route::get('/street', [StreetController::class, "index"]);
     Route::post('/street/create', [StreetController::class, "store"]);
     Route::get('/street/view/{street}', [StreetController::class, "show"]);
@@ -73,11 +77,14 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::put('/property-use/update/{propertyUse}', [PropertyUseController::class, "update"]);
     Route::delete('/property-use/delete/{propertyUse}', [PropertyUseController::class, "destroy"]);
 
+=======
+>>>>>>> 7030308 (crud for property type)
     Route::get('/property-type', [PropertyTypeController::class, "index"]);
     Route::post('/property-type/create', [PropertyTypeController::class, "store"]);
     Route::get('/property-type/view/{propertyType}', [PropertyTypeController::class, "show"]);
     Route::put('/property-type/update/{propertyType}', [PropertyTypeController::class, "update"]);
     Route::delete('/property-type/delete/{propertyType}', [PropertyTypeController::class, "destroy"]);
+<<<<<<< HEAD
 
     Route::get('/category', [CategoryController::class, "index"]);
     Route::post('/category/create', [CategoryController::class, "store"]);
@@ -102,6 +109,8 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/category/view/{category}', [CategoryController::class, "show"]);
     Route::put('/category/update/{category}', [CategoryController::class, "update"]);
     Route::delete('/category/delete/{category}', [CategoryController::class, "destroy"]);
+=======
+>>>>>>> 7030308 (crud for property type)
 });
 
 Route::get('/payment/generate-account/{id}', [PaymentController::class, 'generateAccount']);

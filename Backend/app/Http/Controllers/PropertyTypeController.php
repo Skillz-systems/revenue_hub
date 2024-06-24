@@ -1,7 +1,10 @@
 <?php
 
 namespace App\Http\Controllers;
+<<<<<<< HEAD
 
+=======
+>>>>>>> 7030308 (crud for property type)
 use App\Models\checkIsAdminOrMd;
 use App\Models\PropertyType;
 use Illuminate\Http\Request;
@@ -171,6 +174,10 @@ class PropertyTypeController extends Controller
         if ($this->propertyTypeService->checkIsAdminOrMd()) {
             $validator = Validator::make($request->all(), [
                 'name' => ['required', 'string', 'max:255'],
+<<<<<<< HEAD
+=======
+                'property_type_id' => ['required', 'string', 'max:255'],
+>>>>>>> 7030308 (crud for property type)
             ]);
 
             if ($validator->fails()) {
@@ -184,10 +191,17 @@ class PropertyTypeController extends Controller
             $addPropertyType = $this->propertyTypeService->create($request->all());
 
             if ($addPropertyType) {
+<<<<<<< HEAD
                 return response()->json([
                     'status' => 'success',
                     'message' => 'Property type created successfully'
                 ], 200);
+=======
+                return (new PropertyTypeResource($addPropertyType))->additional([
+                    'status' => 'success',
+                    'message' => 'Property type created successfully'
+                ]);
+>>>>>>> 7030308 (crud for property type)
             }
 
             return response()->json([
@@ -375,6 +389,10 @@ class PropertyTypeController extends Controller
         if ($this->propertyTypeService->checkIsAdminOrMd()) {
             $validator = Validator::make($request->all(), [
                 'name' => ['required', 'string', 'max:255'],
+<<<<<<< HEAD
+=======
+                'property_type_id' => ['required', 'string', 'max:255'],
+>>>>>>> 7030308 (crud for property type)
             ]);
 
             if ($validator->fails()) {
