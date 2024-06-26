@@ -5658,6 +5658,35 @@
                 },
                 "type": "object"
             },
+            "CategoryResource": {
+                "title": "Category Resource",
+                "description": "A resource representing a category",
+                "properties": {
+                    "id": {
+                        "description": "The unique identifier of the category",
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "name": {
+                        "description": "name of the category",
+                        "type": "string",
+                        "example": "Residential"
+                    },
+                    "created_at": {
+                        "description": "The creation timestamp of the street",
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2023-01-01T12:00:00Z"
+                    },
+                    "updated_at": {
+                        "description": "The last update timestamp of the street",
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2023-01-02T12:00:00Z"
+                    }
+                },
+                "type": "object"
+            },
             "DemandNoticePaymentResource": {
                 "title": "DemandNoticePaymentResource",
                 "description": "The payment resource",

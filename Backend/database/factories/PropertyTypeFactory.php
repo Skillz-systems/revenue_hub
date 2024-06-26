@@ -18,6 +18,10 @@ class PropertyTypeFactory extends Factory
     {
         return [
             'name' => fake()->name(),
+<<<<<<< HEAD
+=======
+            'property_type_id' => fake()->RandomDigits(),
+>>>>>>> 7030308 (crud for property type)
         ];
     }
 }
