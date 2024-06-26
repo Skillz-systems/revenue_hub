@@ -1,6 +1,6 @@
 import React, { useState, ChangeEvent, FormEvent } from "react";
 import { data } from "./staffInputData";
-import { CustomAlert } from "../../Components/Index";
+import { CustomAlert } from "../Index";
 import axios from "axios";
 import { useTokens } from "../../Utils/client";
 
