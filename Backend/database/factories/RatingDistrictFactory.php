@@ -19,7 +19,7 @@ class RatingDistrictFactory extends Factory
     {
         return [
             'name' => fake()->randomElement(['APO', 'DUROMI']),
-            "office_zone_id" => OfficeZone::inRandomOrder()->first()->id,
+            "office_zone_id" => 1,
         ];
     }
 }

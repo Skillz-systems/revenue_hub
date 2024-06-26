@@ -19,4 +19,9 @@ class CadastralZone extends Model
     {
         return $this->belongsTo(RatingDistrict::class, 'rating_district_id');
     }
+
+    public function street()
+    {
+        return $this->hasMany(Street::class);
+    }
 }

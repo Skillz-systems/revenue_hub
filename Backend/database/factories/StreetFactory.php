@@ -19,7 +19,7 @@ class StreetFactory extends Factory
     {
         return [
             'name' => fake()->name(),
-            'cadastral_zone_id' => CadastralZone::inRandomOrder()->first()->id,
+            'cadastral_zone_id' => 1,
         ];
     }
 }

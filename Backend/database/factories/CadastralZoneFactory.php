@@ -19,7 +19,7 @@ class CadastralZoneFactory extends Factory
     {
         return [
             'name' => fake()->name(),
-            'rating_district_id' => RatingDistrict::inRandomOrder()->first()->id,
+            'rating_district_id' => 1,
         ];
     }
 }

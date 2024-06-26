@@ -39,35 +39,35 @@ class Property extends Model
 
     public function street()
     {
-        return $this->belongsTo(Street::class, 'street_id');
+        return $this->belongsTo(Street::class);
     }
     public function cadastralZone()
     {
-        return $this->belongsTo(CadastralZone::class, 'cadastral_zone_id');
+        return $this->belongsTo(CadastralZone::class);
     }
 
     public function propertyType()
     {
-        return $this->belongsTo(PropertyType::class, 'property_type_id');
+        return $this->belongsTo(PropertyType::class);
     }
 
     public function propertyUse()
     {
-        return $this->belongsTo(PropertyUse::class, 'property_use_id');
+        return $this->belongsTo(PropertyUse::class);
     }
 
     public function ratingDistrict()
     {
-        return $this->belongsTo(RatingDistrict::class, 'rating_district_id');
+        return $this->belongsTo(RatingDistrict::class);
     }
 
     public function category()
     {
-        return $this->belongsTo(Category::class, 'category_id');
+        return $this->belongsTo(Category::class);
     }
 
     public function group()
     {
-        return $this->belongsTo(Group::class, 'group_id');
+        return $this->belongsTo(Group::class);
     }
 }
