@@ -5,6 +5,8 @@ import { InputComponent, CustomAlert } from "../Components/Index";
 import axios from "axios";
 import { useTriggerError } from "../Utils/client";
 
+const apiUrl = import.meta.env.VITE_API_URL as string;
+
 function ConfirmAccount(): JSX.Element {
   const [isLoading, setIsLoading] = useState(false);
   const [errorState, setErrorState] = useState<string | null>(null);
@@ -35,7 +37,7 @@ function ConfirmAccount(): JSX.Element {
         severity: "info",
       });
       const response = await axios.post(
-        `https://api.revenuehub.skillzserver.com/api/user-with-token/${userId}`,
+        `${apiUrl}/api/user-with-token/${userId}`,
         {
           token: remember_token,
         }
@@ -55,7 +57,7 @@ function ConfirmAccount(): JSX.Element {
           severity: "warning",
         });
       }
-    } catch (error) {
+    } catch (error: any) {
       let message = "Internal Server Error";
       if (error.response) {
         switch (error.response.status) {
@@ -107,7 +109,7 @@ function ConfirmAccount(): JSX.Element {
 
     try {
       const response = await axios.put(
-        `https://api.revenuehub.skillzserver.com/api/staff/update-staff-details/${userId}`,
+        `${apiUrl}/api/staff/update-staff-details/${userId}`,
         {
           name: formData.firstName,
           email: formData.email,
@@ -126,7 +128,7 @@ function ConfirmAccount(): JSX.Element {
           severity: "warning",
         });
       }
-    } catch (error) {
+    } catch (error: any) {
       let message = "Internal Server Error";
       if (error.response) {
         switch (error.response.status) {

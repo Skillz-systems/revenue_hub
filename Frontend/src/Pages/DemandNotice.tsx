@@ -8,6 +8,8 @@ import {
 import { useTokens, useTriggerError } from "../Utils/client";
 import axios from "axios";
 
+const apiUrl = import.meta.env.VITE_API_URL as string;
+
 export const DemandNotice: React.FC = () => {
   const { token } = useTokens();
   const [demandNoticeInformation, setDemandNoticeInformation] =
@@ -33,7 +35,7 @@ export const DemandNotice: React.FC = () => {
   const fetchDemandNotices = async (dateFilter = "") => {
     try {
       const response = await axios.post(
-        "https://api.revenuehub.skillzserver.com/api/demand-notice",
+        `${apiUrl}/api/demand-notice`,
         { date_filter: dateFilter },
         {
           headers: {
@@ -61,7 +63,7 @@ export const DemandNotice: React.FC = () => {
           severity: "warning",
         });
       }
-    } catch (error) {
+    } catch (error: any) {
       let message = "Internal Server Error";
       if (error.response) {
         switch (error.response.status) {
