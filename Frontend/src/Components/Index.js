@@ -34,5 +34,5 @@ export { default as Password } from "./Settings/Password";
 export { default as InputComponent } from "./InputComponent/InputComponent";
 export { default as SelectComponent } from "./InputComponent/SelectComponent";
 export { userData, paginationStyles } from "../Data/userData";
-export { default as CustomAlert } from "../Components/ProjectLayout/CustomAlert"
-export * from "../Data/types.ts";
+export { default as CustomAlert } from "./ProjectLayout/CustomAlert"
+export * from "../Data/types";
