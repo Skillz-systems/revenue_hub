@@ -6,6 +6,8 @@ import { GrFormViewHide, GrFormView } from "react-icons/gr";
 import axios from "axios";
 import Cookies from "js-cookie";
 
+const apiUrl = import.meta.env.VITE_API_URL as string;
+
 function LoginPage(): JSX.Element {
   const [passwordDisplay, setPasswordDisplay] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -59,13 +61,10 @@ function LoginPage(): JSX.Element {
     setIsLoading(true);
 
     try {
-      const response = await axios.post(
-        "https://api.revenuehub.skillzserver.com/api/auth/login",
-        {
-          email: formData.email,
-          password: formData.password,
-        }
-      );
+      const response = await axios.post(`${apiUrl}/api/auth/login`, {
+        email: formData.email,
+        password: formData.password,
+      });
 
       if (response.status === 200) {
         Cookies.set("userData", JSON.stringify(response.data.data), {
@@ -75,7 +74,7 @@ function LoginPage(): JSX.Element {
       } else {
         setErrorState(response.data.message);
       }
-    } catch (error) {
+    } catch (error: any) {
       if (error.response.status === 400) {
         setErrorState(
           "Ensure that all required filed are properly filled. Your password is at least 8 characters."
@@ -106,12 +105,9 @@ function LoginPage(): JSX.Element {
     setIsLoading(true);
 
     try {
-      const response = await axios.post(
-        "https://api.revenuehub.skillzserver.com/api/auth/forgot-password",
-        {
-          email: forgotPasswordEmail,
-        }
-      );
+      const response = await axios.post(`${apiUrl}/api/auth/forgot-password`, {
+        email: forgotPasswordEmail,
+      });
 
       if (response.status === 200) {
         setResetSuccess("Password reset link has been sent to your email");
