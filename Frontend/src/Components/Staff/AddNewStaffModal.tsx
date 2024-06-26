@@ -1,6 +1,6 @@
 import React, { useState, ChangeEvent, FormEvent } from "react";
 import { data } from "./staffInputData";
-import { CustomAlert } from "../../Components/Index";
+import { CustomAlert } from "../Index";
 import axios from "axios";
 import { useTokens } from "../../Utils/client";
 
@@ -16,6 +16,8 @@ interface FieldData {
 interface FormData {
   [key: string]: string;
 }
+
+const apiUrl = import.meta.env.VITE_API_URL as string;
 
 interface AddNewStaffModalProps {
   hideNewStaffModal: () => void;
@@ -110,15 +112,11 @@ const AddNewStaffModal: React.FC<AddNewStaffModalProps> = ({
         const { token } = useTokens();
 
         // Make the POST request
-        const response = await axios.post(
-          "https://api.revenuehub.skillzserver.com/api/staff",
-          requestData,
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
+        const response = await axios.post(`${apiUrl}/api/staff`, requestData, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
 
         if (response.status === 200 || 201) {
           setSnackbar({
@@ -134,7 +132,7 @@ const AddNewStaffModal: React.FC<AddNewStaffModalProps> = ({
             severity: "warning",
           });
         }
-      } catch (error) {
+      } catch (error: any) {
         let message = "Internal Server Error";
         if (error.response) {
           switch (error.response.status) {

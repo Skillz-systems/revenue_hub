@@ -6,6 +6,8 @@ import { GrFormViewHide, GrFormView } from "react-icons/gr";
 import axios from "axios";
 import { useTriggerError } from "../Utils/client";
 
+const apiUrl = import.meta.env.VITE_API_URL as string;
+
 function AccountPassword(): JSX.Element {
   const [passwordDisplay, setPasswordDisplay] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -66,15 +68,12 @@ function AccountPassword(): JSX.Element {
     setErrorState(null); // Clear any previous error messages
 
     try {
-      const response = await axios.post(
-        "https://api.revenuehub.skillzserver.com/api/auth/store-password",
-        {
-          user: userId,
-          token: remember_token,
-          password: formData.password,
-          password_confirmation: formData.confirmPassword,
-        }
-      );
+      const response = await axios.post(`${apiUrl}/api/auth/store-password`, {
+        user: userId,
+        token: remember_token,
+        password: formData.password,
+        password_confirmation: formData.confirmPassword,
+      });
 
       if (response.status === 200 || 201) {
         navigate("/login");
@@ -86,7 +85,7 @@ function AccountPassword(): JSX.Element {
           severity: "warning",
         });
       }
-    } catch (error) {
+    } catch (error: any) {
       let message = "Internal Server Error";
       if (error.response) {
         switch (error.response.status) {
