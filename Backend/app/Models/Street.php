@@ -18,4 +18,9 @@ class Street extends Model
     {
         return $this->belongsTo(CadastralZone::class, 'cadastral_zone_id');
     }
+
+    public function properties()
+    {
+        return $this->hasMany(Property::class);
+    }
 }

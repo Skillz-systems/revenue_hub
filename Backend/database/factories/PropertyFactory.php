@@ -2,6 +2,13 @@
 
 namespace Database\Factories;
 
+use App\Models\CadastralZone;
+use App\Models\Category;
+use App\Models\Group;
+use App\Models\PropertyType;
+use App\Models\PropertyUse;
+use App\Models\RatingDistrict;
+use App\Models\Street;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -20,19 +27,19 @@ class PropertyFactory extends Factory
             'pid' => fake()->randomNumber(8),
             'occupant' => fake()->name(),
             'prop_addr' => fake()->address(),
-            'street_name' => fake()->streetAddress(),
+            'street_id' => Street::inRandomOrder()->first()->id,
             'asset_no' => 'AMC/B14/TR/' . fake()->randomDigit(),
-            'cadastral_zone' => fake()->postcode(),
-            'prop_type' => fake()->randomElement(['SPLITTED', 'CONSOLIDATED']),
-            'prop_use' => fake()->randomElement(['RESIDENTIAL', 'COMMERCIAL']),
-            'rating_dist' => fake()->randomElement(['APO', 'DUROMI']),
+            'cadastral_zone_id' => CadastralZone::inRandomOrder()->first()->id,
+            'property_type_id' => PropertyType::inRandomOrder()->first()->id,
+            'property_use_id' => PropertyUse::inRandomOrder()->first()->id,
+            'rating_district_id' => RatingDistrict::inRandomOrder()->first()->id,
             'annual_value' => fake()->randomElement(['200000', '30000000', '4500000']),
             'rate_payable' => fake()->randomElement(['25000', '45000', '48625']),
             //'arrears'  => fake()->randomElement(['25000', '45000', '48625']),
             //'penalty'  => fake()->randomElement(['25000', '45000', '48625']),
             'grand_total' => fake()->randomElement(['2500000', '4500000', '4862500']),
-            'category' => fake()->randomElement(['RESIDENTIAL', 'SCHOOL', 'NULL']),
-            'group' => fake()->randomElement(['AMAC1', 'AMAC2']),
+            'category_id' => Category::inRandomOrder()->first()->id,
+            'group_id' => Group::inRandomOrder()->first()->id,
             'active' => 'ACTIVE',
         ];
     }

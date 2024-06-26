@@ -17,7 +17,7 @@ class PropertyUseFactory extends Factory
     public function definition(): array
     {
         return [
-            //
+            'name' => fake()->randomElement(['RESIDENTIAL', 'COMMERCIAL']),
         ];
     }
 }

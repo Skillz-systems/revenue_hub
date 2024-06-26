@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Models\RatingDistrict;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -18,7 +19,7 @@ class CadastralZoneFactory extends Factory
     {
         return [
             'name' => fake()->name(),
-            'rating_district_id' => fake()->numberBetween(1, 10),
+            'rating_district_id' => RatingDistrict::inRandomOrder()->first()->id,
         ];
     }
 }

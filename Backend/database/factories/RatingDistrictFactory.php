@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Models\OfficeZone;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -17,7 +18,8 @@ class RatingDistrictFactory extends Factory
     public function definition(): array
     {
         return [
-            //
+            'name' => fake()->randomElement(['APO', 'DUROMI']),
+            "office_zone_id" => OfficeZone::inRandomOrder()->first()->id,
         ];
     }
 }

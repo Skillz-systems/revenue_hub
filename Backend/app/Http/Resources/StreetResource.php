@@ -35,7 +35,7 @@ class StreetResource extends JsonResource
         return [
             "id" => $this->id,
             "name" => $this->name,
-            "cadastral_zone_id" => (new CadastralZoneResource($this->cadastralZone)),
+            "cadastral_zone" => (new CadastralZoneResource($this->cadastralZone)),
             "created_at" => $this->created_at,
             "updated_at" => $this->updated_at,
         ];

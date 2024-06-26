@@ -5605,9 +5605,9 @@
                             },
                             "name": {
                                 "type": "string",
-                                "example": "OBIDINI"
+                                "example": "AMAC"
                             },
-                            "office_zone_id": {
+                            "rating_district_id": {
                                 "type": "integer",
                                 "example": 2
                             }
@@ -5731,6 +5731,35 @@
                         "description": "The date when the demand notice was created",
                         "type": "string",
                         "format": "date-time"
+                    }
+                },
+                "type": "object"
+            },
+            "GroupResource": {
+                "title": "Group Resource",
+                "description": "A resource representing a group",
+                "properties": {
+                    "id": {
+                        "description": "The unique identifier of the group",
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "name": {
+                        "description": "name of the group",
+                        "type": "string",
+                        "example": "Residential"
+                    },
+                    "created_at": {
+                        "description": "The creation timestamp of the street",
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2023-01-01T12:00:00Z"
+                    },
+                    "updated_at": {
+                        "description": "The last update timestamp of the street",
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2023-01-02T12:00:00Z"
                     }
                 },
                 "type": "object"
@@ -6059,6 +6088,52 @@
                 },
                 "type": "object"
             },
+            "RatingDistrictResource": {
+                "title": "Rating District Resource",
+                "description": "A resource representing a rating district",
+                "properties": {
+                    "id": {
+                        "description": "The unique identifier of the rating district",
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "name": {
+                        "description": "The rating district name",
+                        "type": "string",
+                        "example": "Johnson Kay Steert"
+                    },
+                    "office_zone": {
+                        "properties": {
+                            "id": {
+                                "type": "integer",
+                                "example": 1
+                            },
+                            "name": {
+                                "type": "string",
+                                "example": "OBIDINI"
+                            },
+                            "office_zone_id": {
+                                "type": "integer",
+                                "example": 2
+                            }
+                        },
+                        "type": "object"
+                    },
+                    "created_at": {
+                        "description": "The creation timestamp of the street",
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2023-01-01T12:00:00Z"
+                    },
+                    "updated_at": {
+                        "description": "The last update timestamp of the street",
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2023-01-02T12:00:00Z"
+                    }
+                },
+                "type": "object"
+            },
             "ShowUserResource": {
                 "title": "Show Staff Resource",
                 "description": "Show Staff Resource",
@@ -6127,10 +6202,22 @@
                         "type": "string",
                         "example": "Johnson Kay Steert"
                     },
-                    "cadastral_zone_id": {
-                        "description": "The cadastral zone id",
-                        "type": "string",
-                        "example": "2"
+                    "cadastral_zone": {
+                        "properties": {
+                            "id": {
+                                "type": "integer",
+                                "example": 1
+                            },
+                            "name": {
+                                "type": "string",
+                                "example": "OBIDINI"
+                            },
+                            "cadastral_zone_id": {
+                                "type": "integer",
+                                "example": 2
+                            }
+                        },
+                        "type": "object"
                     },
                     "created_at": {
                         "description": "The creation timestamp of the street",
