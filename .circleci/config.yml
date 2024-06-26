@@ -21,7 +21,14 @@ jobs:
 
       - run: CI=false sudo apt update
       - run: CI=false sudo apt-get install rsync
-
+      - run:
+          name: rename .env.example file to .env 
+          command: |
+            cd Frontend &&  mv .env.example .env
+      - run:
+          name: find and replace in document
+          command: |
+            cd Frontend && sed -i -e 's:VITE_API_URL=url:VITE_API_URL=https://api.revenuehub.skillzserver.com:g' .env
       - run:
           name: Update known hosts
           command: ssh-keyscan -H 185.160.67.60 >> ~/.ssh/known_hosts && cat ~/.ssh/known_hosts
@@ -235,6 +242,15 @@ jobs:
 
       - run: CI=false sudo apt update
       - run: CI=false sudo apt-get install rsync
+
+      - run:
+          name: rename .env.example file to .env 
+          command: |
+            cd Frontend &&  mv .env.example .env
+      - run:
+          name: find and replace in document
+          command: |
+            cd Frontend && sed -i -e 's:VITE_API_URL=url:VITE_API_URL=https://api.revenuehub.ng:g' .env
 
       - run:
           name: Update known hosts
