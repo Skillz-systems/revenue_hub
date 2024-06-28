@@ -35,7 +35,23 @@ class PropertyService
 
         if ($property) {
 
-            if ($property->update($request->all())) {
+            if ($property->update([
+                'pid' => $request->pid,
+                'occupant' => $request->occupant,
+                'prop_addr' => $request->prop_addr,
+                'street_id' => $request->street_name,
+                'asset_no' => $request->asset_no,
+                'cadastral_zone_id' => $request->cadastral_zone,
+                'property_type_id' => $request->prop_type,
+                'property_use_id' => $request->prop_use,
+                'rating_district_id' => $request->rating_dist,
+                'annual_value' => $request->annual_value,
+                'rate_payable' => $request->rate_payable,
+                'grand_total' => $request->grand_total,
+                'category_id' => $request->category,
+                'group_id' => $request->group,
+                'active' => $request->active,
+            ])) {
                 return $property;
             }
 
