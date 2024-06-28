@@ -36,7 +36,6 @@ class PropertyService
         if ($property) {
 
             if ($property->update([
-                'pid' => $request->pid,
                 'occupant' => $request->occupant,
                 'prop_addr' => $request->prop_addr,
                 'street_id' => $request->street_name,
