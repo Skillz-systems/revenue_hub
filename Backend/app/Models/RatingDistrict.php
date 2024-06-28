@@ -18,4 +18,9 @@ class RatingDistrict extends Model
     {
         return $this->hasMany(Property::class);
     }
+
+    public function officeZone()
+    {
+        return $this->belongsTo(OfficeZone::class, 'office_zone_id');
+    }
 }

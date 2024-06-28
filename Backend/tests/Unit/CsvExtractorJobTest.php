@@ -179,7 +179,7 @@ class CsvExtractorJobTest extends TestCase
         $job = new CsvExtractorJob($data);
         $job->handle();
 
-        $this->assertDatabaseHas('properties', ['pid' => '74544', 'rating_dist' => "1"]);
+        $this->assertDatabaseHas('properties', ['pid' => '74544', 'rating_district_id' => "1"]);
     }
     public function test_handle_property_created_with_demand_notice()
     {
@@ -213,7 +213,7 @@ class CsvExtractorJobTest extends TestCase
         $job = new CsvExtractorJob($data);
         $job->handle();
 
-        $this->assertDatabaseHas('properties', ['pid' => '74544', 'rating_dist' => "1"]);
+        $this->assertDatabaseHas('properties', ['pid' => '74544', 'rating_district_id' => "1"]);
         $this->assertDatabaseHas('demand_notices', ['property_id' => 1, 'amount' => "45000",]);
     }
 }

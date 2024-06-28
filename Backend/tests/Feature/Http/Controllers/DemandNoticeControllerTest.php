@@ -2,12 +2,20 @@
 
 namespace Tests\Feature\Http\Controllers;
 
-use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
-use App\Models\DemandNotice;
+use App\Models\Group;
+use App\Models\Street;
 use App\Models\Payment;
+use App\Models\Category;
 use App\Models\Property;
+use App\Models\OfficeZone;
+use App\Models\PropertyUse;
+use App\Models\DemandNotice;
+use App\Models\PropertyType;
+use App\Models\CadastralZone;
+use App\Models\RatingDistrict;
+use Illuminate\Foundation\Testing\WithFaker;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 
 class DemandNoticeControllerTest extends TestCase
 {
@@ -15,6 +23,14 @@ class DemandNoticeControllerTest extends TestCase
 
     public function test_to_fetch_all_paginated_demand_notice(): void
     {
+        OfficeZone::factory()->create();
+        RatingDistrict::factory()->create();
+        CadastralZone::factory()->create();
+        Street::factory()->create();
+        PropertyType::factory()->create();
+        PropertyUse::factory()->create();
+        Category::factory()->create();
+        Group::factory()->create();
         $property = Property::factory()->create();
         $demandNotice = DemandNotice::factory()->create([
             "property_id" => $property->id
@@ -43,6 +59,14 @@ class DemandNoticeControllerTest extends TestCase
     }
     public function test_to_fetch_single_demand_notice(): void
     {
+        OfficeZone::factory()->create();
+        RatingDistrict::factory()->create();
+        CadastralZone::factory()->create();
+        Street::factory()->create();
+        PropertyType::factory()->create();
+        PropertyUse::factory()->create();
+        Category::factory()->create();
+        Group::factory()->create();
         $property = Property::factory()->create();
         $demandNotice = DemandNotice::factory()->create([
             "property_id" => $property->id
@@ -68,6 +92,14 @@ class DemandNoticeControllerTest extends TestCase
 
     public function test_to_see_if_a_new_demand_notice_can_be_created(): void
     {
+        OfficeZone::factory()->create();
+        RatingDistrict::factory()->create();
+        CadastralZone::factory()->create();
+        Street::factory()->create();
+        PropertyType::factory()->create();
+        PropertyUse::factory()->create();
+        Category::factory()->create();
+        Group::factory()->create();
         $property = Property::factory()->create();
         $data = [
             "property_id" => $property->id

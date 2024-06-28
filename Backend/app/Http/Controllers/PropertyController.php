@@ -25,6 +25,7 @@ class PropertyController extends Controller
      *     path="/api/property",
      *     summary="Get all properties",
      *     tags={"Property"},
+     *     security={{"api_key":{}}},
      *     @OA\Response(
      *         response=200,
      *         description="Successful operation",

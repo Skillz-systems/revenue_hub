@@ -116,7 +116,7 @@ class StreetControllerTest extends TestCase
                 'status' => 'success',
             ])
             ->assertJsonStructure([
-                'data' => ['id', 'name', 'cadastral_zone_id', 'created_at', 'updated_at']
+                'data' => ['id', 'name', 'cadastral_zone', 'created_at', 'updated_at']
             ]);
     }
 
@@ -205,7 +205,7 @@ class StreetControllerTest extends TestCase
                 'status' => 'success',
             ])
             ->assertJsonStructure([
-                'data' => ['id', 'name', 'cadastral_zone_id', 'created_at', 'updated_at']
+                'data' => ['id', 'name', 'cadastral_zone', 'created_at', 'updated_at']
             ]);
     }
 
