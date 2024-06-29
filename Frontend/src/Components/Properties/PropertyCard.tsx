@@ -24,6 +24,8 @@ type PropertiesTableProps = {
   occupationStatus: string;
 };
 
+const apiUrl = import.meta.env.VITE_API_URL as string;
+
 const PropertiesTable: React.FC<PropertiesTableProps> = ({
   id,
   personalIdentificationNumber,
@@ -60,14 +62,11 @@ const PropertiesTable: React.FC<PropertiesTableProps> = ({
     }
 
     try {
-      const response = await axios.delete(
-        `https://api.revenuehub.skillzserver.com/api/property/${pid}`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`, // Headers
-          },
-        }
-      );
+      const response = await axios.delete(`${apiUrl}/api/property/${pid}`, {
+        headers: {
+          Authorization: `Bearer ${token}`, // Headers
+        },
+      });
       if (response.status === 200) {
         setSnackbar({
           open: true,
@@ -84,7 +83,7 @@ const PropertiesTable: React.FC<PropertiesTableProps> = ({
           severity: "warning",
         });
       }
-    } catch (error) {
+    } catch (error: any) {
       let message = "Internal Server Error";
       if (error.response) {
         switch (error.response.status) {
@@ -128,7 +127,7 @@ const PropertiesTable: React.FC<PropertiesTableProps> = ({
 
     try {
       const response = await axios.post(
-        "https://api.revenuehub.skillzserver.com/api/demand-notice/create",
+        `${apiUrl}/api/demand-notice/create`,
         {
           property_id: pid,
         },
@@ -151,7 +150,7 @@ const PropertiesTable: React.FC<PropertiesTableProps> = ({
           severity: "warning",
         });
       }
-    } catch (error) {
+    } catch (error: any) {
       let message = "Internal Server Error";
       if (error.response) {
         switch (error.response.status) {

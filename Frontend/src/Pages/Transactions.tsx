@@ -8,6 +8,8 @@ import {
 import { useTokens, useTriggerError } from "../Utils/client";
 import axios from "axios";
 
+const apiUrl = import.meta.env.VITE_API_URL as string;
+
 const Transactions: React.FC = () => {
   const { token } = useTokens();
   const { staticInformation } = userData();
@@ -33,7 +35,7 @@ const Transactions: React.FC = () => {
   const fetchTransactions = async (dateFilter = "") => {
     try {
       const response = await axios.post(
-        "https://api.revenuehub.skillzserver.com/api/payment",
+        `${apiUrl}/api/payment`,
         { date_filter: dateFilter },
         {
           headers: {
@@ -62,7 +64,7 @@ const Transactions: React.FC = () => {
           severity: "warning",
         });
       }
-    } catch (error) {
+    } catch (error: any) {
       let message = "Internal Server Error";
       if (error.response) {
         switch (error.response.status) {

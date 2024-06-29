@@ -9,6 +9,8 @@ interface AddPropertyProps {
   propertyModalTransition: boolean;
 }
 
+const apiUrl = import.meta.env.VITE_API_URL as string;
+
 const AddProperty: React.FC<AddPropertyProps> = ({
   hideAddPropertyModal,
   propertyModalTransition,
@@ -32,7 +34,7 @@ const AddProperty: React.FC<AddPropertyProps> = ({
     event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
   ) => {
     const { name, value } = event.target;
-    setFormData((prevState) => ({
+    setFormData((prevState: any) => ({
       ...prevState,
       [name]: value,
     }));
@@ -92,7 +94,7 @@ const AddProperty: React.FC<AddPropertyProps> = ({
 
         // Make the POST request
         const response = await axios.post(
-          "https://api.revenuehub.skillzserver.com/api/property",
+          `${apiUrl}/api/property`,
           requestData,
           {
             headers: {
@@ -117,7 +119,7 @@ const AddProperty: React.FC<AddPropertyProps> = ({
             severity: "warning",
           });
         }
-      } catch (error) {
+      } catch (error: any) {
         let message = "Internal Server Error";
         if (error.response) {
           switch (error.response.status) {

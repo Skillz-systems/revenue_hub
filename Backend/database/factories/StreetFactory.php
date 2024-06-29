@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Models\CadastralZone;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -18,7 +19,7 @@ class StreetFactory extends Factory
     {
         return [
             'name' => fake()->name(),
-            'cadastral_zone_id' => fake()->randomDigit(),
+            'cadastral_zone_id' => 1,
         ];
     }
 }

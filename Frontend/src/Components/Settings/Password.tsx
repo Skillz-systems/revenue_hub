@@ -56,7 +56,7 @@ export default function Password() {
 
     try {
       const response = await axios.put(
-        `https://api.revenuehub.skillzserver.com/api/staff/${userId}`,
+        `${apiUrl}/api/staff/${userId}`,
         { password: formData.newPassword },
         {
           headers: {

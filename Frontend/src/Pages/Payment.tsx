@@ -6,6 +6,8 @@ import axios from "axios";
 import images from "../assets";
 import { CustomAlert } from "../Components/Index";
 
+const apiUrl = import.meta.env.VITE_API_URL as string;
+
 const Payment = () => {
   const { pid } = useParams();
   const [paymentAccount, setPaymentAccount] = useState<any>(null);
@@ -28,7 +30,7 @@ const Payment = () => {
         severity: "info",
       });
       const response = await axios.get(
-        `https://api.revenuehub.skillzserver.com/api/payment/generate-account/${pid}`
+        `${apiUrl}/api/payment/generate-account/${pid}`
       );
       if (response.status === 200) {
         setPaymentAccount(response.data);
@@ -45,7 +47,7 @@ const Payment = () => {
           severity: "warning",
         });
       }
-    } catch (error) {
+    } catch (error: any) {
       let message = "Internal Server Error";
       if (error.response) {
         switch (error.response.status) {
