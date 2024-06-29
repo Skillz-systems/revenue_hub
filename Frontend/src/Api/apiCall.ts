@@ -37,7 +37,7 @@ interface ApiCallOptions {
       const response = await axios(requestConfig);
       return response;
     } catch (error) {
-       console.log(error)
+       
       //useTriggerError 
       throw error;
     }

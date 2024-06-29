@@ -32,16 +32,28 @@ const TableComponent: React.FC<TableComponentProps> = ({ loading = false, tableD
   };
 
 
+  const renderHeader:any=  ()=> {
+   
+   const formatted =   tableHeader.map(key => formatHeaderKey(key, true));
+   
+               return formatted.map((item, index) => {
+               
+                return <th key={index} className=" capitalize px-4 py-2 text-left border font-medium font-lexend text-gray-700 text-[10px]">{item || "Id"}</th>
+              
+             })
+  }
+  const renderTableData:any=  (row:any)=> {
+   
+   //const formatted =   tableHeader.map(key => formatHeaderKey(key, true));
+   
+               return tableHeader.map((item, index) => {
+                
+              return <td className="px-4 py-2 font-lexend text-gray-700 text-[15px]">{row[item]}  </td> 
+               
+             })
+  }
   if (loading) return <p className="text-center text-blue-500">Loading data, please wait...</p>;
   // if (error) return <p className="text-center text-red-500">{error}</p>;
-   const renderHeader:any= async (row)=> {
-    const formatted =await  tableHeader.map(key => formatHeaderKey(key, true));
-                formatted.map((item, index) => {
-                 
-               return (<td className="px-4 py-2 font-lexend text-gray-700 text-[15px]">{row[item]} </td> 
-                )
-              })
-   }
   return (
     <div>
       <div className="flex items-center justify-end mb-4 gap-2">
@@ -72,18 +84,20 @@ const TableComponent: React.FC<TableComponentProps> = ({ loading = false, tableD
       <div className="overflow-x-auto">
         <table className="min-w-full bg-white">
           <thead className="bg-gray-100">
+             
             <tr>
-              {tableHeader.map((item, index) => (
-                <th key={index} className=" capitalize px-4 py-2 text-left border font-medium font-lexend text-gray-700 text-[10px]">{item || "Id"}</th>
-              ))}
+              <th className="px-4 py-2 text-left border font-medium font-lexend text-gray-700 text-[10px]">SN</th>
+              {renderHeader()}
+              
               <th className="px-4 py-2 text-left border font-medium font-lexend text-gray-700 text-[10px]">Actions</th>
             </tr>
 
           </thead>
           <tbody>
-            {tableData.map((row) => (
+            {tableData.map((row,index) => (
               <tr key={row.id} className="border-b hover:bg-gray-50">
-                {renderHeader(row)}
+                <td className="px-4 py-2 font-lexend text-gray-700 text-[15px]">{index+1}  </td> 
+                {renderTableData(row)}
                 <td className="px-4 py-2 font-lexend text-gray-700 text-[15px]">
                   <span
                     className="relative px-2 py-2.5 rounded text-base hover:cursor-pointer"
