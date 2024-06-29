@@ -33,8 +33,7 @@ const TabList: React.FC = () => {
     setActiveTab(tabId);
     const activeEndpoint = tabData.find((tab) => tab.id === tabId)?.endpoint;
     setCurrerntEndpoint(activeEndpoint || "street");
-    console.log(tabId);
-    console.log(activeEndpoint)
+    
 
   };
   const fetching = async (endpoint) => {
@@ -52,7 +51,7 @@ const TabList: React.FC = () => {
       switch (currentEndpoint) {
         case "street":
           finalresponse= await Street(response?.data?.data)
-          console.log("finalresponse street",finalresponse)
+          
           break
 
       }
@@ -60,9 +59,8 @@ const TabList: React.FC = () => {
        // setTableData(response?.data?.data)
         const headerKeys = await Object.keys(finalresponse[0]).filter(key => key !== 'updated_at' && key !== 'created_at');
         //setTableHeader(headerKeys)
-        console.log(headerKeys);
-        console.log(response?.data.data)
-        //console.log(tableHeader)
+        
+        
         // setStreets(response.data.data)
         //setTableData(response.data);
 
@@ -71,7 +69,7 @@ const TabList: React.FC = () => {
         setTableHeader(headerKeys)
       }
     } catch (error) {
-      console.log(error)
+      
     } finally {
       setLoading(false);
     }
@@ -97,7 +95,7 @@ const TabList: React.FC = () => {
 
   return (
     <div className="container mx-auto mt-8">
-      <div className="flex flex-wrap mb-4">
+      <div className="grid  grid-cols-4  gap-4">
         {tabData.map((tab) => (
           <button
             key={tab.id}

@@ -67,12 +67,12 @@ const TabItem: React.FC<{ tabData: TabData }> = ({ tabData }) => {
             })
 
             if (response.status === 200) {
-                console.log(response.data.data);
+               
                 setStreets(response.data.data)
                 //setTableData(response.data);
             }
         } catch (error) {
-            console.log(error)
+            
         } finally {
             //setLoading(false);
         }

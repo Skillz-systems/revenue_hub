@@ -27,11 +27,11 @@ const AddNewStreetModal: React.FC<AddNewStreetModalProps> = ({ isOpen, hideModal
     try {
       if (!form.name || !form.cadastral_zone_id) {
         alert("All fields are required.");
-        console.log("Form submission prevented: All fields are required.");
+        
         return;
       }
 
-      console.log("Submitting form data:", form);
+    
 
       const response = await apiCall<{}>({
         endpoint: "/street/create",
@@ -40,7 +40,7 @@ const AddNewStreetModal: React.FC<AddNewStreetModalProps> = ({ isOpen, hideModal
       });
 
       if (response.status === 201) {
-        console.log('Street added successfully:', response.data);
+        
         setForm({ name: "", cadastral_zone_id: "" }); 
         hideModal(); 
       } 
