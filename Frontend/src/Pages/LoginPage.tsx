@@ -142,7 +142,7 @@ function LoginPage(): JSX.Element {
                 : "STAFF SIGN IN"}
             </span>
           </div>
-          {forgotPasswordState === "login" ? (
+          {forgotPasswordState !== "email" ? (
             <form
               className="flex flex-col items-center justify-center w-full space-y-2 lg:items-start md:space-y-3"
               onSubmit={handleFormSubmit}
@@ -180,9 +180,11 @@ function LoginPage(): JSX.Element {
                   inputStyle="h-12 mg:h-[48px] rounded outline-none px-1 py-0.5 md:px-2 md:py-1 w-full font-lexend text-sm md:text-base font-medium text-white hover:cursor-pointer"
                 />
               </div>
-              <p className="text-xs font-lexend text-color-dark-red">
-                {errorState}
-              </p>
+              {errorState ? (
+                <p className="text-xs font-lexend text-color-dark-red test">
+                  {errorState}
+                </p>
+              ) : null}
               <p
                 className="flex items-center justify-center w-full text-sm underline cursor-pointer text-color-text-two font-lexend"
                 onClick={() => setForgotPasswordState("email")}
