@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { useParams } from "react-router-dom";
 import QRCode from "react-qr-code";
 import { formatNumberWithCommas, useTriggerError } from "../Utils/client";
-import axios from "axios";
+import axios, { AxiosError } from "axios";
 import images from "../assets";
 import { CustomAlert } from "../Components/Index";
 
@@ -49,31 +49,37 @@ const Payment = () => {
       }
     } catch (error: any) {
       let message = "Internal Server Error";
-      if (error.response) {
-        switch (error.response.status) {
-          case 400:
-            message = "Bad request. Property Id is missing.";
-            break;
-          case 401:
-            message = "You are unauthorized";
-            break;
-          case 403:
-            message = "You are forbidden";
-            break;
-          case 404:
-            message = "Payment not found";
-            break;
-          case 429:
-            message = "Too many requests made. Refreshing in 3 seconds";
-            setTimeout(() => {
-              window.location.reload();
-            }, 3000);
-            break;
-          case 500:
-            triggerError(error);
-            break;
-          default:
-            break;
+      if (error.isAxiosError) {
+        const axiosError = error as AxiosError;
+        if (axiosError.code === "ERR_NETWORK") {
+          message =
+            "Network error. Please check your internet connection and try again.";
+        } else if (axiosError.response) {
+          switch (axiosError.response.status) {
+            case 400:
+              message = "Bad request. Property Id is missing.";
+              break;
+            case 401:
+              message = "You are unauthorized";
+              break;
+            case 403:
+              message = "You are forbidden";
+              break;
+            case 404:
+              message = "Payment not found";
+              break;
+            case 429:
+              message = "Too many requests made. Refreshing in 3 seconds";
+              setTimeout(() => {
+                window.location.reload();
+              }, 3000);
+              break;
+            case 500:
+              triggerError(error);
+              break;
+            default:
+              break;
+          }
         }
       }
       setSnackbar({ open: true, message, severity: "error" });
