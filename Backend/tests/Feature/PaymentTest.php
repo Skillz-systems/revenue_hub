@@ -2,15 +2,23 @@
 
 namespace Tests\Feature;
 
-use App\Models\DemandNotice;
-use App\Models\DemandNoticeAccount;
-use App\Models\Payment;
-use App\Models\Property;
-use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
-use Illuminate\Support\Facades\Http;
+use App\Models\Group;
+use App\Models\Street;
+use App\Models\Payment;
+use App\Models\Category;
+use App\Models\Property;
+use App\Models\OfficeZone;
+use App\Models\PropertyUse;
+use App\Models\DemandNotice;
+use App\Models\PropertyType;
 use Illuminate\Http\Request;
+use App\Models\CadastralZone;
+use App\Models\RatingDistrict;
+use App\Models\DemandNoticeAccount;
+use Illuminate\Support\Facades\Http;
+use Illuminate\Foundation\Testing\WithFaker;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 
 class PaymentTest extends TestCase
 {
@@ -46,6 +54,14 @@ class PaymentTest extends TestCase
      */
     public function test_to_fetch_all_paginated_payments(): void
     {
+        OfficeZone::factory()->create();
+        RatingDistrict::factory()->create();
+        CadastralZone::factory()->create();
+        Street::factory()->create();
+        PropertyType::factory()->create();
+        PropertyUse::factory()->create();
+        Category::factory()->create();
+        Group::factory()->create();
         $property = Property::factory()->create();
         $demandNotice = DemandNotice::factory()->create([
             "property_id" => $property->id
@@ -75,6 +91,14 @@ class PaymentTest extends TestCase
     }
     public function test_to_fetch_single_payments(): void
     {
+        OfficeZone::factory()->create();
+        RatingDistrict::factory()->create();
+        CadastralZone::factory()->create();
+        Street::factory()->create();
+        PropertyType::factory()->create();
+        PropertyUse::factory()->create();
+        Category::factory()->create();
+        Group::factory()->create();
         $property = Property::factory()->create();
         //DemandNotice::factory()->count(1)->make(["property_id" => (Property::factory()->create())->id])->create())->id
         $demandNotice = DemandNotice::factory()->create([
