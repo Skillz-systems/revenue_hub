@@ -6,6 +6,7 @@ import { IoIosReturnLeft } from "react-icons/io";
 import {
   TopNavigation,
   SideBarMenu,
+  SideBarMenuMobile,
   MenuItemData,
   DemandPropertyModal,
   AddProperty,
@@ -36,6 +37,8 @@ const ProjectLayout: React.FC = () => {
   }, [online]);
 
   const [displaySideBarMenu, setDisplaySideBarMenu] = useState<boolean>(true);
+  const [displayMobileSideBarMenu, setDisplayMobileSideBarMenu] =
+    useState<boolean>(true);
   const [transitionSection, setTransitionSection] = useState<boolean>(false);
   const [activeMenuItem, setActiveMenuItem] =
     useState<string>("Overview Component");
@@ -266,6 +269,7 @@ const ProjectLayout: React.FC = () => {
                   setActiveComponent(null);
                   setAccountsPasswordState("Accounts");
                 }}
+                displayMobileNav={() => setDisplayMobileSideBarMenu(true)}
               />
 
               {activeMenuItem === "Settings Component" ? null : (
@@ -354,6 +358,33 @@ const ProjectLayout: React.FC = () => {
                 )}
               </DemandPropertyModal>
             )}
+            {displayMobileSideBarMenu ? (
+              <div className="flex-col h-screen overflow-y-auto overscroll-contain scrollbar-thin scrollbar-thumb-color-text-two scrollbar-track-white">
+                <SideBarMenuMobile
+                  hideSideBar={() => setDisplayMobileSideBarMenu(false)}
+                  showAddPropertyModal={() => {
+                    setDisplayAddPropertyModal(true);
+                    setTimeout(() => {
+                      setPropertyModalTransition(true);
+                    }, 250);
+                  }}
+                  showAddDemandModal={() => {
+                    setDisplayAddDemandModal(true);
+                    setTimeout(() => {
+                      setPropertyModalTransition(true);
+                    }, 250);
+                  }}
+                  handleMenuItemClick={handleMenuItemClick}
+                  activeMenuItem={activeMenuItem}
+                  setActiveComponent={setActiveComponent}
+                  handleViewProfile={() => {
+                    setActiveMenuItem("Settings Component");
+                    setActiveComponent(null);
+                    setAccountsPasswordState("Accounts");
+                  }}
+                />
+              </div>
+            ) : null}
             <CustomAlert
               isOpen={snackbar.open}
               message={snackbar.message}

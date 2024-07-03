@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 
 interface ProfileBoxProps {
   profileName: string;
@@ -7,6 +7,7 @@ interface ProfileBoxProps {
   designation: string;
   location: string;
   onHideSideBarMenu: () => void;
+  handleViewProfile: () => void;
 }
 
 const ProfileBox: React.FC<ProfileBoxProps> = ({
@@ -16,6 +17,7 @@ const ProfileBox: React.FC<ProfileBoxProps> = ({
   designation,
   location,
   onHideSideBarMenu,
+  handleViewProfile,
 }) => {
   return (
     <div className="flex-col w-full p-2 space-y-2 border-0.5 rounded border-custom-color-two">
@@ -31,16 +33,27 @@ const ProfileBox: React.FC<ProfileBoxProps> = ({
           {profileIcon}
         </span>
       </div>
-      <div className="flex bg-primary-color p-1.5 items-center justify-between rounded">
-        <p className="text-xs text-white font-lexend">{title}</p>
-        <span className="flex gap-1">
-          <p className="px-1 text-xs font-semibold uppercase bg-white rounded-sm text-primary-color font-lexend">
+      <div
+        className="flex w-full gap-1 flex-col space-y-1.5 items-start lg:space-y-0 lg:flex-row bg-primary-color p-1.5 lg:items-center justify-between rounded"
+        onClick={handleViewProfile}
+      >
+        <p className="text-xs text-white font-lexend hover:underline lg:hover:no-underline">
+          {title}
+        </p>
+        <div className="flex w-full gap-1 lg:justify-end lg:w-[75%]">
+          <span
+            className="px-1 text-xs font-semibold uppercase bg-white rounded-sm ellipsis text-primary-color font-lexend w-[50%] lg:w-auto"
+            title={designation}
+          >
             {designation}
-          </p>
-          <p className="px-1 text-xs font-semibold uppercase bg-white rounded-sm text-primary-color font-lexend">
+          </span>
+          <span
+            className="px-1 text-xs font-semibold uppercase bg-white rounded-sm ellipsis text-primary-color font-lexend w-[50%] lg:w-auto"
+            title={location}
+          >
             {location}
-          </p>
-        </span>
+          </span>
+        </div>
       </div>
     </div>
   );
