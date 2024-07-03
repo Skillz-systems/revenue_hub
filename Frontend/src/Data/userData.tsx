@@ -51,7 +51,7 @@ const userData = () => {
       if (error.response?.status === 500) {
         triggerError(error);
       } else {
-        console.error(error);
+        console.error(error.message);
       }
     }
   };

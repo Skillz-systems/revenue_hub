@@ -43,8 +43,8 @@ const SibeBarMenuMobile: React.FC<SideBarMenuProps> = ({
   const isMobile: boolean = true;
 
   return (
-    <div className="absolute top-0 right-0 z-50 flex items-start justify-end w-full bg-black bg-opacity-40 lg:hidden">
-      <div className="flex-col space-y-6 w-[200px] sm:w-[225px] h-full px-2 py-2 pb-6 bg-white">
+    <div className="flex-col w-[200px] sm:w-[225px] items-start justify-end h-screen overflow-y-auto bg-white lg:hidden overscroll-contain scrollbar-thin scrollbar-thumb-color-text-two scrollbar-track-white">
+      <div className="flex-col w-full px-2.5 py-2 space-y-6">
         <ProfileBox
           profileName={"Revenuehub.ng"}
           profileIcon={<FaChevronLeft />}
@@ -59,11 +59,17 @@ const SibeBarMenuMobile: React.FC<SideBarMenuProps> = ({
           iconTwo={<PiBuildingsFill />}
           buttonTextOne={"New Demand Invoice"}
           buttonTextTwo={"Add Property"}
-          openNewDemandInvoiceModal={showAddDemandModal}
-          openAddPropertyModal={showAddPropertyModal}
+          openNewDemandInvoiceModal={() => {
+            hideSideBar();
+            showAddDemandModal();
+          }}
+          openAddPropertyModal={() => {
+            hideSideBar();
+            showAddPropertyModal();
+          }}
         />
         <hr className="border-0.5 border-divider-grey my-4" />
-        <div className="flex-col space-y-2">
+        <div className="flex-col pb-5 space-y-2">
           {menuItems.map((item) => (
             <React.Fragment key={item.id}>
               <MenuItem

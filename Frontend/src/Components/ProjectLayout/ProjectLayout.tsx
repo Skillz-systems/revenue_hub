@@ -27,9 +27,10 @@ const ProjectLayout: React.FC = () => {
   const [online, setOnline] = useState<boolean | any>(true);
 
   const checkInternetStatus = async () => {
-    const { isOnline } = await networkStatus();
-    setOnline(isOnline);
-    console.log("Status:", online);
+    const status = await networkStatus();
+    if (status) {
+      setOnline(status.isOnline);
+    }
   };
 
   useEffect(() => {
@@ -38,7 +39,7 @@ const ProjectLayout: React.FC = () => {
 
   const [displaySideBarMenu, setDisplaySideBarMenu] = useState<boolean>(true);
   const [displayMobileSideBarMenu, setDisplayMobileSideBarMenu] =
-    useState<boolean>(true);
+    useState<boolean>(false);
   const [transitionSection, setTransitionSection] = useState<boolean>(false);
   const [activeMenuItem, setActiveMenuItem] =
     useState<string>("Overview Component");
@@ -255,14 +256,16 @@ const ProjectLayout: React.FC = () => {
             ) : null}
 
             <div
-              className={`flex-col items-center justify-center p-4 pt-1 space-y-8 bg-white border-0.6 border-b-0 rounded-b-none border-custom-border rounded overflow-auto overscroll-contain scrollbar-thin scrollbar-thumb-color-text-two scrollbar-track-white ${
+              className={`h-full flex-col items-center justify-center p-4 pt-[70px] lg:pt-1 space-y-8 bg-white border-0.6 border-b-0 rounded-b-none border-custom-border rounded overflow-auto overscroll-contain scrollbar-thin scrollbar-thumb-color-text-two scrollbar-track-white ${
                 transitionSection
                   ? "w-full transition-all ease-in-out duration-500"
                   : "w-full lg:w-[81%]"
               }`}
             >
               <TopNavigation
-                parentStyle={""}
+                parentStyle={
+                  "fixed lg:static top-0 left-0 z-10 w-full bg-white"
+                }
                 userName={accountInformation?.name}
                 handleViewProfile={() => {
                   setActiveMenuItem("Settings Component");
@@ -328,11 +331,13 @@ const ProjectLayout: React.FC = () => {
               )}
             </div>
 
-            {(displayAddPropertyModal || displayAddDemandModal) && (
+            {displayAddPropertyModal ||
+            displayAddDemandModal ||
+            displayMobileSideBarMenu ? (
               <DemandPropertyModal
-                modalStyle={
-                  "absolute top-0 left-0 z-20 flex items-start justify-end w-full h-screen p-4 overflow-hidden bg-black bg-opacity-40"
-                }
+                modalStyle={`absolute top-0 left-0 z-20 flex items-start justify-end w-full h-screen overflow-hidden bg-black bg-opacity-40 ${
+                  displayMobileSideBarMenu ? "p-0" : "p-4 "
+                }`}
               >
                 {displayAddPropertyModal && (
                   <AddProperty
@@ -356,34 +361,32 @@ const ProjectLayout: React.FC = () => {
                     propertyModalTransition={propertyModalTransition}
                   />
                 )}
+                {displayMobileSideBarMenu && (
+                  <SideBarMenuMobile
+                    hideSideBar={() => setDisplayMobileSideBarMenu(false)}
+                    showAddPropertyModal={() => {
+                      setDisplayAddPropertyModal(true);
+                      setTimeout(() => {
+                        setPropertyModalTransition(true);
+                      }, 250);
+                    }}
+                    showAddDemandModal={() => {
+                      setDisplayAddDemandModal(true);
+                      setTimeout(() => {
+                        setPropertyModalTransition(true);
+                      }, 250);
+                    }}
+                    handleMenuItemClick={handleMenuItemClick}
+                    activeMenuItem={activeMenuItem}
+                    setActiveComponent={setActiveComponent}
+                    handleViewProfile={() => {
+                      setActiveMenuItem("Settings Component");
+                      setActiveComponent(null);
+                      setAccountsPasswordState("Accounts");
+                    }}
+                  />
+                )}
               </DemandPropertyModal>
-            )}
-            {displayMobileSideBarMenu ? (
-              <div className="flex-col h-screen overflow-y-auto overscroll-contain scrollbar-thin scrollbar-thumb-color-text-two scrollbar-track-white">
-                <SideBarMenuMobile
-                  hideSideBar={() => setDisplayMobileSideBarMenu(false)}
-                  showAddPropertyModal={() => {
-                    setDisplayAddPropertyModal(true);
-                    setTimeout(() => {
-                      setPropertyModalTransition(true);
-                    }, 250);
-                  }}
-                  showAddDemandModal={() => {
-                    setDisplayAddDemandModal(true);
-                    setTimeout(() => {
-                      setPropertyModalTransition(true);
-                    }, 250);
-                  }}
-                  handleMenuItemClick={handleMenuItemClick}
-                  activeMenuItem={activeMenuItem}
-                  setActiveComponent={setActiveComponent}
-                  handleViewProfile={() => {
-                    setActiveMenuItem("Settings Component");
-                    setActiveComponent(null);
-                    setAccountsPasswordState("Accounts");
-                  }}
-                />
-              </div>
             ) : null}
             <CustomAlert
               isOpen={snackbar.open}

@@ -3,14 +3,16 @@ import Cookies from "js-cookie";
 import { useContext } from "react";
 import { ErrorContext } from "../Context/ErrorContext";
 import isOnline from "is-online";
+interface NetworkStatus {
+  isOnline: boolean;
+}
 
-export const networkStatus = async () => {
+export const networkStatus = async (): Promise<NetworkStatus | undefined> => {
   try {
     const online = await isOnline();
-    console.log("Network Status:", online);
     return { isOnline: online };
   } catch (error) {
-    console.log("Error checking network status:", error);
+    return undefined;
   }
 };
 
