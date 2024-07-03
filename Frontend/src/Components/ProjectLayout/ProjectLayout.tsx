@@ -22,8 +22,11 @@ import {
 } from "../Index";
 import NetworkOffline from "../../Pages/NetworkOffline";
 import { networkStatus } from "../../Utils/client";
+import { useMediaQuery } from "react-responsive";
+import PasswordAccountPortal from "./PasswordAccountPortal";
 
 const ProjectLayout: React.FC = () => {
+  const isDesktop = useMediaQuery({ query: "(min-width: 1024px)" });
   const [online, setOnline] = useState<boolean | any>(true);
 
   const checkInternetStatus = async () => {
@@ -210,49 +213,14 @@ const ProjectLayout: React.FC = () => {
               )}
             </div>
 
-            {activeMenuItem === "Settings Component" ? (
-              <div className="flex-col px-4 space-y-2 w-[200px] text-color-text-on font-lexend border-l-0.5 border-divider-grey">
-                <div
-                  className={`p-2 text-xs rounded border-0.6 border-custom-color-two hover:bg-primary-color hover:text-white hover:cursor-pointer ${
-                    accountsPasswordState === "Accounts" &&
-                    "bg-primary-color text-white"
-                  }`}
-                  title="Your account information"
-                  onClick={() => {
-                    setActiveComponent(null);
-                    setAccountsPasswordState("Accounts");
-                  }}
-                >
-                  Your Account
-                </div>
-                <div
-                  className={`p-2 text-xs rounded border-0.6 border-custom-color-two hover:bg-primary-color hover:text-white hover:cursor-pointer ${
-                    accountsPasswordState === "Password" &&
-                    "bg-primary-color text-white"
-                  }`}
-                  title="Change your password"
-                  onClick={() => {
-                    setActiveComponent(null);
-                    setAccountsPasswordState("Password");
-                  }}
-                >
-                  Change Password
-                </div>
-                {accountsPasswordState ? (
-                  <p
-                    className="flex items-center gap-1 pt-2 text-[11px] text-color-dark-red hover:cursor-pointer"
-                    onClick={() => {
-                      setAccountsPasswordState("return");
-                      setActiveComponent(<Settings />);
-                    }}
-                  >
-                    <span>
-                      <IoIosReturnLeft />
-                    </span>
-                    Return to Dashboard
-                  </p>
-                ) : null}
-              </div>
+            {activeMenuItem === "Settings Component" && isDesktop ? (
+              <PasswordAccountPortal>
+                <PasswordAccountButtons
+                  accountsPasswordState={accountsPasswordState}
+                  setAccountsPasswordState={setAccountsPasswordState}
+                  setActiveComponent={setActiveComponent}
+                />
+              </PasswordAccountPortal>
             ) : null}
             <div
               className={`h-full flex-col items-center justify-center p-4 pt-[70px] lg:pt-1 space-y-8 bg-white border-0.6 border-b-0 rounded-b-none border-custom-border rounded overflow-auto scrollbar-thin scrollbar-thumb-color-text-two scrollbar-track-white ${
@@ -399,6 +367,55 @@ const ProjectLayout: React.FC = () => {
         <NetworkOffline />
       )}
     </>
+  );
+};
+
+export const PasswordAccountButtons = ({
+  accountsPasswordState,
+  setAccountsPasswordState,
+  setActiveComponent,
+}: any) => {
+  return (
+    <div className="test flex-col px-4 space-y-2 w-[200px] text-color-text-on font-lexend border-l-0.5 border-divider-grey">
+      <div
+        className={`p-2 text-xs rounded border-0.6 border-custom-color-two hover:bg-primary-color hover:text-white hover:cursor-pointer ${
+          accountsPasswordState === "Accounts" && "bg-primary-color text-white"
+        }`}
+        title="Your account information"
+        onClick={() => {
+          setActiveComponent(null);
+          setAccountsPasswordState("Accounts");
+        }}
+      >
+        Your Account
+      </div>
+      <div
+        className={`p-2 text-xs rounded border-0.6 border-custom-color-two hover:bg-primary-color hover:text-white hover:cursor-pointer ${
+          accountsPasswordState === "Password" && "bg-primary-color text-white"
+        }`}
+        title="Change your password"
+        onClick={() => {
+          setActiveComponent(null);
+          setAccountsPasswordState("Password");
+        }}
+      >
+        Change Password
+      </div>
+      {accountsPasswordState ? (
+        <p
+          className="flex items-center gap-1 pt-2 text-[11px] text-color-dark-red hover:cursor-pointer"
+          onClick={() => {
+            setAccountsPasswordState("return");
+            setActiveComponent(<Settings />);
+          }}
+        >
+          <span>
+            <IoIosReturnLeft />
+          </span>
+          Return to Dashboard
+        </p>
+      ) : null}
+    </div>
   );
 };
 
