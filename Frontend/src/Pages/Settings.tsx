@@ -11,7 +11,7 @@ export default function Settings() {
   } = userData();
 
   return (
-    <div className="flex-col space-y-8">
+    <div className="flex-col w-full space-y-8 overflow-auto scrollbar-thin scrollbar-thumb-color-text-two scrollbar-track-white">
       {staffInformation ? (
         <StaffTable
           staticInformation={staticInformation}

@@ -1,5 +1,5 @@
 import React, { MouseEvent } from "react";
-
+import { useMediaQuery } from "react-responsive";
 interface MenuItemProps {
   menuId: number;
   parentDivStyle: string;
@@ -9,6 +9,7 @@ interface MenuItemProps {
   menuItemCount?: number;
   setComponent: () => void;
   isActive: boolean;
+  hideSideBar: () => void;
 }
 
 const MenuItem: React.FC<MenuItemProps> = ({
@@ -20,7 +21,10 @@ const MenuItem: React.FC<MenuItemProps> = ({
   menuItemCount,
   setComponent,
   isActive,
+  hideSideBar,
 }) => {
+  const isDesktop = useMediaQuery({ query: "(min-width: 1024px)" });
+
   const handleClick = (event: MouseEvent<HTMLDivElement>) => {
     event.preventDefault();
     setComponent();
@@ -31,16 +35,35 @@ const MenuItem: React.FC<MenuItemProps> = ({
       key={menuId}
       className={`flex items-center justify-between px-1.5 py-2 transition ease-in-out  hover:cursor-pointer hover:translate-x-1
       ${parentDivStyle}
-      ${isActive ? "bg-white border-1.5 border-custom-color-two rounded shadow-custom-100" : ""}
+      ${
+        isActive
+          ? "bg-white border-1.5 border-custom-color-two rounded shadow-custom-100"
+          : ""
+      }
       `}
       title={menuName}
-      onClick={handleClick}
+      onClick={(event) => {
+        if (isDesktop) {
+          handleClick(event);
+        } else {
+          hideSideBar();
+          handleClick(event);
+        }
+      }}
     >
       <div className="flex items-center space-x-2">
-        <span className={`text-2xl text-color-text-two ${isActive ? "text-primary-color" : ""}`}>
+        <span
+          className={`text-2xl text-color-text-two ${
+            isActive ? "text-primary-color" : ""
+          }`}
+        >
           {isActive ? menuIconTwo : menuIcon}
         </span>
-        <span className={`text-xs text-left text-color-text-two font-lexend ${isActive ? "text-primary-color font-semibold" : ""}`}>
+        <span
+          className={`text-xs text-left text-color-text-two font-lexend ${
+            isActive ? "text-primary-color font-semibold" : ""
+          }`}
+        >
           {menuName}
         </span>
       </div>

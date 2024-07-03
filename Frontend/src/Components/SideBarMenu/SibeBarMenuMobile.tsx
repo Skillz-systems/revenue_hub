@@ -84,6 +84,7 @@ const SibeBarMenuMobile: React.FC<SideBarMenuProps> = ({
                   handleMenuItemClick(item.componentName);
                   setActiveComponent(item.component);
                 }}
+                hideSideBar={hideSideBar}
               />
               {item.id === 5 && (
                 <div className="py-2">

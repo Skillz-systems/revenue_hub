@@ -254,9 +254,8 @@ const ProjectLayout: React.FC = () => {
                 ) : null}
               </div>
             ) : null}
-
             <div
-              className={`h-full flex-col items-center justify-center p-4 pt-[70px] lg:pt-1 space-y-8 bg-white border-0.6 border-b-0 rounded-b-none border-custom-border rounded overflow-auto overscroll-contain scrollbar-thin scrollbar-thumb-color-text-two scrollbar-track-white ${
+              className={`h-full flex-col items-center justify-center p-4 pt-[70px] lg:pt-1 space-y-8 bg-white border-0.6 border-b-0 rounded-b-none border-custom-border rounded overflow-auto scrollbar-thin scrollbar-thumb-color-text-two scrollbar-track-white ${
                 transitionSection
                   ? "w-full transition-all ease-in-out duration-500"
                   : "w-full lg:w-[81%]"
@@ -323,7 +322,7 @@ const ProjectLayout: React.FC = () => {
                   <Accounts currentUserData={accountInformation} />
                 </div>
               ) : accountsPasswordState === "Password" ? (
-                <div className="flex items-center justify-center ">
+                <div className="flex items-center justify-center">
                   <Password />
                 </div>
               ) : (
