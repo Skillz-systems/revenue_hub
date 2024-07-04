@@ -254,7 +254,7 @@ const DemandInvoiceDocument = ({
   };
 
   return (
-    <div className="flex flex-col items-center py-2 space-y-2 bg-white w-[50%] h-[95vh] rounded print:w-[100%] print:h-[auto]">
+    <div className="flex flex-col items-center py-2 space-y-2 bg-white md:w-[60%] lg:w-[50%] h-[95vh] rounded print:w-[100%] print:h-[auto]">
       <div className="flex justify-end w-full px-4 hide-on-print">
         <span
           className="flex items-center justify-center px-0.5 w-[24px] h-[24px] text-xs text-color-dark-red border border-color-dark-red rounded hover:cursor-pointer"
@@ -266,7 +266,7 @@ const DemandInvoiceDocument = ({
       </div>
       {/* PDF START*/}
 
-      <div className="overflow-y-auto overscroll-contain scrollbar-thin scrollbar-thumb-color-text-two scrollbar-track-white">
+      <div className="overflow-auto sm:w-auto overscroll-contain scrollbar-thin scrollbar-thumb-color-text-two scrollbar-track-white">
         <div
           ref={pdfRef}
           className="bg-white print-section flex flex-col items-center justify-center px-4 py-4 space-y-4 w-[100%]"
