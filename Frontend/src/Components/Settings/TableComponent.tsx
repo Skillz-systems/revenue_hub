@@ -27,7 +27,7 @@ const TableComponent: React.FC<TableComponentProps> = ({ loading, tableData, tab
   };
 
   const handleActionsClick = (rowId: number) => {
-    console.log("Action", rowId)
+
     setOpenRowId(prevRowId => (prevRowId === rowId ? null : rowId));
   };
 
@@ -39,32 +39,30 @@ const TableComponent: React.FC<TableComponentProps> = ({ loading, tableData, tab
     ));
   };
 
-  const renderTableData = (row: any, index: number, data:any="") => {
-    console.log("info", data, row)
+  const renderTableData = (row: any, index: number, data: any = "") => {
+
     return (
       <tr key={row.id} className="border-b hover:bg-gray-50">
         <td className="px-4 py-2 font-lexend text-gray-700 text-[15px]">{index + 1}</td>
         {tableHeader.map((key, i) => (
-          <td key={i} className="px-4 py-2 font-lexend text-gray-700 text-[15px]">
+          <td className="px-4 py-2 font-lexend text-gray-700 text-[15px]">
             {row[key]}
           </td>
         ))}
         <td className="px-4 py-2 font-lexend text-gray-700 text-[15px] relative">
-          <span
+          <div
             className="relative px-2 py-2.5 rounded text-base hover:cursor-pointer"
-            onClick={() => handleActionsClick(index)}
+
           >
-            <HiOutlineDotsHorizontal />
-            {openRowId === index && (
-              <div className="absolute top-0 z-10 right-0 flex-col w-36 p-4 text-xs bg-white rounded shadow-md">
-                <RowActions
-                  endpoint={endpoints}
-                  data={data}
-                  onActionComplete={() => setOpenRowId(null)} // Close the actions when an action is complete
-                />
-              </div>
-            )}
-          </span>
+            <RowActions
+              endpoint={endpoints}
+              data={data}
+              onActionComplete={() => setOpenRowId(null)} // Close the actions when an action is complete
+            />
+
+
+
+          </div>
         </td>
       </tr>
     );
