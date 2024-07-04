@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
+import React, { useRef, useEffect, useState } from 'react';
 import apiCall from '../../Api/apiCall';
+import { HiOutlineDotsHorizontal } from 'react-icons/hi';
 
 interface RowActionsProps {
   endpoint: string;
@@ -8,11 +9,29 @@ interface RowActionsProps {
 }
 
 const RowActions: React.FC<RowActionsProps> = ({ endpoint, data, onActionComplete }) => {
+  const [showOptions, setShowOptions] = useState<boolean>(false);
   const [viewDetails, setViewDetails] = useState<boolean>(false);
   const [updateData, setUpdateData] = useState<boolean>(false);
   const [deleteData, setDeleteData] = useState<boolean>(false);
   const [form, setForm] = useState<{ [key: string]: string | number }>(data);
   const [viewData, setViewData] = useState<object>({})
+  const optionsRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (optionsRef.current && !optionsRef.current.contains(event.target as Node)) {
+        setShowOptions(false);
+      }
+    }
+
+    // Bind the event listener
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      // Unbind the event listener on cleanup
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
+
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target;
@@ -48,65 +67,72 @@ const RowActions: React.FC<RowActionsProps> = ({ endpoint, data, onActionComplet
       console.error('Error deleting:', error);
     }
   };
-  
-  const handleView = async (data:any) => {
-    setViewDetails(true)
+
+  const handleView = async (data: any) => {
+
     try {
 
-   let viewDatas =   await apiCall({
+      let viewDatas: any = await apiCall({
         endpoint: `${endpoint.toLowerCase()}/view/${data.id}`,
         method: 'get',
       });
-      setViewData(viewDatas);
-      console.log("things", viewData)
+      setViewData(viewDatas?.data?.data);
       setViewDetails(true)
-      
+
     } catch (error) {
       console.error('Error fetchingData:', error);
     }
   };
-  const renderView = (mainData:any) => {
-  
-    let data:any = Object.keys(mainData);
-  
+  const renderView = (mainData: any) => {
+
+    let data: any = Object.keys(mainData);
     return (
-      <table>
-        {data.map((value:any) => {
-          <tr>
-            <td>{value}</td>
+      <table className=''>
+
+        {data.map((value: any) => {
+
+          return <tr className='border-b hover:bg-gray-50'>
+            <th>{value.replace('_', ' ')} :</th>
             <td>
               {typeof mainData[value] == "object"
                 ? mainData[value].name
                 : mainData[value]}
             </td>
-          </tr>;
+          </tr>
         })}
       </table>
     );
-    
-  
   }
 
   return (
     <>
-      <p
-        className="hover:cursor-pointer mb-2 font-lexend text-gray-700 text-[10px]"
-        onClick={() => handleView(data)}
-      >
-        View Details
-      </p>
-      <p
-        className="hover:cursor-pointer mb-2 font-lexend text-gray-700 text-[10px]"
-        onClick={() => setUpdateData(true)}
-      >
-        Update
-      </p>
-      <p
-        className="hover:cursor-pointer font-lexend text-gray-700 text-[10px]"
-        onClick={() => setDeleteData(true)}
-      >
-        Delete
-      </p>
+      {showOptions && (
+
+        <div ref={optionsRef} className="absolute top-0 z-10 right-0 flex-col w-36 p-4 text-xs bg-white rounded shadow-md">
+          <p
+            className="hover:cursor-pointer mb-2 font-lexend text-gray-700 text-[10px]"
+            onClick={() => handleView(data)}
+          >
+            View Details
+          </p>
+          <p
+            className="hover:cursor-pointer mb-2 font-lexend text-gray-700 text-[10px]"
+            onClick={() => setUpdateData(true)}
+          >
+            Update
+          </p>
+          <p
+            className="hover:cursor-pointer font-lexend text-gray-700 text-[10px]"
+            onClick={() => setDeleteData(true)}
+          >
+            Delete
+          </p>
+        </div>
+      )}
+
+      {!showOptions && <div onClick={() => setShowOptions(true)}><HiOutlineDotsHorizontal /></div>}
+
+
 
       {viewDetails && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
@@ -118,7 +144,7 @@ const RowActions: React.FC<RowActionsProps> = ({ endpoint, data, onActionComplet
               </button>
             </div>
             <div>
-              abcdn
+              {renderView(viewData)}
             </div>
           </div>
         </div>
@@ -177,7 +203,7 @@ const RowActions: React.FC<RowActionsProps> = ({ endpoint, data, onActionComplet
         </div>
       )}
     </>
-    
+
   );
 };
 
