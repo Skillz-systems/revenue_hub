@@ -23,7 +23,6 @@ import {
 import NetworkOffline from "../../Pages/NetworkOffline";
 import { networkStatus } from "../../Utils/client";
 import { useMediaQuery } from "react-responsive";
-import PasswordAccountPortal from "./PasswordAccountPortal";
 
 const ProjectLayout: React.FC = () => {
   const isDesktop = useMediaQuery({ query: "(min-width: 1024px)" });
