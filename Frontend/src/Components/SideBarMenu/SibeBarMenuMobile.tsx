@@ -11,6 +11,7 @@ import { PiBuildingsFill, PiListBulletsFill } from "react-icons/pi";
 import Cookies from "js-cookie";
 import { useNavigate } from "react-router-dom";
 import { GrPowerShutdown } from "react-icons/gr";
+import { RiCloseLargeFill } from "react-icons/ri";
 
 interface SideBarMenuProps {
   hideSideBar: () => void;
@@ -47,12 +48,15 @@ const SibeBarMenuMobile: React.FC<SideBarMenuProps> = ({
       <div className="flex-col w-full px-2.5 py-2 space-y-6">
         <ProfileBox
           profileName={"Revenuehub.ng"}
-          profileIcon={<FaChevronLeft />}
+          profileIcon={isMobile ? <RiCloseLargeFill /> : <FaChevronLeft />}
           title={isMobile ? "View Profile" : "Profile"}
           designation={accountInformation?.role.name}
           location={accountInformation?.zone}
           onHideSideBarMenu={hideSideBar}
-          handleViewProfile={handleViewProfile}
+          handleViewProfile={() => {
+            handleViewProfile();
+            hideSideBar();
+          }}
         />
         <DemandPropertyButtons
           iconOne={<PiListBulletsFill />}

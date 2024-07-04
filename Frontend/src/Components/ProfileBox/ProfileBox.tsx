@@ -37,9 +37,7 @@ const ProfileBox: React.FC<ProfileBoxProps> = ({
         className="flex w-full gap-1 flex-col space-y-1.5 items-start lg:space-y-0 lg:flex-row bg-primary-color p-1.5 lg:items-center justify-between rounded"
         onClick={handleViewProfile}
       >
-        <p className="text-xs text-white font-lexend hover:underline lg:hover:no-underline">
-          {title}
-        </p>
+        <p className="text-xs text-white font-lexend hover:underline lg: dec">{title}</p>
         <div className="flex w-full gap-1 lg:justify-end lg:w-[75%]">
           <span
             className="px-1 text-xs font-semibold uppercase bg-white rounded-sm ellipsis text-primary-color font-lexend w-[50%] lg:w-auto"
