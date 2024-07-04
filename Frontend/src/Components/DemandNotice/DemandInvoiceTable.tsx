@@ -23,12 +23,23 @@ import {
 } from "../../Utils/client";
 import axios from "axios";
 
+const apiUrl = import.meta.env.VITE_API_URL as string;
+
 const DemandInvoiceTable = ({
   staticInformation,
   demandNoticeInformation,
+  paginationMeta,
+  setPaginationMeta,
 }: {
   staticInformation: any;
   demandNoticeInformation: DemandNotice[];
+  paginationMeta: {
+    currentPage: number;
+    lastPage: number;
+    total: number;
+    perPage: number;
+  };
+  setPaginationMeta: React.SetStateAction<any>;
 }) => {
   const [displaySearchIcon, setDisplaySearchIcon] = useState<boolean>(true);
   const [activeMenu, setActiveMenu] = useState<number>(1);
@@ -39,7 +50,6 @@ const DemandInvoiceTable = ({
   const [propertyModalTransition, setPropertyModalTransition] =
     useState<boolean>(false);
   const [currentPage, setCurrentPage] = useState<number>(0);
-  const [propertiesPerPage, setPropertiesPerPage] = useState<number>(12);
   const [currentStyle, setCurrentStyle] = useState<number | undefined>(
     undefined
   );
@@ -51,6 +61,7 @@ const DemandInvoiceTable = ({
     severity: "success",
   });
   const triggerError = useTriggerError();
+  const propertiesPerPage = paginationMeta.perPage;
 
   const handleSnackbarClose = () => {
     setSnackbar({ ...snackbar, open: false });
@@ -68,7 +79,7 @@ const DemandInvoiceTable = ({
 
     try {
       const response = await axios.delete(
-        `https://api.revenuehub.skillzserver.com/api/demand-notice/delete/${id}`,
+        `${apiUrl}/api/demand-notice/delete/${id}`,
         {
           headers: {
             Authorization: `Bearer ${token}`, // Headers
@@ -91,7 +102,7 @@ const DemandInvoiceTable = ({
           severity: "warning",
         });
       }
-    } catch (error) {
+    } catch (error: any) {
       let message = "Internal Server Error";
       if (error.response) {
         switch (error.response.status) {
@@ -139,13 +150,14 @@ const DemandInvoiceTable = ({
   const offset = currentPage * propertiesPerPage;
 
   const handlePageChange = ({ selected }: { selected: number }) => {
-    setCurrentPage(selected);
+    setPaginationMeta((prev: any) => ({
+      ...prev,
+      currentPage: selected + 1, // SWR uses 1-based index for pages
+    }));
     ScrollToTop("top-container");
   };
 
   const handlePropertiesPerPageChange = (e: ChangeEvent<HTMLSelectElement>) => {
-    setPropertiesPerPage(parseInt(e.target.value));
-    setCurrentPage(0);
     ScrollToTop("top-container");
   };
 
@@ -165,7 +177,7 @@ const DemandInvoiceTable = ({
     setDisplayColumn(false);
   }, [query !== ""]);
 
-  const handleQueryChange = (event) => {
+  const handleQueryChange = (event: any) => {
     setQuery(event.target.value);
   };
 
@@ -288,7 +300,7 @@ const DemandInvoiceTable = ({
   };
 
   function LengthByActiveMenu() {
-    return demandNoticeInformation.length;
+    return paginationMeta.total;
   }
 
   return (
@@ -299,7 +311,7 @@ const DemandInvoiceTable = ({
       >
         <div className="flex items-start justify-between">
           <div className="flex items-center justify-between border-0.6 border-custom-grey-100 rounded p-1">
-            {staticInformation.demandNotice.menu.map((menu) =>
+            {staticInformation.demandNotice.menu.map((menu: any) =>
               displayColumn === false && query !== "" && menu.id > 1 ? null : (
                 <div
                   key={menu.id}
@@ -365,7 +377,7 @@ const DemandInvoiceTable = ({
 
         <div className="flex-col space-y-6 ">
           <div className="flex items-center justify-between gap-1">
-            {staticInformation.demandNotice.columns.map((column) => (
+            {staticInformation.demandNotice.columns.map((column: any) => (
               <div
                 key={column.id}
                 className={`flex items-center gap-1 w-1/12 text-color-text-two text-[10px] font-lexend
@@ -415,30 +427,42 @@ const DemandInvoiceTable = ({
         <div className="flex justify-between p-4 item-center">
           <div className="flex flex-wrap w-[70%]">
             <Pagination
-              pageCount={pageCount}
+              pageCount={paginationMeta.lastPage}
               pageRangeDisplayed={2}
               marginPagesDisplayed={0}
               onPageChange={handlePageChange}
               paginationStyles={paginationStyles}
-              forcePage={currentStyle}
+              forcePage={paginationMeta.currentPage - 1}
             />
           </div>
           <p className="flex items-center gap-2 justify-end w-[30%] text-xs text-color-text-two font-lexend">
             Showing
             <select
-              className="flex items-center outline-none justify-center w-[60px] h-[32px] px-2.5 border border-divider-grey rounded text-color-text-one"
+              className="flex items-center outline-none justify-center w-[45px] h-[32px] px-2.5 border border-divider-grey rounded text-color-text-one appearance-none bg-transparent"
               onChange={handlePropertiesPerPageChange}
               value={
-                LengthByActiveMenu() > propertiesPerPage
-                  ? propertiesPerPage
-                  : LengthByActiveMenu()
+                paginationMeta.perPage > paginationMeta.total
+                  ? paginationMeta.total
+                  : paginationMeta.perPage
               }
+              disabled
+              style={{
+                WebkitAppearance: "none",
+                MozAppearance: "none",
+                appearance: "none",
+              }}
             >
-              {Array.from({ length: LengthByActiveMenu() }, (_, index) => (
-                <option key={index} value={1 + index}>
-                  {1 + index}
-                </option>
-              ))}
+              <option
+                value={
+                  paginationMeta.perPage > paginationMeta.total
+                    ? paginationMeta.total
+                    : paginationMeta.perPage
+                }
+              >
+                {paginationMeta.perPage > paginationMeta.total
+                  ? paginationMeta.total
+                  : paginationMeta.perPage}
+              </option>
             </select>
             of <span>{LengthByActiveMenu()}</span>
             entries

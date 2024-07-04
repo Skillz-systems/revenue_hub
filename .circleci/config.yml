@@ -1,63 +1,67 @@
 version: 2.1
 
-
 jobs:
   deploy-frontend-staging:
-    
     docker:
-        - image: circleci/node:16
+      - image: circleci/node:16
     working_directory: ~/repo
     steps:
       - add_ssh_keys:
-         fingerprints: 
-          - "SHA256:XM+2xRjrCCSH/Frn3FMhEbTaB4RS9hNa9Wm54+iINww"
+          fingerprints:
+            - "SHA256:XM+2xRjrCCSH/Frn3FMhEbTaB4RS9hNa9Wm54+iINww"
       - checkout
       # install dependencies
       - setup_remote_docker:
-          version: 20.10.12 
+          version: 20.10.12
           docker_layer_caching: true
       - run:
-          name: Run npm 
+          name: Run npm
           command: |
-            cd Frontend && npm install 
+            cd Frontend && npm install
 
       - run: CI=false sudo apt update
       - run: CI=false sudo apt-get install rsync
-
+      - run:
+          name: rename .env.example file to .env 
+          command: |
+            cd Frontend &&  mv .env.example .env
+      - run:
+          name: find and replace in document
+          command: |
+            cd Frontend && sed -i -e 's:VITE_API_URL=url:VITE_API_URL=https://api.revenuehub.skillzserver.com:g' .env
       - run:
           name: Update known hosts
           command: ssh-keyscan -H 185.160.67.60 >> ~/.ssh/known_hosts && cat ~/.ssh/known_hosts
       - run:
           name: build file
           command: |
-             cd Frontend && CI=false npm run build
-     
+            cd Frontend && CI=false npm run build
+
       - run:
-          name: ssh login  
+          name: ssh login
           command: |
             rsync -va -e 'ssh -p 7822 -o StrictHostKeyChecking=no'  --delete   Frontend/dist/ Frontend/.htaccess  skillz@185.160.67.60:revenuehub/frontend
       # - run:
-      #     name: ssh and run migration on live server  
+      #     name: ssh and run migration on live server
       #     command: |
       #       ssh bartumen@192.254.235.94 && cd devapi.bartumenergy.com &&  php artisan migrate && ls && exit
   deploy-hub-production:
-    
     docker:
-        - image: circleci/node:16
+      - image: circleci/node:16
     working_directory: ~/repo
     steps:
       - add_ssh_keys:
-         fingerprints: 
-          - "SHA256:XM+2xRjrCCSH/Frn3FMhEbTaB4RS9hNa9Wm54+iINww"
+          fingerprints:
+            - "SHA256:XM+2xRjrCCSH/Frn3FMhEbTaB4RS9hNa9Wm54+iINww"
       - checkout
       # install dependencies
       - setup_remote_docker:
-          version: 20.10.12 
+          version: 20.10.12
           docker_layer_caching: true
       - run:
-          name: Run npm 
+          name: Run npm
           command: |
-            npm install 
+            npm install
 
       - run: CI=false sudo apt update
       - run: CI=false sudo apt-get install rsync
@@ -66,7 +70,7 @@ jobs:
           name: Update known hosts
           command: ssh-keyscan -H 94.72.98.194 >> ~/.ssh/known_hosts && cat ~/.ssh/known_hosts
       - run:
-          name: rename .env.sample file to .env 
+          name: rename .env.sample file to .env
           command: |
             mv .env.sample .env
 
@@ -78,37 +82,62 @@ jobs:
           name: build file
           command: |
             CI=false npm run build
-     
+
       - run:
-          name: ssh login  
+          name: ssh login
           command: |
             rsync -va -e 'ssh  -o StrictHostKeyChecking=no'  --delete   build/  hubeei@94.72.98.194:public_html/hub
-  deploy-backend-staging:
+  deploy-backend-test:
     docker:
-        - image: cimg/php:8.3
+      - image: cimg/php:8.3
     working_directory: ~/repo
     steps:
       - add_ssh_keys:
-          fingerprints: 
-          - "SHA256:XM+2xRjrCCSH/Frn3FMhEbTaB4RS9hNa9Wm54+iINww"
+          fingerprints:
+            - "SHA256:XM+2xRjrCCSH/Frn3FMhEbTaB4RS9hNa9Wm54+iINww"
       - checkout
       # install dependencies
       - setup_remote_docker:
           version: 20.10.12
           docker_layer_caching: true
       - run:
-          name: rename .env.example file to .env 
+          name: rename .env.example file to .env
           command: |
             mv Backend/.env.example Backend/.env
 
       - run:
           name: Install dependencies
-          command:  cd Backend && CI=false composer clear-cache && CI=false  composer install &&  CI=false php artisan key:generate
+          command: cd Backend && CI=false composer clear-cache && CI=false  composer install &&  CI=false php artisan key:generate
+      - run:
+          name: run test
+          command: cd Backend && php artisan test && php artisan l5-swagger:generate
+
+  deploy-backend-staging:
+    docker:
+      - image: cimg/php:8.3
+    working_directory: ~/repo
+    steps:
+      - add_ssh_keys:
+          fingerprints:
+            - "SHA256:XM+2xRjrCCSH/Frn3FMhEbTaB4RS9hNa9Wm54+iINww"
+      - checkout
+      # install dependencies
+      - setup_remote_docker:
+          version: 20.10.12
+          docker_layer_caching: true
+      - run:
+          name: rename .env.example file to .env
+          command: |
+            mv Backend/.env.example Backend/.env
+
+      - run:
+          name: Install dependencies
+          command: cd Backend && CI=false composer clear-cache && CI=false  composer install &&  CI=false php artisan key:generate
 
       - run: sudo apt update
       - run: sudo apt-get install rsync
       - run:
-          name: test environment variable for MAILERSEND_API_KEY 
+          name: test environment variable for MAILERSEND_API_KEY
           command: |
             echo ${MAILERSEND_API_KEY}
       - run:
@@ -134,37 +163,36 @@ jobs:
             sed -i -e "s:ENCRYPTION_KEY=forge:ENCRYPTION_KEY=${ENCRYPTION_KEY}:g" Backend/.env
             sed -i -e "s:MAILERSEND_API_KEY=forge:MAILERSEND_API_KEY=${MAILERSEND_API_KEY}:g" Backend/.env
 
-      
       - run:
-          name: ssh login  
+          name: ssh login
           command: |
-             rsync --delete -va -e 'ssh -p 7822 -o StrictHostKeyChecking=no'   Backend/app Backend/database Backend/phpunit.xml Backend/storage Backend/vendor Backend/artisan Backend/.env Backend/tests Backend/bootstrap Backend/composer.json Backend/resources Backend/composer.lock Backend/routes Backend/config Backend/package.json Backend/public/ Backend/public skillz@185.160.67.60:revenuehub/api
+            rsync --delete -va -e 'ssh -p 7822 -o StrictHostKeyChecking=no'   Backend/app Backend/database Backend/phpunit.xml Backend/storage Backend/vendor Backend/artisan Backend/.env Backend/tests Backend/bootstrap Backend/composer.json Backend/resources Backend/composer.lock Backend/routes Backend/config Backend/package.json Backend/public/ Backend/public skillz@185.160.67.60:revenuehub/api
       - run:
-          name: ssh and effect migration  
+          name: ssh and effect migration
           command: |
-             ssh -p 7822 -t skillz@185.160.67.60 "cd revenuehub/api && php artisan migrate && php artisan l5-swagger:generate"
-             
+            ssh -p 7822 -t skillz@185.160.67.60 "cd revenuehub/api && php artisan migrate && php artisan l5-swagger:generate"
+
   deploy-backend-production:
     docker:
-        - image: cimg/php:8.3
+      - image: cimg/php:8.3
     working_directory: ~/repo
     steps:
       - add_ssh_keys:
-          fingerprints: 
-          - "SHA256:XM+2xRjrCCSH/Frn3FMhEbTaB4RS9hNa9Wm54+iINww"
+          fingerprints:
+            - "SHA256:XM+2xRjrCCSH/Frn3FMhEbTaB4RS9hNa9Wm54+iINww"
       - checkout
       # install dependencies
       - setup_remote_docker:
           version: 20.10.12
           docker_layer_caching: true
       - run:
-          name: rename .env.example file to .env 
+          name: rename .env.example file to .env
           command: |
             mv Backend/.env.example Backend/.env
 
       - run:
           name: Install dependencies
-          command:  cd Backend && CI=false composer clear-cache && CI=false  composer install &&  CI=false php artisan key:generate
+          command: cd Backend && CI=false composer clear-cache && CI=false  composer install &&  CI=false php artisan key:generate
 
       - run: sudo apt update
       - run: sudo apt-get install rsync
@@ -186,36 +214,43 @@ jobs:
             sed -i -e "s:ENCRYPTION_KEY=forge:ENCRYPTION_KEY=${ENCRYPTION_KEY}:g" Backend/.env
             sed -i -e "s:MAILERSEND_API_KEY=forge:MAILERSEND_API_KEY=${MAILERSEND_API_KEY}:g" Backend/.env
 
-      
       - run:
-          name: ssh login  
+          name: ssh login
           command: |
-             rsync --delete -va -e 'ssh -p 7822 -o StrictHostKeyChecking=no'   Backend/app Backend/database Backend/phpunit.xml Backend/storage Backend/vendor Backend/artisan Backend/.env Backend/tests Backend/bootstrap Backend/composer.json Backend/resources Backend/composer.lock Backend/routes Backend/config Backend/package.json Backend/public/ Backend/public revenuehub@185.160.67.6:api
+            rsync --delete -va -e 'ssh -p 7822 -o StrictHostKeyChecking=no'   Backend/app Backend/database Backend/phpunit.xml Backend/storage Backend/vendor Backend/artisan Backend/.env Backend/tests Backend/bootstrap Backend/composer.json Backend/resources Backend/composer.lock Backend/routes Backend/config Backend/package.json Backend/public/ Backend/public revenuehub@185.160.67.6:api
       - run:
-          name: ssh and effect migration  
+          name: ssh and effect migration
           command: |
-             ssh -p 7822 -t revenuehub@185.160.67.6 "cd api && php artisan migrate && php artisan l5-swagger:generate"
+            ssh -p 7822 -t revenuehub@185.160.67.6 "cd api && php artisan migrate && php artisan l5-swagger:generate"
   deploy-frontend-production:
-    
     docker:
-        - image: circleci/node:16
+      - image: circleci/node:16
     working_directory: ~/repo
     steps:
       - add_ssh_keys:
-         fingerprints: 
-          - "SHA256:XM+2xRjrCCSH/Frn3FMhEbTaB4RS9hNa9Wm54+iINww"
+          fingerprints:
+            - "SHA256:XM+2xRjrCCSH/Frn3FMhEbTaB4RS9hNa9Wm54+iINww"
       - checkout
       # install dependencies
       - setup_remote_docker:
-          version: 20.10.12 
+          version: 20.10.12
           docker_layer_caching: true
       - run:
-          name: Run npm 
+          name: Run npm
           command: |
-            cd Frontend && npm install 
+            cd Frontend && npm install
 
       - run: CI=false sudo apt update
       - run: CI=false sudo apt-get install rsync
+
+      - run:
+          name: rename .env.example file to .env 
+          command: |
+            cd Frontend &&  mv .env.example .env
+      - run:
+          name: find and replace in document
+          command: |
+            cd Frontend && sed -i -e 's:VITE_API_URL=url:VITE_API_URL=https://api.revenuehub.ng:g' .env
 
       - run:
           name: Update known hosts
@@ -223,10 +258,10 @@ jobs:
       - run:
           name: build file
           command: |
-             cd Frontend && CI=false npm run build
-     
+            cd Frontend && CI=false npm run build
+
       - run:
-          name: ssh login  
+          name: ssh login
           command: |
             rsync -va -e 'ssh -p 7822 -o StrictHostKeyChecking=no'  --delete   Frontend/dist/ Frontend/.htaccess  revenuehub@185.160.67.6:www
 
@@ -234,11 +269,14 @@ workflows:
   version: 2
   revenue_hub_deploy:
     jobs:
+      - deploy-backend-test
       - deploy-frontend-staging: # Use the pre-configured job, deploy-via-git
           filters:
             branches:
               only: staging
       - deploy-backend-staging: # Use the pre-configured job, deploy-via-git
+          requires:
+            - deploy-backend-test
           filters:
             branches:
               only: staging
@@ -251,7 +289,7 @@ workflows:
           filters:
             branches:
               only: main
-     
+
       # - deploy-nest: # Use the pre-configured job, deploy-via-git
       #     filters:
       #       branches:

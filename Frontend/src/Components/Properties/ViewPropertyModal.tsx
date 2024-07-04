@@ -22,6 +22,8 @@ interface ViewPropertyModalProps {
   customTableData: any;
 }
 
+const apiUrl = import.meta.env.VITE_API_URL as string;
+
 const ViewPropertyModal: React.FC<ViewPropertyModalProps> = ({
   hideViewPropertyModal,
   propertyModalTransition,
@@ -86,7 +88,7 @@ const ViewPropertyModal: React.FC<ViewPropertyModalProps> = ({
       });
 
       const response = await axios.put(
-        `https://api.revenuehub.skillzserver.com/api/property/${formData.pid}`,
+        `${apiUrl}/api/property/${formData.pid}`,
         requestData,
         {
           headers: {

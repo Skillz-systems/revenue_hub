@@ -9,7 +9,9 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 use App\Http\Resources\PropertyResource;
 use App\Jobs\CsvExtractorJob;
+use App\Jobs\ProcessCSVFileInBatchJob;
 use App\Models\User;
+use Illuminate\Support\Facades\Storage;
 
 class PropertyController extends Controller
 {
@@ -23,6 +25,7 @@ class PropertyController extends Controller
      *     path="/api/property",
      *     summary="Get all properties",
      *     tags={"Property"},
+     *     security={{"api_key":{}}},
      *     @OA\Response(
      *         response=200,
      *         description="Successful operation",
@@ -50,12 +53,13 @@ class PropertyController extends Controller
      *     )
      * )
      */
-    public function index()
+    public function index(Request $request)
     {
+        $perPage = $request->input('per_page', 100);
         if (Auth::user()->role_id != User::ROLE_ADMIN) {
-            $properties = Property::all();
+            $properties = Property::paginate(100);
         } else {
-            $properties = Property::all();
+            $properties = Property::paginate(100);
             //$properties = $this->propertyService->getAllProperties(Auth::user()->zone);
         }
 
@@ -473,21 +477,10 @@ class PropertyController extends Controller
         ], 401);
     }
 
-    public function processCsv(Request $request)
+    public function processCsv($request)
     {
-        $validator = Validator::make($request->all(), [
-            'csv_file' => ['required', 'file',],
-            'extraction_type' => ['required'],
-        ]);
-        if ($validator->fails()) {
-            return response()->json([
-                'status' => 'error',
-                'message' => "All fields are required ",
-                "data" => $validator->errors()
-            ], 400);
-        }
-        $fileContents = $request->file('csv_file')->get();
 
+        $fileContents = Storage::get($request["file_path"]);
         // Parse CSV data
         $rows = explode("\n", $fileContents);
         $uniqRatingDistrictData = [];
@@ -498,10 +491,11 @@ class PropertyController extends Controller
         $uniqCategoryData = [];
         $uniqGroupData = [];
 
+
         foreach ($rows as $row) {
             $data = str_getcsv($row);
 
-            if ($request->extraction_type == "property") {
+            if ($request["extraction_type"] == "property") {
                 $dispatchProperty = ["for" => "property", "data" => $data];
                 CsvExtractorJob::dispatch($dispatchProperty);
             } else {
@@ -532,7 +526,7 @@ class PropertyController extends Controller
             }
         }
 
-        if ($request->extraction_type != "property") {
+        if ($request["extraction_type"] != "property") {
             // shuffle the array for unique rating district
             $uniqRatingDistrictData = array_column($uniqRatingDistrictData, 'rating_district');
 
@@ -646,12 +640,83 @@ class PropertyController extends Controller
             CsvExtractorJob::dispatch($categoryData);
             CsvExtractorJob::dispatch($groupData);
         }
+    }
+
+    public function chunkUpload(Request $request)
+    {
+        $validator = validator::make($request->all(), [
+            'file' => 'required|file',
+            'chunk_number' => 'required|integer',
+            'total_chunks' => 'required|integer',
+            'file_name' => 'required|string',
+        ]);
 
 
+        if ($validator->fails()) {
+            return response()->json([
+                'status' => 'error',
+                'message' => "All fields are required ",
+                "data" => $validator->errors()
+            ], 400);
+        }
 
+
+        // Directory to store chunks
+        $chunkDir = storage_path('app/chunks/' . $request->file_name);
+
+        // Create directory if not exists
+        if (!is_dir($chunkDir)) {
+            mkdir($chunkDir, 0777, true);
+        }
+
+        // Save the uploaded chunk
+        $file = $request->file('file');
+        $file->move($chunkDir, 'chunk_' . $request->chunk_number);
+
+        // Check if all chunks are uploaded
+        $allChunksUploaded = true;
+        for ($i = 1; $i <= $request->total_chunks; $i++) {
+            if (!file_exists($chunkDir . '/chunk_' . $i)) {
+                $allChunksUploaded = false;
+                break;
+            }
+        }
+
+        // Combine chunks if all are uploaded
+        if ($allChunksUploaded) {
+            $finalPath = storage_path('app/uploads/' . $request->file_name);
+
+            // Create a file pointer
+            $dir = storage_path('app/uploads');
+            if (!is_dir($dir)) {
+                mkdir($dir, 0777, true);
+            }
+            $output = fopen($finalPath, 'wb');
+            for ($i = 1; $i <= $request->total_chunks; $i++) {
+                $chunkPath = $chunkDir . '/chunk_' . $i;
+                $input = fopen($chunkPath, 'rb');
+                stream_copy_to_stream($input, $output);
+                fclose($input);
+                // Optionally delete the chunk file
+                unlink($chunkPath);
+            }
+            fclose($output);
+            // Optionally delete the chunk directory
+            rmdir($chunkDir);
+            $updatedFile = 'uploads/' . $request->file_name;
+            // $data = ["file_path" => $updatedFile, "extraction_type" => "others"];
+            ProcessCSVFileInBatchJob::dispatch($finalPath);
+            //$this->processCsv($data);
+            //$data2 = ["file_path" => $updatedFile, "extraction_type" => "property"];
+            //$this->processCsv($data2);
+            return response()->json([
+                'status' => 'success',
+                'message' => 'File uploaded successfully and merged',
+            ], 200);
+        }
         return response()->json([
-            "status" => "success",
-            "message" => "CSV file processed successfully",
+            'status' => 'success',
+            'message' => 'File uploaded successfully',
         ], 200);
     }
 }

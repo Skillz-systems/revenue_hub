@@ -4,6 +4,8 @@ import useSWR from "swr";
 import { fetcher, useTokens, useTriggerError } from "../Utils/client";
 import { StatisticsData } from "./types";
 
+const apiUrl = import.meta.env.VITE_API_URL as string;
+
 const userData = () => {
   const [accountInformation, setAccountInformation] = useState<any>(null);
   const [staffInformation, setStaffInformation] = useState<any>(null);
@@ -22,21 +24,19 @@ const userData = () => {
   };
 
   const { data: staff, error: staffError } = useSWR(
-    token && userId
-      ? `https://api.revenuehub.skillzserver.com/api/staff/${userId}`
-      : null, // Only fetch if token and userId exists
+    token && userId ? `${apiUrl}/api/staff/${userId}` : null, // Only fetch if token and userId exists
     (url) => fetcher(url, token)
   );
 
   const { data: allStaff, error: allStaffError } = useSWR(
-    token ? "https://api.revenuehub.skillzserver.com/api/staff" : null, // Only fetch if token exists
+    token ? `${apiUrl}/api/staff` : null, // Only fetch if token exists
     (url) => fetcher(url, token)
   );
 
   const fetchStatistics = async (dateFilter = "") => {
     try {
       const response = await axios.post(
-        "https://api.revenuehub.skillzserver.com/api/statistic/all-yearly-data",
+        `${apiUrl}/api/statistic/all-yearly-data`,
         { date_filter: dateFilter }, // Data payload
         {
           headers: {
@@ -47,7 +47,7 @@ const userData = () => {
       if (response.status === 200) {
         setStatistics(response.data.data);
       }
-    } catch (error) {
+    } catch (error: any) {
       if (error.response.status === 500) {
         triggerError(error);
       } else {
@@ -98,19 +98,16 @@ const userData = () => {
 
   const deleteStaffById = async (staffId: number) => {
     try {
-      const response = await axios.delete(
-        `https://api.revenuehub.skillzserver.com/api/staff/${staffId}`,
-        {
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`, // Add your authorization token if needed
-          },
-        }
-      );
+      const response = await axios.delete(`${apiUrl}/api/staff/${staffId}`, {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`, // Add your authorization token if needed
+        },
+      });
 
       if (response.status === 200) {
-        setStaffInformation((prevStaff) =>
-          prevStaff.filter((staff) => staff.id !== staffId)
+        setStaffInformation((prevStaff: any) =>
+          prevStaff.filter((staff: any) => staff.id !== staffId)
         );
         setStaffSnackbar({
           open: true,
@@ -127,7 +124,7 @@ const userData = () => {
           severity: "warning",
         });
       }
-    } catch (error) {
+    } catch (error: any) {
       let message = "Internal Server Error";
       if (error.response) {
         switch (error.response.status) {

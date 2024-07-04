@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Service;
+
 use App\Models\User;
 use App\Models\Property;
 use App\Models\PropertyType;

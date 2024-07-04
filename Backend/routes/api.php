@@ -3,10 +3,13 @@
 use App\Models\User;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CadastralZoneController;
+use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\DemandNoticeController;
+use App\Http\Controllers\OfficeZoneController;
 use App\Http\Controllers\PropertyTypeController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\PropertyController;
+use App\Http\Controllers\PropertyUseController;
 use App\Http\Controllers\StatisticController;
 use App\Http\Controllers\StreetController;
 use App\Http\Controllers\UserController;
@@ -26,7 +29,7 @@ use Illuminate\Support\Facades\Route;
 
 
 // Staff login route
-Route::post('property/process-csv', [PropertyController::class, 'processCsv']);
+Route::post('property/process-csv', [PropertyController::class, 'chunkUpload']);
 Route::post('auth/login', [AuthController::class, 'login']);
 Route::post('payment/webhook', [PaymentController::class, 'webhook']);
 
@@ -50,12 +53,6 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/property', [PropertyController::class, "index"]);
     Route::post('/property/create', [PropertyController::class, "store"]);
     Route::apiResource('/property', PropertyController::class);
-  
-    Route::get('/property-type', [PropertyTypeController::class, "index"]);
-    Route::post('/property-type/create', [PropertyTypeController::class, "store"]);
-    Route::get('/property-type/view/{propertyType}', [PropertyTypeController::class, "show"]);
-    Route::put('/property-type/update/{propertyType}', [PropertyTypeController::class, "update"]);
-    Route::delete('/property-type/delete/{propertyType}', [PropertyTypeController::class, "destroy"]);
 
     Route::get('/street', [StreetController::class, "index"]);
     Route::post('/street/create', [StreetController::class, "store"]);
@@ -69,6 +66,29 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::put('/cadastral-zone/update/{cadastralZone}', [CadastralZoneController::class, "update"]);
     Route::delete('/cadastral-zone/delete/{cadastralZone}', [CadastralZoneController::class, "destroy"]);
 
+    Route::get('/property-use', [PropertyUseController::class, "index"]);
+    Route::post('/property-use/create', [PropertyUseController::class, "store"]);
+    Route::get('/property-use/view/{propertyUse}', [PropertyUseController::class, "show"]);
+    Route::put('/property-use/update/{propertyUse}', [PropertyUseController::class, "update"]);
+    Route::delete('/property-use/delete/{propertyUse}', [PropertyUseController::class, "destroy"]);
+
+    Route::get('/property-type', [PropertyTypeController::class, "index"]);
+    Route::post('/property-type/create', [PropertyTypeController::class, "store"]);
+    Route::get('/property-type/view/{propertyType}', [PropertyTypeController::class, "show"]);
+    Route::put('/property-type/update/{propertyType}', [PropertyTypeController::class, "update"]);
+    Route::delete('/property-type/delete/{propertyType}', [PropertyTypeController::class, "destroy"]);
+
+    Route::get('/category', [CategoryController::class, "index"]);
+    Route::post('/category/create', [CategoryController::class, "store"]);
+    Route::get('/category/view/{category}', [CategoryController::class, "show"]);
+    Route::put('/category/update/{category}', [CategoryController::class, "update"]);
+    Route::delete('/category/delete/{category}', [CategoryController::class, "destroy"]);
+
+    Route::get('/office-zone', [OfficeZoneController::class, "index"]);
+    Route::post('/office-zone/create', [OfficeZoneController::class, "store"]);
+    Route::get('/office-zone/view/{officeZone}', [OfficeZoneController::class, "show"]);
+    Route::put('/office-zone/update/{officeZone}', [OfficeZoneController::class, "update"]);
+    Route::delete('/office-zone/delete/{officeZone}', [OfficeZoneController::class, "destroy"]);
 });
 
 Route::get('/payment/generate-account/{id}', [PaymentController::class, 'generateAccount']);

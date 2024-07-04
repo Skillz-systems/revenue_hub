@@ -6,6 +6,8 @@ import axios from "axios";
 import images from "../assets";
 import { CustomAlert } from "../Components/Index";
 
+const apiUrl = import.meta.env.VITE_API_URL as string;
+
 const Payment = () => {
   const { pid } = useParams();
   const [paymentAccount, setPaymentAccount] = useState<any>(null);
@@ -28,7 +30,7 @@ const Payment = () => {
         severity: "info",
       });
       const response = await axios.get(
-        `https://api.revenuehub.skillzserver.com/api/payment/generate-account/${pid}`
+        `${apiUrl}/api/payment/generate-account/${pid}`
       );
       if (response.status === 200) {
         setPaymentAccount(response.data);
@@ -45,7 +47,7 @@ const Payment = () => {
           severity: "warning",
         });
       }
-    } catch (error) {
+    } catch (error: any) {
       let message = "Internal Server Error";
       if (error.response) {
         switch (error.response.status) {
@@ -108,12 +110,12 @@ const Payment = () => {
       {/* PDF START*/}
       {!paymentAccount ? (
         <div className="flex flex-col items-center justify-center space-y-4">
-          <h1 className="font-lexend text-color-text-black">
+          <h1 className="text-center font-lexend text-color-text-black md:text-left">
             You are about to make payment for your AMAC Tenement Rate for
             Property with <b>PID-{pid}</b>.
           </h1>
-          <div className="flex flex-col items-center justify-center space-y-4 w-[300px] bg-white border border-grey rounded shadow-md px-4 py-4">
-            <img src={images.logo} alt="Logo" className="w-60 md:w-[150px]" />
+          <div className="flex flex-col items-center justify-center space-y-8 w-[300px] bg-white border border-grey rounded shadow-md px-4 py-4">
+            <img src={images.logo} alt="Logo" className="w-40 md:w-[150px]" />
             <button
               className="px-3 py-2 text-white rounded bg-primary-color font-lexend"
               onClick={generatePaymentDetails}
@@ -141,8 +143,8 @@ const Payment = () => {
                 Secreteriat: No 1 Olusegun Obasanjo Way, Area 10 Garki - Abuja.
               </p>
               <p className="text-document-grey font-lexend text-[11px] leading-[13.75px]">
-                Annex Office: Suite 411, 4th Floor, MKK Plaza, Gudu District,
-                Abuja, FCT, Nigeria.
+                Annex Office: Suite 301, 3rd floor Kano House, Ralph Shodeinde
+                street, CBD, Abuja
               </p>
               <p className="text-color-dark-red font-lexend text-[11px] leading-[13.75px]">
                 TEL: +2348037809941, +2348057912241
@@ -166,8 +168,8 @@ const Payment = () => {
                 {demandInvoiceData.Occupant}
               </p>
             </div>
-            <div className="flex items-center justify-center gap-1 p-1">
-              <div className="flex flex-col items-start space-y-1 font-lexend w-[70%]">
+            <div className="flex items-center justify-center gap-2 p-1 md:gap-1">
+              <div className="flex flex-col items-start space-y-1 font-lexend w-[80%] md:w-[70%]">
                 <p className="text-document-grey text-right font-lexend text-[11px] leading-[13.75px]">
                   In respect of the property below:
                 </p>
@@ -176,13 +178,17 @@ const Payment = () => {
                     key={index}
                     className="flex w-full items-center justify-start text-metal font-lexend text-[11px] leading-[13.75px]"
                   >
-                    <p className="text-left font-bold w-[30%]">{item.label}</p>
-                    <p className="text-left w-[5%]">:</p>
-                    <p className="text-left text-wrap w-[60%]">{item.value}</p>
+                    <p className="text-left font-bold w-[40%] md:w-[30%]">
+                      {item.label}
+                    </p>
+                    <p className="text-left w-[5%] md:w-[5%]">:</p>
+                    <p className="text-left text-wrap w-[50%] md:w-[60%]">
+                      {item.value}
+                    </p>
                   </div>
                 ))}
               </div>
-              <div className="flex flex-col items-center justify-center space-y-1 bg-white w-[30%]">
+              <div className="flex flex-col items-center justify-center space-y-1 bg-white w-[20%] md:w-[30%]">
                 <QRCode
                   size={256}
                   style={{ height: "auto", maxWidth: "72px", width: "100%" }}
@@ -213,13 +219,13 @@ const Payment = () => {
                 </div>
                 <p className="font-lexend text-[10px] text-document-grey leading-[12.5px]">
                   Payment Amount:{" "}
-                  <b className="font-bold text-[12px] text-color-bright-green">
+                  <b className="font-bold text-[10px] md:text-[12px] text-color-bright-green">
                     {formatNumberWithCommas(paymentAccount?.data.data.amount)}
                   </b>
                 </p>
                 <p className="font-lexend text-[10px] text-document-grey leading-[12.5px]">
                   Payment Account:{" "}
-                  <b className="text-[12px] text-color-bright-green">
+                  <b className="text-[10px] md:text-[12px] text-color-bright-green">
                     Abuja Municipal Area Council.{" "}
                     {paymentAccount?.data.data.bank_name}.{" "}
                     {paymentAccount?.data.data.account_number}

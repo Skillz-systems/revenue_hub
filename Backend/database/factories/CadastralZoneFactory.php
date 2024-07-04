@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Models\RatingDistrict;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -17,7 +18,8 @@ class CadastralZoneFactory extends Factory
     public function definition(): array
     {
         return [
-            //
+            'name' => fake()->name(),
+            'rating_district_id' => 1,
         ];
     }
 }

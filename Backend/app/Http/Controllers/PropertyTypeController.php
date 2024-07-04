@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
+
 use App\Models\checkIsAdminOrMd;
 use App\Models\PropertyType;
 use Illuminate\Http\Request;
@@ -165,7 +166,7 @@ class PropertyTypeController extends Controller
      *     security={{"api_key":{}}}
      * )
      */
-    public function store(Request $request)
+  public function store(Request $request)
 {
     if ($this->propertyTypeService->checkIsAdminOrMd()) {
         $validator = Validator::make($request->all(), [

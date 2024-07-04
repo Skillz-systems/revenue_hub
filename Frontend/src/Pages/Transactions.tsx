@@ -8,6 +8,8 @@ import {
 import { useTokens, useTriggerError } from "../Utils/client";
 import axios from "axios";
 
+const apiUrl = import.meta.env.VITE_API_URL as string;
+
 const Transactions: React.FC = () => {
   const { token } = useTokens();
   const { staticInformation } = userData();
@@ -18,6 +20,12 @@ const Transactions: React.FC = () => {
     message: "",
     severity: "success",
   });
+  const [paginationMeta, setPaginationMeta] = useState({
+    currentPage: 0,
+    lastPage: 0,
+    total: 0,
+    perPage: 0,
+  });
   const triggerError = useTriggerError();
 
   const handleSnackbarClose = () => {
@@ -27,7 +35,7 @@ const Transactions: React.FC = () => {
   const fetchTransactions = async (dateFilter = "") => {
     try {
       const response = await axios.post(
-        "https://api.revenuehub.skillzserver.com/api/payment",
+        `${apiUrl}/api/payment`,
         { date_filter: dateFilter },
         {
           headers: {
@@ -37,6 +45,12 @@ const Transactions: React.FC = () => {
       );
       if (response.status === 200) {
         setTransactionInformation(response.data.data);
+        setPaginationMeta({
+          currentPage: response.data.meta.current_page,
+          lastPage: response.data.meta.last_page,
+          total: response.data.meta.total,
+          perPage: response.data.meta.per_page,
+        });
         setSnackbar({
           open: true,
           message: "Successfuly fetched all transactions",
@@ -50,7 +64,7 @@ const Transactions: React.FC = () => {
           severity: "warning",
         });
       }
-    } catch (error) {
+    } catch (error: any) {
       let message = "Internal Server Error";
       if (error.response) {
         switch (error.response.status) {
@@ -94,6 +108,8 @@ const Transactions: React.FC = () => {
         <TransactionsTable
           staticInformation={staticInformation}
           transactionInformation={transactionInformation}
+          paginationMeta={paginationMeta}
+          setPaginationMeta={setPaginationMeta}
         />
       ) : (
         <LoadingSpinner title="Loading Transactions" />

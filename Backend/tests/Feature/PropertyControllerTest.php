@@ -2,15 +2,24 @@
 
 namespace Tests\Feature;
 
-use App\Jobs\CsvExtractorJob;
-use App\Models\DemandNotice;
-use App\Models\Property;
+use Tests\TestCase;
 use App\Models\User;
-use Illuminate\Foundation\Testing\RefreshDatabase;
+use App\Models\Group;
+use App\Models\Street;
+use App\Models\Category;
+use App\Models\Property;
+use App\Models\OfficeZone;
+use App\Models\PropertyUse;
+use App\Models\DemandNotice;
+use App\Models\PropertyType;
+use App\Jobs\CsvExtractorJob;
+use App\Models\CadastralZone;
+use App\Models\RatingDistrict;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Queue;
+use App\Jobs\ProcessCSVFileInBatchJob;
 use Illuminate\Support\Facades\Storage;
-use Tests\TestCase;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 
 class PropertyControllerTest extends TestCase
 {
@@ -22,6 +31,14 @@ class PropertyControllerTest extends TestCase
         DemandNotice::factory()->create(["property_id" => 1]);
 
         DemandNotice::factory()->create(["property_id" => 3, "status" => 1]);
+        OfficeZone::factory()->create();
+        RatingDistrict::factory()->create();
+        CadastralZone::factory()->create();
+        Street::factory()->create();
+        PropertyType::factory()->create();
+        PropertyUse::factory()->create();
+        Category::factory()->create();
+        Group::factory()->create();
         Property::factory()->count(3)->create();
 
         // Act: Call the index route
@@ -57,22 +74,31 @@ class PropertyControllerTest extends TestCase
 
     public function test_it_stores_a_new_property_successfully()
     {
+
+        OfficeZone::factory()->create();
+        RatingDistrict::factory()->create();
+        CadastralZone::factory()->create();
+        Street::factory()->create();
+        PropertyType::factory()->create();
+        PropertyUse::factory()->create();
+        Category::factory()->create();
+        Group::factory()->create();
         // Arrange: Prepare valid property data
         $data = [
             'pid' => "1",
             'occupant' => 'John Doe',
             'prop_addr' => '123 Main St',
-            'street_name' => 'Main St',
+            'street_name' => '1',
             'asset_no' => 'A-001',
-            'cadastral_zone' => 'Zone 1',
-            'prop_type' => 'Residential',
-            'prop_use' => 'Residential',
-            'rating_dist' => 'District 1',
+            'cadastral_zone' => '1',
+            'prop_type' => '1',
+            'prop_use' => '1',
+            'rating_dist' => '1',
             'annual_value' => "10000",
             'rate_payable' => "1000",
             'grand_total' => "11000",
-            'category' => 'Category 1',
-            'group' => 'Group 1',
+            'category' => '1',
+            'group' => '1',
             'active' => 'Yes',
         ];
 
@@ -141,6 +167,14 @@ class PropertyControllerTest extends TestCase
 
     public function test_it_shows_a_property_successfully()
     {
+        OfficeZone::factory()->create();
+        RatingDistrict::factory()->create();
+        CadastralZone::factory()->create();
+        Street::factory()->create();
+        PropertyType::factory()->create();
+        PropertyUse::factory()->create();
+        Category::factory()->create();
+        Group::factory()->create();
         // Arrange: Create a property
         $property = Property::factory()->create();
 
@@ -174,19 +208,30 @@ class PropertyControllerTest extends TestCase
 
     public function test_testSuccessfulUpdate()
     {
+        OfficeZone::factory()->create();
+        RatingDistrict::factory()->create();
+        CadastralZone::factory()->create();
+        Street::factory()->create();
+        PropertyType::factory()->create();
+        PropertyUse::factory()->create();
+        Category::factory()->create();
+        Group::factory()->create();
         $property = Property::factory()->create();
         // Assuming $property is a property instance
         $data = [
             'occupant' => 'John Doe',
             'prop_addr' => '123 Main St',
-            'street_name' => 'Main St',
+            'street_name' => '1',
             'asset_no' => 'A-001',
-            'cadastral_zone' => 'Zone 1',
-            'prop_type' => 'Residential',
-            'prop_use' => 'Residential',
-            'rating_dist' => 'District 1',
-            'category' => 'Category 1',
-            'group' => 'Group 1',
+            'cadastral_zone' => '1',
+            'prop_type' => '1',
+            'prop_use' => '1',
+            'rating_dist' => '1',
+            'annual_value' => "10000",
+            'rate_payable' => "1000",
+            'grand_total' => "11000",
+            'category' => '1',
+            'group' => '1',
             'active' => 'Yes',
         ];
 
@@ -284,46 +329,26 @@ class PropertyControllerTest extends TestCase
         $this->assertDatabaseHas('properties', ['id' => $property->id]);
     }
 
-    public function test_to_see_if_csv_file_can_be_extracted_for_other_columns(): void
+    public function test_to_see_if_csv_file_can_be_extracted_and_updated_on_the_database(): void
     {
-        Storage::fake('local');
+        //Storage::fake('local');
         Queue::fake();
         // Create a fake CSV file
-        $csvContent = "header0,header1,header2,header3,header4,header5,header6,header7,header8,header9,header10,header11,header12,header13,header14,header15,header16\n
-value0,value1,value2,value3,value4,value5,value6,value7,value8,value9,value10,value11,value12,value13,value14,value15,header11\n";
+        $csvContent = "header0,header1,header2,header3,header4,header5,header6,header7,header8,header9,header10,header11,header12,header13,header14,header15,header16\nvalue0,value1,value2,value3,value4,value5,value6,value7,value8,value9,value10,value11,value12,value13,value14,value15,header11";
         $file = UploadedFile::fake()->createWithContent('test.csv', $csvContent);
 
         // Perform the request
         $response = $this->post('/api/property/process-csv', [
-            'csv_file' => $file,
-            'extraction_type' => "others",
+            'file' => $file,
+            'chunk_number' => 1,
+            'total_chunks' => 1,
+            'file_name' => "test.csv",
         ]);
 
-        Queue::assertPushed(CsvExtractorJob::class, 7);
+        Queue::assertPushed(ProcessCSVFileInBatchJob::class, 1);
 
         // Assert the response status
         $response->assertStatus(200);
-        $response->assertJson(['message' => 'CSV file processed successfully']);
-    }
-    public function test_to_see_if_csv_file_can_be_extracted_for_properties(): void
-    {
-        Storage::fake('local');
-        Queue::fake();
-        // Create a fake CSV file
-        $csvContent = "header0,header1,header2,header3,header4,header5,header6,header7,header8,header9,header10,header11,header12,header13,header14,header15,header16\n
-value0,value1,value2,value3,value4,value5,value6,value7,value8,value9,value10,value11,value12,value13,value14,value15,header11\n";
-        $file = UploadedFile::fake()->createWithContent('test.csv', $csvContent);
-
-        // Perform the request
-        $response = $this->post('/api/property/process-csv', [
-            'csv_file' => $file,
-            'extraction_type' => "property",
-        ]);
-
-        Queue::assertPushed(CsvExtractorJob::class, 4);
-
-        // Assert the response status
-        $response->assertStatus(200);
-        $response->assertJson(['message' => 'CSV file processed successfully']);
+        $response->assertJson(['message' => 'File uploaded successfully and merged']);
     }
 }

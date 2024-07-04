@@ -13,19 +13,19 @@ class Property extends Model
         'pid',
         'occupant',
         'prop_addr',
-        'street_name',
+        'street_id',
         'asset_no',
-        'cadastral_zone',
-        'prop_type',
-        'prop_use',
-        'rating_dist',
+        'cadastral_zone_id',
+        'property_type_id',
+        'property_use_id',
+        'rating_district_id',
         'annual_value',
         'rate_payable',
         //'arrears',
         //'penalty',
         'grand_total',
-        'category',
-        'group',
+        'category_id',
+        'group_id',
         'active',
     ];
 
@@ -37,8 +37,37 @@ class Property extends Model
         return $this->hasMany(DemandNotice::class);
     }
 
+    public function street()
+    {
+        return $this->belongsTo(Street::class);
+    }
+    public function cadastralZone()
+    {
+        return $this->belongsTo(CadastralZone::class);
+    }
+
+    public function propertyType()
+    {
+        return $this->belongsTo(PropertyType::class);
+    }
+
+    public function propertyUse()
+    {
+        return $this->belongsTo(PropertyUse::class);
+    }
+
     public function ratingDistrict()
     {
         return $this->belongsTo(RatingDistrict::class);
+    }
+
+    public function category()
+    {
+        return $this->belongsTo(Category::class);
+    }
+
+    public function group()
+    {
+        return $this->belongsTo(Group::class);
     }
 }
