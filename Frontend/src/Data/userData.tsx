@@ -48,10 +48,10 @@ const userData = () => {
         setStatistics(response.data.data);
       }
     } catch (error: any) {
-      if (error.response.status === 500) {
+      if (error.response?.status === 500) {
         triggerError(error);
       } else {
-        console.error(error);
+        console.error(error.message);
       }
     }
   };
@@ -127,7 +127,7 @@ const userData = () => {
     } catch (error: any) {
       let message = "Internal Server Error";
       if (error.response) {
-        switch (error.response.status) {
+        switch (error.response?.status) {
           case 400:
             message = "Bad request. Staff Id is missing.";
             break;

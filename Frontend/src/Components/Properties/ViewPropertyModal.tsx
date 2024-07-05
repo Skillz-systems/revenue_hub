@@ -149,7 +149,7 @@ const ViewPropertyModal: React.FC<ViewPropertyModalProps> = ({
   return (
     <>
       <div
-        className={`flex-col relative bg-white rounded overflow-y-auto overscroll-contain scrollbar-thin scrollbar-thumb-color-text-two scrollbar-track-white ${
+        className={`flex-col relative min-w-[290px] sm:min-w-[350px] md:min-w-[500px] bg-white rounded overflow-y-auto overscroll-contain scrollbar-thin scrollbar-thumb-color-text-two scrollbar-track-white ${
           propertyModalTransition
             ? "w-6/12 transition-all ease-in-out duration-500"
             : "w-32"
@@ -166,7 +166,7 @@ const ViewPropertyModal: React.FC<ViewPropertyModalProps> = ({
             className="flex items-start justify-between"
             style={{ height: "10vh" }}
           >
-            <div className="flex items-center gap-2">
+            <div className="flex flex-wrap items-center gap-2 w-[70%] md:w-auto">
               <h3 className="text-base font-bold text-color-text-two">PIN</h3>
               <p className="font-bold text-color-text-one">
                 {customTableData?.pid || customTableData?.property.pid}
@@ -209,7 +209,7 @@ const ViewPropertyModal: React.FC<ViewPropertyModalProps> = ({
                   customTableData?.property?.demand_notice_status}
               </span>
             </div>
-            <div className="flex items-center gap-2">
+            <div className="flex items-center justify-end gap-2 w-[20%] md:w-auto">
               {editProperty ? (
                 <div className="flex items-center justify-center gap-2">
                   <span

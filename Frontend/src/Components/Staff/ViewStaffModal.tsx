@@ -13,7 +13,7 @@ const ViewStaffModal = ({
   const { deleteStaffById } = userData();
   return (
     <div
-      className={`flex-col relative bg-white rounded overflow-y-auto overscroll-contain scrollbar-thin scrollbar-thumb-color-text-two scrollbar-track-white ${
+      className={`flex-col relative min-w-[290px] sm:min-w-[350px] md:min-w-[500px] bg-white rounded overflow-y-auto overscroll-contain scrollbar-thin scrollbar-thumb-color-text-two scrollbar-track-white ${
         propertyModalTransition
           ? "w-6/12 transition-all ease-in-out duration-500"
           : "w-32"

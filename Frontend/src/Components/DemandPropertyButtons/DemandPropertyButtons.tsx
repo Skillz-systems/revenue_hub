@@ -43,17 +43,16 @@ const DemandPropertyButtons: React.FC<DemandPropertyButtonsProps> = ({
   };
 
   return (
-    <div className="flex items-center justify-between">
+    <div className="flex flex-col items-center justify-between space-y-2 lg:space-y-0 lg:flex-row">
       <button
         type="button"
-        className="flex items-center justify-between button-gradient-one space-x-1 px-2 py-2.5 border border-custom-color-two rounded shadow-custom-100"
-        style={{ width: "48.5%" }}
+        className="w-full lg:w-[48.5%] flex items-center justify-between button-gradient-one space-x-1 px-2 py-2.5 border border-custom-color-two rounded shadow-custom-100"
         title={buttonTextOne}
         onClick={() => handleButtonClick(openNewDemandInvoiceModal)}
       >
         <span className="text-sm text-white">{iconOne}</span>
         <span
-          className="font-medium text-left text-white ellipsis font-lexend"
+          className="font-medium text-left text-white ellipsis font-lexend w-[85%] lg:w-auto"
           style={{ fontSize: "0.6875rem" }}
         >
           {buttonTextOne}
@@ -61,14 +60,13 @@ const DemandPropertyButtons: React.FC<DemandPropertyButtonsProps> = ({
       </button>
       <button
         type="button"
-        className="flex items-center justify-between button-gradient-two space-x-1  px-2 py-2.5 border border-custom-color-two rounded shadow-custom-100"
-        style={{ width: "48.5%" }}
+        className="w-full lg:w-[48.5%] flex items-center justify-between button-gradient-two space-x-1  px-2 py-2.5 border border-custom-color-two rounded shadow-custom-100"
         title={buttonTextTwo}
         onClick={() => handleButtonClick(openAddPropertyModal)}
       >
         <span className="text-sm text-primary-color">{iconTwo}</span>
         <span
-          className="font-medium text-left text-primary-color ellipsis font-lexend"
+          className="font-medium text-left text-primary-color ellipsis font-lexend w-[85%] lg:w-auto"
           style={{ fontSize: "0.6875rem" }}
         >
           {buttonTextTwo}

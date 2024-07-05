@@ -3,7 +3,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import images from "../assets";
 import { InputComponent, CustomAlert } from "../Components/Index";
 import { GrFormViewHide, GrFormView } from "react-icons/gr";
-import axios from "axios";
+import axios, { AxiosError } from "axios";
 import { useTriggerError } from "../Utils/client";
 
 const apiUrl = import.meta.env.VITE_API_URL as string;
@@ -87,28 +87,34 @@ function AccountPassword(): JSX.Element {
       }
     } catch (error: any) {
       let message = "Internal Server Error";
-      if (error.response) {
-        switch (error.response.status) {
-          case 400:
-            message = "Bad request. Fill in the required fields";
-            break;
-          case 401:
-            message = "Invalid Password Token";
-            break;
-          case 429:
-            message = "Too many requests made. Refreshing in 3 seconds";
-            setTimeout(() => {
-              window.location.reload();
-            }, 3000);
-            break;
-          case 500:
-            triggerError(error);
-            break;
-          default:
-            break;
+      if (error.isAxiosError) {
+        const axiosError = error as AxiosError;
+        if (axiosError.code === "ERR_NETWORK") {
+          message =
+            "Network error. Please check your internet connection and try again.";
+        } else if (axiosError.response) {
+          switch (axiosError.response.status) {
+            case 400:
+              message = "Bad request. Fill in the required fields";
+              break;
+            case 401:
+              message = "Invalid Password Token";
+              break;
+            case 429:
+              message = "Too many requests made. Refreshing in 3 seconds";
+              setTimeout(() => {
+                window.location.reload();
+              }, 3000);
+              break;
+            case 500:
+              triggerError(error);
+              break;
+            default:
+              break;
+          }
         }
+        setSnackbar({ open: true, message, severity: "error" });
       }
-      setSnackbar({ open: true, message, severity: "error" });
     }
     setIsLoading(false);
   };

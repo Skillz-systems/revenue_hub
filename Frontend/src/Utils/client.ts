@@ -1,27 +1,19 @@
-import { useState, useEffect } from "react";
-import axios from "axios";
+import axios, { AxiosError } from "axios";
 import Cookies from "js-cookie";
 import { useContext } from "react";
 import { ErrorContext } from "../Context/ErrorContext";
+import isOnline from "is-online";
+interface NetworkStatus {
+  isOnline: boolean;
+}
 
-// WRONG
-export const useOnlineStatus = () => {
-  const [isOnline, setIsOnline] = useState<boolean>(navigator.onLine);
-
-  useEffect(() => {
-    const handleOnline = () => setIsOnline(true);
-    const handleOffline = () => setIsOnline(false);
-
-    window.addEventListener("online", handleOnline);
-    window.addEventListener("offline", handleOffline);
-
-    return () => {
-      window.removeEventListener("online", handleOnline);
-      window.removeEventListener("offline", handleOffline);
-    };
-  }, []);
-
-  return isOnline;
+export const networkStatus = async (): Promise<NetworkStatus | undefined> => {
+  try {
+    const online = await isOnline();
+    return { isOnline: online };
+  } catch (error) {
+    return undefined;
+  }
 };
 
 export function formatNumberWithCommas(number: number | string): string {
@@ -120,8 +112,17 @@ export const fetcher = async (url: string, token: any) => {
     });
 
     return response.data;
-  } catch (error) {
-    throw new Error("Failed to fetch data");
+  } catch (error: any) {
+    if (error.isAxiosError) {
+      const axiosError = error as AxiosError;
+      if (axiosError.code === "ERR_NETWORK") {
+        const message =
+          "Network error. Please check your internet connection and try again.";
+        // alert(message);
+      }
+    } else {
+      console.log("Failed to fetch data");
+    }
   }
 };
 
@@ -146,7 +147,7 @@ export const useTokens = () => {
 export const useTriggerError = () => {
   const { setHasError } = useContext(ErrorContext);
 
-  const triggerError = (error) => {
+  const triggerError = (error: any) => {
     console.error("Error Boundary:", error);
     setHasError(error);
   };

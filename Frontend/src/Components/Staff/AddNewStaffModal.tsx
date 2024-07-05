@@ -158,7 +158,7 @@ const AddNewStaffModal: React.FC<AddNewStaffModalProps> = ({
 
   return (
     <form
-      className={`flex-col relative bg-white rounded overflow-y-auto overscroll-contain scrollbar-thin scrollbar-thumb-color-text-two scrollbar-track-white ${
+      className={`flex-col relative min-w-[290px] sm:min-w-[350px] md:min-w-[500px] bg-white rounded overflow-y-auto overscroll-contain scrollbar-thin scrollbar-thumb-color-text-two scrollbar-track-white ${
         propertyModalTransition
           ? "w-5/12 transition-all ease-in-out duration-500"
           : "w-32"
@@ -175,15 +175,14 @@ const AddNewStaffModal: React.FC<AddNewStaffModalProps> = ({
       />
       <div className="absolute z-10 flex-col w-full p-4 space-y-8 ">
         <div
-          className="flex items-start justify-between"
-          style={{ height: "10vh" }}
+          className="flex items-start justify-between h-auto gap-4 md:h-[10vh]"
         >
-          <h3 className="text-base font-bold text-color-text-two">
+          <h3 className="text-base w-[50%] lg:w-full font-bold text-color-text-two">
             CREATE NEW STAFF
           </h3>
-          <div className="flex items-center justify-between w-64 gap-4">
+          <div className="flex flex-col items-center justify-end gap-4 w-[50%] md:w-64 lg:w-full md:justify-between md:flex-row">
             <button
-              className="w-1/2 text-xs text-color-dark-red font-lexend font-medium px-0.5 py-2 border-0.6 border-color-dark-red rounded"
+              className="w-full md:w-1/2 text-xs text-color-dark-red font-lexend font-medium px-0.5 py-2 border-0.6 border-color-dark-red rounded"
               onClick={hideNewStaffModal}
               type="button"
               title="Close Add New Property Modal"
@@ -191,7 +190,7 @@ const AddNewStaffModal: React.FC<AddNewStaffModalProps> = ({
               Close
             </button>
             <button
-              className="w-1/2 text-xs text-white font-lexend font-medium bg-primary-color px-0.5 py-2 rounded"
+              className="w-full md:w-1/2 text-xs text-white font-lexend font-medium bg-primary-color px-0.5 py-2 rounded"
               title="Save Changes"
               type="submit"
             >

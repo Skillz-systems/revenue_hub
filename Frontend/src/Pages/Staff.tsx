@@ -11,7 +11,7 @@ const Staff: React.FC = () => {
   } = userData();
 
   return (
-    <div className="flex-col space-y-8">
+    <div className="flex-col w-full space-y-8 overflow-auto scrollbar-thin scrollbar-thumb-color-text-two scrollbar-track-white">
       <hr className="border-0.5 mb-8 border-custom-grey-100" />
       {staffInformation ? (
         <StaffTable
