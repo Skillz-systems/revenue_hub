@@ -11,8 +11,7 @@ import {
   LineChart,
   Line,
   Dot,
-} from 'recharts';
-
+} from "recharts";
 
 const Month: string[] = [
   "Select Month",
@@ -53,17 +52,17 @@ const Statistics: React.FC = () => {
     if (type === "Day") {
       return Array.from({ length: 30 }, (_, i) => ({
         name: `Day ${i + 1}`,
-        value: Math.floor(Math.random() * 25) + 1
+        value: Math.floor(Math.random() * 25) + 1,
       }));
     } else if (type === "Week") {
       return Array.from({ length: 4 }, (_, i) => ({
         name: `Week ${i + 1}`,
-        value: Math.floor(Math.random() * 25) + 1
+        value: Math.floor(Math.random() * 25) + 1,
       }));
     } else {
       return Month.map((month, i) => ({
         name: month,
-        value: Math.floor(Math.random() * 25) + 1
+        value: Math.floor(Math.random() * 25) + 1,
       }));
     }
   };
@@ -73,24 +72,24 @@ const Statistics: React.FC = () => {
       return Array.from({ length: 30 }, (_, i) => ({
         name: `Day ${i + 1}`,
         invoice: Math.floor(Math.random() * 25) + 1,
-        payment: Math.floor(Math.random() * 25) + 1
+        payment: Math.floor(Math.random() * 25) + 1,
       }));
     } else if (type === "Week") {
       return Array.from({ length: 4 }, (_, i) => ({
         name: `Week ${i + 1}`,
         invoice: Math.floor(Math.random() * 25) + 1,
-        payment: Math.floor(Math.random() * 25) + 1
+        payment: Math.floor(Math.random() * 25) + 1,
       }));
     } else {
       return Month.map((month, i) => ({
         name: month,
         invoice: Math.floor(Math.random() * 25) + 1,
-        payment: Math.floor(Math.random() * 25) + 1
+        payment: Math.floor(Math.random() * 25) + 1,
       }));
     }
   };
 
-  const CustomBar = (props) => {
+  const CustomBar = (props: any) => {
     const { x, y, width, height, name } = props;
     const isHovered = hoveredBar === name;
 
@@ -101,7 +100,7 @@ const Statistics: React.FC = () => {
           y={y}
           width={width}
           height={height}
-          fill={isHovered ? 'url(#barHoverGradient)' : 'url(#barGradient)'} // Changed fill on hover
+          fill={isHovered ? "url(#barHoverGradient)" : "url(#barGradient)"} // Changed fill on hover
           stroke="#D8C5C2" // Border color
           strokeWidth={0.7} // Border thickness
           rx="2" // Border radius
@@ -114,7 +113,7 @@ const Statistics: React.FC = () => {
   const CustomTooltip = ({ active, payload, label }) => {
     if (active && payload && payload.length) {
       setHoveredBar(label);
-      setInvoicePayload(payload[0].value)
+      setInvoicePayload(payload[0].value);
       return (
         <div className="flex flex-col p-2 space-y-1 text-xs custom-tooltip font-lexend bg-[#22306D] text-white rounded font-medium shadow-md">
           <p className="label">{`${label}`}</p>
@@ -135,10 +134,16 @@ const Statistics: React.FC = () => {
         <div className="flex flex-col p-2 space-y-1 text-xs font-medium bg-white border rounded shadow-md custom-tooltip font-lexend">
           <p className="label">{`${label}`}</p>
           {invoice && (
-            <p className="desc" style={{ color: '#4561DB' }}>{`Invoices: ${invoice.value}`}</p>
+            <p
+              className="desc"
+              style={{ color: "#4561DB" }}
+            >{`Invoices: ${invoice.value}`}</p>
           )}
           {payment && (
-            <p className="desc" style={{ color: '#D6236A' }}>{`Payments: ${payment.value}`}</p>
+            <p
+              className="desc"
+              style={{ color: "#D6236A" }}
+            >{`Payments: ${payment.value}`}</p>
           )}
         </div>
       );
@@ -155,204 +160,248 @@ const Statistics: React.FC = () => {
     setValueChartData(generateValueData(valueChartState));
   }, [valueChartState]);
   return (
-    <div className="flex-col space-y-8 pb-14">
-      <hr className="border-0.5 mb-8 border-custom-grey-100" />
-      <div className="flex-col border-0.6 w-full border-custom-color-one shadow rounded">
-        <div className="flex items-center justify-between px-4 py-2 bg-color-light-green ">
-          <p className="text-base font-bold font-lexend text-color-text-one">
-            Invoice Generated
+    <div className="w-full space-y-8 overflow-auto scrollbar-thin scrollbar-thumb-color-text-two scrollbar-track-white">
+      <div className="flex-col space-y-8 pb-14 w-[1000px] lg:w-full">
+        <hr className="border-0.5 mb-8 border-custom-grey-100" />
+        <div className="flex-col border-0.6 w-full border-custom-color-one shadow rounded">
+          <div className="flex items-center justify-between px-4 py-2 bg-color-light-green ">
+            <p className="text-base font-bold font-lexend text-color-text-one">
+              Invoice Generated
+            </p>
+            <div className="flex items-center gap-3 text-xs font-lexend">
+              <span
+                className={`cursor-pointer ${
+                  invoiceChartState === "Day"
+                    ? "text-color-dark-red font-bold"
+                    : "text-color-text-two"
+                }`}
+                onClick={() => setInvoiceChartState("Day")}
+              >
+                Day
+              </span>
+              <span
+                className={`cursor-pointer ${
+                  invoiceChartState === "Week"
+                    ? "text-color-dark-red font-bold"
+                    : "text-color-text-two"
+                }`}
+                onClick={() => setInvoiceChartState("Week")}
+              >
+                Week
+              </span>
+              <span
+                className={`cursor-pointer ${
+                  invoiceChartState === "Month"
+                    ? "text-color-dark-red font-bold"
+                    : "text-color-text-two"
+                }`}
+                onClick={() => setInvoiceChartState("Month")}
+              >
+                Month
+              </span>
+              <select
+                className="p-2 overflow-y-auto font-medium leading-tight border rounded outline-none text-color-text-two font-lexend bg-inherit border-divider-grey overscroll-contain scrollbar-thin scrollbar-thumb-color-text-two scrollbar-track-white"
+                onChange={handleMonthChange}
+                value={selectedMonth}
+              >
+                {Month.map((month, index) => (
+                  <option key={index} value={month}>
+                    {month}
+                  </option>
+                ))}
+              </select>
+              <select
+                className="p-2 overflow-y-auto font-medium leading-tight border rounded outline-none text-color-text-two font-lexend bg-inherit border-divider-grey overscroll-contain scrollbar-thin scrollbar-thumb-color-text-two scrollbar-track-white"
+                onChange={handleYearChange}
+                value={selectedYear}
+              >
+                {Array.from({ length: 25 }, (_, index) => (
+                  <option key={index} value={2000 + index}>
+                    {2000 + index}
+                  </option>
+                ))}
+              </select>
+            </div>
+          </div>
+          <p className="flex gap-2 px-4 py-2 text-xs font-bold border-b bg-very-light-grey border-custom-color-one font-lexend text-color-text-two">
+            LAST DAILY TOTAL
+            <span className="text-color-text-black">{invoicePayload}</span>
           </p>
-          <div className="flex items-center gap-3 text-xs font-lexend">
-            <span
-              className={`cursor-pointer ${invoiceChartState === "Day"
-                ? "text-color-dark-red font-bold"
-                : "text-color-text-two"
-                }`}
-              onClick={() => setInvoiceChartState("Day")}
-            >
-              Day
-            </span>
-            <span
-              className={`cursor-pointer ${invoiceChartState === "Week"
-                ? "text-color-dark-red font-bold"
-                : "text-color-text-two"
-                }`}
-              onClick={() => setInvoiceChartState("Week")}
-            >
-              Week
-            </span>
-            <span
-              className={`cursor-pointer ${invoiceChartState === "Month"
-                ? "text-color-dark-red font-bold"
-                : "text-color-text-two"
-                }`}
-              onClick={() => setInvoiceChartState("Month")}
-            >
-              Month
-            </span>
-            <select
-              className="p-2 overflow-y-auto font-medium leading-tight border rounded outline-none text-color-text-two font-lexend bg-inherit border-divider-grey overscroll-contain scrollbar-thin scrollbar-thumb-color-text-two scrollbar-track-white"
-              onChange={handleMonthChange}
-              value={selectedMonth}
-            >
-              {Month.map((month, index) => (
-                <option key={index} value={month}>
-                  {month}
-                </option>
-              ))}
-            </select>
-            <select
-              className="p-2 overflow-y-auto font-medium leading-tight border rounded outline-none text-color-text-two font-lexend bg-inherit border-divider-grey overscroll-contain scrollbar-thin scrollbar-thumb-color-text-two scrollbar-track-white"
-              onChange={handleYearChange}
-              value={selectedYear}
-            >
-              {Array.from({ length: 25 }, (_, index) => (
-                <option key={index} value={2000 + index}>
-                  {2000 + index}
-                </option>
-              ))}
-            </select>
+          <div className="flex-col p-4 bg-very-light-grey">
+            <ResponsiveContainer width="100%" height={300}>
+              <BarChart data={invoiceChartData}>
+                <defs>
+                  <linearGradient id="barGradient" x1="0" y1="1" x2="0" y2="0">
+                    <stop offset="0%" stopColor="#FFFFFF" stopOpacity={1} />
+                    <stop offset="63%" stopColor="#D8C5C2" stopOpacity={0.63} />
+                    <stop offset="100%" stopColor="#D8C5C2" stopOpacity={1} />
+                  </linearGradient>
+                  {/* Added hover gradient */}
+                  <linearGradient
+                    id="barHoverGradient"
+                    x1="0"
+                    y1="1"
+                    x2="0"
+                    y2="0"
+                  >
+                    <stop offset="0%" stopColor="#F76FA5" stopOpacity={1} />
+                    <stop offset="19%" stopColor="#D12B6D" stopOpacity={1} />
+                    <stop offset="81%" stopColor="#D5296D" stopOpacity={1} />
+                    <stop offset="100%" stopColor="#FFBDD7" stopOpacity={1} />
+                  </linearGradient>
+                </defs>
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis
+                  dataKey="name"
+                  tick={{ fontFamily: "Lexend", fontSize: 12, fontWeight: 500 }}
+                />
+                <YAxis
+                  domain={[0, 25]}
+                  ticks={[0, 5, 10, 15, 20, 25]}
+                  tick={{ fontFamily: "Lexend", fontSize: 12, fontWeight: 500 }}
+                  label={{
+                    value: "Invoices",
+                    angle: -90,
+                    position: "insideLeft",
+                    fontFamily: "Lexend",
+                    fontSize: 12,
+                    fontWeight: "bold",
+                  }}
+                />
+                <Tooltip
+                  cursor={false}
+                  active={true}
+                  content={<CustomTooltip active payload label />}
+                  wrapperStyle={{ fontFamily: "Lexend", fontSize: 12 }}
+                  contentStyle={{ fontFamily: "Lexend", fontSize: 12 }}
+                />
+                <Bar
+                  dataKey="value"
+                  name={invoiceChartState}
+                  shape={<CustomBar />}
+                />
+              </BarChart>
+            </ResponsiveContainer>
           </div>
         </div>
-        <p className="flex gap-2 px-4 py-2 text-xs font-bold border-b bg-very-light-grey border-custom-color-one font-lexend text-color-text-two">
-          LAST DAILY TOTAL
-          <span className="text-color-text-black">{invoicePayload}</span>
-        </p>
-        <div className="flex-col p-4 bg-very-light-grey">
-          <ResponsiveContainer width="100%" height={300}>
-            <BarChart data={invoiceChartData}>
-              <defs>
-                <linearGradient id="barGradient" x1="0" y1="1" x2="0" y2="0">
-                  <stop offset="0%" stopColor="#FFFFFF" stopOpacity={1} />
-                  <stop offset="63%" stopColor="#D8C5C2" stopOpacity={0.63} />
-                  <stop offset="100%" stopColor="#D8C5C2" stopOpacity={1} />
-                </linearGradient>
-                {/* Added hover gradient */}
-                <linearGradient id="barHoverGradient" x1="0" y1="1" x2="0" y2="0">
-                  <stop offset="0%" stopColor="#F76FA5" stopOpacity={1} />
-                  <stop offset="19%" stopColor="#D12B6D" stopOpacity={1} />
-                  <stop offset="81%" stopColor="#D5296D" stopOpacity={1} />
-                  <stop offset="100%" stopColor="#FFBDD7" stopOpacity={1} />
-                </linearGradient>
-              </defs>
-              <CartesianGrid strokeDasharray="3 3" />
-              <XAxis
-                dataKey="name"
-                tick={{ fontFamily: 'Lexend', fontSize: 12, fontWeight: 500 }}
-              />
-              <YAxis
-                domain={[0, 25]}
-                ticks={[0, 5, 10, 15, 20, 25]}
-                tick={{ fontFamily: 'Lexend', fontSize: 12, fontWeight: 500 }}
-                label={{ value: 'Invoices', angle: -90, position: 'insideLeft', fontFamily: 'Lexend', fontSize: 12, fontWeight: 'bold' }}
-              />
-              <Tooltip
-                cursor={false}
-                active={true}
-                content={<CustomTooltip active payload label />}
-                wrapperStyle={{ fontFamily: 'Lexend', fontSize: 12 }}
-                contentStyle={{ fontFamily: 'Lexend', fontSize: 12 }}
-              />
-              <Bar dataKey="value" name={invoiceChartState} shape={<CustomBar />} />
-            </BarChart>
-          </ResponsiveContainer>
-        </div>
-      </div>
 
-      <div className="flex-col border-0.6 w-full border-custom-color-one shadow rounded">
-        <div className="flex items-center justify-between px-4 py-2 bg-color-light-yellow">
-          <p className="text-base font-bold font-lexend text-color-text-one">
-            Value Generated
-          </p>
-          <div className="flex items-center gap-3 text-xs font-lexend">
-            <span
-              className={`cursor-pointer ${valueChartState === "Day"
-                ? "text-color-dark-red font-bold"
-                : "text-color-text-two"
+        <div className="flex-col border-0.6 w-full border-custom-color-one shadow rounded">
+          <div className="flex items-center justify-between px-4 py-2 bg-color-light-yellow">
+            <p className="text-base font-bold font-lexend text-color-text-one">
+              Value Generated
+            </p>
+            <div className="flex items-center gap-3 text-xs font-lexend">
+              <span
+                className={`cursor-pointer ${
+                  valueChartState === "Day"
+                    ? "text-color-dark-red font-bold"
+                    : "text-color-text-two"
                 }`}
-              onClick={() => setValueChartState("Day")}
-            >
-              Day
-            </span>
-            <span
-              className={`cursor-pointer ${valueChartState === "Week"
-                ? "text-color-dark-red font-bold"
-                : "text-color-text-two"
+                onClick={() => setValueChartState("Day")}
+              >
+                Day
+              </span>
+              <span
+                className={`cursor-pointer ${
+                  valueChartState === "Week"
+                    ? "text-color-dark-red font-bold"
+                    : "text-color-text-two"
                 }`}
-              onClick={() => setValueChartState("Week")}
-            >
-              Week
-            </span>
-            <span
-              className={`cursor-pointer ${valueChartState === "Month"
-                ? "text-color-dark-red font-bold"
-                : "text-color-text-two"
+                onClick={() => setValueChartState("Week")}
+              >
+                Week
+              </span>
+              <span
+                className={`cursor-pointer ${
+                  valueChartState === "Month"
+                    ? "text-color-dark-red font-bold"
+                    : "text-color-text-two"
                 }`}
-              onClick={() => setValueChartState("Month")}
-            >
-              Month
-            </span>
-            <select
-              className="p-2 overflow-y-auto font-medium leading-tight border rounded outline-none text-color-text-two font-lexend bg-inherit border-divider-grey overscroll-contain scrollbar-thin scrollbar-thumb-color-text-two scrollbar-track-white"
-              onChange={handleMonthChange}
-              value={selectedMonth}
-            >
-              {Month.map((month, index) => (
-                <option key={index} value={month}>
-                  {month}
-                </option>
-              ))}
-            </select>
-            <select
-              className="p-2 overflow-y-auto font-medium leading-tight border rounded outline-none text-color-text-two font-lexend bg-inherit border-divider-grey overscroll-contain scrollbar-thin scrollbar-thumb-color-text-two scrollbar-track-white"
-              onChange={handleYearChange}
-              value={selectedYear}
-            >
-              {Array.from({ length: 25 }, (_, index) => (
-                <option key={index} value={2000 + index}>
-                  {2000 + index}
-                </option>
-              ))}
-            </select>
+                onClick={() => setValueChartState("Month")}
+              >
+                Month
+              </span>
+              <select
+                className="p-2 overflow-y-auto font-medium leading-tight border rounded outline-none text-color-text-two font-lexend bg-inherit border-divider-grey overscroll-contain scrollbar-thin scrollbar-thumb-color-text-two scrollbar-track-white"
+                onChange={handleMonthChange}
+                value={selectedMonth}
+              >
+                {Month.map((month, index) => (
+                  <option key={index} value={month}>
+                    {month}
+                  </option>
+                ))}
+              </select>
+              <select
+                className="p-2 overflow-y-auto font-medium leading-tight border rounded outline-none text-color-text-two font-lexend bg-inherit border-divider-grey overscroll-contain scrollbar-thin scrollbar-thumb-color-text-two scrollbar-track-white"
+                onChange={handleYearChange}
+                value={selectedYear}
+              >
+                {Array.from({ length: 25 }, (_, index) => (
+                  <option key={index} value={2000 + index}>
+                    {2000 + index}
+                  </option>
+                ))}
+              </select>
+            </div>
           </div>
-        </div>
-        <div className="flex items-center justify-start gap-2 px-4 py-2 text-xs border-b bg-very-light-grey border-custom-color-one font-mulish text-color-text-one">
-          <div className="flex items-center gap-1">
-            <span className="w-[13px] h-[13px] bg-primary-color"></span>
-            <span>Invoices Generated</span>
+          <div className="flex items-center justify-start gap-2 px-4 py-2 text-xs border-b bg-very-light-grey border-custom-color-one font-mulish text-color-text-one">
+            <div className="flex items-center gap-1">
+              <span className="w-[13px] h-[13px] bg-primary-color"></span>
+              <span>Invoices Generated</span>
+            </div>
+            <div className="flex items-center gap-1">
+              <span className="w-[13px] h-[13px] bg-color-dark-red"></span>
+              <span>Payments Received</span>
+            </div>
           </div>
-          <div className="flex items-center gap-1">
-            <span className="w-[13px] h-[13px] bg-color-dark-red"></span>
-            <span>Payments Received</span>
+          <div className="flex-col p-4 bg-very-light-grey">
+            <ResponsiveContainer width="100%" height={300}>
+              <LineChart data={valueChartData}>
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis
+                  dataKey="name"
+                  tick={{ fontFamily: "Lexend", fontSize: 12, fontWeight: 500 }}
+                />
+                <YAxis
+                  domain={[0, 25]}
+                  ticks={[0, 5, 10, 15, 20, 25]}
+                  tick={{ fontFamily: "Lexend", fontSize: 12, fontWeight: 500 }}
+                  label={{
+                    value: "Value",
+                    angle: -90,
+                    position: "insideLeft",
+                    fontFamily: "Lexend",
+                    fontSize: 12,
+                    fontWeight: "bold",
+                  }}
+                />
+                <Tooltip
+                  content={<CustomLineTooltip active label payload />}
+                  wrapperStyle={{ fontFamily: "Lexend", fontSize: 12 }}
+                  contentStyle={{ fontFamily: "Lexend", fontSize: 12 }}
+                />
+                <Line
+                  type="monotone"
+                  dataKey="invoice"
+                  stroke="#4561DB"
+                  fill="#4561DB"
+                  dot={{ r: 3 }}
+                />
+                <Line
+                  type="monotone"
+                  dataKey="payment"
+                  stroke="#D6236A"
+                  fill="#D6236A"
+                  dot={{ r: 3 }}
+                />
+              </LineChart>
+            </ResponsiveContainer>
           </div>
-        </div>
-        <div className="flex-col p-4 bg-very-light-grey">
-          <ResponsiveContainer width="100%" height={300}>
-            <LineChart data={valueChartData}>
-              <CartesianGrid strokeDasharray="3 3" />
-              <XAxis
-                dataKey="name"
-                tick={{ fontFamily: 'Lexend', fontSize: 12, fontWeight: 500 }}
-              />
-              <YAxis
-                domain={[0, 25]}
-                ticks={[0, 5, 10, 15, 20, 25]}
-                tick={{ fontFamily: 'Lexend', fontSize: 12, fontWeight: 500 }}
-                label={{ value: 'Value', angle: -90, position: 'insideLeft', fontFamily: 'Lexend', fontSize: 12, fontWeight: 'bold' }}
-              />
-              <Tooltip
-                content={<CustomLineTooltip active label payload />}
-                wrapperStyle={{ fontFamily: 'Lexend', fontSize: 12 }}
-                contentStyle={{ fontFamily: 'Lexend', fontSize: 12 }}
-              />
-              <Line type="monotone" dataKey="invoice" stroke="#4561DB" fill="#4561DB" dot={{ r: 3 }} />
-              <Line type="monotone" dataKey="payment" stroke="#D6236A" fill="#D6236A" dot={{ r: 3 }} />
-            </LineChart>
-          </ResponsiveContainer>
         </div>
       </div>
     </div>
   );
-}
+};
 
-export default Statistics
+export default Statistics;

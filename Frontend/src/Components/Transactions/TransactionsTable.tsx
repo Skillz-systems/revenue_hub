@@ -18,6 +18,7 @@ import {
   ScrollToTop,
   useTokens,
 } from "../../Utils/client";
+import { useMediaQuery } from "react-responsive";
 
 const TransactionsTable = ({
   staticInformation,
@@ -35,6 +36,7 @@ const TransactionsTable = ({
   };
   setPaginationMeta: React.SetStateAction<any>;
 }) => {
+  const isDesktop = useMediaQuery({ query: "(min-width: 1024px)" });
   const [displaySearchIcon, setDisplaySearchIcon] = useState(true);
   const [activeMenu, setActiveMenu] = useState<number>(1);
   const [query, setQuery] = useState<string>("");
@@ -196,11 +198,16 @@ const TransactionsTable = ({
   }
 
   return (
-    <div>
+    <div className="w-[1000px] lg:w-full">
       <div
         id="top-container"
         className="flex-col space-y-4 p-4 border-0.6 border-custom-grey-100 rounded-lg"
       >
+        {!isDesktop ? (
+          <p className="text-base font-bold text-color-text-two lg:hidden">
+            TRANSACTIONS
+          </p>
+        ) : null}
         <div className="flex items-start justify-between">
           <div className="flex items-center justify-between border-0.6 border-custom-grey-100 rounded p-1">
             {staticInformation.transactions.menu.map((menu) =>

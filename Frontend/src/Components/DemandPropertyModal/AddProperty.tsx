@@ -150,9 +150,9 @@ const AddProperty: React.FC<AddPropertyProps> = ({
 
   return (
     <form
-      className={`flex-col relative bg-white rounded overflow-y-auto overscroll-contain scrollbar-thin scrollbar-thumb-color-text-two scrollbar-track-white ${
+      className={`flex-col relative min-w-[290px] sm:min-w-[350px] md:min-w-[500px] bg-white rounded overflow-y-auto overscroll-contain scrollbar-thin scrollbar-thumb-color-text-two scrollbar-track-white ${
         propertyModalTransition
-          ? "w-6/12 transition-all ease-in-out duration-500"
+          ? "lg:w-6/12 transition-all ease-in-out duration-500"
           : "w-32"
       }`}
       style={{ height: "95vh" }}
@@ -173,9 +173,9 @@ const AddProperty: React.FC<AddPropertyProps> = ({
           <h3 className="text-base font-bold text-color-text-two">
             NEW PROPERTY REGISTRATION
           </h3>
-          <div className="flex items-center justify-between w-64 gap-4">
+          <div className="flex flex-col items-center justify-between gap-2 w-44 sm:w-64 lg:gap-4 md:flex-row">
             <button
-              className="w-1/2 text-xs text-color-dark-red font-lexend font-medium px-0.5 py-2 border-0.6 border-color-dark-red rounded"
+              className="w-full lg:w-1/2 text-xs text-color-dark-red font-lexend font-medium px-0.5 py-2 border-0.6 border-color-dark-red rounded"
               onClick={hideAddPropertyModal}
               type="button"
               title="Close Add New Property Modal"
@@ -183,7 +183,7 @@ const AddProperty: React.FC<AddPropertyProps> = ({
               Close
             </button>
             <button
-              className="w-1/2 text-xs text-white font-lexend font-medium bg-primary-color px-0.5 py-2 rounded"
+              className="w-full lg:w-1/2 text-xs text-white font-lexend font-medium bg-primary-color px-0.5 py-2 rounded"
               title="Save Changes"
               type="submit"
             >
@@ -192,7 +192,7 @@ const AddProperty: React.FC<AddPropertyProps> = ({
           </div>
         </div>
         <div className="flex-col pt-10 space-y-4">
-          <div className="flex items-center justify-between w-6/12 gap-2 p-0.5 border-0.6 border-custom-color-one rounded">
+          <div className="flex items-center justify-between w-full md:w-7/12 lg:w-6/12 gap-2 p-0.5 border-0.6 border-custom-color-one rounded">
             {data.section.map((item) => (
               <button
                 key={item.id}

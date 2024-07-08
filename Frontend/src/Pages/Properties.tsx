@@ -196,9 +196,9 @@ export default function Properties() {
   const pageCount = Math.ceil(LengthByFilterState() / propertiesPerPage);
 
   return (
-    <div>
+    <div className="w-full overflow-auto scrollbar-thin scrollbar-thumb-color-text-two scrollbar-track-white">
       {propertyInformation ? (
-        <>
+        <div className="w-[1000px] lg:w-full">
           <hr className="border-0.5 mb-8 border-custom-grey-100" />
           <div
             id="top-container"
@@ -430,7 +430,7 @@ export default function Properties() {
               />
             </DemandPropertyModal>
           ) : null}
-        </>
+        </div>
       ) : (
         <LoadingSpinner title="Loading Properties" />
       )}

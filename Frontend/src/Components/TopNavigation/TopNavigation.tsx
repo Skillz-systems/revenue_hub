@@ -12,12 +12,14 @@ interface TopNavigationProps {
   userName: string;
   handleViewProfile: () => void;
   parentStyle: string;
+  displayMobileNav: () => void;
 }
 
 const TopNavigation: React.FC<TopNavigationProps> = ({
   userName,
   handleViewProfile,
   parentStyle,
+  displayMobileNav,
 }) => {
   const [selectedYear, setSelectedYear] = useState<number>(2024);
   const [menuState, setMenuState] = useState<boolean>(false);
@@ -85,7 +87,7 @@ const TopNavigation: React.FC<TopNavigationProps> = ({
           {getCurrentDate()}
         </p>
       </div>
-      <div className="flex text-3xl lg:hidden">
+      <div className="flex text-3xl lg:hidden" onClick={displayMobileNav}>
         <GiHamburgerMenu />
       </div>
       <div className="hidden w-auto gap-4 lg:flex">
