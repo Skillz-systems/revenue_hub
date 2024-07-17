@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { GoDotFill } from "react-icons/go";
 import { TbCurrencyNaira } from "react-icons/tb";
 import {
@@ -10,6 +10,7 @@ import { BiSolidEditAlt } from "react-icons/bi";
 import { HiOutlineDotsHorizontal } from "react-icons/hi";
 import axios from "axios";
 import { CustomAlert } from "../Index";
+import { useMediaQuery } from "react-responsive";
 
 type PropertiesTableProps = {
   id: number;
@@ -38,6 +39,7 @@ const PropertiesTable: React.FC<PropertiesTableProps> = ({
   setViewPropertyModal,
   occupationStatus,
 }) => {
+  const isDesktop = useMediaQuery({ query: "(min-width: 1130px)" });
   const { token, userRoleId } = useTokens();
   const [settingsModal, setSettingsModal] = useState<boolean>(false);
   const [snackbar, setSnackbar] = useState({
@@ -178,7 +180,11 @@ const PropertiesTable: React.FC<PropertiesTableProps> = ({
   };
 
   return (
-    <div className="flex-col border border-divider-grey w-[32%] rounded">
+    <div
+      className={`flex-col border border-divider-grey ${
+        isDesktop ? "w-[32%]" : "w-[31%]"
+      } rounded`}
+    >
       <div className="flex items-center justify-between px-2.5 py-3 gap-1 border-b border-divider-grey">
         <div className="flex items-center justify-between gap-2">
           <span className="text-xs font-bold text-color-text-one">

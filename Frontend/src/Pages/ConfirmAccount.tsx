@@ -2,7 +2,7 @@ import React, { useState, FormEvent, ChangeEvent, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import images from "../assets";
 import { InputComponent, CustomAlert } from "../Components/Index";
-import axios from "axios";
+import axios, { AxiosError } from "axios";
 import { useTriggerError } from "../Utils/client";
 
 const apiUrl = import.meta.env.VITE_API_URL as string;
@@ -59,25 +59,31 @@ function ConfirmAccount(): JSX.Element {
       }
     } catch (error: any) {
       let message = "Internal Server Error";
-      if (error.response) {
-        switch (error.response.status) {
-          case 403:
-            message = "You are forbidden!";
-            break;
-          case 404:
-            message = "No Staff Found";
-            break;
-          case 429:
-            message = "Too many requests made. Refreshing in 3 seconds";
-            setTimeout(() => {
-              window.location.reload();
-            }, 3000);
-            break;
-          case 500:
-            triggerError(error);
-            break;
-          default:
-            break;
+      if (error.isAxiosError) {
+        const axiosError = error as AxiosError;
+        if (axiosError.code === "ERR_NETWORK") {
+          message =
+            "Network error. Please check your internet connection and try again.";
+        } else if (axiosError.response) {
+          switch (axiosError.response.status) {
+            case 403:
+              message = "You are forbidden!";
+              break;
+            case 404:
+              message = "No Staff Found";
+              break;
+            case 429:
+              message = "Too many requests made. Refreshing in 3 seconds";
+              setTimeout(() => {
+                window.location.reload();
+              }, 3000);
+              break;
+            case 500:
+              triggerError(error);
+              break;
+            default:
+              break;
+          }
         }
       }
       setSnackbar({ open: true, message, severity: "error" });
