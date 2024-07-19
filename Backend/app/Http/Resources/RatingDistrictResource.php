@@ -12,7 +12,8 @@ use Illuminate\Http\Resources\Json\JsonResource;
  *     title="Rating District Resource",
  *     description="A resource representing a rating district",
  *     @OA\Property(property="id", type="integer", example=1, description="The unique identifier of the rating district"),
- *     @OA\Property(property="name", type="string", example="hama district", description="The rating district name"),
+ *     @OA\Property(property="name", type="string", example="APO", description="The rating district name"),
+ *     @OA\Property(property="office_zone_id", type="string", example="2", description="The rating district id"),
  *     @OA\Property(property="created_at", type="string", format="date-time", example="2023-01-01T12:00:00Z", description="The creation timestamp of the street"),
  *     @OA\Property(property="updated_at", type="string", format="date-time", example="2023-01-02T12:00:00Z", description="The last update timestamp of the street"),
  * )

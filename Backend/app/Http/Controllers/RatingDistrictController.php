@@ -174,9 +174,9 @@ class RatingDistrictController extends Controller
                 ], 400);
             }
 
-            $addratingDistrict = $this->ratingDistrictService->create($request->all());
-            if ($addratingDistrict) {
-                $returnRatingDistrict = new RatingDistrictResource($addratingDistrict);
+            $addRatingDistrict = $this->ratingDistrictService->create($request->all());
+            if ($addRatingDistrict) {
+                $returnRatingDistrict = new RatingDistrictResource($addRatingDistrict);
                 $returnRatingDistrict->additional([
                     'status' => 'success',
                 ]);
@@ -254,11 +254,9 @@ class RatingDistrictController extends Controller
         if ($this->ratingDistrictService->checkIsAdminOrMd()) {
             $getRatingDistrict = $this->ratingDistrictService->getRatingDistrictById($ratingDistrict);
             if ($getRatingDistrict) {
-                $returnRatingDistrict = new RatingDistrictResource($getRatingDistrict);
-                $returnRatingDistrict->additional([
-                    'status' => 'success', // or any other status you want to append
+                return (new RatingDistrictResource($getRatingDistrict))->additional([
+                    'status' => 'success', 
                 ]);
-                return  $returnRatingDistrict;
             }
 
             return response()->json([
@@ -291,7 +289,7 @@ class RatingDistrictController extends Controller
      *                 property="name",
      *                 type="string",
      *                 description="Name of the rating district",
-     *                 example="kolan rating district"
+     *                 example="APO"
      *             ),
      *             @OA\Property(
      *                 property="office_zone_id",
@@ -357,35 +355,35 @@ class RatingDistrictController extends Controller
      *             @OA\Property(
      *                 property="message",
      *                 type="string",
-     *                 example="An error occured."
+     *                 example="An error occurred."
      *             )
      *         )
      *     ),
      *     security={{"api_key":{}}}
      * )
      */
-    public function update(Request $request, $ratingDistrict)
+
+public function update(Request $request, $propertyType)
     {
-        if ($this->ratingDistrictService->checkIsAdminOrMd()) {
+        if ($this->propertyTypeService->checkIsAdminOrMd()) {
             $validator = Validator::make($request->all(), [
                 'name' => ['required', 'string', 'max:255'],
-                'office_zone_id' => ['required', 'string', 'max:255'],
             ]);
-
 
             if ($validator->fails()) {
                 return response()->json([
                     'status' => 'error',
                     'message' => "All fields are required",
-                    "data" => $validator->errors()
+                    'data' => $validator->errors()
                 ], 400);
             }
 
-            $updateratingDistrict = $this->ratingDistrictService->updateRatingDistrict($request->all(), $ratingDistrict);
-            if ($updateratingDistrict) {
+            $updatePropertyType = $this->propertyTypeService->updatePropertyType($request->all(), $propertyType);
+
+            if ($updatePropertyType) {
                 return response()->json([
                     "status" => "success",
-                    "message" => "Rating District Updated successfully",
+                    "message" => "Property type updated successfully",
                 ], 200);
             }
 
@@ -397,9 +395,10 @@ class RatingDistrictController extends Controller
 
         return response()->json([
             "status" => "error",
-            "message" => "You dont Have Permission",
+            "message" => "You don't have permission",
         ], 403);
     }
+
 
     /**
      * @OA\Delete(
