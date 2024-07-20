@@ -174,9 +174,9 @@ class RatingDistrictController extends Controller
                 ], 400);
             }
 
-            $addRatingDistrict = $this->ratingDistrictService->create($request->all());
-            if ($addRatingDistrict) {
-                $returnRatingDistrict = new RatingDistrictResource($addRatingDistrict);
+            $addratingDistrict = $this->ratingDistrictService->create($request->all());
+            if ($addratingDistrict) {
+                $returnRatingDistrict = new RatingDistrictResource($addratingDistrict);
                 $returnRatingDistrict->additional([
                     'status' => 'success',
                 ]);
@@ -254,9 +254,11 @@ class RatingDistrictController extends Controller
         if ($this->ratingDistrictService->checkIsAdminOrMd()) {
             $getRatingDistrict = $this->ratingDistrictService->getRatingDistrictById($ratingDistrict);
             if ($getRatingDistrict) {
-                return (new RatingDistrictResource($getRatingDistrict))->additional([
-                    'status' => 'success', 
+                $returnRatingDistrict = new RatingDistrictResource($getRatingDistrict);
+                $returnRatingDistrict->additional([
+                    'status' => 'success', // or any other status you want to append
                 ]);
+                return  $returnRatingDistrict;
             }
 
             return response()->json([
@@ -271,119 +273,122 @@ class RatingDistrictController extends Controller
     }
 
     /**
-     * @OA\PUT(
-     *     path="/api/rating-district/update/{ratingDistrict}",
-     *     summary="update rating district details",
-     *     tags={"RatingDistrict"},
-     *      @OA\Parameter(
-     *         name="ratingDistrict",
-     *         in="path",
-     *         description="The ID of the rating district to update.",
-     *         required=true,
-     *         @OA\Schema(type="string")
-     *     ),
-     *     @OA\RequestBody(
-     *         required=true,
-     *         @OA\JsonContent(
-     *             @OA\Property(
-     *                 property="name",
-     *                 type="string",
-     *                 description="Name of the rating district",
-     *                 example="APO"
-     *             ),
-     *             @OA\Property(
-     *                 property="office_zone_id",
-     *                 type="string",
-     *                 description="ID of the office Zone",
-     *                 example="2"
-     *             ),
-     *         )
-     *     ),
-     *     @OA\Response(
-     *         response=200,
-     *         description="Successful operation",
-     *         @OA\JsonContent(
-     *             @OA\Property(
-     *                 property="status",
-     *                 type="string",
-     *                 example="success"
-     *             ),
-     *             @OA\Property(
-     *                 property="message",
-     *                 type="string",
-     *                 example=Rating District updated successfully"
-     *             )
-     *         )
-     *     ),
-     *     @OA\Response(
-     *         response=400,
-     *         description="Bad Request",
-     *         @OA\JsonContent(
-     *             @OA\Property(
-     *                 property="message",
-     *                 type="string",
-     *                 example="All fields are required."
-     *             )
-     *         )
-     *     ),
-     *     @OA\Response(
-     *         response=401,
-     *         description="Unauthorized",
-     *         @OA\JsonContent(
-     *             @OA\Property(
-     *                 property="message",
-     *                 type="string",
-     *                 example="Unauthenticated."
-     *             )
-     *         )
-     *     ),
-     *     @OA\Response(
-     *         response=403,
-     *         description="Forbidden",
-     *         @OA\JsonContent(
-     *             @OA\Property(
-     *                 property="message",
-     *                 type="string",
-     *                 example="You dont Have Permission."
-     *             )
-     *         )
-     *     ),
-     *     @OA\Response(
-     *         response=500,
-     *         description="Internal Server Error",
-     *         @OA\JsonContent(
-     *             @OA\Property(
-     *                 property="message",
-     *                 type="string",
-     *                 example="An error occurred."
-     *             )
-     *         )
-     *     ),
-     *     security={{"api_key":{}}}
-     * )
-     */
+ * 
+ * @OA\PUT(
+ *     path="/api/rating-district/update/{ratingDistrict}",
+ *     summary="Update rating district details",
+ *     tags={"RatingDistrict"},
+ *     @OA\Parameter(
+ *         name="ratingDistrict",
+ *         in="path",
+ *         description="The ID of the rating district to update.",
+ *         required=true,
+ *         @OA\Schema(type="string")
+ *     ),
+ *     @OA\RequestBody(
+ *         required=true,
+ *         @OA\JsonContent(
+ *             @OA\Property(
+ *                 property="name",
+ *                 type="string",
+ *                 description="Name of the rating district",
+ *                 example="APO"
+ *             ),
+ *             @OA\Property(
+ *                 property="office_zone_id",
+ *                 type="string",
+ *                 description="ID of the office Zone",
+ *                 example="2"
+ *             )
+ *         )
+ *     ),
+ *     @OA\Response(
+ *         response=200,
+ *         description="Successful operation",
+ *         @OA\JsonContent(
+ *             @OA\Property(
+ *                 property="status",
+ *                 type="string",
+ *                 example="success"
+ *             ),
+ *             @OA\Property(
+ *                 property="message",
+ *                 type="string",
+ *                 example="Rating District updated successfully"
+ *             )
+ *         )
+ *     ),
+ *     @OA\Response(
+ *         response=400,
+ *         description="Bad Request",
+ *         @OA\JsonContent(
+ *             @OA\Property(
+ *                 property="message",
+ *                 type="string",
+ *                 example="All fields are required."
+ *             )
+ *         )
+ *     ),
+ *     @OA\Response(
+ *         response=401,
+ *         description="Unauthorized",
+ *         @OA\JsonContent(
+ *             @OA\Property(
+ *                 property="message",
+ *                 type="string",
+ *                 example="Unauthenticated."
+ *             )
+ *         )
+ *     ),
+ *     @OA\Response(
+ *         response=403,
+ *         description="Forbidden",
+ *         @OA\JsonContent(
+ *             @OA\Property(
+ *                 property="message",
+ *                 type="string",
+ *                 example="You don't have permission."
+ *             )
+ *         )
+ *     ),
+ *     @OA\Response(
+ *         response=500,
+ *         description="Internal Server Error",
+ *         @OA\JsonContent(
+ *             @OA\Property(
+ *                 property="message",
+ *                 type="string",
+ *                 example="An error occurred."
+ *             )
+ *         )
+ *     ),
+ *     security={{"api_key":{}}}
+ * )
+ */
 
-public function update(Request $request, $propertyType)
+
+     public function update(Request $request, $ratingDistrict)
     {
-        if ($this->propertyTypeService->checkIsAdminOrMd()) {
+        if ($this->ratingDistrictService->checkIsAdminOrMd()) {
             $validator = Validator::make($request->all(), [
                 'name' => ['required', 'string', 'max:255'],
+                'office_zone_id' => ['required', 'string', 'max:255'],
             ]);
+
 
             if ($validator->fails()) {
                 return response()->json([
                     'status' => 'error',
                     'message' => "All fields are required",
-                    'data' => $validator->errors()
+                    "data" => $validator->errors()
                 ], 400);
             }
 
-            $updatePropertyType = $this->propertyTypeService->updatePropertyType($request->all(), $propertyType);
-
-            if ($updatePropertyType) {
+            $updateratingDistrict = $this->ratingDistrictService->updateRatingDistrict($request->all(), $ratingDistrict);
+            if ($updateratingDistrict) {
                 return response()->json([
                     "status" => "success",
-                    "message" => "Property type updated successfully",
+                    "message" => "Rating District Updated successfully",
                 ], 200);
             }
 
@@ -395,10 +400,9 @@ public function update(Request $request, $propertyType)
 
         return response()->json([
             "status" => "error",
-            "message" => "You don't have permission",
+            "message" => "You dont Have Permission",
         ], 403);
     }
-
 
     /**
      * @OA\Delete(
