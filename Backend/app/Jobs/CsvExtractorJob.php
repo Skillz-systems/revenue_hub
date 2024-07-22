@@ -122,7 +122,7 @@ class CsvExtractorJob implements ShouldQueue
         $data = $data["data"];
         foreach ($data as $ratingDistricts) {
             // check if the district already exists
-            $checkExistingRatingDistrict = (new RatingDistrictService())->geRatingDistrictFromDistrictName($ratingDistricts["rating_district"]);
+            $checkExistingRatingDistrict = (new RatingDistrictService())->getRatingDistrictFromDistrictName($ratingDistricts["rating_district"]);
 
             if (!$checkExistingRatingDistrict) {
                 (new RatingDistrictService())->create(["name" => $ratingDistricts["rating_district"]]);
@@ -151,7 +151,7 @@ class CsvExtractorJob implements ShouldQueue
         foreach ($data as $cadastralZone) {
             // check if the cadastral Zone already exists
             $checkExistingCadastralZone = (new CadastralZoneService())->getCadastralZoneFromZoneName($cadastralZone["cadastral_zone"]);
-            $getRatingDistrict = (new RatingDistrictService())->geRatingDistrictFromDistrictName($cadastralZone["rating_district"]);
+            $getRatingDistrict = (new RatingDistrictService())->getRatingDistrictFromDistrictName($cadastralZone["rating_district"]);
             if (!$checkExistingCadastralZone) {
                 (new CadastralZoneService())->create(["name" => $cadastralZone["cadastral_zone"], "rating_district_id" => $getRatingDistrict->id]);
             }
@@ -169,7 +169,7 @@ class CsvExtractorJob implements ShouldQueue
         $getCadastralZone = (new CadastralZoneService())->getCadastralZoneFromZoneName($data[5]);
         $getPropertyType = (new PropertyTypeService())->getPropertyTypeFromPropertyTypeName($data[6]);
         $getPropertyUse = (new PropertyUseService())->getPropertyUseFromPropertyUseName($data[7]);
-        $getRatingDistrict = (new RatingDistrictService())->geRatingDistrictFromDistrictName($data[8]);
+        $getRatingDistrict = (new RatingDistrictService())->getRatingDistrictFromDistrictName($data[8]);
         $getAnnualValue = str_replace(",", "", $data[9]);
         $getRatePayable = str_replace(",", "", $data[10]);
         $getArrears = str_replace(",", "", $data[11]);

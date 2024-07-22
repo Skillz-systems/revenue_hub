@@ -7,6 +7,7 @@ use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\DemandNoticeController;
 use App\Http\Controllers\OfficeZoneController;
 use App\Http\Controllers\PropertyTypeController;
+use App\Http\Controllers\RatingDistrictController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\PropertyController;
 use App\Http\Controllers\PropertyUseController;
@@ -89,6 +90,12 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/office-zone/view/{officeZone}', [OfficeZoneController::class, "show"]);
     Route::put('/office-zone/update/{officeZone}', [OfficeZoneController::class, "update"]);
     Route::delete('/office-zone/delete/{officeZone}', [OfficeZoneController::class, "destroy"]);
+
+    Route::get('/rating-district', [RatingDistrictController::class, "index"]);
+    Route::post('/rating-district/create', [RatingDistrictController::class, "store"]);
+    Route::get('/rating-district/view/{ratingDistrict}', [RatingDistrictController::class, "show"]);
+    Route::put('/rating-district/update/{ratingDistrict}', [RatingDistrictController::class, "update"]);
+    Route::delete('/rating-district/delete/{ratingDistrict}', [RatingDistrictController::class, "destroy"]);
 });
 
 Route::get('/payment/generate-account/{id}', [PaymentController::class, 'generateAccount']);
