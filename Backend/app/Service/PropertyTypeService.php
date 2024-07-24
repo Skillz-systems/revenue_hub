@@ -14,11 +14,11 @@ use Illuminate\Support\Facades\Validator;
 class PropertyTypeService
 {
     /**
-     * Retrieve all PropretyType.
+     * Retrieve all PropertyType.
      *
-     * This method returns a collection of all PropretyType from the database.
+     * This method returns a collection of all PropertyType from the database.
      *
-     * @return Collection|PropretyType[]  A collection of PropretyType models.
+     * @return Collection|PropertyType[]  A collection of PropertyType models.
      */
     public function getAllPropertyType()
     {
@@ -26,12 +26,12 @@ class PropertyTypeService
     }
 
     /**
-     * Create a new PropretyType.
+     * Create a new PropertyType.
      *
-     * This method creates a new PropretyType with the given data.
+     * This method creates a new PropertyType with the given data.
      *
-     * @param array $data  The data to create the PropretyType.
-     * @return PropretyType  The created PropretyType model.
+     * @param array $data  The data to create the PropertyType.
+     * @return PropertyType  The created PropertyType model.
      */
     public function create($data)
     {
@@ -39,12 +39,12 @@ class PropertyTypeService
     }
 
     /**
-     * Retrieve a PropretyType by its name.
+     * Retrieve a PropertyType by its name.
      *
-     * This method returns the first PropretyType that matches the given name.
+     * This method returns the first PropertyType that matches the given name.
      *
-     * @param string $name  The name of the PropretyType.
-     * @return PropretyType|null  The PropretyType model if found, null otherwise.
+     * @param string $name  The name of the PropertyType.
+     * @return PropertyType|null  The PropertyType model if found, null otherwise.
      */
     public function getPropertyTypeFromPropertyTypeName($name)
     {
@@ -52,12 +52,12 @@ class PropertyTypeService
     }
 
     /**
-     * Retrieve a PropretyType by its ID.
+     * Retrieve a PropertyType by its ID.
      *
-     * This method returns the first PropretyType that matches the given ID.
+     * This method returns the first PropertyType that matches the given ID.
      *
-     * @param int $id  The ID of the PropretyType.
-     * @return PropretyType|null  The PropretyType model if found, null otherwise.
+     * @param int $id  The ID of the PropertyType.
+     * @return PropertyType|null  The PropertyType model if found, null otherwise.
      */
     public function getPropertyTypeById($id)
     {
@@ -65,12 +65,12 @@ class PropertyTypeService
     }
 
     /**
-     * Update a PropretyType by its ID.
+     * Update a PropertyType by its ID.
      *
-     * This method updates the PropretyType with the given ID using the provided data.
+     * This method updates the PropertyType with the given ID using the provided data.
      *
-     * @param array $data The data to update the PropretyType.
-     * @param int $id  The ID of the PropretyType to update.
+     * @param array $data The data to update the PropertyType.
+     * @param int $id  The ID of the PropertyType to update.
      * @return bool  True if the update was successful, false otherwise.
      */
     public function updatePropertyType($data, $id)
@@ -84,12 +84,12 @@ class PropertyTypeService
     }
 
     /**
-     * Delete a PropretyType by its ID.
+     * Delete a PropertyType by its ID.
      *
-     * This method deletes the PropretyType with the given ID.
+     * This method deletes the PropertyType with the given ID.
      *
-     * @param int $id  The ID of the PropretyType to delete.
-     * @return bool|null  True if the deletion was successful, false otherwise. Null if the PropretyType was not found.
+     * @param int $id  The ID of the PropertyType to delete.
+     * @return bool|null  True if the deletion was successful, false otherwise. Null if the PropertyType was not found.
      */
     public function deletePropertyType($id)
     {
