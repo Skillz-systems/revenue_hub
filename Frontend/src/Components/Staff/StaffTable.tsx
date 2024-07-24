@@ -340,7 +340,7 @@ export default function StaffTable({
                 `}
               >
                 <GoDotFill />
-                <span className="flex items-center justify-center gap-1">
+                <span className="flex items-center justify-center gap-1 ">
                   {column.name}
                 </span>
               </div>
