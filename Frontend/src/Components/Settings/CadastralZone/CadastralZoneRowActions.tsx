@@ -2,9 +2,18 @@ import React, { useState, useRef, useEffect } from 'react';
 import { HiOutlineDotsHorizontal } from 'react-icons/hi';
 import apiCall from '../../../Api/apiCall';
 
-interface OfficeZone {
-  id: number;
+interface ViewData {
+  id: string;
   name: string;
+  rating_district?: {
+    name: string;
+  };
+  created_at: string;
+  updated_at: string;
+}
+
+interface ApiResponse<T> {
+  data: T;
 }
 
 interface CadastralZone {
@@ -31,11 +40,11 @@ const CadastralZoneRowActions: React.FC<CadastralZoneRowActionsProps> = ({ data,
   const [viewDetails, setViewDetails] = useState<boolean>(false);
   const [updateData, setUpdateData] = useState<boolean>(false);
   const [deleteData, setDeleteData] = useState<boolean>(false);
+  const [viewData, setViewData] = useState<ViewData | null>(null);
   const [form, setForm] = useState<{ name: string; rating_district_id: string }>({
     name: data.name,
     rating_district_id: data.rating_district?.id.toString() || ''
   });
-  const [viewData, setViewData] = useState<object>({});
   const [dropDownValue, setDropdownValue] = useState<any[]>(ratingDistricts);
   const optionsRef = useRef<HTMLDivElement>(null);
 
@@ -105,11 +114,11 @@ const CadastralZoneRowActions: React.FC<CadastralZoneRowActionsProps> = ({ data,
 
   const handleView = async () => {
     try {
-      const response = await apiCall({
+      const response = await apiCall<ViewData>({
         endpoint: `cadastral-zone/view/${data.id}`,
         method: 'get',
       });
-      setViewData(response.data.data);
+      setViewData(response.data);
       setViewDetails(true);
     } catch (error) {
       console.error('Error fetching data:', error);
