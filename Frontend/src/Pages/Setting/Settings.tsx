@@ -1,6 +1,5 @@
 
 import React from "react";
-import TabList from "../../Components/Settings/TabList";
 import { Index } from "../../Components/Settings/Index";
 
 export default function Settings() {

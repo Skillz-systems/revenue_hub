@@ -198,7 +198,7 @@ const PropertyTypeRowActions: React.FC<PropertyTypeRowActionsProps> = ({ data, o
               <button onClick={() => setDeleteData(false)} className="mr-2 px-4 py-2 bg-gray-300 text-black rounded">
                 Cancel
               </button>
-              <button onClick={handleDelete} className="px-4 py-2 bg-red-500 text-white rounded">
+              <button onClick={handleDelete} className="px-4 py-2 bg-blue-600 text-white rounded">
                 Delete
               </button>
             </div>
