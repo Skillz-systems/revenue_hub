@@ -6,7 +6,7 @@ import {
   CustomAlert,
 } from "../Components/Index";
 import { useTokens, useTriggerError } from "../Utils/client";
-import axios from "axios";
+import axios, { AxiosError } from "axios";
 
 const apiUrl = import.meta.env.VITE_API_URL as string;
 
@@ -66,31 +66,37 @@ const Transactions: React.FC = () => {
       }
     } catch (error: any) {
       let message = "Internal Server Error";
-      if (error.response) {
-        switch (error.response.status) {
-          case 400:
-            message = "Bad request. Property Id is missing.";
-            break;
-          case 401:
-            message = "You are unauthorized";
-            break;
-          case 403:
-            message = "You are forbidden";
-            break;
-          case 404:
-            message = "Payment not found";
-            break;
-          case 429:
-            message = "Too many requests made. Refreshing in 3 seconds";
-            setTimeout(() => {
-              window.location.reload();
-            }, 3000);
-            break;
-          case 500:
-            triggerError(error);
-            break;
-          default:
-            break;
+      if (error.isAxiosError) {
+        const axiosError = error as AxiosError;
+        if (axiosError.code === "ERR_NETWORK") {
+          message =
+            "Network error. Please check your internet connection and try again.";
+        } else if (axiosError.response) {
+          switch (axiosError.response.status) {
+            case 400:
+              message = "Bad request. Property Id is missing.";
+              break;
+            case 401:
+              message = "You are unauthorized";
+              break;
+            case 403:
+              message = "You are forbidden";
+              break;
+            case 404:
+              message = "Payment not found";
+              break;
+            case 429:
+              message = "Too many requests made. Refreshing in 3 seconds";
+              setTimeout(() => {
+                window.location.reload();
+              }, 3000);
+              break;
+            case 500:
+              triggerError(error);
+              break;
+            default:
+              break;
+          }
         }
       }
       setSnackbar({ open: true, message, severity: "error" });
@@ -102,7 +108,7 @@ const Transactions: React.FC = () => {
   }, []);
 
   return (
-    <div className="flex-col space-y-8">
+    <div className="flex-col w-full space-y-8 overflow-auto scrollbar-thin scrollbar-thumb-color-text-two scrollbar-track-white">
       <hr className="border-0.5 mb-8 border-custom-grey-100" />
       {transactionInformation ? (
         <TransactionsTable

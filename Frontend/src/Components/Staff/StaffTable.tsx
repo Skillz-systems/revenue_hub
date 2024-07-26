@@ -18,6 +18,7 @@ import {
   ScrollToTop,
   useTokens,
 } from "../../Utils/client";
+import { useMediaQuery } from "react-responsive";
 
 interface StaffRecord {
   id: number;
@@ -39,7 +40,14 @@ export default function StaffTable({
   staffSnackbar,
   setStaffSnackbar,
   handleStaffSnackbarClose,
+}: {
+  staticInformation: any;
+  staffInformation: any;
+  staffSnackbar: any;
+  setStaffSnackbar: any;
+  handleStaffSnackbarClose: () => void;
 }) {
+  const isDesktop = useMediaQuery({ query: "(min-width: 1024px)" });
   const [displaySearchIcon, setDisplaySearchIcon] = useState(true);
   const [activeMenu, setActiveMenu] = useState(1);
   const [query, setQuery] = useState("");
@@ -222,14 +230,19 @@ export default function StaffTable({
   }
 
   return (
-    <div>
+    <div className="w-[1000px] lg:w-full">
       <div
         id="top-container"
         className="flex-col space-y-4 p-4 border-0.6 border-custom-grey-100 rounded-lg"
       >
-        <div className="flex items-start justify-between ">
+        {!isDesktop ? (
+          <p className="text-base font-bold text-color-text-two lg:hidden">
+            STAFF
+          </p>
+        ) : null}
+        <div className="flex items-start justify-between">
           <div className="flex items-center justify-between border-0.6 border-custom-grey-100 rounded p-1">
-            {staticInformation?.staff?.menu.map((menu) =>
+            {staticInformation?.staff?.menu.map((menu: any) =>
               displayColumn === false && query !== "" && menu.id > 1 ? null : (
                 <div
                   key={menu.id}
@@ -328,7 +341,7 @@ export default function StaffTable({
 
         <div className="flex-col space-y-6">
           <div className="flex items-center justify-between gap-1">
-            {staticInformation.staff.columns.map((column) => (
+            {staticInformation.staff.columns.map((column: any) => (
               <div
                 key={column.id}
                 className={`flex items-center gap-1 w-1/12 text-color-text-two text-[10px] font-lexend
@@ -356,7 +369,7 @@ export default function StaffTable({
                 </p>
               )
             ) : filteredResults.length > 0 ? (
-              filteredResults?.map((record) => recordField(record))
+              filteredResults?.map((record: any) => recordField(record))
             ) : (
               <p className="text-sm font-medium font-lexend text-color-text-black">
                 No results found.

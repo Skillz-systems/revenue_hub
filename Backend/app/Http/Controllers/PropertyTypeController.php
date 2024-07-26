@@ -166,41 +166,47 @@ class PropertyTypeController extends Controller
      *     security={{"api_key":{}}}
      * )
      */
-    public function store(Request $request)
-    {
-        if ($this->propertyTypeService->checkIsAdminOrMd()) {
-            $validator = Validator::make($request->all(), [
-                'name' => ['required', 'string', 'max:255'],
-            ]);
+  public function store(Request $request)
+{
+    if ($this->propertyTypeService->checkIsAdminOrMd()) {
+        $validator = Validator::make($request->all(), [
+            'name' => ['required', 'string', 'max:255'],
+        ]);
 
-            if ($validator->fails()) {
-                return response()->json([
-                    'status' => 'error',
-                    'message' => "All fields are required",
-                    'data' => $validator->errors()
-                ], 400);
-            }
-
-            $addPropertyType = $this->propertyTypeService->create($request->all());
-
-            if ($addPropertyType) {
-                return response()->json([
-                    'status' => 'success',
-                    'message' => 'Property type created successfully'
-                ], 200);
-            }
-
+        if ($validator->fails()) {
             return response()->json([
-                "status" => "error",
-                "message" => "An error occurred",
-            ], 500);
+                'status' => 'error',
+                'message' => "All fields are required",
+                'data' => $validator->errors()
+            ], 400);
+        }
+
+        $addPropertyType = $this->propertyTypeService->create($request->all());
+
+        if ($addPropertyType) {
+            return response()->json([
+                'status' => 'success',
+                'message' => 'Property type created successfully',
+                'data' => [
+                    'id' => $addPropertyType->id,
+                    'name' => $addPropertyType->name,
+                    'created_at' => $addPropertyType->created_at,
+                    'updated_at' => $addPropertyType->updated_at,
+                ],
+            ], 200);
         }
 
         return response()->json([
             "status" => "error",
-            "message" => "You don't have permission",
-        ], 403);
+            "message" => "An error occurred",
+        ], 500);
     }
+
+    return response()->json([
+        "status" => "error",
+        "message" => "You don't have permission",
+    ], 403);
+}
 
     /**
      * @OA\Get(
