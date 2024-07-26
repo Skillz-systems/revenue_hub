@@ -10,13 +10,14 @@ interface CategoryRowActionsProps {
   onActionComplete: () => void;
 }
 
+
 const CategoryRowActions: React.FC<CategoryRowActionsProps> = ({ data, onActionComplete }) => {
   const [showOptions, setShowOptions] = useState<boolean>(false);
   const [viewDetails, setViewDetails] = useState<boolean>(false);
   const [updateData, setUpdateData] = useState<boolean>(false);
   const [deleteData, setDeleteData] = useState<boolean>(false);
   const [form, setForm] = useState<{ name: string }>({ name: data.name });
-  const [viewData, setViewData] = useState<CategoryData | null>(null);
+  const [viewData, setViewData] = useState<any>({});
   const optionsRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -79,7 +80,7 @@ const CategoryRowActions: React.FC<CategoryRowActionsProps> = ({ data, onActionC
 
   const handleView = async () => {
     try {
-      const response = await apiCall<{ data: CategoryData }>({
+      const response = await apiCall({
         endpoint: `category/view/${data.id}`,
         method: 'get',
       });
@@ -120,7 +121,7 @@ const CategoryRowActions: React.FC<CategoryRowActionsProps> = ({ data, onActionC
       )}
       {!showOptions && <div onClick={() => setShowOptions(true)}><HiOutlineDotsHorizontal /></div>}
 
-      {viewDetails && viewData && (
+      {viewDetails && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
           <div className="bg-white rounded-lg shadow-lg p-6 w-1/3">
             <div className="flex justify-between items-center mb-4">
@@ -198,7 +199,7 @@ const CategoryRowActions: React.FC<CategoryRowActionsProps> = ({ data, onActionC
               <button onClick={() => setDeleteData(false)} className="mr-2 px-4 py-2 bg-gray-300 text-black rounded">
                 Cancel
               </button>
-              <button onClick={handleDelete} className="px-4 py-2 bg-red-500 text-white rounded">
+              <button onClick={handleDelete} className="px-4 py-2 bg-blue-600 text-white rounded">
                 Delete
               </button>
             </div>

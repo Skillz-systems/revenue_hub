@@ -183,7 +183,7 @@ const StreetRowActions: React.FC<StreetRowActionsProps> = ({ data, onActionCompl
   return (
     <>
       {showOptions && (
-        <div ref={optionsRef} className="absolute space-y-2 top-0 z-10 right-4 flex-col w-36 p-4 text-xs bg-white rounded shadow-md left-44 border border-red-600">
+        <div ref={optionsRef} className="absolute space-y-2 top-0 z-10 right-0 flex-col w-36 p-4 text-xs bg-white rounded shadow-md border border-gray-300">
           <p
             className="hover:cursor-pointer mb-2 font-lexend text-gray-700 text-[10px]"
             onClick={handleView}
@@ -204,7 +204,7 @@ const StreetRowActions: React.FC<StreetRowActionsProps> = ({ data, onActionCompl
           </p>
         </div>
       )}
-      {!showOptions && <div onClick={() => setShowOptions(true)}><HiOutlineDotsHorizontal /></div>}
+      {!showOptions && <div onClick={() => setShowOptions(true)}><HiOutlineDotsHorizontal  className=""/></div>}
 
       {viewDetails && viewData && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
@@ -279,7 +279,7 @@ const StreetRowActions: React.FC<StreetRowActionsProps> = ({ data, onActionCompl
               <button onClick={() => setDeleteData(false)} className="mr-2 px-4 py-2 bg-gray-300 text-black rounded">
                 Cancel
               </button>
-              <button onClick={handleDelete} className="px-4 py-2 bg-red-500 text-white rounded">
+              <button onClick={handleDelete} className="px-4 py-2 bg-blue-600 text-white rounded">
                 Delete
               </button>
             </div>
