@@ -24,6 +24,8 @@ type AccountsProps = {
   currentUserData: CurrentUserData;
 };
 
+const apiUrl = import.meta.env.VITE_API_URL as string;
+
 export default function Accounts({ currentUserData }: AccountsProps) {
   const [editStaff, setEditStaff] = useState<boolean>(false);
   const [displaySave, setDisplaySave] = useState<boolean>(false);
@@ -118,7 +120,7 @@ export default function Accounts({ currentUserData }: AccountsProps) {
 
       try {
         const response = await axios.put(
-          `https://api.revenuehub.skillzserver.com/api/staff/${userId}`,
+          `${apiUrl}/api/staff/${userId}`,
           requestData,
           {
             headers: {
@@ -140,7 +142,7 @@ export default function Accounts({ currentUserData }: AccountsProps) {
           });
         }
         setIsLoading(false);
-      } catch (error) {
+      } catch (error: any) {
         let message = "Internal Server Error";
         if (error.response) {
           switch (error.response.status) {

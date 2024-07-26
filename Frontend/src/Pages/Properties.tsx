@@ -59,6 +59,8 @@ type PropertyData = {
 
 type PropertyArray = PropertyData[];
 
+const apiUrl = import.meta.env.VITE_API_URL as string;
+
 export default function Properties() {
   const { token } = useTokens();
   const [districtState, setDistrictState] = useState<string>("");
@@ -89,9 +91,7 @@ export default function Properties() {
   };
 
   const { data, error } = useSWR(
-    token
-      ? `https://api.revenuehub.skillzserver.com/api/property?page=${paginationMeta.currentPage}`
-      : null,
+    token ? `${apiUrl}/api/property?page=${paginationMeta.currentPage}` : null,
     (url) => fetcher(url, token)
   );
 
@@ -271,7 +271,7 @@ export default function Properties() {
             <div className="flex flex-wrap items-center justify-start p-4 gap-y-4 gap-x-4">
               {districtState && propertyUseState ? (
                 propertyInformation.length > 0 ? (
-                  propertyInformation.map((property) => (
+                  propertyInformation.map((property: any) => (
                     // SHOW ALL PROPERTIES
                     <PropertyCard
                       id={property.id}
@@ -295,7 +295,7 @@ export default function Properties() {
                 )
               ) : districtState !== "" ? (
                 propertyInformation.length > 0 ? (
-                  propertyInformation.map((property) => (
+                  propertyInformation.map((property: any) => (
                     // SHOW ALL DISTRICTS
                     <PropertyCard
                       id={property.id}
@@ -319,7 +319,7 @@ export default function Properties() {
                 )
               ) : propertyUseState !== "" ? (
                 propertyInformation.length > 0 ? (
-                  propertyInformation.map((property) => (
+                  propertyInformation.map((property: any) => (
                     // SHOW ALL PROPERTY USE
                     <PropertyCard
                       id={property.id}
@@ -342,7 +342,7 @@ export default function Properties() {
                   </p>
                 )
               ) : currentProperties.length > 0 ? (
-                currentProperties.map((property) => (
+                currentProperties.map((property: any) => (
                   // SHOW CURRENT FILTER DATA
                   <PropertyCard
                     id={property.id}

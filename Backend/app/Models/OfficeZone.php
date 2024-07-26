@@ -14,4 +14,9 @@ class OfficeZone extends Model
         'name',
         'address'
     ];
+
+    public function ratingDistrict()
+    {
+        return $this->hasMany(RatingDistrict::class);
+    }
 }

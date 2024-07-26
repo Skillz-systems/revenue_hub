@@ -23,6 +23,8 @@ import {
 } from "../../Utils/client";
 import axios from "axios";
 
+const apiUrl = import.meta.env.VITE_API_URL as string;
+
 const DemandInvoiceTable = ({
   staticInformation,
   demandNoticeInformation,
@@ -77,7 +79,7 @@ const DemandInvoiceTable = ({
 
     try {
       const response = await axios.delete(
-        `https://api.revenuehub.skillzserver.com/api/demand-notice/delete/${id}`,
+        `${apiUrl}/api/demand-notice/delete/${id}`,
         {
           headers: {
             Authorization: `Bearer ${token}`, // Headers
@@ -100,7 +102,7 @@ const DemandInvoiceTable = ({
           severity: "warning",
         });
       }
-    } catch (error) {
+    } catch (error: any) {
       let message = "Internal Server Error";
       if (error.response) {
         switch (error.response.status) {
@@ -148,7 +150,7 @@ const DemandInvoiceTable = ({
   const offset = currentPage * propertiesPerPage;
 
   const handlePageChange = ({ selected }: { selected: number }) => {
-    setPaginationMeta((prev) => ({
+    setPaginationMeta((prev: any) => ({
       ...prev,
       currentPage: selected + 1, // SWR uses 1-based index for pages
     }));
@@ -175,7 +177,7 @@ const DemandInvoiceTable = ({
     setDisplayColumn(false);
   }, [query !== ""]);
 
-  const handleQueryChange = (event) => {
+  const handleQueryChange = (event: any) => {
     setQuery(event.target.value);
   };
 
@@ -309,7 +311,7 @@ const DemandInvoiceTable = ({
       >
         <div className="flex items-start justify-between">
           <div className="flex items-center justify-between border-0.6 border-custom-grey-100 rounded p-1">
-            {staticInformation.demandNotice.menu.map((menu) =>
+            {staticInformation.demandNotice.menu.map((menu: any) =>
               displayColumn === false && query !== "" && menu.id > 1 ? null : (
                 <div
                   key={menu.id}
@@ -375,7 +377,7 @@ const DemandInvoiceTable = ({
 
         <div className="flex-col space-y-6 ">
           <div className="flex items-center justify-between gap-1">
-            {staticInformation.demandNotice.columns.map((column) => (
+            {staticInformation.demandNotice.columns.map((column: any) => (
               <div
                 key={column.id}
                 className={`flex items-center gap-1 w-1/12 text-color-text-two text-[10px] font-lexend

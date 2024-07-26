@@ -4,9 +4,17 @@ namespace Tests\Feature;
 
 use Tests\TestCase;
 use App\Models\User;
+use App\Models\Group;
+use App\Models\Street;
+use App\Models\Category;
 use App\Models\Property;
+use App\Models\OfficeZone;
+use App\Models\PropertyUse;
 use App\Models\DemandNotice;
+use App\Models\PropertyType;
 use App\Jobs\CsvExtractorJob;
+use App\Models\CadastralZone;
+use App\Models\RatingDistrict;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Queue;
 use App\Jobs\ProcessCSVFileInBatchJob;
@@ -23,6 +31,14 @@ class PropertyControllerTest extends TestCase
         DemandNotice::factory()->create(["property_id" => 1]);
 
         DemandNotice::factory()->create(["property_id" => 3, "status" => 1]);
+        OfficeZone::factory()->create();
+        RatingDistrict::factory()->create();
+        CadastralZone::factory()->create();
+        Street::factory()->create();
+        PropertyType::factory()->create();
+        PropertyUse::factory()->create();
+        Category::factory()->create();
+        Group::factory()->create();
         Property::factory()->count(3)->create();
 
         // Act: Call the index route
@@ -58,22 +74,31 @@ class PropertyControllerTest extends TestCase
 
     public function test_it_stores_a_new_property_successfully()
     {
+
+        OfficeZone::factory()->create();
+        RatingDistrict::factory()->create();
+        CadastralZone::factory()->create();
+        Street::factory()->create();
+        PropertyType::factory()->create();
+        PropertyUse::factory()->create();
+        Category::factory()->create();
+        Group::factory()->create();
         // Arrange: Prepare valid property data
         $data = [
             'pid' => "1",
             'occupant' => 'John Doe',
             'prop_addr' => '123 Main St',
-            'street_name' => 'Main St',
+            'street_name' => '1',
             'asset_no' => 'A-001',
-            'cadastral_zone' => 'Zone 1',
-            'prop_type' => 'Residential',
-            'prop_use' => 'Residential',
-            'rating_dist' => 'District 1',
+            'cadastral_zone' => '1',
+            'prop_type' => '1',
+            'prop_use' => '1',
+            'rating_dist' => '1',
             'annual_value' => "10000",
             'rate_payable' => "1000",
             'grand_total' => "11000",
-            'category' => 'Category 1',
-            'group' => 'Group 1',
+            'category' => '1',
+            'group' => '1',
             'active' => 'Yes',
         ];
 
@@ -142,6 +167,14 @@ class PropertyControllerTest extends TestCase
 
     public function test_it_shows_a_property_successfully()
     {
+        OfficeZone::factory()->create();
+        RatingDistrict::factory()->create();
+        CadastralZone::factory()->create();
+        Street::factory()->create();
+        PropertyType::factory()->create();
+        PropertyUse::factory()->create();
+        Category::factory()->create();
+        Group::factory()->create();
         // Arrange: Create a property
         $property = Property::factory()->create();
 
@@ -175,19 +208,30 @@ class PropertyControllerTest extends TestCase
 
     public function test_testSuccessfulUpdate()
     {
+        OfficeZone::factory()->create();
+        RatingDistrict::factory()->create();
+        CadastralZone::factory()->create();
+        Street::factory()->create();
+        PropertyType::factory()->create();
+        PropertyUse::factory()->create();
+        Category::factory()->create();
+        Group::factory()->create();
         $property = Property::factory()->create();
         // Assuming $property is a property instance
         $data = [
             'occupant' => 'John Doe',
             'prop_addr' => '123 Main St',
-            'street_name' => 'Main St',
+            'street_name' => '1',
             'asset_no' => 'A-001',
-            'cadastral_zone' => 'Zone 1',
-            'prop_type' => 'Residential',
-            'prop_use' => 'Residential',
-            'rating_dist' => 'District 1',
-            'category' => 'Category 1',
-            'group' => 'Group 1',
+            'cadastral_zone' => '1',
+            'prop_type' => '1',
+            'prop_use' => '1',
+            'rating_dist' => '1',
+            'annual_value' => "10000",
+            'rate_payable' => "1000",
+            'grand_total' => "11000",
+            'category' => '1',
+            'group' => '1',
             'active' => 'Yes',
         ];
 
