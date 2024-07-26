@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import apiCall from '../../../Api/apiCall';
-import { CadastralZoneModal } from "./CadastralZoneModal"; // Assume this component exists
-import CadastralZoneRowActions from './CadastralZoneRowActions'; // Use the newly created CadastralZoneRowActions component
+import { CadastralZoneModal } from "./CadastralZoneModal";
+import CadastralZoneRowActions from './CadastralZoneRowActions';
 
 export type CadastralZoneData = {
   id: string;
@@ -14,11 +14,16 @@ export type CadastralZoneData = {
   updated_at: string;
 };
 
+type RatingDistrict = {
+  id: string;
+  name: string;
+};
+
 export const CadastralZoneTable = () => {
   const [tableData, setTableData] = useState<CadastralZoneData[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
-  const [ratingDistricts, setRatingDistricts] = useState<{ id: string, name: string }[]>([]);
+  const [ratingDistricts, setRatingDistricts] = useState<RatingDistrict[]>([]);
 
   const fetching = async () => {
     setLoading(true);
@@ -40,7 +45,7 @@ export const CadastralZoneTable = () => {
 
   const fetchRatingDistricts = async () => {
     try {
-      const response = await apiCall({
+      const response = await apiCall<{ data: RatingDistrict[] }>({
         endpoint: 'rating-district',
         method: 'get',
       });
@@ -67,7 +72,7 @@ export const CadastralZoneTable = () => {
 
   return (
     <div className="relative">
-      <CadastralZoneModal ratingDistricts={ratingDistricts} /> {/* Assume this component exists */}
+      <CadastralZoneModal ratingDistricts={ratingDistricts} /> 
       <div className="overflow-x-auto">
         <table className="min-w-full bg-white">
           <thead className="bg-gray-100">

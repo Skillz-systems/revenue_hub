@@ -17,7 +17,7 @@ interface ApiResponse<T> {
 }
 
 interface CadastralZone {
-  id: number;
+  id: string;
   name: string;
   rating_district: { id: number; name: string } | null;
   created_at: string;

@@ -16,7 +16,7 @@ const CategoryRowActions: React.FC<CategoryRowActionsProps> = ({ data, onActionC
   const [updateData, setUpdateData] = useState<boolean>(false);
   const [deleteData, setDeleteData] = useState<boolean>(false);
   const [form, setForm] = useState<{ name: string }>({ name: data.name });
-  const [viewData, setViewData] = useState<any>({});
+  const [viewData, setViewData] = useState<CategoryData | null>(null);
   const optionsRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -79,7 +79,7 @@ const CategoryRowActions: React.FC<CategoryRowActionsProps> = ({ data, onActionC
 
   const handleView = async () => {
     try {
-      const response = await apiCall({
+      const response = await apiCall<{ data: CategoryData }>({
         endpoint: `category/view/${data.id}`,
         method: 'get',
       });
@@ -120,7 +120,7 @@ const CategoryRowActions: React.FC<CategoryRowActionsProps> = ({ data, onActionC
       )}
       {!showOptions && <div onClick={() => setShowOptions(true)}><HiOutlineDotsHorizontal /></div>}
 
-      {viewDetails && (
+      {viewDetails && viewData && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
           <div className="bg-white rounded-lg shadow-lg p-6 w-1/3">
             <div className="flex justify-between items-center mb-4">

@@ -48,7 +48,7 @@ export const CategoryModal = () => {
       <div className="flex items-center justify-end mb-4 gap-2">
         <button
           type="button"
-          className="flex items-center justify-between p-2 space-x-1 border rounded button-gradient-one border-custom-color-two shadow-custom-100"
+          className="flex items-center justify-between p-2 space-x-1 border rounded button-gradient-one  shadow-custom-100"
           style={{ width: "8%" }}
           onClick={onOpenModal}
         >

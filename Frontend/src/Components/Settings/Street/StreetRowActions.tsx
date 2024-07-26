@@ -2,13 +2,13 @@ import React, { useState, useRef, useEffect } from 'react';
 import { HiOutlineDotsHorizontal } from 'react-icons/hi';
 import apiCall from '../../../Api/apiCall';
 
-interface RatingDistrict {
+export type RatingDistrict = {
   id: number;
   name: string;
   office_zone: string | null;
 }
 
-interface CadastralZone {
+export type CadastralZone = {
   id: number;
   name: string;
   rating_district: RatingDistrict;
@@ -24,19 +24,19 @@ export type Street = {
   updated_at: string;
 }
 
-interface Cadastral {
+export type Cadastral = {
   id: string;
   name: string;
 }
 
-interface StreetRowActionsProps {
+export type StreetRowActionsProps = {
   data: Street;
   cadastrals: { id: string; name: string }[];
   onActionComplete: () => void;
   
 }
 
-interface ViewData {
+export type ViewData = {
   id: number;
   name: string;
   cadastral_zone: {
@@ -132,7 +132,7 @@ const StreetRowActions: React.FC<StreetRowActionsProps> = ({ data, onActionCompl
         endpoint: `street/view/${data.id}`,
         method: 'get',
       });
-      setViewData(response.data.data as ViewData);
+      setViewData(response.data.data );
       setViewDetails(true);
     } catch (error) {
       console.error('Error fetching data:', error);
@@ -183,7 +183,7 @@ const StreetRowActions: React.FC<StreetRowActionsProps> = ({ data, onActionCompl
   return (
     <>
       {showOptions && (
-        <div ref={optionsRef} className="absolute space-y-2 top-0 z-10 right-4 flex-col w-36 p-4 text-xs bg-white rounded shadow-md  border border-red-600">
+        <div ref={optionsRef} className="absolute space-y-2 top-0 z-10 right-4 flex-col w-36 p-4 text-xs bg-white rounded shadow-md left-44 border border-red-600">
           <p
             className="hover:cursor-pointer mb-2 font-lexend text-gray-700 text-[10px]"
             onClick={handleView}

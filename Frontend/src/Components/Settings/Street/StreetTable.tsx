@@ -1,14 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import apiCall from '../../../Api/apiCall';
 import { StreetModal } from "./StreetModal";
-import StreetRowActions from './StreetRowActions';
+import StreetRowActions, {Street, CadastralZone, ViewData} from './StreetRowActions';
 
 export type StreetData = {
   name: string;
   id?: string;
-  cadastral_zone: string;
-  created_at: string;
-  updated_at: string;
+  
 };
 
 export const StreetTable = () => {
@@ -27,6 +25,7 @@ export const StreetTable = () => {
       });
       if (response.status === 200) {
         setTableData(response.data.data);
+        console.log("28 Street TableData",response.data.data)
       }
     } catch (error) {
       setError("An error occurred while fetching data.");
