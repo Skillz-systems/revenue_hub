@@ -1,14 +1,20 @@
 import React, { useState } from 'react';
 import { HiX } from 'react-icons/hi';
-import apiCall from '../../../Api/apiCall';
-import { Modal } from 'react-responsive-modal';
-import { HiUsers } from 'react-icons/hi';
 import { BiLoader } from "react-icons/bi";
+import { Modal } from 'react-responsive-modal';
+import apiCall from '../../../Api/apiCall';
+import { CustomAlert } from "../../Index"; 
+import { PiHouseLineFill } from "react-icons/pi";
 
 export const PropertyUseModal = () => {
   const [open, setOpen] = useState(false);
   const [form, setForm] = useState<{ [key: string]: string }>({});
   const [isLoading, setIsLoading] = useState(false);
+  const [snackbar, setSnackbar] = useState({
+    open: false,
+    message: "",
+    severity: "success",
+  });
 
   const onOpenModal = () => setOpen(true);
   const onCloseModal = () => setOpen(false);
@@ -32,15 +38,28 @@ export const PropertyUseModal = () => {
       });
 
       if (response.status === 201) {
-        alert('Property Type created successfully!');
+        setSnackbar({
+          open: true,
+          message: "Property Use created successfully!",
+          severity: "success",
+        });
         setForm({});
         onCloseModal();
       }
     } catch (error) {
+      setSnackbar({
+        open: true,
+        message: "An error occurred while creating new property use data",
+        severity: "error",
+      });
       console.error('Error adding:', error);
     } finally {
       setIsLoading(false);
     }
+  };
+
+  const handleSnackbarClose = () => {
+    setSnackbar({ ...snackbar, open: false });
   };
 
   return (
@@ -53,10 +72,10 @@ export const PropertyUseModal = () => {
           onClick={onOpenModal}
         >
           <span className="text-sm text-white">
-            <HiUsers />
+            <PiHouseLineFill />
           </span>
           <span className="font-medium text-left text-white ellipsis font-lexend" style={{ fontSize: "0.6875rem" }}>
-            New Property Type
+            New Property Use
           </span>
         </button>
       </div>
@@ -84,7 +103,7 @@ export const PropertyUseModal = () => {
             <div className="flex justify-end">
               <button
                 type="button"
-                className="px-4 py-2 bg-blue-600 text-white rounded-md shadow-sm hover:bg-blue-700 flex items-center justify-center"
+                className="px-4 py-2 bg-blue-800 text-white rounded-md shadow-sm hover:bg-blue-700 flex items-center justify-center"
                 style={{ width: "8%" }}
                 onClick={submitForm}
                 disabled={isLoading}
@@ -93,7 +112,7 @@ export const PropertyUseModal = () => {
                   {isLoading ? (
                     <BiLoader className="animate-spin" />
                   ) : (
-                    <HiUsers />
+                    <PiHouseLineFill />
                   )}
                 </span>
                 <span className="font-medium text-left text-white ellipsis font-lexend" style={{ fontSize: "0.6875rem" }}>
@@ -104,6 +123,12 @@ export const PropertyUseModal = () => {
           </form>
         </div>
       </Modal>
+      <CustomAlert
+        isOpen={snackbar.open}
+        message={snackbar.message}
+        severity={snackbar.severity}
+        handleClose={handleSnackbarClose}
+      />
     </div>
   );
 };

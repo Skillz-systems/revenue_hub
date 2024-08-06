@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import apiCall from '../../../Api/apiCall';
 import { RatingDistrictModal } from "./RatingDistrictModal";
 import RatingDistrictRowActions from './RatingDistrictRowActions';
+import { CustomAlert } from "../../Index";
 
 export type RatingDistrictData = {
   id: string;
@@ -19,6 +20,11 @@ export const RatingDistrictTable = () => {
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [officeZones, setOfficeZones] = useState<{ id: string, name: string }[]>([]);
+  const [snackbar, setSnackbar] = useState({
+    open: false,
+    message: "",
+    severity: "success" as "success" | "error" | "warning" | "info",
+  });
 
   const fetching = async () => {
     setLoading(true);
@@ -30,9 +36,19 @@ export const RatingDistrictTable = () => {
       });
       if (response.status === 200) {
         setTableData(response.data.data);
+        setSnackbar({
+          open: true,
+          message: "Successfully fetched Rating Districts",
+          severity: "success",
+        });
       }
     } catch (error) {
       setError("An error occurred while fetching data.");
+      setSnackbar({
+        open: true,
+        message: "An error occurred while fetching Rating Districts data",
+        severity: "error",
+      });
     } finally {
       setLoading(false);
     }
@@ -60,6 +76,10 @@ export const RatingDistrictTable = () => {
 
   const handleActionComplete = () => {
     fetching();
+  };
+
+  const handleSnackbarClose = () => {
+    setSnackbar({ ...snackbar, open: false });
   };
 
   if (loading) return <p className="text-center text-blue-500">Loading data, please wait...</p>;
@@ -96,6 +116,12 @@ export const RatingDistrictTable = () => {
           </tbody>
         </table>
       </div>
+      <CustomAlert
+        isOpen={snackbar.open}
+        message={snackbar.message}
+        severity={snackbar.severity}
+        handleClose={handleSnackbarClose}
+      />
     </div>
   );
 };

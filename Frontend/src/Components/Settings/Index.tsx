@@ -21,7 +21,6 @@ export const Index = () => {
         <Tab className="px-4 py-2 border rounded  data-[selected]:bg-blue-800 data-[selected]:text-white font-lexend text-[15px] bg-white text-gray-600 hover:bg-gray-200 hover:text-gray-800">Property Use</Tab>
         <Tab className="px-4 py-2 border rounded  data-[selected]:bg-blue-800 data-[selected]:text-white font-lexend text-[15px] bg-white text-gray-600 hover:bg-gray-200 hover:text-gray-800">Office Zone</Tab>
         <Tab className="px-4 py-2 border rounded  data-[selected]:bg-blue-800 data-[selected]:text-white font-lexend text-[15px] bg-white text-gray-600 hover:bg-gray-200 hover:text-gray-800">Category</Tab>
-        <Tab className="px-4 py-2 border rounded  data-[selected]:bg-blue-800 data-[selected]:text-white font-lexend text-[15px] bg-white text-gray-600 hover:bg-gray-200 hover:text-gray-800">Particular Street</Tab>
       </TabList>
       <TabPanels className="w-full  mt-4 ">
         <TabPanel><StreetTable /></TabPanel>
@@ -31,7 +30,6 @@ export const Index = () => {
         <TabPanel><PropertyUseTable /></TabPanel>
         <TabPanel><OfficeZoneTable /></TabPanel>
         <TabPanel><CategoryTable /></TabPanel>
-        <TabPanel>Particular Street Content</TabPanel>
       </TabPanels>
     </TabGroup>
   )

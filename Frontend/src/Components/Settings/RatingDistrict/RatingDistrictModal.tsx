@@ -1,14 +1,20 @@
-import React, { useState, useEffect } from 'react';
-import { HiX } from 'react-icons/hi';
-import apiCall from '../../../Api/apiCall';
-import { Modal } from 'react-responsive-modal';
-import { HiUsers } from 'react-icons/hi';
+import React, { useState } from 'react';
+import { HiX, HiUsers } from 'react-icons/hi';
 import { BiLoader } from "react-icons/bi";
+import { Modal } from 'react-responsive-modal';
+import apiCall from '../../../Api/apiCall';
+import { CustomAlert } from "../../Index"; 
+import { GiVibratingBall } from "react-icons/gi";
 
 export const RatingDistrictModal = ({ officeZones }) => {
   const [open, setOpen] = useState(false);
   const [form, setForm] = useState<{ [key: string]: string }>({});
   const [isLoading, setIsLoading] = useState(false);
+  const [snackbar, setSnackbar] = useState({
+    open: false,
+    message: "",
+    severity: "success" as "success" | "error" | "warning" | "info",
+  });
 
   const onOpenModal = () => setOpen(true);
   const onCloseModal = () => setOpen(false);
@@ -31,15 +37,28 @@ export const RatingDistrictModal = ({ officeZones }) => {
       });
 
       if (response.status === 201) {
-        alert('Rating District created successfully!');
+        setSnackbar({
+          open: true,
+          message: "Rating District created successfully!",
+          severity: "success",
+        });
         setForm({});
         onCloseModal();
       }
     } catch (error) {
       console.error('Error adding:', error);
+      setSnackbar({
+        open: true,
+        message: "Error creating Rating District",
+        severity: "error",
+      });
     } finally {
       setIsLoading(false);
     }
+  };
+
+  const handleSnackbarClose = () => {
+    setSnackbar({ ...snackbar, open: false });
   };
 
   return (
@@ -52,7 +71,7 @@ export const RatingDistrictModal = ({ officeZones }) => {
           onClick={onOpenModal}
         >
           <span className="text-sm text-white">
-            <HiUsers />
+            <GiVibratingBall />
           </span>
           <span className="font-medium text-left text-white ellipsis font-lexend" style={{ fontSize: "0.6875rem" }}>
             New Rating District
@@ -88,8 +107,8 @@ export const RatingDistrictModal = ({ officeZones }) => {
                 onChange={handleInputChange}
               >
                 <option className='text-xl font-semibold text-gray-700' value="" disabled>Select</option>
-                 {officeZones.map((zone) => (
-                  <option className="font-lexend text-gray-700 text-[15px]" key={zone.id} value={zone.id} >{zone.name}</option>
+                {officeZones.map((zone) => (
+                  <option className="font-lexend text-gray-700 text-[15px]" key={zone.id} value={zone.id}>{zone.name}</option>
                 ))}
               </select>
             </div>
@@ -97,7 +116,7 @@ export const RatingDistrictModal = ({ officeZones }) => {
             <div className="flex justify-end">
               <button
                 type="button"
-                className="px-4 py-2 bg-blue-600 text-white rounded-md shadow-sm hover:bg-blue-700 flex items-center justify-center"
+                className="px-4 py-2 bg-blue-800 text-white rounded-md shadow-sm hover:bg-blue-700 flex items-center justify-center"
                 style={{ width: "8%" }}
                 onClick={submitForm}
                 disabled={isLoading}
@@ -106,7 +125,7 @@ export const RatingDistrictModal = ({ officeZones }) => {
                   {isLoading ? (
                     <BiLoader className="animate-spin" />
                   ) : (
-                    <HiUsers />
+                    <GiVibratingBall />
                   )}
                 </span>
                 <span className="font-medium text-left text-white ellipsis font-lexend" style={{ fontSize: "0.6875rem" }}>
@@ -117,6 +136,12 @@ export const RatingDistrictModal = ({ officeZones }) => {
           </form>
         </div>
       </Modal>
+      <CustomAlert
+        isOpen={snackbar.open}
+        message={snackbar.message}
+        severity={snackbar.severity}
+        handleClose={handleSnackbarClose}
+      />
     </div>
   );
 };

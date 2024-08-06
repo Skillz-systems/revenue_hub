@@ -1,16 +1,21 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { HiX } from 'react-icons/hi';
-import apiCall from '../../../Api/apiCall';
-import { Modal } from 'react-responsive-modal';
 import { HiUsers } from 'react-icons/hi';
 import { BiLoader } from "react-icons/bi";
+import { Modal } from 'react-responsive-modal';
+import apiCall from '../../../Api/apiCall';
+import { CustomAlert } from "../../Index"; 
+import { FaStreetView } from "react-icons/fa6";
 
-export const StreetModal = ({ cadastrals}) => {
+export const StreetModal = ({ cadastrals }) => {
   const [open, setOpen] = useState(false);
   const [form, setForm] = useState<{ [key: string]: string }>({});
   const [isLoading, setIsLoading] = useState(false);
-
- 
+  const [snackbar, setSnackbar] = useState({
+    open: false,
+    message: "",
+    severity: "success",
+  });
 
   const onOpenModal = () => setOpen(true);
   const onCloseModal = () => setOpen(false);
@@ -33,15 +38,28 @@ export const StreetModal = ({ cadastrals}) => {
       });
 
       if (response.status === 201) {
-        alert('Street created successfully!');
+        setSnackbar({
+          open: true,
+          message: "Street created successfully!",
+          severity: "success",
+        });
         setForm({});
         onCloseModal();
       }
     } catch (error) {
+      setSnackbar({
+        open: true,
+        message: "An error occurred while creating new street data",
+        severity: "error",
+      });
       console.error('Error adding:', error);
     } finally {
       setIsLoading(false);
     }
+  };
+
+  const handleSnackbarClose = () => {
+    setSnackbar({ ...snackbar, open: false });
   };
 
   return (
@@ -54,7 +72,7 @@ export const StreetModal = ({ cadastrals}) => {
           onClick={onOpenModal}
         >
           <span className="text-sm text-white">
-            <HiUsers />
+            <FaStreetView />
           </span>
           <span className="font-medium text-left text-white ellipsis font-lexend" style={{ fontSize: "0.6875rem" }}>
             New Street
@@ -62,7 +80,7 @@ export const StreetModal = ({ cadastrals}) => {
         </button>
       </div>
       <Modal open={open} onClose={onCloseModal} center>
-        <div className="relative bg-white rounded-lg shadow-lg ">
+        <div className="relative bg-white rounded-lg shadow-lg">
           <div className="flex justify-between items-center mb-4 sticky top-0 z-10 p-6 bg-white">
             <h2 className="font-lexend text-gray-700 text-[15px]">Add New Street</h2>
             <button onClick={onCloseModal}>
@@ -90,36 +108,43 @@ export const StreetModal = ({ cadastrals}) => {
                 onChange={handleInputChange}
               >
                 <option className='text-xl font-semibold text-gray-700' value="" disabled>Select</option>
-                 {cadastrals.map((zone) => (
-                  <option className="font-lexend text-gray-700 text-[15px]"key={zone.id} value={zone.id} >{zone.name}</option>
+                {cadastrals.map((zone) => (
+                  <option className="font-lexend text-gray-700 text-[15px]" key={zone.id} value={zone.id}>
+                    {zone.name}
+                  </option>
                 ))}
               </select>
             </div>
 
             <div className="flex justify-end">
-        <button
-          type="button"
-          className="px-4 py-2 bg-blue-600 text-white rounded-md shadow-sm hover:bg-blue-700 flex items-center justify-center"
-          style={{ width: "8%" }}
-          onClick={submitForm}
+              <button
+                type="button"
+                className="px-4 py-2 bg-blue-800 text-white rounded-md shadow-sm hover:bg-blue-700 flex items-center justify-center"
+                style={{ width: "8%" }}
+                onClick={submitForm}
                 disabled={isLoading}
-        >
-          <span className="text-sm text-white">
-
-          {isLoading ? (
-                 <BiLoader  className="animate-spin" />
-                ) : (
-                  <HiUsers />
-                )}
-          </span>
-          <span className="font-medium text-left text-white ellipsis font-lexend" style={{ fontSize: "0.6875rem" }}>
-           Add New Street
-          </span>
-        </button>
-      </div>
+              >
+                <span className="text-sm text-white">
+                  {isLoading ? (
+                    <BiLoader className="animate-spin" />
+                  ) : (
+                    <FaStreetView />
+                  )}
+                </span>
+                <span className="font-medium text-left text-white ellipsis font-lexend" style={{ fontSize: "0.6875rem" }}>
+                  Add New Street
+                </span>
+              </button>
+            </div>
           </form>
         </div>
       </Modal>
+      <CustomAlert
+        isOpen={snackbar.open}
+        message={snackbar.message}
+        severity={snackbar.severity}
+        handleClose={handleSnackbarClose}
+      />
     </div>
   );
 };

@@ -1,13 +1,20 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { HiUsers, HiX } from 'react-icons/hi';
-import apiCall from '../../../Api/apiCall';
-import { Modal } from 'react-responsive-modal';
 import { BiLoader } from "react-icons/bi";
+import { Modal } from 'react-responsive-modal';
+import apiCall from '../../../Api/apiCall';
+import { CustomAlert } from "../../Index"; 
+import { SiAmazonecs } from "react-icons/si";
 
 export const CadastralZoneModal = ({ ratingDistricts }) => {
   const [open, setOpen] = useState(false);
   const [form, setForm] = useState<{ [key: string]: string }>({});
   const [isLoading, setIsLoading] = useState(false);
+  const [snackbar, setSnackbar] = useState({
+    open: false,
+    message: "",
+    severity: "success" as "success" | "error" | "warning" | "info",
+  });
 
   const onOpenModal = () => setOpen(true);
   const onCloseModal = () => setOpen(false);
@@ -30,15 +37,27 @@ export const CadastralZoneModal = ({ ratingDistricts }) => {
       });
 
       if (response.status === 201) {
-        alert('Cadastral Zone created successfully!');
+        setSnackbar({
+          open: true,
+          message: "Cadastral Zone created Successfully",
+          severity: "success",
+        });
         setForm({});
-        onCloseModal();
+        setOpen(false);
       }
     } catch (error) {
-      console.error('Error adding:', error);
+      setSnackbar({
+        open: true,
+        message: "An error occurred while creating cadastral zone data",
+        severity: "error",
+      });
     } finally {
       setIsLoading(false);
     }
+  };
+
+  const handleSnackbarClose = () => {
+    setSnackbar({ ...snackbar, open: false });
   };
 
   return (
@@ -51,7 +70,7 @@ export const CadastralZoneModal = ({ ratingDistricts }) => {
           onClick={onOpenModal}
         >
           <span className="text-sm text-white">
-          <HiUsers />
+            <SiAmazonecs />
           </span>
           <span className="font-medium text-left text-white ellipsis font-lexend" style={{ fontSize: "0.6875rem" }}>
             New Cadastral Zone
@@ -59,7 +78,7 @@ export const CadastralZoneModal = ({ ratingDistricts }) => {
         </button>
       </div>
       <Modal open={open} onClose={onCloseModal} center>
-        <div className="relative bg-white rounded-lg shadow-lg ">
+        <div className="relative bg-white rounded-lg shadow-lg">
           <div className="flex justify-between items-center mb-4 sticky top-0 z-10 p-6 bg-white">
             <h2 className="font-lexend text-gray-700 text-[15px]">Add New Cadastral Zone</h2>
             <button onClick={onCloseModal}>
@@ -107,7 +126,7 @@ export const CadastralZoneModal = ({ ratingDistricts }) => {
                   {isLoading ? (
                     <BiLoader className="animate-spin" />
                   ) : (
-                    <HiUsers />
+                    <SiAmazonecs />
                   )}
                 </span>
                 <span className="font-medium text-left text-white ellipsis font-lexend" style={{ fontSize: "0.6875rem" }}>
@@ -118,6 +137,12 @@ export const CadastralZoneModal = ({ ratingDistricts }) => {
           </form>
         </div>
       </Modal>
+      <CustomAlert
+        isOpen={snackbar.open}
+        message={snackbar.message}
+        severity={snackbar.severity}
+        handleClose={handleSnackbarClose}
+      />
     </div>
   );
 };

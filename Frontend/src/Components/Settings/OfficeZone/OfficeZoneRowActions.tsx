@@ -1,6 +1,8 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { HiOutlineDotsHorizontal } from 'react-icons/hi';
 import apiCall from '../../../Api/apiCall';
+import { FaTrash } from "react-icons/fa";
+import { GrUpdate } from "react-icons/gr";
 
 interface OfficeZoneRowActionsProps {
   data: {
@@ -97,7 +99,7 @@ const OfficeZoneRowActions: React.FC<OfficeZoneRowActionsProps> = ({ data, onAct
   return (
     <>
       {showOptions && (
-        <div ref={optionsRef} className="absolute top-0 z-10 right-0 flex-col w-36 p-4 text-xs bg-white rounded shadow-md border border-gray-300">
+        <div ref={optionsRef} className="absolute space-y-2 top-0 z-10 flex-col w-36 p-4 text-xs bg-white rounded shadow-md -left-44 border-0.6 border-custom-grey-100 text-color-text-black font-lexend">
           <p
             className="hover:cursor-pointer mb-2 font-lexend text-gray-700 text-[10px]"
             onClick={handleView}
@@ -177,8 +179,8 @@ const OfficeZoneRowActions: React.FC<OfficeZoneRowActionsProps> = ({ data, onAct
               </div>
             </div>
 
-            <button onClick={handleUpdate} className="mt-4 px-4 py-2 bg-blue-500 text-white rounded">
-              Update
+            <button onClick={handleUpdate} className="mt-4 px-4 py-2 bg-blue-900 text-white rounded">
+             <GrUpdate />
             </button>
           </div>
         </div>
@@ -195,11 +197,9 @@ const OfficeZoneRowActions: React.FC<OfficeZoneRowActionsProps> = ({ data, onAct
             </div>
             <p>Are you sure you want to delete <strong>{data.name}</strong> ? </p>
             <div className="mt-4 flex justify-end">
-              <button onClick={() => setDeleteData(false)} className="mr-2 px-4 py-2 bg-gray-300 text-black rounded">
-                Cancel
-              </button>
-              <button onClick={handleDelete} className="px-4 py-2 bg-blue-600 text-white rounded">
-                Delete
+              
+              <button onClick={handleDelete} className="px-4 py-2 bg-blue-900 text-white rounded">
+               < FaTrash />
               </button>
             </div>
           </div>

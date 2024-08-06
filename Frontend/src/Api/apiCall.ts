@@ -11,6 +11,8 @@ interface ApiCallOptions {
     headers?: any;
   }
 
+  const apiUrl = import.meta.env.VITE_API_URL as string;
+
   const apiCall = async <T>({
     endpoint,
     method,
@@ -19,7 +21,7 @@ interface ApiCallOptions {
     headers = {},
   }: ApiCallOptions): Promise<AxiosResponse<T>> => {
     const {token} = useTokens();
-    const baseURL = 'https://api.revenuehub.skillzserver.com/api';
+    const baseURL = `${apiUrl}/api`;
   
     const requestConfig: AxiosRequestConfig = {
       baseURL,

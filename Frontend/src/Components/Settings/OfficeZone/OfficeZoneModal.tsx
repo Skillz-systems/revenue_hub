@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
-import { HiX } from 'react-icons/hi';
+import { HiX, HiUsers } from 'react-icons/hi';
+import { BiLoader } from "react-icons/bi";
 import apiCall from '../../../Api/apiCall';
 import { Modal } from 'react-responsive-modal';
-import { HiUsers } from 'react-icons/hi';
-import { BiLoader } from "react-icons/bi";
+import { HiOutlineBuildingOffice2 } from "react-icons/hi2";
 
 export const OfficeZoneModal = () => {
   const [open, setOpen] = useState(false);
@@ -53,7 +53,7 @@ export const OfficeZoneModal = () => {
           onClick={onOpenModal}
         >
           <span className="text-sm text-white">
-            <HiUsers />
+            <HiOutlineBuildingOffice2 />
           </span>
           <span className="font-medium text-left text-white ellipsis font-lexend" style={{ fontSize: "0.6875rem" }}>
             New Office Zone
@@ -61,7 +61,7 @@ export const OfficeZoneModal = () => {
         </button>
       </div>
       <Modal open={open} onClose={onCloseModal} center>
-        <div className="relative bg-white rounded-lg shadow-lg ">
+        <div className="relative bg-white rounded-lg shadow-lg">
           <div className="flex justify-between items-center mb-4 sticky top-0 z-10 p-6 bg-white">
             <h2 className="font-lexend text-gray-700 text-[15px]">Add New Office Zone</h2>
             <button onClick={onCloseModal}>
@@ -81,21 +81,20 @@ export const OfficeZoneModal = () => {
               />
             </div>
             <div className="mb-4">
-              <label className="font-lexend text-gray-700 text-[15px]">Address of Office Zone Name</label>
+              <label className="font-lexend text-gray-700 text-[15px]">Address of Office Zone</label>
               <input
                 type="text"
                 className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-                placeholder="Enter Office Zone Address Name"
-                name="Address"
-                value={form.name || ''}
+                placeholder="Enter Office Zone Address"
+                name="address"
+                value={form.address || ''}
                 onChange={handleInputChange}
               />
             </div>
-
             <div className="flex justify-end">
               <button
                 type="button"
-                className="px-4 py-2 bg-blue-600 text-white rounded-md shadow-sm hover:bg-blue-700 flex items-center justify-center"
+                className="px-4 py-2 bg-blue-800 text-white rounded-md shadow-sm hover:bg-blue-700 flex items-center justify-center"
                 style={{ width: "8%" }}
                 onClick={submitForm}
                 disabled={isLoading}
@@ -104,7 +103,7 @@ export const OfficeZoneModal = () => {
                   {isLoading ? (
                     <BiLoader className="animate-spin" />
                   ) : (
-                    <HiUsers />
+                    <HiOutlineBuildingOffice2 />
                   )}
                 </span>
                 <span className="font-medium text-left text-white ellipsis font-lexend" style={{ fontSize: "0.6875rem" }}>

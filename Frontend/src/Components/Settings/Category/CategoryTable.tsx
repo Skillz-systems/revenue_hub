@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import apiCall from '../../../Api/apiCall';
 import { CategoryModal } from "./CategoryModal";
 import CategoryRowActions from './CategoryRowActions';
+import { CustomAlert } from "../../Index";
 
 export type CategoryData = {
     name: string;
@@ -12,6 +13,11 @@ export const CategoryTable = () => {
     const [tableData, setTableData] = useState<CategoryData[]>([]);
     const [loading, setLoading] = useState<boolean>(true);
     const [error, setError] = useState<string | null>(null);
+    const [snackbar, setSnackbar] = useState({
+        open: false,
+        message: "",
+        severity: "success",
+    });
 
     const fetching = async () => {
         setLoading(true);
@@ -22,10 +28,20 @@ export const CategoryTable = () => {
                 method: "get",
             });
             if (response.status === 200) {
+                setSnackbar({
+                    open: true,
+                    message: "Successfully fetched Category",
+                    severity: "success",
+                });
                 setTableData(response.data.data);
             }
         } catch (error) {
             setError("An error occurred while fetching data.");
+            setSnackbar({
+                open: true,
+                message: "An error occurred while fetching Category data",
+                severity: "error",
+            });
         } finally {
             setLoading(false);
         }
@@ -37,6 +53,9 @@ export const CategoryTable = () => {
 
     const handleActionComplete = () => {
         fetching();
+    };
+    const handleSnackbarClose = () => {
+        setSnackbar({ ...snackbar, open: false });
     };
 
     if (loading) return <p className="text-center text-blue-500">Loading data, please wait...</p>;
@@ -73,6 +92,12 @@ export const CategoryTable = () => {
 
                 </table>
             </div>
+            <CustomAlert
+                isOpen={snackbar.open}
+                message={snackbar.message}
+                severity={snackbar.severity}
+                handleClose={handleSnackbarClose}
+            />
         </div>
     );
 };

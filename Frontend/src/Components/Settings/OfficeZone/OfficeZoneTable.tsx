@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import apiCall from '../../../Api/apiCall';
 import { OfficeZoneModal } from './OfficeZoneModal';
 import OfficeZoneRowActions from './OfficeZoneRowActions';
-
+import { CustomAlert } from "../../Index";
 
 export type OfficeZoneData = {
     name: string;
@@ -13,6 +13,11 @@ export const OfficeZoneTable = () => {
     const [tableData, setTableData] = useState<OfficeZoneData[]>([]);
     const [loading, setLoading] = useState<boolean>(true);
     const [error, setError] = useState<string | null>(null);
+    const [snackbar, setSnackbar] = useState({
+        open: false,
+        message: "",
+        severity: "success" as "success" | "error" | "warning" | "info",
+    });
 
     const fetching = async () => {
         setLoading(true);
@@ -23,10 +28,20 @@ export const OfficeZoneTable = () => {
                 method: "get",
             });
             if (response.status === 200) {
+                setSnackbar({
+                    open: true,
+                    message: "Successfully fetched Office Zone",
+                    severity: "success",
+                });
                 setTableData(response.data.data);
             }
         } catch (error) {
             setError("An error occurred while fetching data.");
+            setSnackbar({
+                open: true,
+                message: "An error occurred while fetching Streets data",
+                severity: "error",
+            });
         } finally {
             setLoading(false);
         }
@@ -38,6 +53,10 @@ export const OfficeZoneTable = () => {
 
     const handleActionComplete = () => {
         fetching();
+    };
+
+    const handleSnackbarClose = () => {
+        setSnackbar({ ...snackbar, open: false });
     };
 
     if (loading) return <p className="text-center text-blue-500">Loading data, please wait...</p>;
@@ -71,9 +90,14 @@ export const OfficeZoneTable = () => {
                             </tr>
                         ))}
                     </tbody>
-
                 </table>
             </div>
+            <CustomAlert
+                isOpen={snackbar.open}
+                message={snackbar.message}
+                severity={snackbar.severity}
+                handleClose={handleSnackbarClose}
+            />
         </div>
     );
 };

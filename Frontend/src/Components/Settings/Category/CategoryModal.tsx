@@ -4,6 +4,7 @@ import apiCall from '../../../Api/apiCall';
 import { Modal } from 'react-responsive-modal';
 import { HiUsers } from 'react-icons/hi';
 import { BiLoader } from "react-icons/bi";
+import { MdCategory } from "react-icons/md";
 
 export const CategoryModal = () => {
   const [open, setOpen] = useState(false);
@@ -53,7 +54,7 @@ export const CategoryModal = () => {
           onClick={onOpenModal}
         >
           <span className="text-sm text-white">
-            <HiUsers />
+            <MdCategory />
           </span>
           <span className="font-medium text-left text-white ellipsis font-lexend" style={{ fontSize: "0.6875rem" }}>
             New Category
@@ -84,7 +85,7 @@ export const CategoryModal = () => {
             <div className="flex justify-end">
               <button
                 type="button"
-                className="px-4 py-2 bg-blue-600 text-white rounded-md shadow-sm hover:bg-blue-700 flex items-center justify-center"
+                className="px-4 py-2 bg-blue-800 text-white rounded-md shadow-sm hover:bg-blue-700 flex items-center justify-center"
                 style={{ width: "8%" }}
                 onClick={submitForm}
                 disabled={isLoading}
@@ -93,7 +94,7 @@ export const CategoryModal = () => {
                   {isLoading ? (
                     <BiLoader className="animate-spin" />
                   ) : (
-                    <HiUsers />
+                    <MdCategory />
                   )}
                 </span>
                 <span className="font-medium text-left text-white ellipsis font-lexend" style={{ fontSize: "0.6875rem" }}>

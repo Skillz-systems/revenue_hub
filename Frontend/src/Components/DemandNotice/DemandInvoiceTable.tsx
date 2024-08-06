@@ -188,6 +188,8 @@ const DemandInvoiceTable = ({
   const recordField = (record: DemandNotice) => {
     const lastPaymentStatus = record?.property?.demand_notice_status;
 
+
+
     return (
       <div
         key={record?.id}
@@ -222,20 +224,19 @@ const DemandInvoiceTable = ({
           {formatNumberWithCommas(record?.amount)}
         </span>
         <div className="flex items-center justify-center w-[12%]">
-          <span
-            className={`flex flex-wrap items-center justify-center px-2 p-1 font-light text-white rounded font-lexend
-            ${
-              lastPaymentStatus === "Expired"
-                ? "bg-color-bright-red"
-                : lastPaymentStatus === "Unpaid"
-                ? "bg-color-bright-orange"
-                : "bg-color-bright-green"
-            }
-            `}
-          >
-            {lastPaymentStatus}
-          </span>
-        </div>
+        <span
+          className={`flex flex-wrap items-center justify-center px-2 p-1 font-light text-white rounded font-lexend ${(new Date() - new Date(record?.property?.created_at)) / (1000 * 60 * 60 * 24) > 44 && lastPaymentStatus === "Expired"
+              ? "bg-color-dark-red"
+            : lastPaymentStatus === "Expired"
+                ? "bg-orange-500"
+              : lastPaymentStatus === "Unpaid"
+                  ? "bg-black"
+                  : "bg-color-bright-green"
+            }`}
+        >
+          {lastPaymentStatus}
+        </span>
+      </div>
         <span className="flex flex-wrap items-center w-1/12 gap-1">
           <span
             className="border-0.6 border-custom-grey-100 text-custom-grey-300 px-2 py-2.5 rounded text-base hover:cursor-pointer"

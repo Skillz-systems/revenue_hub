@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import apiCall from '../../../Api/apiCall';
 import { CadastralZoneModal } from "./CadastralZoneModal";
 import CadastralZoneRowActions from './CadastralZoneRowActions';
+import { CustomAlert } from "../../Index";
 
 export type CadastralZoneData = {
   id: string;
@@ -24,6 +25,11 @@ export const CadastralZoneTable = () => {
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [ratingDistricts, setRatingDistricts] = useState<RatingDistrict[]>([]);
+  const [snackbar, setSnackbar] = useState({
+    open: false,
+    message: "",
+    severity: "success",
+  });
 
   const fetching = async () => {
     setLoading(true);
@@ -34,10 +40,20 @@ export const CadastralZoneTable = () => {
         method: "get",
       });
       if (response.status === 200) {
+        setSnackbar({
+          open: true,
+          message: "Successfully fetched Cadastral Zone",
+          severity: "success",
+        });
         setTableData(response.data.data);
       }
     } catch (error) {
       setError("An error occurred while fetching data.");
+      setSnackbar({
+        open: true,
+        message: "An error occurred while fetching Cadastral Zone data",
+        severity: "error",
+      });
     } finally {
       setLoading(false);
     }
@@ -51,7 +67,6 @@ export const CadastralZoneTable = () => {
       });
       if (response.status === 200) {
         setRatingDistricts(response.data.data);
-        console.log("ratingDistricts CadastralZoneTable Line 44", ratingDistricts);
       }
     } catch (error) {
       console.error('Error fetching rating districts:', error);
@@ -65,6 +80,9 @@ export const CadastralZoneTable = () => {
 
   const handleActionComplete = () => {
     fetching();
+  };
+  const handleSnackbarClose = () => {
+    setSnackbar({ ...snackbar, open: false });
   };
 
   if (loading) return <p className="text-center text-blue-500">Loading data, please wait...</p>;
@@ -101,6 +119,12 @@ export const CadastralZoneTable = () => {
           </tbody>
         </table>
       </div>
+      <CustomAlert
+      isOpen={snackbar.open}
+      message={snackbar.message}
+      severity={snackbar.severity}
+      handleClose={handleSnackbarClose}
+    />
     </div>
   );
 };
