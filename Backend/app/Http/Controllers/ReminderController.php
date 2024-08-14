@@ -147,4 +147,41 @@ class ReminderController extends Controller
     ], 400);
 }
 
+
+
+
+// View a reminder by demand notice ID
+public function viewReminder($demandNoticeId)
+{
+    // Retrieve the demand notice with its reminders
+    $demandNotice = DemandNotice::with('reminders')->find($demandNoticeId);
+
+    if (!$demandNotice) {
+        return response()->json([
+            'status' => 'error',
+            'message' => 'Demand notice not found.',
+        ], 404);
+    }
+
+    // Get the latest reminder for this demand notice
+    $reminder = $demandNotice->reminders()->latest()->first();
+
+    if (!$reminder) {
+        return response()->json([
+            'status' => 'error',
+            'message' => 'No reminders found for this demand notice.',
+        ], 404);
+    }
+
+    return response()->json([
+        'status' => 'success',
+        'data' => [
+            'demand_notice_id' => $demandNotice->id,
+            'reminder_id' => $reminder->id,
+            'reminder_created_at' => $reminder->created_at,
+            'reminder_updated_at' => $reminder->updated_at,
+        ],
+    ], 200);
+}
+
 }   
