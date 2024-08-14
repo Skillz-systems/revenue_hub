@@ -15,8 +15,6 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger('demand_notice_id');
             $table->timestamps();
-
-            // Foreign key constraint
             $table->foreign('demand_notice_id')->references('id')->on('demand_notices')->onDelete('cascade');
         });
     }

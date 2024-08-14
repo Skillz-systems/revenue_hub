@@ -5196,6 +5196,121 @@
                 ]
             }
         },
+        "/reminders/{demandNoticeId}/create": {
+            "post": {
+                "tags": [
+                    "Reminders"
+                ],
+                "summary": "Create a reminder for a demand notice",
+                "description": "Creates a reminder for the specified demand notice if it is not paid and no reminder has been created within the last 28 days.",
+                "operationId": "4de7de47e2ce3c15189ca6fe357546be",
+                "parameters": [
+                    {
+                        "name": "demandNoticeId",
+                        "in": "path",
+                        "description": "ID of the demand notice to create a reminder for",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": false,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "demand_notice_id": {
+                                        "description": "ID of the demand notice",
+                                        "type": "integer",
+                                        "example": 1
+                                    },
+                                    "created_at": {
+                                        "description": "Timestamp when the reminder was created",
+                                        "type": "string",
+                                        "format": "date-time",
+                                        "example": "2024-08-14T17:38:00Z"
+                                    },
+                                    "updated_at": {
+                                        "description": "Timestamp when the reminder was last updated",
+                                        "type": "string",
+                                        "format": "date-time",
+                                        "example": "2024-08-14T17:38:00Z"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Reminder created successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "string",
+                                            "example": "success"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Reminder created successfully"
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "demand_notice_id": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "created_at": {
+                                                    "type": "string",
+                                                    "format": "date-time",
+                                                    "example": "2024-08-14T17:38:00Z"
+                                                },
+                                                "updated_at": {
+                                                    "type": "string",
+                                                    "format": "date-time",
+                                                    "example": "2024-08-14T17:38:00Z"
+                                                },
+                                                "id": {
+                                                    "type": "integer",
+                                                    "example": 2
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Error in creating reminder",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "string",
+                                            "example": "error"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "A reminder has already been created within the last 28 days"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/api/statistic/all-yearly-data": {
             "post": {
                 "tags": [
