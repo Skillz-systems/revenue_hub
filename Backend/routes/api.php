@@ -15,6 +15,7 @@ use App\Http\Controllers\PropertyUseController;
 use App\Http\Controllers\StatisticController;
 use App\Http\Controllers\StreetController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\ReminderController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -47,6 +48,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/demand-notice/view/{demandNotice}', [DemandNoticeController::class, 'show']);
     Route::put('/demand-notice/update/{demandNotice}', [DemandNoticeController::class, 'update']);
     Route::delete('/demand-notice/delete/{demandNotice}', [DemandNoticeController::class, 'destroy']);
+    Route::post('/reminders/{demandNoticeId}/create', [ReminderController::class, 'createReminder'])->name('createReminder');
 
     Route::post('/statistic/all-yearly-data', [StatisticController::class, 'allYearlyData']);
     Route::post('/payment', [PaymentController::class, 'index']);
