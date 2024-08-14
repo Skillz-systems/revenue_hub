@@ -10,7 +10,7 @@ use Carbon\Carbon;
 
 /**
  * @OA\Post(
- *     path="/reminders/{demandNoticeId}/create",
+ *     path="/api/reminders/{demandNoticeId}/create",
  *     summary="Create a reminder for a demand notice",
  *     description="Creates a reminder for the specified demand notice if it is not paid and no reminder has been created within the last 28 days.",
  *     tags={"Reminders"},
