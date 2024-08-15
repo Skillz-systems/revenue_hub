@@ -49,6 +49,8 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::put('/demand-notice/update/{demandNotice}', [DemandNoticeController::class, 'update']);
     Route::delete('/demand-notice/delete/{demandNotice}', [DemandNoticeController::class, 'destroy']);
     Route::post('/reminders/{demandNoticeId}/create', [ReminderController::class, 'createReminder'])->name('createReminder');
+    Route::get('reminders/{demandNoticeId}/view', [ReminderController::class, 'show'])->name('viewReminder');
+
 
     Route::post('/statistic/all-yearly-data', [StatisticController::class, 'allYearlyData']);
     Route::post('/payment', [PaymentController::class, 'index']);
