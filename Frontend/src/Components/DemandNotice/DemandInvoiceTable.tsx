@@ -167,6 +167,7 @@ const DemandInvoiceTable = ({
     if (!data) {
       return [];
     }
+    console.log("Demand Notice", data)
     return data?.slice(offset, offset + propertiesPerPage);
   };
 
@@ -187,6 +188,31 @@ const DemandInvoiceTable = ({
 
   const recordField = (record: DemandNotice) => {
     const lastPaymentStatus = record?.property?.demand_notice_status;
+    function getRandomStatus() {
+      return Math.floor(Math.random() * 5);
+    }
+    function getStatusClass(status) {
+
+      switch (status) {
+        case 0:
+          return "bg-black text-white";
+        case 1:
+          return "bg-blue-500 text-white";
+        case 2:
+          return "bg-green-500 text-white";
+        case 3:
+          return "bg-yellow-500 text-black";
+        case 4:
+          return "bg-red-500 text-white";
+        default:
+          return "bg-gray100 text-black";
+      }
+    }
+    const status = Number(record?.property?.demand_notice_status)
+
+    const className = getStatusClass(status);
+    const status = getRandomStatus();
+
 
 
 
@@ -206,13 +232,12 @@ const DemandInvoiceTable = ({
         </span>
         <span
           className={`flex flex-wrap items-center px-4 py-1 justify-center rounded-xl w-[12%] font-light font-lexend text-color-text-black text-[10px] border-0.6 border-custom-grey-100
-          ${
-            record?.property?.prop_use === "Commercial"
+          ${record?.property?.prop_use === "Commercial"
               ? "bg-color-light-red"
               : record?.property?.prop_use === "Residential"
-              ? "bg-color-light-yellow"
-              : "bg-custom-blue-200"
-          }
+                ? "bg-color-light-yellow"
+                : "bg-custom-blue-200"
+            }
           `}
         >
           {record?.property?.prop_use.toUpperCase()}
@@ -224,19 +249,20 @@ const DemandInvoiceTable = ({
           {formatNumberWithCommas(record?.amount)}
         </span>
         <div className="flex items-center justify-center w-[12%]">
-        <span
-          className={`flex flex-wrap items-center justify-center px-2 p-1 font-light text-white rounded font-lexend ${(new Date() - new Date(record?.property?.created_at)) / (1000 * 60 * 60 * 24) > 44 && lastPaymentStatus === "Expired"
-              ? "bg-color-dark-red"
-            : lastPaymentStatus === "Expired"
-                ? "bg-orange-500"
-              : lastPaymentStatus === "Unpaid"
-                  ? "bg-black"
-                  : "bg-color-bright-green"
-            }`}
-        >
-          {lastPaymentStatus}
-        </span>
-      </div>
+          <span
+            className={`flex flex-wrap items-center justify-center px-2 p-1 font-light text-white rounded font-lexend
+            ${
+              lastPaymentStatus === "Expired"
+                ? "bg-color-bright-red"
+                : lastPaymentStatus === "Unpaid"
+                ? "bg-color-bright-orange"
+                : "bg-color-bright-green"
+            }
+            `}
+          >
+            {lastPaymentStatus}
+          </span>
+        </div>
         <span className="flex flex-wrap items-center w-1/12 gap-1">
           <span
             className="border-0.6 border-custom-grey-100 text-custom-grey-300 px-2 py-2.5 rounded text-base hover:cursor-pointer"
@@ -323,11 +349,10 @@ const DemandInvoiceTable = ({
               displayColumn === false && query !== "" && menu.id > 1 ? null : (
                 <div
                   key={menu.id}
-                  className={`flex items-start justify-between gap-2 px-2 py-1 text-xs font-lexend hover:cursor-pointer ${
-                    activeMenu === menu.id
+                  className={`flex items-start justify-between gap-2 px-2 py-1 text-xs font-lexend hover:cursor-pointer ${activeMenu === menu.id
                       ? "bg-primary-color rounded"
                       : "bg-inherit"
-                  }`}
+                    }`}
                   onClick={() => {
                     if (menu.id > 1) {
                       setSnackbar({
@@ -343,11 +368,10 @@ const DemandInvoiceTable = ({
                   }}
                 >
                   <span
-                    className={`${
-                      activeMenu === menu.id
+                    className={`${activeMenu === menu.id
                         ? "font-medium text-white"
                         : "text-color-text-two"
-                    }`}
+                      }`}
                   >
                     {menu.name}
                   </span>
@@ -362,9 +386,8 @@ const DemandInvoiceTable = ({
           </div>
           <TableSearchInput
             parentBoxStyle="flex items-center justify-between p-2 bg-custom-grey-100 rounded-3xl border border-custom-color-one"
-            inputBoxStyle={` ${
-              displaySearchIcon ? "w-10/12" : "w-full"
-            } text-xs outline-none bg-inherit font-lexend text-color-text-two`}
+            inputBoxStyle={` ${displaySearchIcon ? "w-10/12" : "w-full"
+              } text-xs outline-none bg-inherit font-lexend text-color-text-two`}
             iconBoxStyle={"text-base text-primary-color hover:cursor-pointer"}
             placeholder={"Search records"}
             searchIcon={<FiSearch />}
