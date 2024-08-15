@@ -13,9 +13,8 @@ return new class extends Migration
     {
         Schema::create('demand_notice_reminders', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('demand_notice_id');
+            $table->foreignId('demand_notice_id')->constrained()->onDelete('cascade');
             $table->timestamps();
-            $table->foreign('demand_notice_id')->references('id')->on('demand_notices')->onDelete('cascade');
         });
     }
 

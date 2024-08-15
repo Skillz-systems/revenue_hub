@@ -526,4 +526,19 @@ class DemandNoticeController extends Controller
             "message" => "You dont Have Permission",
         ], 401);
     }
+
+    public function createReminder(DemandNotice $demandNotice)
+    {
+        $reminder = $this->demandNoticeService->createReminder($demandNotice);
+        if ($reminder) {
+            return response()->json([
+                'status' => 'success', 
+                'message' => 'Reminder created successfully'
+            ]);
+        }
+        return response()->json([
+            'status' => 'error', 
+            'message' => 'Reminder could not be created'
+        ]);
+    }
 }
