@@ -51,7 +51,7 @@ use Illuminate\Http\Resources\Json\JsonResource;
  *         type="string",
  *         format="date-time",
  *         description="The date when the demand notice was created"
- *     )
+ *     ),
  *     @OA\Property(
  *         property="reminder_date",
  *         type="string",
