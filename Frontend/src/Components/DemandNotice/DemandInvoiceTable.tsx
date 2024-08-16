@@ -197,24 +197,22 @@ const DemandInvoiceTable = ({
         case 0:
           return "bg-black text-white";
         case 1:
-          return "bg-blue-500 text-white";
+          return "bg-black-500 text-white";
         case 2:
-          return "bg-green-500 text-white";
+          return "bg-Amber-500 text-white";
         case 3:
-          return "bg-yellow-500 text-black";
+          return "bg-green-500 text-black";
         case 4:
           return "bg-red-500 text-white";
         default:
-          return "bg-gray100 text-black";
+          return "bg-gray-100 text-black";
       }
     }
-    const status = Number(record?.property?.demand_notice_status)
-
-    const className = getStatusClass(status);
+   
     const status = getRandomStatus();
 
-
-
+    const className = getStatusClass(status);
+    
 
     return (
       <div
@@ -252,11 +250,7 @@ const DemandInvoiceTable = ({
           <span
             className={`flex flex-wrap items-center justify-center px-2 p-1 font-light text-white rounded font-lexend
             ${
-              lastPaymentStatus === "Expired"
-                ? "bg-color-bright-red"
-                : lastPaymentStatus === "Unpaid"
-                ? "bg-color-bright-orange"
-                : "bg-color-bright-green"
+              className
             }
             `}
           >
