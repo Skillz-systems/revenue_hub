@@ -15,8 +15,6 @@ class DemandNoticeReminderFactory extends Factory
     {
         return [
             'demand_notice_id' => DemandNotice::factory(),
-            'created_at' => $this->faker->dateTimeBetween('-30 days', 'now'),
-            'updated_at' => $this->faker->dateTimeBetween('-30 days', 'now'),
         ];
     }
 }

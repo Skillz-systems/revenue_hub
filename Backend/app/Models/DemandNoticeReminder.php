@@ -8,14 +8,12 @@ use Illuminate\Database\Eloquent\Model;
 class DemandNoticeReminder extends Model
 {
     use HasFactory;
-    protected $fillable = [
-        "demand_notice_id",
-        "created_at",
-        "updated_at",
-    ];
 
-    public function demandNotice()
+    protected $fillable = [
+        'demand_notice_id',
+    ];
+    public function reminder()
     {
-        return $this->belongsTo(DemandNotice::class,"id", "demand_notice_id");
+        return $this->hasOne(DemandNoticeReminder::class);
     }
 }
