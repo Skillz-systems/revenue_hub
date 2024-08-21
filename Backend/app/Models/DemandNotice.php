@@ -30,6 +30,6 @@ class DemandNotice extends Model
     }
     public function reminders()
     {
-        return $this->hasMany(DemandNoticeReminder::class, "id", "demand_notice_id");
+        return $this->hasOne(DemandNoticeReminder::class, "id", "demand_notice_id");
     }
 }
