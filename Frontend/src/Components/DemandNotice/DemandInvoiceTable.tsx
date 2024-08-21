@@ -57,6 +57,7 @@ const DemandInvoiceTable = ({
   );
   const [demandInvoiceDocument, setDemandInvoiceDocument] = useState<any>(null);
   const { token, userRoleId } = useTokens();
+  const [statusMap, setStatusMap] = useState<{ [key: number]: number }>({});
   const [snackbar, setSnackbar] = useState({
     open: false,
     message: "",
@@ -185,35 +186,33 @@ const DemandInvoiceTable = ({
   };
 
   const pageCount = Math.ceil(LengthByActiveMenu() / propertiesPerPage);
+  const getStatusClass=(status:number)=> {
 
+    switch (status) {
+      case 0:
+        return {css:"bg-black text-white",reminder:true,text:"paid"};
+      case 1:
+        return {css:"bg-black-500 text-white",reminder:true,text:"paid"};
+      case 2:
+        return {css:"bg-Amber-500 text-white",reminder:true,text:"paid"};
+      case 3:
+        return {css:"bg-green-500 text-black",reminder:true,text:"paid"};
+      case 4:
+        return {css:"bg-red-500 text-white",reminder:true,text:"paid"};
+      default:
+        return {css:"bg-gray-100 text-black",reminder:true,text:"paid"};
+    }
+  }
+  const getRandomStatus=()=> {
+    return Math.floor(Math.random() * 5);
+  }
   const recordField = (record: DemandNotice) => {
     const lastPaymentStatus = record?.property?.demand_notice_status;
-    function getRandomStatus() {
-      return Math.floor(Math.random() * 5);
-    }
-    function getStatusClass(status) {
-
-      switch (status) {
-        case 0:
-          return "bg-black text-white";
-        case 1:
-          return "bg-black-500 text-white";
-        case 2:
-          return "bg-Amber-500 text-white";
-        case 3:
-          return "bg-green-500 text-black";
-        case 4:
-          return "bg-red-500 text-white";
-        default:
-          return "bg-gray-100 text-black";
-      }
-    }
-   
+    
     const status = getRandomStatus();
 
     const className = getStatusClass(status);
-    
-
+  
     return (
       <div
         key={record?.id}
@@ -248,13 +247,9 @@ const DemandInvoiceTable = ({
         </span>
         <div className="flex items-center justify-center w-[12%]">
           <span
-            className={`flex flex-wrap items-center justify-center px-2 p-1 font-light text-white rounded font-lexend
-            ${
-              className
-            }
-            `}
+            className={`flex flex-wrap items-center justify-center px-2 p-1 font-light text-white rounded font-lexend ${className['css']} `}
           >
-            {lastPaymentStatus}
+            {className['text']}
           </span>
         </div>
         <span className="flex flex-wrap items-center w-1/12 gap-1">
