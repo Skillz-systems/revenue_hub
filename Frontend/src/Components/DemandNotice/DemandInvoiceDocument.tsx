@@ -27,6 +27,8 @@ const DemandInvoiceDocument = ({
   demandInvoiceInfo?: DemandNotice;
   hideDemandInvoiceModal: () => any;
 }) => {
+  console.log("customtabledata:", customTableData)
+  console.log("demandinvoiceinfo", demandInvoiceInfo)
   const [loading, setLoading] = useState<string>("");
   const demandInvoiceData = {
     Occupant: `THE OCCUPIER/${
@@ -103,7 +105,7 @@ const DemandInvoiceDocument = ({
         label: "Grand Total",
         value:
           customTableData?.grand_total ||
-          demandInvoiceInfo?.property.grand_total,
+          demandInvoiceInfo?.amount,
         isTotal: true,
       },
     ],
