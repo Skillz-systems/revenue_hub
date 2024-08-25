@@ -21,53 +21,67 @@ interface SectionProps {
 const DemandInvoiceDocument = ({
   customTableData,
   demandInvoiceInfo,
+  demandNotice,
   hideDemandInvoiceModal,
 }: {
   customTableData?: any;
   demandInvoiceInfo?: DemandNotice;
+  demandNotice?: any;
   hideDemandInvoiceModal: () => any;
 }) => {
-  console.log("customtabledata:", customTableData)
-  console.log("demandinvoiceinfo", demandInvoiceInfo)
   const [loading, setLoading] = useState<string>("");
   const demandInvoiceData = {
     Occupant: `THE OCCUPIER/${
-      customTableData?.pid || demandInvoiceInfo?.property.pid
+      customTableData?.pid ||
+      customTableData?.property.pid ||
+      demandInvoiceInfo?.property.pid
     }`,
     PropertyIdentificationNumber: `PID-${
-      customTableData?.pid || demandInvoiceInfo?.property.pid
+      customTableData?.pid ||
+      customTableData?.property.pid ||
+      demandInvoiceInfo?.property.pid
     }`,
     QrCodePayment: `{https://revenuehub.ng/invoice/${
-      customTableData?.pid || demandInvoiceInfo?.property.pid
+      customTableData?.pid ||
+      customTableData?.property.pid ||
+      demandInvoiceInfo?.property.pid
     }`,
     propertyData: [
       {
         label: "Name of Occupier",
         value: `${
-          customTableData?.occupant || demandInvoiceInfo?.property?.occupant
+          customTableData?.occupant ||
+          customTableData?.property?.occupant ||
+          demandInvoiceInfo?.property?.occupant
         }`,
       },
       { label: "Assessment No", value: "AM/B12/TTR/2016/0400" },
       {
         label: "Property Address",
         value:
-          customTableData?.prop_addr || demandInvoiceInfo?.property.prop_addr,
+          customTableData?.prop_addr ||
+          customTableData?.property.prop_addr ||
+          demandInvoiceInfo?.property.prop_addr,
       },
       {
         label: "Cadestral Zone",
         value:
           customTableData?.cadastral_zone ||
+          customTableData?.property.cadastral_zone ||
           demandInvoiceInfo?.property.cadastral_zone,
       },
       {
         label: "Use of Property",
         value:
-          customTableData?.prop_use || demandInvoiceInfo?.property.prop_use,
+          customTableData?.prop_use ||
+          customTableData?.property.prop_use ||
+          demandInvoiceInfo?.property.prop_use,
       },
       {
         label: "Rating District",
         value:
           customTableData?.rating_dist ||
+          customTableData?.property.rating_dist ||
           demandInvoiceInfo?.property.rating_dist,
       },
     ],
@@ -85,26 +99,35 @@ const DemandInvoiceDocument = ({
         label: "Annual Value",
         value:
           customTableData?.annual_value ||
+          customTableData?.property.annual_value ||
           demandInvoiceInfo?.property.annual_value,
       },
       {
         label: "Rate Payable",
         value:
           customTableData?.rate_payable ||
+          customTableData?.property.rate_payable ||
           demandInvoiceInfo?.property.rate_payable,
       },
       {
         label: "Arrears Year",
-        value: customTableData?.arrears || demandInvoiceInfo?.arrears_amount,
+        value:
+          demandNotice?.arrears_amount ||
+          customTableData?.arrears_amount ||
+          demandInvoiceInfo?.arrears_amount,
       },
       {
         label: "Penalty (10%)",
-        value: customTableData?.penalty || demandInvoiceInfo?.penalty,
+        value:
+          demandNotice?.penalty ||
+          customTableData?.penalty ||
+          demandInvoiceInfo?.penalty,
       },
       {
         label: "Grand Total",
         value:
-          customTableData?.grand_total ||
+          demandNotice?.amount ||
+          customTableData?.amount ||
           demandInvoiceInfo?.amount,
         isTotal: true,
       },
@@ -418,6 +441,7 @@ const DemandInvoiceDocument = ({
                       <a
                         href={`/invoice/${
                           customTableData?.pid ||
+                          customTableData?.property.pid ||
                           demandInvoiceInfo?.property.pid
                         }`}
                         target="_blank"
@@ -425,6 +449,7 @@ const DemandInvoiceDocument = ({
                       >
                         https://revenuehub.ng/invoice/
                         {customTableData?.pid ||
+                          customTableData?.property.pid ||
                           demandInvoiceInfo?.property.pid}
                       </a>
                     </b>

@@ -5,7 +5,11 @@ import { PiBuildingsFill } from "react-icons/pi";
 import { GiStarFormation } from "react-icons/gi";
 import { TbCurrencyNaira } from "react-icons/tb";
 import { BsCalendar2EventFill } from "react-icons/bs";
-import { formatNumberWithCommas, useTriggerError } from "../../Utils/client";
+import {
+  formatDate,
+  formatNumberWithCommas,
+  useTriggerError,
+} from "../../Utils/client";
 import { HiOutlineDotsHorizontal } from "react-icons/hi";
 import { FaPeopleRoof } from "react-icons/fa6";
 import {
@@ -30,9 +34,10 @@ const ViewPropertyModal: React.FC<ViewPropertyModalProps> = ({
   customTableData,
 }) => {
   const [activateState, setActiveState] = useState<number>(0);
-  const [editModal, setEditModal] = useState<boolean>(false);
+  const [editModal, setEditModal] = useState<number | any>(null);
   const [demandInvoiceDocument, setDemandInvoiceDocument] =
     useState<boolean>(false);
+  const [demandNotice, setDemandNotice] = useState<any>([]);
   const [editProperty, setEditProperty] = useState<boolean>(false);
   const [displaySave, setDisplaySave] = useState<boolean>(false);
   const [formData, setFormData] = useState<any>(customTableData);
@@ -584,7 +589,7 @@ const ViewPropertyModal: React.FC<ViewPropertyModalProps> = ({
             {customTableData?.demand_notice ? (
               <div className="flex flex-col space-y-1">
                 {customTableData?.demand_notice.map(
-                  (demand_notice) =>
+                  (demand_notice: any) =>
                     activateState === 2 &&
                     customTableData?.demand_notice_status !== "Ungenerated" &&
                     customTableData?.property?.demand_notice_status !==
@@ -602,7 +607,7 @@ const ViewPropertyModal: React.FC<ViewPropertyModalProps> = ({
                             customTableData?.property?.prop_addr}
                         </span>
                         <span className="flex flex-wrap items-center text-color-text-black font-lexend text-[10px]">
-                          {`24/5/2024`}
+                          {formatDate(demand_notice.date_created)}
                         </span>
                         <span
                           className={`flex-wrap hidden items-center px-1 py-0.5 justify-center rounded-xl font-light font-lexend text-color-text-black text-[10px] border-0.6 border-custom-grey-100 group-hover:flex
@@ -621,7 +626,7 @@ const ViewPropertyModal: React.FC<ViewPropertyModalProps> = ({
                           {customTableData?.prop_use ||
                             customTableData?.property?.prop_use}
                         </span>
-                        <span className="flex flex-wrap items-center justify-center text-sm text-color-text-black font-chonburi">
+                        <span className="flex flex-wrap items-center justify-center text-sm text-color-text-black font-chonbur">
                           {formatNumberWithCommas(
                             demand_notice.amount || customTableData?.amount
                           )}
@@ -654,19 +659,22 @@ const ViewPropertyModal: React.FC<ViewPropertyModalProps> = ({
                             <span
                               title="Edit Invoice"
                               className="hover:cursor-pointer"
-                              onClick={() => setEditModal(!editModal)}
+                              onClick={() => setEditModal(demand_notice.id)}
                             >
                               <HiOutlineDotsHorizontal />
                             </span>
-                            {editModal && (
+                            {editModal === demand_notice.id && (
                               <span
                                 className="absolute space-y-2 top-0 z-10 flex-col w-40 p-4 text-xs bg-white rounded shadow-md -left-44 border-0.6 border-custom-grey-100 text-color-text-black font-lexend"
-                                onMouseLeave={() => setEditModal(!editModal)}
+                                onMouseLeave={() => setEditModal(null)}
                               >
                                 <p
                                   className="hover:cursor-pointer"
                                   title="View Demand Notice"
-                                  onClick={() => setDemandInvoiceDocument(true)}
+                                  onClick={() => {
+                                    setDemandNotice(demand_notice);
+                                    setDemandInvoiceDocument(true);
+                                  }}
                                 >
                                   View Demand Notice
                                 </p>
@@ -733,7 +741,7 @@ const ViewPropertyModal: React.FC<ViewPropertyModalProps> = ({
               customTableData?.demand_notice_status !== "Ungenerated" &&
               customTableData?.property?.demand_notice_status !==
                 "Ungenerated" && (
-                <div className="flex items-center justify-between gap-3 text-xs group">
+                <div className="flex items-center justify-between gap-3 text-xs border group">
                   <span className="flex flex-wrap items-center justify-center w-20 h-8 px-2 py-1 text-xs font-medium rounded text-color-text-three bg-custom-blue-400">
                     {customTableData?.pid || customTableData?.property?.pid}
                   </span>
@@ -742,7 +750,7 @@ const ViewPropertyModal: React.FC<ViewPropertyModalProps> = ({
                       customTableData?.property?.prop_addr}
                   </span>
                   <span className="flex flex-wrap items-center text-color-text-black font-lexend text-[10px]">
-                    {`24/5/2024`}
+                    {formatDate(customTableData.date_created)}
                   </span>
                   <span
                     className={`flex-wrap hidden items-center px-1 py-0.5 justify-center rounded-xl font-light font-lexend text-color-text-black text-[10px] border-0.6 border-custom-grey-100 group-hover:flex
@@ -792,19 +800,21 @@ const ViewPropertyModal: React.FC<ViewPropertyModalProps> = ({
                       <span
                         title="Edit Invoice"
                         className="hover:cursor-pointer"
-                        onClick={() => setEditModal(!editModal)}
+                        onClick={() => setEditModal(customTableData?.id)}
                       >
                         <HiOutlineDotsHorizontal />
                       </span>
-                      {editModal && (
+                      {editModal === customTableData?.id && (
                         <span
                           className="absolute space-y-2 top-0 z-10 flex-col w-40 p-4 text-xs bg-white rounded shadow-md -left-44 border-0.6 border-custom-grey-100 text-color-text-black font-lexend"
-                          onMouseLeave={() => setEditModal(!editModal)}
+                          onMouseLeave={() => setEditModal(null)}
                         >
                           <p
                             className="hover:cursor-pointer"
                             title="View Demand Notice"
-                            onClick={() => setDemandInvoiceDocument(true)}
+                            onClick={() => {
+                              setDemandInvoiceDocument(true);
+                            }}
                           >
                             View Demand Notice
                           </p>
@@ -883,6 +893,7 @@ const ViewPropertyModal: React.FC<ViewPropertyModalProps> = ({
             }}
             // propertyModalTransition={propertyModalTransition}
             customTableData={customTableData}
+            demandNotice={demandNotice}
           />
         </DemandPropertyModal>
       ) : null}
