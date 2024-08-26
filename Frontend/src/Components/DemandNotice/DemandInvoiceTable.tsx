@@ -26,6 +26,7 @@ import axios from "axios";
 
 const apiUrl = import.meta.env.VITE_API_URL as string;
 
+
 const DemandInvoiceTable = ({
   staticInformation,
   demandNoticeInformation,
@@ -42,6 +43,7 @@ const DemandInvoiceTable = ({
   };
   setPaginationMeta: React.SetStateAction<any>;
 }) => {
+  const [status, setStatus] = useState<number>(0);
   const isDesktop = useMediaQuery({ query: "(min-width: 1024px)" });
   const [displaySearchIcon, setDisplaySearchIcon] = useState<boolean>(true);
   const [activeMenu, setActiveMenu] = useState<number>(1);
@@ -194,7 +196,7 @@ const DemandInvoiceTable = ({
       case 1:
         return {css:"bg-black-500 text-white",reminder:true,text:"paid"};
       case 2:
-        return {css:"bg-Amber-500 text-white",reminder:true,text:"paid"};
+        return {css:"bg-Amber-500 text-black",reminder:true,text:"paid"};
       case 3:
         return {css:"bg-green-500 text-black",reminder:true,text:"paid"};
       case 4:
@@ -206,12 +208,22 @@ const DemandInvoiceTable = ({
   const getRandomStatus=()=> {
     return Math.floor(Math.random() * 5);
   }
+
+  useEffect(() => {
+     
+    setStatus(getRandomStatus());
+    console.log(status)
+  }, []); 
+
   const recordField = (record: DemandNotice) => {
     const lastPaymentStatus = record?.property?.demand_notice_status;
     
-    const status = getRandomStatus();
+    // const status = getRandomStatus();
+    
 
-    const className = getStatusClass(status);
+ 
+    
+    const classDynamicName = getStatusClass(status);
   
     return (
       <div
@@ -247,9 +259,9 @@ const DemandInvoiceTable = ({
         </span>
         <div className="flex items-center justify-center w-[12%]">
           <span
-            className={`flex flex-wrap items-center justify-center px-2 p-1 font-light text-white rounded font-lexend ${className['css']} `}
+            className={`flex flex-wrap items-center justify-center px-2 p-1 font-light text-white rounded font-lexend ${classDynamicName['css']} `}
           >
-            {className['text']}
+            {classDynamicName['text']}
           </span>
         </div>
         <span className="flex flex-wrap items-center w-1/12 gap-1">
