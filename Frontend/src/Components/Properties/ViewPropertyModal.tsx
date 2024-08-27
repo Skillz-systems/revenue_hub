@@ -150,7 +150,7 @@ const ViewPropertyModal: React.FC<ViewPropertyModalProps> = ({
   useEffect(() => {
     setFormData(customTableData);
   }, [editProperty, customTableData]);
-
+  // console.log(customTableData);
   return (
     <>
       <div
@@ -443,7 +443,7 @@ const ViewPropertyModal: React.FC<ViewPropertyModalProps> = ({
                       name: "Arrears",
                       value: formatNumberWithCommas(
                         customTableData?.arrears ||
-                          customTableData?.arears_amount ||
+                          customTableData?.arrears_amount ||
                           0
                       ),
                     },
@@ -458,8 +458,7 @@ const ViewPropertyModal: React.FC<ViewPropertyModalProps> = ({
                     {
                       name: "Grand Total",
                       value: formatNumberWithCommas(
-                        customTableData?.grand_total ||
-                          customTableData?.property?.grand_total
+                        customTableData?.amount || customTableData?.rate_payable
                       ),
                     },
                   ].map((item, index) => (
@@ -470,14 +469,8 @@ const ViewPropertyModal: React.FC<ViewPropertyModalProps> = ({
                       <p className="px-1 py-0.5 text-darkerblueberry rounded bg-custom-blue-100 text-xs">
                         {item.name}
                       </p>
-                      <p
-                        className={`flex w-[50%] justify-end text-xs font-medium ${
-                          index === 3
-                            ? "text-color-bright-red"
-                            : "text-color-text-black"
-                        }`}
-                      >
-                        {index === 3 ? `(${item.value})` : item.value}
+                      <p className="flex w-[50%] justify-end text-xs font-medium">
+                        {item.value}
                       </p>
                     </div>
                   ))}

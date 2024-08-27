@@ -29,6 +29,7 @@ const DemandInvoiceDocument = ({
   demandNotice?: any;
   hideDemandInvoiceModal: () => any;
 }) => {
+  console.log(demandNotice);
   const [loading, setLoading] = useState<string>("");
   const demandInvoiceData = {
     Occupant: `THE OCCUPIER/${
@@ -123,6 +124,30 @@ const DemandInvoiceDocument = ({
           customTableData?.penalty ||
           demandInvoiceInfo?.penalty,
       },
+      // {
+      //   label: "Grand Total",
+      //   value: (
+      //     parseFloat(
+      //       customTableData?.rate_payable?.replace(/,/g, "") ||
+      //         customTableData?.property?.rate_payable?.replace(/,/g, "") ||
+      //         demandInvoiceInfo?.property?.rate_payable?.replace(/,/g, "") ||
+      //         "0"
+      //     ) +
+      //     parseFloat(
+      //       demandNotice?.arrears_amount?.replace(/,/g, "") ||
+      //         customTableData?.arrears_amount?.replace(/,/g, "") ||
+      //         demandInvoiceInfo?.arrears_amount?.replace(/,/g, "") ||
+      //         "0"
+      //     ) +
+      //     parseFloat(
+      //       demandNotice?.penalty?.replace(/,/g, "") ||
+      //         customTableData?.penalty?.replace(/,/g, "") ||
+      //         demandInvoiceInfo?.penalty?.replace(/,/g, "") ||
+      //         "0"
+      //     )
+      //   ).toFixed(2),
+      //   isTotal: true,
+      // },
       {
         label: "Grand Total",
         value:
@@ -404,7 +429,7 @@ const DemandInvoiceDocument = ({
                     <span className="mr-1 text-xs text-color-bright-green">
                       ₦
                     </span>
-                    <span>{`${formatNumberWithCommas(item.value)}.00`}</span>
+                    <span>{`${formatNumberWithCommas(item.value)}`}</span>
                   </p>
                 </div>
               ))}

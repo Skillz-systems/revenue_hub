@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { GoDotFill } from "react-icons/go";
 import { TbCurrencyNaira } from "react-icons/tb";
 import {
@@ -11,6 +11,8 @@ import { HiOutlineDotsHorizontal } from "react-icons/hi";
 import axios from "axios";
 import { CustomAlert } from "../Index";
 import { useMediaQuery } from "react-responsive";
+import { observer } from "mobx-react-lite";
+import { rootStore } from "../../Stores/rootstore";
 
 type PropertiesTableProps = {
   id: number;
@@ -27,171 +29,173 @@ type PropertiesTableProps = {
 
 const apiUrl = import.meta.env.VITE_API_URL as string;
 
-const PropertiesTable: React.FC<PropertiesTableProps> = ({
-  id,
-  personalIdentificationNumber,
-  propertyUse,
-  paymentStatus,
-  propertyAddress,
-  group,
-  cadestralZone,
-  ratePaybale,
-  setViewPropertyModal,
-  occupationStatus,
-}) => {
-  const isDesktop = useMediaQuery({ query: "(min-width: 1130px)" });
-  const { token, userRoleId } = useTokens();
-  const [settingsModal, setSettingsModal] = useState<boolean>(false);
-  const [snackbar, setSnackbar] = useState({
-    open: false,
-    message: "",
-    severity: "success",
-  });
-  const triggerError = useTriggerError();
+const PropertiesTable: React.FC<PropertiesTableProps> = observer(
+  ({
+    id,
+    personalIdentificationNumber,
+    propertyUse,
+    paymentStatus,
+    propertyAddress,
+    group,
+    cadestralZone,
+    ratePaybale,
+    setViewPropertyModal,
+    occupationStatus,
+  }) => {
+    const isDesktop = useMediaQuery({ query: "(min-width: 1130px)" });
+    const { token, userRoleId } = useTokens();
+    const [settingsModal, setSettingsModal] = useState<boolean>(false);
+    const [snackbar, setSnackbar] = useState({
+      open: false,
+      message: "",
+      severity: "success",
+    });
+    const triggerError = useTriggerError();
 
-  const handleSnackbarClose = () => {
-    setSnackbar((prev) => ({ ...prev, open: false }));
-  };
+    const handleSnackbarClose = () => {
+      setSnackbar((prev) => ({ ...prev, open: false }));
+    };
 
-  const deleteProperty = async (pid: number) => {
-    if (userRoleId > 1) {
-      setSnackbar({
-        open: true,
-        message: "You don't have permission",
-        severity: "error",
-      });
-      return;
-    }
-
-    try {
-      const response = await axios.delete(`${apiUrl}/api/property/${pid}`, {
-        headers: {
-          Authorization: `Bearer ${token}`, // Headers
-        },
-      });
-      if (response.status === 200) {
+    const deleteProperty = async (pid: number) => {
+      if (userRoleId > 1) {
         setSnackbar({
           open: true,
-          message: "Successfully removed property",
-          severity: "success",
+          message: "You don't have permission",
+          severity: "error",
         });
-        setTimeout(() => {
-          window.location.reload();
-        }, 3000);
-      } else {
-        setSnackbar({
-          open: true,
-          message: "Unexpected status code",
-          severity: "warning",
-        });
+        return;
       }
-    } catch (error: any) {
-      let message = "Internal Server Error";
-      if (error.response) {
-        switch (error.response.status) {
-          case 400:
-            message = "Bad request. Property Id is missing.";
-            break;
-          case 401:
-            message = "You are unauthorized";
-            break;
-          case 403:
-            message = "You are forbidden";
-            break;
-          case 404:
-            message = "Demand notice not found";
-            break;
-          case 429:
-            message = "Too many requests made. Refreshing in 3 seconds";
-            setTimeout(() => {
-              window.location.reload();
-            }, 3000);
-            break;
-          case 500:
-            triggerError(error);
-            break;
-          default:
-            break;
-        }
-      }
-      setSnackbar({ open: true, message, severity: "error" });
-    }
-  };
-  const generateDemandNotice = async (pid: number) => {
-    if (userRoleId > 1) {
-      setSnackbar({
-        open: true,
-        message: "You don't have permission",
-        severity: "error",
-      });
-      return;
-    }
 
-    try {
-      const response = await axios.post(
-        `${apiUrl}/api/demand-notice/create`,
-        {
-          property_id: pid,
-        },
-        {
+      try {
+        const response = await axios.delete(`${apiUrl}/api/property/${pid}`, {
           headers: {
             Authorization: `Bearer ${token}`, // Headers
           },
+        });
+        if (response.status === 200) {
+          setSnackbar({
+            open: true,
+            message: "Successfully removed property",
+            severity: "success",
+          });
+          setTimeout(() => {
+            window.location.reload();
+          }, 3000);
+        } else {
+          setSnackbar({
+            open: true,
+            message: "Unexpected status code",
+            severity: "warning",
+          });
         }
-      );
-      if (response.status === 200 || response.status === 201) {
+      } catch (error: any) {
+        let message = "Internal Server Error";
+        if (error.response) {
+          switch (error.response.status) {
+            case 400:
+              message = "Bad request. Property Id is missing.";
+              break;
+            case 401:
+              message = "You are unauthorized";
+              break;
+            case 403:
+              message = "You are forbidden";
+              break;
+            case 404:
+              message = "Demand notice not found";
+              break;
+            case 429:
+              message = "Too many requests made. Refreshing in 3 seconds";
+              setTimeout(() => {
+                window.location.reload();
+              }, 3000);
+              break;
+            case 500:
+              triggerError(error);
+              break;
+            default:
+              break;
+          }
+        }
+        setSnackbar({ open: true, message, severity: "error" });
+      }
+    };
+    const generateDemandNotice = async (pid: number) => {
+      if (userRoleId > 1) {
         setSnackbar({
           open: true,
-          message: `Successfully created demand notice`,
-          severity: "success",
+          message: "You don't have permission",
+          severity: "error",
         });
-      } else {
-        setSnackbar({
-          open: true,
-          message: "Unexpected status code",
-          severity: "warning",
-        });
+        return;
       }
-    } catch (error: any) {
-      let message = "Internal Server Error";
-      if (error.response) {
-        switch (error.response.status) {
-          case 400:
-            message = "Bad request. Property Id is missing.";
-            break;
-          case 401:
-            message = "You are unauthorized";
-            break;
-          case 429:
-            message = "Too many requests made. Refreshing in 3 seconds";
-            setTimeout(() => {
-              window.location.reload();
-            }, 3000);
-            break;
-          case 500:
-            triggerError(error);
-            break;
-          default:
-            break;
-        }
-      }
-      setSnackbar({ open: true, message, severity: "error" });
-    }
-  };
 
-  return (
-    <div
-      className={`flex-col border border-divider-grey ${
-        isDesktop ? "w-[32%]" : "w-[31%]"
-      } rounded`}
-    >
-      <div className="flex items-center justify-between px-2.5 py-3 gap-1 border-b border-divider-grey">
-        <div className="flex items-center justify-between gap-2">
-          <span className="text-xs font-bold text-color-text-one">
-            {personalIdentificationNumber}
-          </span>
-          <span
-            className={`rounded-md px-2 py-0.5 font-light font-lexend text-color-text-black text-[10px] border-0.6 border-custom-grey-100
+      try {
+        const response = await axios.post(
+          `${apiUrl}/api/demand-notice/create`,
+          {
+            property_id: pid,
+          },
+          {
+            headers: {
+              Authorization: `Bearer ${token}`, // Headers
+            },
+          }
+        );
+        if (response.status === 200 || response.status === 201) {
+          setSnackbar({
+            open: true,
+            message: `Successfully created demand notice`,
+            severity: "success",
+          });
+          rootStore.updateDemandList(true);
+        } else {
+          setSnackbar({
+            open: true,
+            message: "Unexpected status code",
+            severity: "warning",
+          });
+        }
+      } catch (error: any) {
+        let message = "Internal Server Error";
+        if (error.response) {
+          switch (error.response.status) {
+            case 400:
+              message = "Bad request. Property Id is missing.";
+              break;
+            case 401:
+              message = "You are unauthorized";
+              break;
+            case 429:
+              message = "Too many requests made. Refreshing in 3 seconds";
+              setTimeout(() => {
+                window.location.reload();
+              }, 3000);
+              break;
+            case 500:
+              triggerError(error);
+              break;
+            default:
+              break;
+          }
+        }
+        setSnackbar({ open: true, message, severity: "error" });
+      }
+    };
+
+    return (
+      <div
+        className={`flex-col border border-divider-grey ${
+          isDesktop ? "w-[32%]" : "w-[31%]"
+        } rounded`}
+      >
+        <div className="flex items-center justify-between px-2.5 py-3 gap-1 border-b border-divider-grey">
+          <div className="flex items-center justify-between gap-2">
+            <span className="text-xs font-bold text-color-text-one">
+              {personalIdentificationNumber}
+            </span>
+            <span
+              className={`rounded-md px-2 py-0.5 font-light font-lexend text-color-text-black text-[10px] border-0.6 border-custom-grey-100
             ${
               propertyUse === "COMMERCIAL"
                 ? "bg-color-light-red"
@@ -200,12 +204,12 @@ const PropertiesTable: React.FC<PropertiesTableProps> = ({
                 : "bg-custom-blue-200"
             }
             `}
-          >
-            {propertyUse.toUpperCase()}
-          </span>
-        </div>
-        <span
-          className={`rounded-md px-2 py-0.5 font-light text-[10px] text-white font-lexend
+            >
+              {propertyUse.toUpperCase()}
+            </span>
+          </div>
+          <span
+            className={`rounded-md px-2 py-0.5 font-light text-[10px] text-white font-lexend
           ${
             paymentStatus === "Ungenerated"
               ? "bg-primary-color"
@@ -216,110 +220,113 @@ const PropertiesTable: React.FC<PropertiesTableProps> = ({
               : "bg-color-bright-green"
           }
           `}
+          >
+            {paymentStatus}
+          </span>
+        </div>
+        <div
+          className="fle-col px-2.5 py-3 space-y-2 hover:cursor-pointer"
+          onClick={setViewPropertyModal}
         >
-          {paymentStatus}
-        </span>
-      </div>
-      <div
-        className="fle-col px-2.5 py-3 space-y-2 hover:cursor-pointer"
-        onClick={setViewPropertyModal}
-      >
-        <div className="text-xs font-lexend text-color-text-black">
-          {propertyAddress}
-        </div>
-        <div className="flex items-center gap-2">
-          <span className="flex items-center gap-0.5 px-1 py-0.5 text-xs font-light rounded font-lexend text-custom-blue-500 bg-custom-blue-100 border-0.6 border-custom-grey-100">
-            <span className="text-blueberry">
+          <div className="text-xs font-lexend text-color-text-black">
+            {propertyAddress}
+          </div>
+          <div className="flex items-center gap-2">
+            <span className="flex items-center gap-0.5 px-1 py-0.5 text-xs font-light rounded font-lexend text-custom-blue-500 bg-custom-blue-100 border-0.6 border-custom-grey-100">
+              <span className="text-blueberry">
+                <GoDotFill />
+              </span>
+              {group}
+            </span>
+            <span className="flex items-center gap-0.5 px-1 py-0.5 text-xs font-light rounded font-lexend text-custom-blue-500 bg-custom-blue-100 border-0.6 border-custom-grey-100">
               <GoDotFill />
+              {cadestralZone}
             </span>
-            {group}
+          </div>
+        </div>
+        <div className="flex items-center justify-between px-2.5 py-3">
+          <span className="px-1 py-0.5 text-xs font-light rounded font-lexend text-color-text-black bg-custom-blue-100 border-0.6 border-custom-grey-100">
+            Rate Payable
           </span>
-          <span className="flex items-center gap-0.5 px-1 py-0.5 text-xs font-light rounded font-lexend text-custom-blue-500 bg-custom-blue-100 border-0.6 border-custom-grey-100">
-            <GoDotFill />
-            {cadestralZone}
+          <span className="flex items-center gap-0.5 font-chonburi text-color-text-black">
+            <span className="text-lg text-blueberry">
+              <TbCurrencyNaira />
+            </span>
+            <span className="text-sm">
+              {formatNumberWithCommas(ratePaybale)}
+            </span>
           </span>
         </div>
-      </div>
-      <div className="flex items-center justify-between px-2.5 py-3">
-        <span className="px-1 py-0.5 text-xs font-light rounded font-lexend text-color-text-black bg-custom-blue-100 border-0.6 border-custom-grey-100">
-          Rate Payable
-        </span>
-        <span className="flex items-center gap-0.5 font-chonburi text-color-text-black">
-          <span className="text-lg text-blueberry">
-            <TbCurrencyNaira />
+        <div className="bg-custom-blue-100 flex items-center justify-between px-2.5 py-3 border-t border-divider-grey">
+          <span className="text-xs font-lexend text-color-text-two">
+            {occupationStatus}
           </span>
-          <span className="text-sm">{formatNumberWithCommas(ratePaybale)}</span>
-        </span>
-      </div>
-      <div className="bg-custom-blue-100 flex items-center justify-between px-2.5 py-3 border-t border-divider-grey">
-        <span className="text-xs font-lexend text-color-text-two">
-          {occupationStatus}
-        </span>
-        <div className="flex items-center justify-between gap-2">
-          <span className="text-blueberry flex items-center justify-center rounded w-[30px] h-[30px] p-0.5 border-0.6 border-custom-grey-100">
-            <span
-              title="Edit Property"
-              className="text-xl hover:cursor-pointer"
-              onClick={(e) => {
-                e.stopPropagation();
-              }}
-            >
-              <BiSolidEditAlt />
-            </span>
-          </span>
-          <span className="relative text-blueberry flex items-center justify-center rounded w-[30px] h-[30px] p-0.5 border-0.6 border-custom-grey-100">
-            <span
-              title="More Options"
-              className="text-xl hover:cursor-pointer text-custom-grey-300"
-              onClick={() => {
-                setSettingsModal(!settingsModal);
-              }}
-            >
-              <HiOutlineDotsHorizontal />
-            </span>
-            {settingsModal && (
+          <div className="flex items-center justify-between gap-2">
+            <span className="text-blueberry flex items-center justify-center rounded w-[30px] h-[30px] p-0.5 border-0.6 border-custom-grey-100">
               <span
-                className="absolute space-y-2 top-0 z-10 flex-col w-40 p-4 text-xs bg-white rounded shadow-md -left-44 border-0.6 border-custom-grey-100 text-color-text-black font-lexend"
-                onMouseLeave={() => {
+                title="Edit Property"
+                className="text-xl hover:cursor-pointer"
+                onClick={(e) => {
+                  e.stopPropagation();
+                }}
+              >
+                <BiSolidEditAlt />
+              </span>
+            </span>
+            <span className="relative text-blueberry flex items-center justify-center rounded w-[30px] h-[30px] p-0.5 border-0.6 border-custom-grey-100">
+              <span
+                title="More Options"
+                className="text-xl hover:cursor-pointer text-custom-grey-300"
+                onClick={() => {
                   setSettingsModal(!settingsModal);
                 }}
               >
-                {paymentStatus === "Ungenerated" ? (
+                <HiOutlineDotsHorizontal />
+              </span>
+              {settingsModal && (
+                <span
+                  className="absolute space-y-2 top-0 z-10 flex-col w-40 p-4 text-xs bg-white rounded shadow-md -left-44 border-0.6 border-custom-grey-100 text-color-text-black font-lexend"
+                  onMouseLeave={() => {
+                    setSettingsModal(!settingsModal);
+                  }}
+                >
+                  {paymentStatus === "Ungenerated" ? (
+                    <p
+                      className="hover:cursor-pointer"
+                      title="View Demand Notice"
+                      onClick={() => generateDemandNotice(id)}
+                    >
+                      Generate Demand Notice
+                    </p>
+                  ) : null}
                   <p
                     className="hover:cursor-pointer"
                     title="View Demand Notice"
-                    onClick={() => generateDemandNotice(id)}
+                    onClick={setViewPropertyModal}
                   >
-                    Generate Demand Notice
+                    View Property
                   </p>
-                ) : null}
-                <p
-                  className="hover:cursor-pointer"
-                  title="View Demand Notice"
-                  onClick={setViewPropertyModal}
-                >
-                  View Property
-                </p>
-                <p
-                  className="hover:cursor-pointer"
-                  title="View Demand Notice"
-                  onClick={() => deleteProperty(id)}
-                >
-                  Delete Property
-                </p>
-              </span>
-            )}
-          </span>
+                  <p
+                    className="hover:cursor-pointer"
+                    title="View Demand Notice"
+                    onClick={() => deleteProperty(id)}
+                  >
+                    Delete Property
+                  </p>
+                </span>
+              )}
+            </span>
+          </div>
         </div>
+        <CustomAlert
+          isOpen={snackbar.open}
+          message={snackbar.message}
+          severity={snackbar.severity}
+          handleClose={handleSnackbarClose}
+        />
       </div>
-      <CustomAlert
-        isOpen={snackbar.open}
-        message={snackbar.message}
-        severity={snackbar.severity}
-        handleClose={handleSnackbarClose}
-      />
-    </div>
-  );
-};
+    );
+  }
+);
 
 export default PropertiesTable;
