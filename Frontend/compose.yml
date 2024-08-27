@@ -30,3 +30,5 @@ services:
       # we also mount the node_modules directory inside the container at /app/node_modules. This is done to avoid installing the node_modules inside the container.
       # node_modules will be installed on the host machine and mounted inside the container
       - /app/node_modules
+    environment:
+      - CHOKIDAR_USEPOLLING=true
