@@ -19,12 +19,14 @@ import {
   Card,
   CardData,
   CustomAlert,
+  Statistics,
 } from "../Index";
 import NetworkOffline from "../../Pages/NetworkOffline";
 import { networkStatus } from "../../Utils/client";
 import { useMediaQuery } from "react-responsive";
+import { observer } from "mobx-react-lite";
 
-const ProjectLayout: React.FC = () => {
+const ProjectLayout: React.FC = observer(() => {
   const isDesktop = useMediaQuery({ query: "(min-width: 1024px)" });
   const [online, setOnline] = useState<boolean | any>(true);
 
@@ -91,21 +93,21 @@ const ProjectLayout: React.FC = () => {
     setSearchClicked(true);
   };
 
-  const showSnackBar = () => {
-    setSnackbar({
-      open: true,
-      message: "Disabled Feature. Statistics Coming soon.",
-      severity: "warning",
-    });
-  };
+  // const showSnackBar = () => {
+  //   setSnackbar({
+  //     open: true,
+  //     message: "Disabled Feature. Statistics Coming soon.",
+  //     severity: "warning",
+  //   });
+  // };
 
-  useEffect(() => {
-    if (activeMenuItem === "Statistic Component") {
-      showSnackBar();
-    } else {
-      return;
-    }
-  }, [activeMenuItem]);
+  // useEffect(() => {
+  //   if (activeMenuItem === "Statistic Component") {
+  //     showSnackBar();
+  //   } else {
+  //     return;
+  //   }
+  // }, [activeMenuItem]);
 
   return (
     <>
@@ -278,7 +280,7 @@ const ProjectLayout: React.FC = () => {
 
               {activeComponent ? (
                 activeMenuItem === "Statistic Component" ? (
-                  <div></div>
+                  <Statistics />
                 ) : (
                   activeComponent
                 )
@@ -382,7 +384,7 @@ const ProjectLayout: React.FC = () => {
       )}
     </>
   );
-};
+});
 
 export const PasswordAccountButtons = ({
   accountsPasswordState,
