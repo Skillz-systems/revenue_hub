@@ -28,7 +28,12 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-
+Route::get('/reset', [PaymentController::class, 'resetKeys']);
+Route::middleware('nibss.biller')->group(function () {
+    Route::post('/validate', [PaymentController::class, 'validateTransaction']);
+    Route::post('/notify', [PaymentController::class, 'notifyTransaction']);
+    Route::post('/reset', [PaymentController::class, 'resetKeys']);
+});
 
 // Staff login route
 Route::post('property/process-csv', [PropertyController::class, 'chunkUpload']);

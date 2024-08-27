@@ -47,6 +47,7 @@ class PropertyResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
+        $allCalculations = $this->getDemandNotice();
         $latestDemandNotice = $this->demandNotices()->latest()->first();
         $demandNoticeStatus = "Ungenerated";
         if (!empty($latestDemandNotice)) {
@@ -69,7 +70,9 @@ class PropertyResource extends JsonResource
             'rating_dist' => $this->ratingDistrict ? $this->ratingDistrict->name : "none",
             'annual_value' => $this->annual_value,
             'rate_payable' => $this->rate_payable,
-            'grand_total' => $this->grand_total,
+            'arrears' => $allCalculations["arrears"],
+            'penalty' => $allCalculations["penalty"],
+            'grand_total' => $allCalculations["grand_total"],
             'category' => $this->category ? $this->category->name : "none",
             'group' => $this->group ? $this->group->name : "none",
             'active' => $this->active,
@@ -81,5 +84,26 @@ class PropertyResource extends JsonResource
             "demand_notice_status" => $demandNoticeStatus,
 
         ];
+    }
+
+    private function getDemandNotice()
+    {
+        $data = ["arrears" => 0, "penalty" => 0, "grand_total" => $this->rate_payable];
+        $getDemandNotice = $this->demandNotices()->latest()->first();
+        $currentYear = date("Y");
+
+        if ($getDemandNotice) {
+
+            if ($currentYear > $getDemandNotice->created_at) {
+                if ($getDemandNotice->status == $this->PENDING) {
+                    $penalty = ($getDemandNotice->amount * $this->PENALTY) / 100;
+                    $data["arrears"] = $getDemandNotice->amount + $penalty;
+                    $data["penalty"] =  $penalty;
+                    $data["grand_total"] =  $this->rate_payable + $getDemandNotice->amount + $penalty;
+                    return  $data;
+                }
+            }
+        }
+        return  $data;
     }
 }
