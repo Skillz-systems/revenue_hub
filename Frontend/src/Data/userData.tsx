@@ -1,8 +1,9 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import axios from "axios";
 import useSWR from "swr";
 import { fetcher, useTokens, useTriggerError } from "../Utils/client";
 import { StatisticsData } from "./types";
+import { rootStore } from "../Stores/rootstore";
 
 const apiUrl = import.meta.env.VITE_API_URL as string;
 
@@ -53,6 +54,8 @@ const userData = () => {
       } else {
         console.error(error.message);
       }
+    } finally {
+      rootStore.updateDemandList(false);
     }
   };
 
@@ -94,7 +97,10 @@ const userData = () => {
 
   useEffect(() => {
     fetchStatistics();
-  }, []);
+    if (rootStore.refreshDemandNotice) {
+      fetchStatistics();
+    }
+  }, [rootStore.refreshDemandNotice]);
 
   const deleteStaffById = async (staffId: number) => {
     try {
