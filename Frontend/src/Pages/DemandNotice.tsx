@@ -7,10 +7,12 @@ import {
 } from "../Components/Index";
 import { useTokens, useTriggerError } from "../Utils/client";
 import axios, { AxiosError } from "axios";
+import { observer } from "mobx-react-lite";
+import { rootStore } from "../Stores/rootstore";
 
 const apiUrl = import.meta.env.VITE_API_URL as string;
 
-export const DemandNotice: React.FC = () => {
+export const DemandNotice: React.FC = observer(() => {
   const { token } = useTokens();
   const [demandNoticeInformation, setDemandNoticeInformation] =
     useState<any>(null);
@@ -102,12 +104,17 @@ export const DemandNotice: React.FC = () => {
         }
       }
       setSnackbar({ open: true, message, severity: "error" });
+    } finally {
+      rootStore.refreshDemandNotice && rootStore.updateDemandList(false);
     }
   };
 
   useEffect(() => {
     fetchDemandNotices();
-  }, []);
+    if (rootStore.refreshDemandNotice) {
+      fetchDemandNotices();
+    }
+  }, [rootStore.refreshDemandNotice]);
 
   return (
     <div className="flex-col w-full space-y-8 overflow-auto scrollbar-thin scrollbar-thumb-color-text-two scrollbar-track-white">
@@ -130,6 +137,6 @@ export const DemandNotice: React.FC = () => {
       />
     </div>
   );
-};
+});
 
 export default DemandNotice;
