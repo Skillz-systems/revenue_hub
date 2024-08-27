@@ -4,6 +4,8 @@ namespace App\Http\Resources;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
+use App\Models\Property;
+use App\Models\DemandNotice;
 
 /**
  * @OA\Schema(
@@ -95,9 +97,9 @@ class PropertyResource extends JsonResource
         if ($getDemandNotice) {
 
             if ($currentYear > $getDemandNotice->created_at) {
-                if ($getDemandNotice->status == $this->PENDING) {
-                    $penalty = ($getDemandNotice->amount * $this->PENALTY) / 100;
-                    $data["arrears"] = $getDemandNotice->amount + $penalty;
+                if ($getDemandNotice->status == DemandNotice::PENDING) {
+                    $penalty = ($getDemandNotice->amount * Property::PENALTY) / 100;
+                    $data["arrears"] = $getDemandNotice->amount;
                     $data["penalty"] =  $penalty;
                     $data["grand_total"] =  $this->rate_payable + $getDemandNotice->amount + $penalty;
                     return  $data;
