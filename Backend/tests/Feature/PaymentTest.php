@@ -14,9 +14,16 @@ use App\Models\DemandNotice;
 use App\Models\PropertyType;
 use Illuminate\Http\Request;
 use App\Models\CadastralZone;
+use Illuminate\Http\Response;
 use App\Models\RatingDistrict;
+use App\Service\PaymentService;
 use App\Models\DemandNoticeAccount;
+use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Crypt;
+use Illuminate\Support\Facades\Config;
+use App\Http\Controllers\PaymentController;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
@@ -210,5 +217,290 @@ class PaymentTest extends TestCase
             "message",
             "data"
         ]);
+    }
+
+    /**
+     * Test valid transaction where amount matches the expected amount.
+     *
+     * @return void
+     */
+    public function test_valid_transaction()
+    {
+
+        $property = Property::factory()->create(["pid" => "223321343"]);
+        DemandNotice::factory()->create([
+            "property_id" => $property->id,
+            "amount" => 1000
+        ]);
+        $payload = [
+            'ProductID' => '223321343',
+            'Amount' => 1000,
+            'Params' => ['param1' => 'value1', 'param2' => 'value2']
+        ];
+
+        $encryptedPayload = $this->encryptPayload($payload);
+
+        $response = $this->postJson('api/validate', [], ["HASH" => $encryptedPayload, "SIGNATURE" => $this->getSignature()]);
+        //dd($response);
+        $response->assertStatus(200);
+        $decryptedResponse = $this->decryptResponse($response->getContent());
+        $this->assertFalse($decryptedResponse['HasError']);
+        $this->assertEquals('Transaction validated successfully.', $decryptedResponse['Message']);
+    }
+
+    /**
+     * Test invalid transaction where amount does not match the expected amount.
+     *
+     * @return void
+     */
+    public function test_invalid_transaction_amount_mismatch()
+    {
+        $property = Property::factory()->create(["pid" => "223321343"]);
+        DemandNotice::factory()->create([
+            "property_id" => $property->id,
+            "amount" => 1000
+        ]);
+        $payload = [
+            'ProductID' => '223321343',
+            'Amount' => 500,
+            'Params' => ['param1' => 'value1', 'param2' => 'value2']
+        ];
+
+        $encryptedPayload = $this->encryptPayload($payload);
+
+        $response = $this->postJson('api/validate', [], ["HASH" => $encryptedPayload, "SIGNATURE" => $this->getSignature()]);
+        $response->assertStatus(200);
+
+        $decryptedResponse = $this->decryptResponse($response->getContent());
+
+        $this->assertTrue($decryptedResponse['HasError']);
+        $this->assertEquals('provided amount is wrong', $decryptedResponse['Message']);
+    }
+
+    /**
+     * Test invalid transaction with malformed payload.
+     *
+     * @return void
+     */
+    // public function test_malformed_payload()
+    // {
+    //     $malformedPayload = 'not a valid payload';
+
+    //     $response = $this->postJson('api/validate', ["Params" => $malformedPayload]);
+
+    //     $response->assertStatus(400); // Bad Request
+    // }
+
+    /**
+     * Test transaction with missing fields in payload.
+     *
+     * @return void
+     */
+    // public function test_transaction_with_missing_fields()
+    // {
+    //     $payload = [
+    //         // 'ProductID' is missing
+    //         'Amount' => 1000,
+    //         'Params' => ['param1' => 'value1', 'param2' => 'value2']
+    //     ];
+
+    //     $encryptedPayload = $this->encryptPayload($payload);
+
+    //     $response = $this->postJson('api/validate', ["Params" => $encryptedPayload]);
+
+    //     $response->assertStatus(400); // Bad Request
+    //     $decryptedResponse = $this->decryptResponse($encryptedPayload);
+    //     $this->assertTrue($decryptedResponse['HasError']);
+    //     $this->assertContains('Missing required fields', $decryptedResponse['Message']);
+    // }
+
+    /**
+     * Test transaction with extra fields in payload.
+     *
+     * @return void
+     */
+    // public function test_transaction_with_extra_fields()
+    // {
+    //     // Mock the getDemandNoticeWithPropertyPid to return a specific amount
+    //     $this->mockBillerService(1000);
+
+    //     $payload = [
+    //         'ProductID' => '12345',
+    //         'Amount' => 1000,
+    //         'ExtraField' => 'should not be here',
+    //         'Params' => ['param1' => 'value1', 'param2' => 'value2']
+    //     ];
+
+    //     $encryptedPayload = $this->encryptPayload($payload);
+
+    //     $response = $this->postJson('/validate', $encryptedPayload);
+
+    //     $response->assertStatus(200);
+    //     $decryptedResponse = $this->decryptResponse($response->getContent());
+    //     $this->assertFalse($decryptedResponse['HasError']);
+    // }
+
+    /**
+     * Test transaction with empty payload.
+     *
+     * @return void
+     */
+    // public function test_empty_payload()
+    // {
+    //     $response = $this->postJson('/validate', []);
+
+    //     $response->assertStatus(400); // Bad Request
+    //     $decryptedResponse = $this->decryptResponse($response->getContent());
+    //     $this->assertTrue($decryptedResponse['HasError']);
+    //     $this->assertContains('Payload cannot be empty', $decryptedResponse['Message']);
+    // }
+
+    // Helper methods to encrypt and decrypt payloads
+    private function encryptPayload(array $payload)
+    {
+        $iv = env('AES_IV');
+        $secretKey = env('SECRET_KEY');
+        $encryptedData = openssl_encrypt(json_encode($payload), 'AES-128-CBC', $secretKey, 0, $iv);
+        return bin2hex($encryptedData);
+    }
+
+    private function decryptResponse($response)
+    {
+        $iv = env('AES_IV');
+        $secretKey = env('SECRET_KEY');
+        $decryptedData = openssl_decrypt(hex2bin(json_decode($response)), 'AES-128-CBC', $secretKey, 0, $iv);
+        return json_decode($decryptedData, true);
+    }
+    private function getSignature()
+    {
+        $date = now()->format('Ymd');
+        $secret = env('SECRET_KEY');
+        $signature = hash('sha256', $date . $secret);
+        return $signature;
+    }
+
+    public function test_valid_notification()
+    {
+
+        $property = Property::factory()->create(["pid" => "223321343"]);
+        DemandNotice::factory()->create([
+            "property_id" => $property->id,
+            "amount" => 1000
+        ]);
+        $payload = [
+            "SessionId" => "C85201 4 - 8 EC 0 - 63 2 - 7 C 98 - 39 -63215a58",
+            "TransactionDate" => "06/10/11",
+            "TransactionTime" => "15:24:16",
+            "Amount" => 1000,
+            "ChannelCode" => "USSD",
+            "BankName" => "Zenith Bank",
+            "BranchName" => "Ikeja",
+            "BillerName" => "Biller_Name",
+            "NotificationEndPoint" => "Biller_Notification_Endpoint",
+            "ProductID" => "223321343",
+            "DestinationInstitutionCode" => "999998",
+            "Params" => [
+                "ReferenceNumber" => "192036198284",
+                "Phone" => "1234566"
+            ]
+        ];
+
+        $encryptedPayload = $this->encryptPayload($payload);
+
+        $response = $this->postJson('api/notify', [], ["HASH" => $encryptedPayload, "SIGNATURE" => $this->getSignature()]);
+        //dd($response);
+        $response->assertStatus(200);
+        $decryptedResponse = $this->decryptResponse($response->getContent());
+        $this->assertFalse($decryptedResponse['HasError']);
+        $this->assertEquals('Transaction Completed', $decryptedResponse['Message']);
+    }
+
+    /** @test */
+    public function it_resets_keys_and_sends_email()
+    {
+        // Fake the mail to intercept the email that is sent
+        $this->updateEnv([
+            'AES_IV' => "8aa9149ae7020648",
+            'SECRET_KEY' => "OJta0qzFaPCW8WZLzrmsCHJL48qWsuZn",
+        ]);
+
+        Mail::fake();
+
+        // Call the resetKeys endpoint
+        $response = $this->postJson('/api/reset', [], ["SIGNATURE" => $this->getSignature()]);
+
+        // Assert the response is successful and has the correct status
+        $response->assertStatus(200)
+            ->assertJson([
+                'status' => 'success',
+                'message' => 'IV and SECRET KEY have been reset and sent to NIBSS.',
+            ]);
+
+        // Check if an email was sent to the specified address
+        Mail::assertSent(\App\Mail\ResetKeysMail::class, function ($mail) {
+            return $mail->hasTo(env("NIBSS_EMAIL"));
+        });
+
+        // Fetch the new IV and SECRET_KEY from the configuration (simulated)
+        $newIv = env('AES_IV');
+        $newSecret = env('SECRET_KEY');
+
+        // Ensure the new IV and SECRET_KEY have been set and are not null
+        $this->assertNotEquals($newIv, "8aa9149ae7020648");
+        $this->assertNotEquals($newSecret, "OJta0qzFaPCW8WZLzrmsCHJL48qWsuZn");
+
+
+        // Check if the length of the new IV is correct (16 characters)
+        $this->assertEquals(16, strlen($newIv));
+
+        // Check if the length of the new SECRET_KEY is correct (32 characters)
+        $this->assertEquals(32, strlen($newSecret));
+    }
+
+    /** @test */
+    public function it_updates_environment_file_correctly()
+    {
+        // Backup the current .env file
+        $envPath = base_path('.env');
+        $envBackupPath = base_path('.env.backup');
+        File::copy($envPath, $envBackupPath);
+
+        // Fake the mail to intercept the email that is sent
+        Mail::fake();
+
+        // Call the resetKeys endpoint
+        $response = $this->postJson('/api/reset', [], ["SIGNATURE" => $this->getSignature()]);
+
+        // Re-fetch the .env file
+        $updatedEnvContent = File::get($envPath);
+
+        // Check if new keys are present in the .env file content
+        $this->assertStringContainsString('AES_IV=', $updatedEnvContent);
+        $this->assertStringContainsString('SECRET_KEY=', $updatedEnvContent);
+
+        // Restore the original .env file
+        File::copy($envBackupPath, $envPath);
+    }
+
+    // public function test_valid_reset()
+    // {
+    // }
+
+    private function updateEnv($data = [])
+    {
+        $envPath = base_path('.env');
+
+        if (file_exists($envPath)) {
+            foreach ($data as $key => $value) {
+                file_put_contents(
+                    $envPath,
+                    preg_replace(
+                        "/^{$key}=.*/m",
+                        "{$key}={$value}",
+                        file_get_contents($envPath)
+                    )
+                );
+            }
+        }
     }
 }
