@@ -51,6 +51,12 @@ use Illuminate\Http\Resources\Json\JsonResource;
  *         type="string",
  *         format="date-time",
  *         description="The date when the demand notice was created"
+ *     ),
+ *     @OA\Property(
+ *         property="reminder_date",
+ *         type="string",
+ *         format="date-time",
+ *         description="The date when the reminder was created"
  *     )
  * )
  */
@@ -77,6 +83,7 @@ class DemandNoticeResource extends JsonResource
             "property" => $property,
             "payments" => DemandNoticePaymentResource::collection($this->payments),
             "date_created" => $this->created_at,
+            "reminder_date" => $this->reminder ? $this->reminder->created_at : null,
         ];
     }
 }

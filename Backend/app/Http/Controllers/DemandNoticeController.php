@@ -272,17 +272,20 @@ class DemandNoticeController extends Controller
      *     security={{"bearerAuth":{}}}
      * )
      */
-    public function show(DemandNotice $demandNotice)
+public function show(DemandNotice $demandNotice)
     {
         $id = $demandNotice->id;
         $service = $this->demandNoticeService;
         $getDemandNotice = $service->viewDemandNotice($id);
-        $demandNotice = new DemandNoticeResource($getDemandNotice);
-        $demandNotice->additional([
-            'status' => 'success' // or any other status you want to append
+        $getDemandNotice->load('reminder');
+        $demandNoticeResource = new DemandNoticeResource($getDemandNotice);
+        $demandNoticeResource->additional([
+            'status' => 'success' 
         ]);
-        return $demandNotice;
+
+        return $demandNoticeResource;
     }
+
 
 
     /**
