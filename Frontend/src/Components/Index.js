@@ -22,7 +22,7 @@ export { Overview, LoadingSpinner } from "../Pages/Overview";
 export { CardData } from "./Card/CardData";
 export { default as Staff } from "../Pages/Staff";
 export { default as StaffTable } from "./Staff/StaffTable";
-export { default as Settings } from "../Pages/Settings";
+export { default as Settings } from "../Pages/Setting/Settings.tsx";
 export { default as Properties } from "../Pages/Properties";
 export { default as PropertyCard } from "./Properties/PropertyCard";
 export { default as Statistics } from "../Pages/Statistics";
