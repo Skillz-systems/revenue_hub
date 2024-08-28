@@ -11,9 +11,7 @@ jobs:
             - "SHA256:XM+2xRjrCCSH/Frn3FMhEbTaB4RS9hNa9Wm54+iINww"
       - checkout
       # install dependencies
-      - setup_remote_docker:
-          version: docker24
-          docker_layer_caching: true
+      - setup_remote_docker
       - run:
           name: Run npm
           command: |
@@ -55,9 +53,8 @@ jobs:
             - "SHA256:XM+2xRjrCCSH/Frn3FMhEbTaB4RS9hNa9Wm54+iINww"
       - checkout
       # install dependencies
-      - setup_remote_docker:
-          version: docker24
-          docker_layer_caching: true
+      - setup_remote_docker
+          
       - run:
           name: Run npm
           command: |
@@ -97,9 +94,7 @@ jobs:
             - "SHA256:XM+2xRjrCCSH/Frn3FMhEbTaB4RS9hNa9Wm54+iINww"
       - checkout
       # install dependencies
-      - setup_remote_docker:
-          version: docker24
-          docker_layer_caching: true
+      - setup_remote_docker
       - run:
           name: rename .env.example file to .env
           command: |
@@ -122,9 +117,7 @@ jobs:
             - "SHA256:XM+2xRjrCCSH/Frn3FMhEbTaB4RS9hNa9Wm54+iINww"
       - checkout
       # install dependencies
-      - setup_remote_docker:
-          version: docker24
-          docker_layer_caching: true
+      - setup_remote_docker
       - run:
           name: rename .env.example file to .env
           command: |
@@ -182,9 +175,7 @@ jobs:
             - "SHA256:XM+2xRjrCCSH/Frn3FMhEbTaB4RS9hNa9Wm54+iINww"
       - checkout
       # install dependencies
-      - setup_remote_docker:
-          version: docker24
-          docker_layer_caching: true
+      - setup_remote_docker
       - run:
           name: rename .env.example file to .env
           command: |
@@ -232,9 +223,7 @@ jobs:
             - "SHA256:XM+2xRjrCCSH/Frn3FMhEbTaB4RS9hNa9Wm54+iINww"
       - checkout
       # install dependencies
-      - setup_remote_docker:
-          version: docker24
-          docker_layer_caching: true
+      - setup_remote_docker
       - run:
           name: Run npm
           command: |
