@@ -133,12 +133,12 @@ export default function StaffTable({
     return (
       <div
         key={staffInformation?.id}
-        className="flex items-center justify-between gap-1 text-xs"
+        className="flex items-center justify-between gap-1 text-xs border"
       >
         <span className="flex flex-wrap items-center justify-center h-10 px-2 py-1 text-sm font-medium rounded w-[12%] text-color-text-three bg-custom-blue-400">
           {staffInformation?.id}
         </span>
-        <span className="flex flex-wrap items-center w-40 text-sm font-bold rounded font-lexend text-color-text-black">
+        <span className="flex flex-wrap items-center w-40 text-sm font-bold rounded font-lexend text-color-text-black ">
           {staffInformation?.name}
         </span>
         <span className="flex flex-wrap items-center w-2/12 text-xs font-lexend text-color-text-black">
