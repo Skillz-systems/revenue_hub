@@ -1,4 +1,3 @@
-import React from "react";
 import { Route, Routes, Navigate } from "react-router-dom";
 import ProjectLayout from "./Components/ProjectLayout/ProjectLayout";
 import LoginPage from "./Pages/LoginPage";
@@ -9,6 +8,7 @@ import ConfirmAccount from "./Pages/ConfirmAccount";
 import PageNotFound from "./Pages/PageNotFound";
 import { ErrorProvider } from "./Context/ErrorContext";
 import ErrorBoundary from "./Context/ErrorBoundary";
+import 'react-responsive-modal/styles.css';
 
 function App() {
   return (

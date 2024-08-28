@@ -38,7 +38,7 @@ class RatingDistrictControllerTest extends TestCase
             ])
             ->assertJsonStructure([
                 'data' => [
-                    '*' => 'office_zone_id', 
+                    '*' => ['id', 'name', 'office_zone_id', 'created_at', 'updated_at'] 
                 ]
             ]);
     }
@@ -94,7 +94,7 @@ class RatingDistrictControllerTest extends TestCase
                 'status' => 'success',
             ])
             ->assertJsonStructure([
-                'data' => 'office_zone_id', 
+                'data' => ['id', 'name', 'office_zone_id', 'created_at', 'updated_at'] 
             ]);
     }
 
@@ -103,8 +103,8 @@ class RatingDistrictControllerTest extends TestCase
     {
         $this->ratingDistrictService->method('checkIsAdminOrMd')->willReturn(true);
 
-        $data = ['name' => 'Updated RatingDistrict Name',
-                'office_zone_id' => '1'];
+        $data = ['name' => '',
+                'office_zone_id' => ''];
 
         $response = $this->actingAsTestUser()->postJson('/api/rating-district/create', $data);
 
@@ -155,10 +155,10 @@ class RatingDistrictControllerTest extends TestCase
     {
         $this->ratingDistrictService->method('checkIsAdminOrMd')->willReturn(true);
 
-        $ratingDistrict = RatingDistrict::factory()->create();
+        $ratingDistrict = RatingDistrict::factory()->make();
         $this->ratingDistrictService->method('getRatingDistrictById')->willReturn($ratingDistrict);
 
-        $response = $this->actingAsTestUser()->getJson('/api/rating-district/view/' . $ratingDistrict->id);
+        $response = $this->actingAsTestUser()->getJson('/api/rating-district/view/1' . $ratingDistrict->id);
 
         $response->assertStatus(200)
             ->assertJson([

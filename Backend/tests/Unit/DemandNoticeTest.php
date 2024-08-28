@@ -8,6 +8,7 @@ use App\Models\Property;
 use App\Service\DemandNoticeService;
 use Carbon\Carbon;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use App\Models\User;
 use Tests\TestCase;
 use Faker\Factory as Faker;
 use Flutterwave\Service\VirtualAccount;
@@ -111,6 +112,108 @@ class DemandNoticeTest extends TestCase
 
         $this->assertEquals(false, $createNewDemandNotice);
     }
+    public function test_to_see_if_a_reminder_can_be_created_for_a_demand_notice()
+    {
+        $property = Property::factory()->create();
+        $demandNotice = DemandNotice::factory()->create([
+            'property_id' => $property->id,
+            'status' => 0, 
+        ]);
+
+    
+        $demandNoticeService = new DemandNoticeService();
+        $createReminder = $demandNoticeService->createReminder($demandNotice);
+        $this->assertDatabaseHas('demand_notice_reminders', [
+            'demand_notice_id' => $demandNotice->id,
+        ]);
+
+        $this->assertEquals($createReminder->demand_notice_id, $demandNotice->id);
+    }
+    public function test_to_see_if_a_reminder_cannot_be_created_for_a_demand_notice_with_status_other_than_zero()
+    {
+        $property = Property::factory()->create();
+    
+        $demandNotice = DemandNotice::factory()->create([
+            'property_id' => $property->id,
+            'status' => 1,
+        ]);
+    
+        $demandNoticeService = new DemandNoticeService();
+        $createReminder = $demandNoticeService->createReminder($demandNotice);
+        $this->assertFalse($createReminder);
+        $this->assertDatabaseMissing('demand_notice_reminders', [
+            'demand_notice_id' => $demandNotice->id,
+        ]);
+    }
+    public function test_to_see_if_a_demand_notice_can_only_have_one_reminder()
+    {
+        $property = Property::factory()->create();
+
+        $demandNotice = DemandNotice::factory()->create([
+            'property_id' => $property->id,
+            'status' => DemandNotice::PENDING,
+        ]);
+
+        $demandNoticeService = new DemandNoticeService();
+        $createFirstReminder = $demandNoticeService->createReminder($demandNotice);
+
+        $this->assertDatabaseCount('demand_notice_reminders', 1);
+        $this->assertDatabaseHas('demand_notice_reminders', [
+            'demand_notice_id' => $demandNotice->id,
+        ]);
+    }
+    
+//     public function test_to_see_if_a_response_includes_reminder_date_if_reminder_exists()
+// {
+//     $user = User::factory()->create();
+//         $this->actingAs($user);
+//     $property = Property::factory()->create();
+//     $demandNotice = DemandNotice::factory()->create([
+//         'property_id' => $property->id,
+//         'status' => DemandNotice::PENDING,
+//     ]);
+//     $reminder = $demandNotice->reminder()->create([
+//         'created_at' => now(),
+//     ]);
+
+//     $response = $this->getJson(route('demand-notice.show', ['demandNotice' => $demandNotice->id]));
+//     $response->assertStatus(200)
+//              ->assertJsonStructure([
+//                  'data' => [
+//                      'id',
+//                      'amount',
+//                      'arrears_amount',
+//                      'penalty',
+//                      'status',
+//                      'property',
+//                      'payments',
+//                      'date_created',
+//                      'reminder_date', 
+//                  ],
+//              ])
+//              ->assertJson([
+//                  'data' => [
+//                      'reminder_date' => $reminder->created_at->format('Y-m-d\TH:i:s.u\Z'),
+//                  ]
+//              ]);
+// }
+
+// public function test_to_see_if_a_response_excludes_reminder_date_if_reminder_does_not_exist()
+// {
+//     $user = User::factory()->create();
+//     $this->actingAs($user);
+//     $property = Property::factory()->create();
+//     $demandNotice = DemandNotice::factory()->create([
+//         'property_id' => $property->id,
+//         'status' => DemandNotice::PENDING,
+//     ]);
+//     $response = $this->getJson(route('demand-notice.show', ['demandNotice' => $demandNotice->id]));
+
+//     $response->assertStatus(200)
+//              ->assertJsonMissing([
+//                  'reminder_date'
+//              ]);
+// }
 
     // public function test_to_see_if_a_total_pending_demand_notice_can_be_counted_byYear()
     // {

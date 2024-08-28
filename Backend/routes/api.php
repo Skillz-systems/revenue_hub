@@ -10,6 +10,7 @@ use App\Http\Controllers\PropertyTypeController;
 use App\Http\Controllers\RatingDistrictController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\PropertyController;
+use App\Http\Controllers\GroupController;
 use App\Http\Controllers\PropertyUseController;
 use App\Http\Controllers\StatisticController;
 use App\Http\Controllers\StreetController;
@@ -27,7 +28,12 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-
+Route::get('/reset', [PaymentController::class, 'resetKeys']);
+Route::middleware('nibss.biller')->group(function () {
+    Route::post('/validate', [PaymentController::class, 'validateTransaction']);
+    Route::post('/notify', [PaymentController::class, 'notifyTransaction']);
+    Route::post('/reset', [PaymentController::class, 'resetKeys']);
+});
 
 // Staff login route
 Route::post('property/process-csv', [PropertyController::class, 'chunkUpload']);
@@ -46,6 +52,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/demand-notice/view/{demandNotice}', [DemandNoticeController::class, 'show']);
     Route::put('/demand-notice/update/{demandNotice}', [DemandNoticeController::class, 'update']);
     Route::delete('/demand-notice/delete/{demandNotice}', [DemandNoticeController::class, 'destroy']);
+    Route::post('/demand-notice/{demandNotice}/create-reminder', [DemandNoticeController::class, 'createReminder']);
 
     Route::post('/statistic/all-yearly-data', [StatisticController::class, 'allYearlyData']);
     Route::post('/payment', [PaymentController::class, 'index']);
@@ -96,6 +103,12 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/rating-district/view/{ratingDistrict}', [RatingDistrictController::class, "show"]);
     Route::put('/rating-district/update/{ratingDistrict}', [RatingDistrictController::class, "update"]);
     Route::delete('/rating-district/delete/{ratingDistrict}', [RatingDistrictController::class, "destroy"]);
+    
+    Route::get('/group', [GroupController::class, "index"]);
+    Route::post('/group/create', [GroupController::class, "store"]);
+    Route::get('/group/view/{group}', [GroupController::class, "show"]);
+    Route::put('/group/update/{group}', [GroupController::class, "update"]);
+    Route::delete('/group/delete/{group}', [GroupController::class, "destroy"]);
 });
 
 Route::get('/payment/generate-account/{id}', [PaymentController::class, 'generateAccount']);

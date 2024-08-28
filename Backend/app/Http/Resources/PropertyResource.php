@@ -4,6 +4,8 @@ namespace App\Http\Resources;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
+use App\Models\Property;
+use App\Models\DemandNotice;
 
 /**
  * @OA\Schema(
@@ -47,6 +49,7 @@ class PropertyResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
+        $allCalculations = $this->getDemandNotice();
         $latestDemandNotice = $this->demandNotices()->latest()->first();
         $demandNoticeStatus = "Ungenerated";
         if (!empty($latestDemandNotice)) {
@@ -61,17 +64,19 @@ class PropertyResource extends JsonResource
             'pid' => $this->pid,
             'occupant' => $this->occupant,
             'prop_addr' => $this->prop_addr,
-            'street_name' => $this->street->name,
+            'street_name' => $this->street ? $this->street->name : "none",
             'asset_no' => $this->asset_no,
-            'cadastral_zone' => $this->cadastralZone->name,
-            'prop_type' => $this->propertyType->name,
-            'prop_use' => $this->propertyUse->name,
-            'rating_dist' => $this->ratingDistrict->name,
+            'cadastral_zone' => $this->cadastralZone ? $this->cadastralZone->name : "none",
+            'prop_type' => $this->propertyType ? $this->propertyType->name : "none",
+            'prop_use' => $this->propertyUse ? $this->propertyUse->name : "none",
+            'rating_dist' => $this->ratingDistrict ? $this->ratingDistrict->name : "none",
             'annual_value' => $this->annual_value,
             'rate_payable' => $this->rate_payable,
-            'grand_total' => $this->grand_total,
-            'category' => $this->category->name,
-            'group' => $this->group->name,
+            'arrears' => $allCalculations["arrears"],
+            'penalty' => $allCalculations["penalty"],
+            'grand_total' => $allCalculations["grand_total"],
+            'category' => $this->category ? $this->category->name : "none",
+            'group' => $this->group ? $this->group->name : "none",
             'active' => $this->active,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
@@ -81,5 +86,26 @@ class PropertyResource extends JsonResource
             "demand_notice_status" => $demandNoticeStatus,
 
         ];
+    }
+
+    private function getDemandNotice()
+    {
+        $data = ["arrears" => 0, "penalty" => 0, "grand_total" => $this->rate_payable];
+        $getDemandNotice = $this->demandNotices()->latest()->first();
+        $currentYear = date("Y");
+
+        if ($getDemandNotice) {
+
+            if ($currentYear > $getDemandNotice->created_at) {
+                if ($getDemandNotice->status == DemandNotice::PENDING) {
+                    $penalty = ($getDemandNotice->amount * Property::PENALTY) / 100;
+                    $data["arrears"] = $getDemandNotice->amount;
+                    $data["penalty"] =  $penalty;
+                    $data["grand_total"] =  $this->rate_payable + $getDemandNotice->amount + $penalty;
+                    return  $data;
+                }
+            }
+        }
+        return  $data;
     }
 }

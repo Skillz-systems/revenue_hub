@@ -15,19 +15,23 @@ class PaymentService
     {
         return $this->model()->whereYear('created_at', $date)->paginate(100);
     }
+
     public function viewPayment($id)
     {
         return $this->model()->findOrFail($id);
     }
+
     public function createPayment($data)
     {
         return $this->model()->create($data);
     }
+
     public function updatePayment($id, $data)
     {
         $payment = $this->viewPayment($id);
         return $payment->update($data);
     }
+
     public function deletePayment($id)
     {
         $payment = $this->viewPayment($id);
