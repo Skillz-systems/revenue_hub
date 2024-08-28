@@ -2,6 +2,15 @@
 @tailwind components;
 @tailwind utilities;
 
+
+.react-responsive-modal-modal {
+  border-radius: 10px;
+  max-width: 900px;
+  position: static;
+  max-height: 500px;
+  padding: 0;
+}
+
 @layer base {
   body {
     font-family: "Lora", serif;

@@ -133,12 +133,12 @@ export default function StaffTable({
     return (
       <div
         key={staffInformation?.id}
-        className="flex items-center justify-between gap-1 text-xs"
+        className="flex items-center justify-between gap-1 text-xs border"
       >
         <span className="flex flex-wrap items-center justify-center h-10 px-2 py-1 text-sm font-medium rounded w-[12%] text-color-text-three bg-custom-blue-400">
           {staffInformation?.id}
         </span>
-        <span className="flex flex-wrap items-center w-40 text-sm font-bold rounded font-lexend text-color-text-black">
+        <span className="flex flex-wrap items-center w-40 text-sm font-bold rounded font-lexend text-color-text-black ">
           {staffInformation?.name}
         </span>
         <span className="flex flex-wrap items-center w-2/12 text-xs font-lexend text-color-text-black">
@@ -161,7 +161,7 @@ export default function StaffTable({
         >
           {staffInformation?.role?.name.toUpperCase()}
         </span>
-        <span className="flex flex-wrap items-center justify-center w-1/12 gap-1">
+        <span className="flex flex-wrap items-center justify-center w-1/12 gap-1 ">
           <span className="border-0.6 relative border-custom-grey-100 text-custom-grey-300 px-2 py-2.5 rounded text-base hover:cursor-pointer">
             <span
               title="Edit Staffs Details"
@@ -353,7 +353,7 @@ export default function StaffTable({
                 `}
               >
                 <GoDotFill />
-                <span className="flex items-center justify-center gap-1">
+                <span className="flex items-center justify-center gap-1 ">
                   {column.name}
                 </span>
               </div>

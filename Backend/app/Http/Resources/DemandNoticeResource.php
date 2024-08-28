@@ -77,7 +77,7 @@ class DemandNoticeResource extends JsonResource
         return [
             "id" => $this->id,
             "amount" => $this->amount,
-            "arrears_amount" => $this->arrears_amount,
+            "arrears_amount" => number_format($this->arrears_amount -$this->penalty, 0, '.', ','),
             "penalty" => $this->penalty,
             "status" => $this->status,
             "property" => $property,
