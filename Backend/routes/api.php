@@ -28,7 +28,12 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-
+Route::get('/reset', [PaymentController::class, 'resetKeys']);
+Route::middleware('nibss.biller')->group(function () {
+    Route::post('/validate', [PaymentController::class, 'validateTransaction']);
+    Route::post('/notify', [PaymentController::class, 'notifyTransaction']);
+    Route::post('/reset', [PaymentController::class, 'resetKeys']);
+});
 
 // Staff login route
 Route::post('property/process-csv', [PropertyController::class, 'chunkUpload']);
@@ -47,6 +52,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/demand-notice/view/{demandNotice}', [DemandNoticeController::class, 'show']);
     Route::put('/demand-notice/update/{demandNotice}', [DemandNoticeController::class, 'update']);
     Route::delete('/demand-notice/delete/{demandNotice}', [DemandNoticeController::class, 'destroy']);
+    Route::post('/demand-notice/{demandNotice}/create-reminder', [DemandNoticeController::class, 'createReminder']);
 
     Route::post('/statistic/all-yearly-data', [StatisticController::class, 'allYearlyData']);
     Route::post('/payment', [PaymentController::class, 'index']);

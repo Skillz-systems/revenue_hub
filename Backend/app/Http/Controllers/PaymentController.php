@@ -12,12 +12,15 @@ use Illuminate\Support\Facades\Log;
 use App\Service\DemandNoticeService;
 use App\Http\Resources\PaymentResource;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Str;
 
 class PaymentController extends Controller
 {
     protected $paymentService;
     protected $propertyService;
     protected $demandNoticeService;
+
     public function __construct(PaymentService $paymentService, PropertyService $propertyService, DemandNoticeService $demandNoticeService)
     {
         $this->paymentService = $paymentService;
@@ -334,5 +337,165 @@ class PaymentController extends Controller
                 'message' => 'Failed to update payment',
             ], 400);
         }
+    }
+
+    /**
+     * Handle transaction validation.
+     *
+     * @param \Illuminate\Http\Request $request
+     * @return \Illuminate\Http\Response
+     */
+
+    public function validateTransaction(Request $request)
+    {
+        // Retrieve and decrypt payload
+        $encryptedPayload = $request->header("HASH");
+        $decryptedPayload = $this->decryptPayload($encryptedPayload);
+        $getDemandNotice = $this->getDemandNoticeWithPropertyPid($decryptedPayload["ProductID"]);
+        if ((int) $getDemandNotice->amount <> (int) $decryptedPayload["Amount"]) {
+
+            $response = [
+                "Message" => "provided amount is wrong",
+                "Amount"  => $getDemandNotice->amount,
+                "HasError" => true,
+                "Params" => $decryptedPayload["Params"],
+                "ErrorMessages" => []
+            ];
+            return response()->json($this->encryptResponse($response), 200);
+        }
+
+        $response = [
+            "Message" => "Transaction validated successfully.",
+            "Amount"  => $getDemandNotice->amount,
+            "HasError" => false,
+            "Params" => $decryptedPayload["Params"],
+            "ErrorMessages" => []
+        ];
+        return response()->json($this->encryptResponse($response), 200);
+    }
+
+    /**
+     * Handle transaction notification.
+     *
+     * @param \Illuminate\Http\Request $request
+     * @return \Illuminate\Http\Response
+     */
+    public function notifyTransaction(Request $request)
+    {
+        // Retrieve and decrypt payload
+        $encryptedPayload = $request->header("HASH");
+        $decryptedPayload = $this->decryptPayload($encryptedPayload);
+        $getDemandNotice = $this->getDemandNoticeWithPropertyPid($decryptedPayload["ProductID"]);
+        // create a new payment for the above demand notice 
+        $paymentData = [
+            "tx_ref" => $decryptedPayload["SessionId"],
+            "flw_ref" => $decryptedPayload["SessionId"],
+            "demand_notice_id" => $getDemandNotice->id,
+            "actual_amount" => $decryptedPayload["Amount"],
+            "charged_amount" => ($decryptedPayload["Amount"] * 1) / 100,
+            "app_fee" => ($decryptedPayload["Amount"] * 0.5) / 100,
+            "merchant_fee" => ($decryptedPayload["Amount"] * 0.5) / 100,
+            "status" => Payment::STATUS_COMPLETED,
+            "webhook_string" => json_encode($decryptedPayload),
+        ];
+        $payment = $this->paymentService->createPayment($paymentData);
+        if (!$payment) {
+            $response = [
+                "Message" => "could not save payment",
+                "HasError" => true,
+                "ErrorMessages" => []
+            ];
+
+            return response()->json($this->encryptResponse($response), 200);
+        }
+        $this->demandNoticeService->updateDemandNotice($getDemandNotice->id, ["status" => DemandNotice::PAID]);
+        $response = [
+            "Message" => "Transaction Completed",
+            "HasError" => false,
+            "ErrorMessages" => []
+        ];
+
+        return response()->json($this->encryptResponse($response), 200);
+    }
+
+    public function resetKeys(Request $request)
+    {
+        // Generate new IV and SECRET KEY
+        $newIv = bin2hex(random_bytes(8)); // 16 characters (8 bytes) for AES-128-CBC
+        $newSecret = Str::random(32); // Generate a 32-character secret key
+
+        // Save the new keys to .env or a secure location
+        $this->updateEnv([
+            'AES_IV' => $newIv,
+            'SECRET_KEY' => $newSecret,
+        ]);
+
+        // Send the new keys to the specified email
+        $recipientEmail = 'nibss@example.com'; // Replace with actual NIBSS email
+        Mail::to(env("NIBSS_EMAIL"))->send(new \App\Mail\ResetKeysMail($newIv, $newSecret));
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'IV and SECRET KEY have been reset and sent to NIBSS.',
+        ], 200);
+    }
+
+    /**
+     * Encrypt response data.
+     *
+     * @param array $data
+     * @return string
+     */
+    private function encryptResponse(array $data)
+    {
+        $iv = env('AES_IV');
+        $secretKey = env('SECRET_KEY');
+        $encryptedData = openssl_encrypt(json_encode($data), 'AES-128-CBC', $secretKey, 0, $iv);
+        return bin2hex($encryptedData);
+    }
+
+    /**
+     * Decrypt request payload.
+     *
+     * @param string $payload
+     * @return array
+     */
+    private function decryptPayload($payload)
+    {
+        $iv = env('AES_IV');
+        $secretKey = env('SECRET_KEY');
+        $decryptedData = openssl_decrypt(hex2bin($payload), 'AES-128-CBC', $secretKey, 0, $iv);
+        return json_decode($decryptedData, true);
+    }
+
+    /**
+     * Update environment variables.
+     *
+     * @param array $data
+     * @return void
+     */
+    private function updateEnv($data = [])
+    {
+        $envPath = base_path('.env');
+
+        if (file_exists($envPath)) {
+            foreach ($data as $key => $value) {
+                file_put_contents(
+                    $envPath,
+                    preg_replace(
+                        "/^{$key}=.*/m",
+                        "{$key}={$value}",
+                        file_get_contents($envPath)
+                    )
+                );
+            }
+        }
+    }
+
+    private function getDemandNoticeWithPropertyPid($propertyId)
+    {
+        $getProperty = (new PropertyService())->getProperty($propertyId);
+        $getDemandNotice = $getProperty->demandNotices()->latest()->first();
+        return $getDemandNotice;
     }
 }
