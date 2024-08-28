@@ -3,6 +3,7 @@
 namespace App\Http\Resources;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Carbon;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 
@@ -78,7 +79,7 @@ class DemandNoticeResource extends JsonResource
         return [
             "id" => $this->id,
             "amount" => $this->amount,
-            "arrears_amount" => number_format($this->arrears_amount -$this->penalty, 0, '.', ','),
+            "arrears_amount" => number_format($this->arrears_amount - $this->penalty, 0, '.', ','),
             "penalty" => $this->penalty,
             "status" => $this->status,
             "color_status" => $colorStatus,
@@ -102,7 +103,7 @@ class DemandNoticeResource extends JsonResource
         $daysSinceCreated = Carbon::now()->diffInDays($this->created_at);
         if ($this->status == 0) {
             if ($daysSinceCreated <= 28) {
-                return 0; 
+                return 0;
             }
 
             if ($this->reminder) {
@@ -111,12 +112,12 @@ class DemandNoticeResource extends JsonResource
                     return 1;
                 }
                 if ($daysSinceReminder > 28) {
-                    return 4; 
+                    return 4;
                 }
             } else {
-                return 2; 
+                return 2;
             }
         }
-        return -1; 
+        return -1;
     }
 }
