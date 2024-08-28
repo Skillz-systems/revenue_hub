@@ -111,6 +111,57 @@ class DemandNoticeTest extends TestCase
 
         $this->assertEquals(false, $createNewDemandNotice);
     }
+    public function test_to_see_if_a_reminder_can_be_created_for_a_demand_notice()
+    {
+        $property = Property::factory()->create();
+        $demandNotice = DemandNotice::factory()->create([
+            'property_id' => $property->id,
+            'status' => 0, 
+        ]);
+
+    
+        $demandNoticeService = new DemandNoticeService();
+        $createReminder = $demandNoticeService->createReminder($demandNotice);
+        $this->assertDatabaseHas('demand_notice_reminders', [
+            'demand_notice_id' => $demandNotice->id,
+        ]);
+
+        $this->assertEquals($createReminder->demand_notice_id, $demandNotice->id);
+    }
+    public function test_to_see_if_a_reminder_cannot_be_created_for_a_demand_notice_with_status_other_than_zero()
+    {
+        $property = Property::factory()->create();
+    
+        $demandNotice = DemandNotice::factory()->create([
+            'property_id' => $property->id,
+            'status' => 1,
+        ]);
+    
+        $demandNoticeService = new DemandNoticeService();
+        $createReminder = $demandNoticeService->createReminder($demandNotice);
+        $this->assertFalse($createReminder);
+        $this->assertDatabaseMissing('demand_notice_reminders', [
+            'demand_notice_id' => $demandNotice->id,
+        ]);
+    }
+    public function test_to_see_if_a_demand_notice_can_only_have_one_reminder()
+    {
+        $property = Property::factory()->create();
+
+        $demandNotice = DemandNotice::factory()->create([
+            'property_id' => $property->id,
+            'status' => DemandNotice::PENDING,
+        ]);
+
+        $demandNoticeService = new DemandNoticeService();
+        $createFirstReminder = $demandNoticeService->createReminder($demandNotice);
+
+        $this->assertDatabaseCount('demand_notice_reminders', 1);
+        $this->assertDatabaseHas('demand_notice_reminders', [
+            'demand_notice_id' => $demandNotice->id,
+        ]);
+    }
+    
 
     // public function test_to_see_if_a_total_pending_demand_notice_can_be_counted_byYear()
     // {
