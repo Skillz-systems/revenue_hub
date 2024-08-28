@@ -8,6 +8,7 @@ import ConfirmAccount from "./Pages/ConfirmAccount";
 import PageNotFound from "./Pages/PageNotFound";
 import { ErrorProvider } from "./Context/ErrorContext";
 import ErrorBoundary from "./Context/ErrorBoundary";
+import 'react-responsive-modal/styles.css';
 
 function App() {
   return (

@@ -161,7 +161,7 @@ export default function StaffTable({
         >
           {staffInformation?.role?.name.toUpperCase()}
         </span>
-        <span className="flex flex-wrap items-center justify-center w-1/12 gap-1">
+        <span className="flex flex-wrap items-center justify-center w-1/12 gap-1 ">
           <span className="border-0.6 relative border-custom-grey-100 text-custom-grey-300 px-2 py-2.5 rounded text-base hover:cursor-pointer">
             <span
               title="Edit Staffs Details"
@@ -353,7 +353,7 @@ export default function StaffTable({
                 `}
               >
                 <GoDotFill />
-                <span className="flex items-center justify-center gap-1">
+                <span className="flex items-center justify-center gap-1 ">
                   {column.name}
                 </span>
               </div>
