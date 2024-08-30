@@ -73,6 +73,7 @@ export interface DemandNotice {
     arrears_amount: string;
     penalty: string;
     status: number;
+    color_status: number;
     property: {
         pid: number;
         prop_addr: string;

@@ -196,7 +196,7 @@ const DemandInvoiceTable = ({
       case 1:
         return {css:"bg-black-500 text-white",reminder:true,text:"paid"};
       case 2:
-        return {css:"bg-Amber-500 text-black",reminder:true,text:"paid"};
+        return {css:"bg-Amber-800 text-black",reminder:true,text:"paid"};
       case 3:
         return {css:"bg-green-500 text-black",reminder:true,text:"paid"};
       case 4:
@@ -210,20 +210,17 @@ const DemandInvoiceTable = ({
   }
 
   useEffect(() => {
-     
     setStatus(getRandomStatus());
-    console.log(status)
   }, []); 
 
   const recordField = (record: DemandNotice) => {
     const lastPaymentStatus = record?.property?.demand_notice_status;
+    const colorStatus = record?.color_status;
     
-    // const status = getRandomStatus();
-    
-
- 
-    
-    const classDynamicName = getStatusClass(status);
+  let  classDynamicName = {css:"bg-amber-700 text-black",reminder:true,text:"pending"}
+     if (colorStatus){
+       classDynamicName = getStatusClass(colorStatus);
+     } 
   
     return (
       <div
