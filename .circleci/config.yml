@@ -12,7 +12,7 @@ jobs:
       - checkout
       # install dependencies
       - setup_remote_docker:
-          version: 20.10.12
+          version: docker24
           docker_layer_caching: true
       - run:
           name: Run npm
@@ -28,10 +28,10 @@ jobs:
       - run:
           name: find and replace in document
           command: |
-            cd Frontend && sed -i -e 's:VITE_API_URL=url:VITE_API_URL=https://api.revenuehub.skillzserver.com:g' .env
+            cd Frontend && sed -i -e 's|VITE_API_URL=url|VITE_API_URL=https://api.revenuehub.skillzserver.com|g' .env
       - run:
           name: Update known hosts
-          command: ssh-keyscan -H 185.160.67.60 >> ~/.ssh/known_hosts && cat ~/.ssh/known_hosts
+          command: ssh-keyscan -H 103.72.76.68 >> ~/.ssh/known_hosts && cat ~/.ssh/known_hosts
       - run:
           name: build file
           command: |
@@ -40,7 +40,7 @@ jobs:
       - run:
           name: ssh login
           command: |
-            rsync -va -e 'ssh -p 7822 -o StrictHostKeyChecking=no'  --delete   Frontend/dist/ Frontend/.htaccess  skillz@185.160.67.60:revenuehub/frontend
+            rsync -va -e 'ssh -p 7822 -o StrictHostKeyChecking=no'  --delete   Frontend/dist/ Frontend/.htaccess  skillz@103.72.76.68:revenuehub/frontend
       # - run:
       #     name: ssh and run migration on live server
       #     command: |
@@ -56,7 +56,7 @@ jobs:
       - checkout
       # install dependencies
       - setup_remote_docker:
-          version: 20.10.12
+          version: docker24
           docker_layer_caching: true
       - run:
           name: Run npm
@@ -98,7 +98,7 @@ jobs:
       - checkout
       # install dependencies
       - setup_remote_docker:
-          version: 20.10.12
+          version: docker24
           docker_layer_caching: true
       - run:
           name: rename .env.example file to .env
@@ -123,7 +123,7 @@ jobs:
       - checkout
       # install dependencies
       - setup_remote_docker:
-          version: 20.10.12
+          version: docker24
           docker_layer_caching: true
       - run:
           name: rename .env.example file to .env
@@ -147,7 +147,7 @@ jobs:
 
       # - run:
       #     name: Update known hosts
-      #     command:  CI=false ssh-keyscan -H 185.160.67.60 >> ~/.ssh/known_hosts && cat ~/.ssh/known_hosts
+      #     command:  CI=false ssh-keyscan -H 103.72.76.68 >> ~/.ssh/known_hosts && cat ~/.ssh/known_hosts
       - run:
           name: find and replace in document
           command: |
@@ -166,11 +166,11 @@ jobs:
       - run:
           name: ssh login
           command: |
-            rsync --delete -va -e 'ssh -p 7822 -o StrictHostKeyChecking=no'   Backend/app Backend/database Backend/phpunit.xml Backend/storage Backend/vendor Backend/artisan Backend/.env Backend/tests Backend/bootstrap Backend/composer.json Backend/resources Backend/composer.lock Backend/routes Backend/config Backend/package.json Backend/public/ Backend/public skillz@185.160.67.60:revenuehub/api
+            rsync --delete -va -e 'ssh -p 7822 -o StrictHostKeyChecking=no'   Backend/app Backend/database Backend/phpunit.xml Backend/storage Backend/vendor Backend/artisan Backend/.env Backend/tests Backend/bootstrap Backend/composer.json Backend/resources Backend/composer.lock Backend/routes Backend/config Backend/package.json Backend/public/ Backend/public skillz@103.72.76.68:revenuehub/api
       - run:
           name: ssh and effect migration
           command: |
-            ssh -p 7822 -t skillz@185.160.67.60 "cd revenuehub/api && php artisan migrate && php artisan l5-swagger:generate"
+            ssh -p 7822 -t skillz@103.72.76.68 "cd revenuehub/api && php artisan migrate && php artisan l5-swagger:generate"
 
   deploy-backend-production:
     docker:
@@ -183,7 +183,7 @@ jobs:
       - checkout
       # install dependencies
       - setup_remote_docker:
-          version: 20.10.12
+          version: docker24
           docker_layer_caching: true
       - run:
           name: rename .env.example file to .env
@@ -198,7 +198,7 @@ jobs:
       - run: sudo apt-get install rsync
       # - run:
       #     name: Update known hosts
-      #     command:  CI=false ssh-keyscan -H 185.160.67.60 >> ~/.ssh/known_hosts && cat ~/.ssh/known_hosts
+      #     command:  CI=false ssh-keyscan -H 103.72.76.68 >> ~/.ssh/known_hosts && cat ~/.ssh/known_hosts
       - run:
           name: find and replace in document
           command: |
@@ -233,7 +233,7 @@ jobs:
       - checkout
       # install dependencies
       - setup_remote_docker:
-          version: 20.10.12
+          version: docker24
           docker_layer_caching: true
       - run:
           name: Run npm
@@ -250,7 +250,7 @@ jobs:
       - run:
           name: find and replace in document
           command: |
-            cd Frontend && sed -i -e 's:VITE_API_URL=url:VITE_API_URL=https://api.revenuehub.ng:g' .env
+            cd Frontend && sed -i -e 's|VITE_API_URL=url|VITE_API_URL=https://api.revenuehub.ng|g' .env
 
       - run:
           name: Update known hosts
