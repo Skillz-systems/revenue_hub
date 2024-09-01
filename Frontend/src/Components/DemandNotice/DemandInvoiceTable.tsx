@@ -192,17 +192,17 @@ const DemandInvoiceTable = ({
 
     switch (status) {
       case 0:
-        return {css:"bg-black text-white",reminder:true,text:"paid"};
+        return { css: "bg-black text-white", reminder: false, text: "Pending" };
       case 1:
-        return {css:"bg-black-500 text-white",reminder:true,text:"paid"};
+        return { css: "bg-black-500 text-white", reminder: false, text: "Reminder Created" };
       case 2:
-        return {css:"bg-Amber-500 text-black",reminder:true,text:"paid"};
+        return { css: "bg-Amber-800 text-black", reminder: true, text: "Create Reminder" };
       case 3:
-        return {css:"bg-green-500 text-black",reminder:true,text:"paid"};
+        return { css: "bg-green-500 text-black", reminder: false, text: "Paid" };
       case 4:
-        return {css:"bg-red-500 text-white",reminder:true,text:"paid"};
+        return { css: "bg-red-500 text-white", reminder: false, text: "View Reminder" };
       default:
-        return {css:"bg-gray-100 text-black",reminder:true,text:"paid"};
+        return { css: "bg-blue-600 text-black", reminder: false, text: "Unknown" };
     }
   }
   const getRandomStatus=()=> {
@@ -210,20 +210,89 @@ const DemandInvoiceTable = ({
   }
 
   useEffect(() => {
-     
     setStatus(getRandomStatus());
-    console.log(status)
   }, []); 
+   
+  const renderReminderButton = (status: number, demandNoticeId: number) => {
+    const createReminder = async (id: number) => {
+      try {
+        const response = await axios.post(
+          `${apiUrl}/api/demand-notice/{demandNoticeId}/reminder`, 
+          { demandNoticeId: id },
+          {
+            headers: {
+              Authorization: `Bearer ${token}`, 
+            },
+          }
+        );
+  
+        if (response.status === 200) {
+          setSnackbar({
+            open: true,
+            message: "Reminder created successfully",
+            severity: "success",
+          });
+          // Optionally, you can reload the page or fetch the updated data
+          window.location.reload();
+        } else {
+          setSnackbar({
+            open: true,
+            message: "Failed to create reminder",
+            severity: "error",
+          });
+        }
+      } catch (error: any) {
+        let message = "Internal Server Error";
+        if (error.response) {
+          switch (error.response.status) {
+            case 400:
+              message = "Bad request. Demand Notice Id is missing.";
+              break;
+            case 401:
+              message = "You are unauthorized";
+              break;
+            case 403:
+              message = "You are forbidden";
+              break;
+            case 404:
+              message = "Demand notice not found";
+              break;
+            default:
+              break;
+          }
+        }
+        setSnackbar({ open: true, message, severity: "error" });
+      }
+    };
+  
+    switch (status) {
+      case 1:
+      case 4:
+        return (
+          <button className="bg-blue-500 text-white px-2 py-1 rounded">
+            View Reminder
+          </button>
+        );
+      case 2:
+        return (
+          <button
+            className="bg-green-500 text-white px-2 py-1 rounded"
+            onClick={() => createReminder(demandNoticeId)}
+          >
+            Create Reminder
+          </button>
+        );
+      default:
+        return null;
+    }
+  };
+  
 
   const recordField = (record: DemandNotice) => {
     const lastPaymentStatus = record?.property?.demand_notice_status;
+    const colorStatus = record?.color_status;
     
-    // const status = getRandomStatus();
-    
-
- 
-    
-    const classDynamicName = getStatusClass(status);
+    const classDynamicName = getStatusClass(colorStatus);
   
     return (
       <div
@@ -261,10 +330,11 @@ const DemandInvoiceTable = ({
           <span
             className={`flex flex-wrap items-center justify-center px-2 p-1 font-light text-white rounded font-lexend ${classDynamicName['css']} `}
           >
-            {classDynamicName['text']}
+             {classDynamicName?.text}
           </span>
         </div>
         <span className="flex flex-wrap items-center w-1/12 gap-1">
+        {renderReminderButton(colorStatus, record?.id)}
           <span
             className="border-0.6 border-custom-grey-100 text-custom-grey-300 px-2 py-2.5 rounded text-base hover:cursor-pointer"
             title="Delete Invoice"
