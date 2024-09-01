@@ -119,5 +119,5 @@ class DemandNoticeResource extends JsonResource
             }
         }
         return -1;
-    }
+   }
 }
