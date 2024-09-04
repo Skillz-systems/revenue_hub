@@ -164,4 +164,36 @@ class PaymentTest extends TestCase
     //     $this->assertArrayHasKey('data', $accounttoArray);
     //     $this->assertArrayHasKey('flw_ref', get_object_vars($accounttoArray["data"]));
     // }
+
+    public function test_that_a_nibss_key_can_be_created()
+    {
+        $data = ["key_name" => "AES_IV", "key" => "0970cf74d8ad2326"];
+        $this->assertDatabaseMissing("nibss_keys", $data);
+        $service = (new PaymentService())->createOrUpdateNibssKey($data);
+        $this->assertDatabaseHas("nibss_keys", $data);
+    }
+
+    public function test_that_a_nibss_key_can_be_updated()
+    {
+        $data = ["key_name" => "AES_IV", "key" => "0970cf74d8ad2326"];
+        (new PaymentService())->createOrUpdateNibssKey($data);
+        $this->assertDatabaseCount("nibss_keys", 1);
+        $updatedData = ["key_name" => "AES_IV", "key" => "0970cf74d8ad2333"];
+        (new PaymentService())->createOrUpdateNibssKey($updatedData);
+        $this->assertDatabaseHas("nibss_keys", $updatedData);
+        $this->assertDatabaseMissing("nibss_keys", $data);
+    }
+
+    public function test_that_a_nibss_key_can_be_fetched()
+    {
+        $data = ["key_name" => "AES_IV", "key" => "0970cf74d8ad2326"];
+        (new PaymentService())->getNibssKey($data["key_name"]);
+        $response = (new PaymentService())->createOrUpdateNibssKey($data);
+
+        $this->assertNotNull($response);
+
+        // Assert that the retrieved property type matches the created property type
+        $this->assertEquals($response->key, $data["key"]);
+        // Add assertions for other fields if needed
+    }
 }
