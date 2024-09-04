@@ -162,8 +162,8 @@ jobs:
             sed -i -e "s:SECRET_KEY=forge:SECRET_KEY=${SECRET_KEY}:g" Backend/.env
             sed -i -e "s:ENCRYPTION_KEY=forge:ENCRYPTION_KEY=${ENCRYPTION_KEY}:g" Backend/.env
             sed -i -e "s:MAILERSEND_API_KEY=forge:MAILERSEND_API_KEY=${MAILERSEND_API_KEY}:g" Backend/.env
-            sed -i -e 's:MAIL_USERNAME=forge:MAIL_USERNAME="${MAIL_USERNAME_STAGE}":g' Backend/.env
-            sed -i -e 's:MAIL_PASSWORD=forge:MAIL_PASSWORD="${MAIL_PASSWORD_STAGE}":g' Backend/.env
+            sed -i -e "s:MAIL_USERNAME=forge:MAIL_USERNAME='${MAIL_USERNAME_STAGE}':g" Backend/.env
+            sed -i -e "s:MAIL_PASSWORD=forge:MAIL_PASSWORD='${MAIL_PASSWORD_STAGE}':g" Backend/.env
             sed -i -e "s:MAIL_HOST=forge:MAIL_HOST=${MAIL_HOST_STAGE}:g" Backend/.env
             sed -i -e "s:NIBSS_EMAIL=forge:NIBSS_EMAIL='${NIBSS_EMAIL_STAGE}':g" Backend/.env
         
@@ -217,8 +217,8 @@ jobs:
             sed -i -e "s:SECRET_KEY=forge:SECRET_KEY=${SECRET_KEY}:g" Backend/.env
             sed -i -e "s:ENCRYPTION_KEY=forge:ENCRYPTION_KEY=${ENCRYPTION_KEY}:g" Backend/.env
             sed -i -e "s:MAILERSEND_API_KEY=forge:MAILERSEND_API_KEY=${MAILERSEND_API_KEY}:g" Backend/.env
-            sed -i -e 's:MAIL_USERNAME=forge:MAIL_USERNAME="${MAIL_USERNAME_PROD}":g' Backend/.env
-            sed -i -e 's:MAIL_PASSWORD=forge:MAIL_PASSWORD="${MAIL_PASSWORD_PROD}":g' Backend/.env
+            sed -i -e "s:MAIL_USERNAME=forge:MAIL_USERNAME='${MAIL_USERNAME_PROD}':g" Backend/.env
+            sed -i -e "s:MAIL_PASSWORD=forge:MAIL_PASSWORD='${MAIL_PASSWORD_PROD}':g" Backend/.env
             sed -i -e "s:MAIL_HOST=forge:MAIL_HOST=${MAIL_HOST_PROD}:g" Backend/.env
             sed -i -e "s:NIBSS_EMAIL=forge:NIBSS_EMAIL='${NIBSS_EMAIL_PROD}':g" Backend/.env
 
