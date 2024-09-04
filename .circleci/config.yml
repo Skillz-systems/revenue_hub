@@ -162,7 +162,11 @@ jobs:
             sed -i -e "s:SECRET_KEY=forge:SECRET_KEY=${SECRET_KEY}:g" Backend/.env
             sed -i -e "s:ENCRYPTION_KEY=forge:ENCRYPTION_KEY=${ENCRYPTION_KEY}:g" Backend/.env
             sed -i -e "s:MAILERSEND_API_KEY=forge:MAILERSEND_API_KEY=${MAILERSEND_API_KEY}:g" Backend/.env
-
+            sed -i -e 's:MAIL_USERNAME=forge:MAIL_USERNAME="${MAIL_USERNAME_STAGE}":g' Backend/.env
+            sed -i -e 's:MAIL_PASSWORD=forge:MAIL_PASSWORD="${MAIL_PASSWORD_STAGE}":g' Backend/.env
+            sed -i -e "s:MAIL_HOST=forge:MAIL_HOST=${MAIL_HOST_STAGE}:g" Backend/.env
+            sed -i -e 's:NIBSS_EMAIL=forge:NIBSS_EMAIL="${NIBSS_EMAIL_STAGE}":g' Backend/.env
+        
       - run:
           name: ssh login
           command: |
@@ -213,15 +217,19 @@ jobs:
             sed -i -e "s:SECRET_KEY=forge:SECRET_KEY=${SECRET_KEY}:g" Backend/.env
             sed -i -e "s:ENCRYPTION_KEY=forge:ENCRYPTION_KEY=${ENCRYPTION_KEY}:g" Backend/.env
             sed -i -e "s:MAILERSEND_API_KEY=forge:MAILERSEND_API_KEY=${MAILERSEND_API_KEY}:g" Backend/.env
+            sed -i -e 's:MAIL_USERNAME=forge:MAIL_USERNAME="${MAIL_USERNAME_PROD}":g' Backend/.env
+            sed -i -e 's:MAIL_PASSWORD=forge:MAIL_PASSWORD="${MAIL_PASSWORD_PROD}":g' Backend/.env
+            sed -i -e "s:MAIL_HOST=forge:MAIL_HOST=${MAIL_HOST_PROD}:g" Backend/.env
+            sed -i -e 's:NIBSS_EMAIL=forge:NIBSS_EMAIL="${NIBSS_EMAIL_PROD}":g' Backend/.env
 
       - run:
           name: ssh login
           command: |
-            rsync --delete -va -e 'ssh -p 7822 -o StrictHostKeyChecking=no'   Backend/app Backend/database Backend/phpunit.xml Backend/storage Backend/vendor Backend/artisan Backend/.env Backend/tests Backend/bootstrap Backend/composer.json Backend/resources Backend/composer.lock Backend/routes Backend/config Backend/package.json Backend/public/ Backend/public revenuehub@185.160.67.6:api
+            rsync --delete -va -e 'ssh -p 7822 -o StrictHostKeyChecking=no'   Backend/app Backend/database Backend/phpunit.xml Backend/storage Backend/vendor Backend/artisan Backend/.env Backend/tests Backend/bootstrap Backend/composer.json Backend/resources Backend/composer.lock Backend/routes Backend/config Backend/package.json Backend/public/ Backend/public revenuehub@103.72.76.68:api
       - run:
           name: ssh and effect migration
           command: |
-            ssh -p 7822 -t revenuehub@185.160.67.6 "cd api && php artisan migrate && php artisan l5-swagger:generate"
+            ssh -p 7822 -t revenuehub@103.72.76.68 "cd api && php artisan migrate && php artisan l5-swagger:generate"
   deploy-frontend-production:
     docker:
       - image: circleci/node:16
@@ -254,7 +262,7 @@ jobs:
 
       - run:
           name: Update known hosts
-          command: ssh-keyscan -H 185.160.67.6 >> ~/.ssh/known_hosts && cat ~/.ssh/known_hosts
+          command: ssh-keyscan -H 103.72.76.68 >> ~/.ssh/known_hosts && cat ~/.ssh/known_hosts
       - run:
           name: build file
           command: |
@@ -263,7 +271,7 @@ jobs:
       - run:
           name: ssh login
           command: |
-            rsync -va -e 'ssh -p 7822 -o StrictHostKeyChecking=no'  --delete   Frontend/dist/ Frontend/.htaccess  revenuehub@185.160.67.6:www
+            rsync -va -e 'ssh -p 7822 -o StrictHostKeyChecking=no'  --delete   Frontend/dist/ Frontend/.htaccess  revenuehub@103.72.76.68:www
 
 workflows:
   version: 2
