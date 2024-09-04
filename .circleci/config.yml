@@ -165,7 +165,7 @@ jobs:
             sed -i -e 's:MAIL_USERNAME=forge:MAIL_USERNAME="${MAIL_USERNAME_STAGE}":g' Backend/.env
             sed -i -e 's:MAIL_PASSWORD=forge:MAIL_PASSWORD="${MAIL_PASSWORD_STAGE}":g' Backend/.env
             sed -i -e "s:MAIL_HOST=forge:MAIL_HOST=${MAIL_HOST_STAGE}:g" Backend/.env
-            sed -i -e 's:NIBSS_EMAIL=forge:NIBSS_EMAIL="${NIBSS_EMAIL_STAGE}":g' Backend/.env
+            sed -i -e "s:NIBSS_EMAIL=forge:NIBSS_EMAIL='${NIBSS_EMAIL_STAGE}':g" Backend/.env
         
       - run:
           name: ssh login
@@ -220,7 +220,7 @@ jobs:
             sed -i -e 's:MAIL_USERNAME=forge:MAIL_USERNAME="${MAIL_USERNAME_PROD}":g' Backend/.env
             sed -i -e 's:MAIL_PASSWORD=forge:MAIL_PASSWORD="${MAIL_PASSWORD_PROD}":g' Backend/.env
             sed -i -e "s:MAIL_HOST=forge:MAIL_HOST=${MAIL_HOST_PROD}:g" Backend/.env
-            sed -i -e 's:NIBSS_EMAIL=forge:NIBSS_EMAIL="${NIBSS_EMAIL_PROD}":g' Backend/.env
+            sed -i -e "s:NIBSS_EMAIL=forge:NIBSS_EMAIL='${NIBSS_EMAIL_PROD}':g" Backend/.env
 
       - run:
           name: ssh login
