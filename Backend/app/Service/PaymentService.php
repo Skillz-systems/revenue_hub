@@ -4,6 +4,7 @@ namespace App\Service;
 
 use App\Http\Resources\StoreUserResource;
 use App\Models\DemandNoticeAccount;
+use App\Models\NibssKeys;
 use App\Models\Payment;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
@@ -101,6 +102,29 @@ class PaymentService
         return DemandNoticeAccount::where("tx_ref", $txRef)->first();
     }
 
+    public function createOrUpdateNibssKey($data)
+    {
+        $model = new NibssKeys();
+        // check if a key exists 
+        $getKey = $this->getNibssKey($data["key_name"]);
+        if ($getKey) {
+            return $getKey->update($data);
+        }
+
+        //create a new key 
+        return $model->create($data);
+    }
+
+    public function getNibssKey($data)
+    {
+        $model = new NibssKeys();
+        $nibssKey = $model->where(["key_name" => $data])->first();
+
+        if ($nibssKey) {
+            return $nibssKey;
+        }
+        return false;
+    }
     public function model()
     {
         return new Payment();
