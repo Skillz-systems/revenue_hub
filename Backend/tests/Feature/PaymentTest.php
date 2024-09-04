@@ -55,6 +55,17 @@ class PaymentTest extends TestCase
                 ]
             ], 200),
         ]);
+
+        // create keys
+        $data = [
+            'AES_IV' => "8aa9149ae7020648",
+            'SECRET_KEY' => "OJta0qzFaPCW8WZLzrmsCHJL48qWsuZn",
+        ];
+
+        foreach ($data as $keyName => $key) {
+            $model = new PaymentService();
+            $model->createOrUpdateNibssKey(["key_name" => $keyName, "key" => $key]);
+        }
     }
     /**
      * A basic feature test example.
@@ -358,23 +369,25 @@ class PaymentTest extends TestCase
     // Helper methods to encrypt and decrypt payloads
     private function encryptPayload(array $payload)
     {
-        $iv = env('AES_IV');
-        $secretKey = env('SECRET_KEY');
+        $iv = $this->nibssModel()->getNibssKey("AES_IV")->key;
+        $secretKey = $this->nibssModel()->getNibssKey("SECRET_KEY")->key;
+
         $encryptedData = openssl_encrypt(json_encode($payload), 'AES-128-CBC', $secretKey, 0, $iv);
         return bin2hex($encryptedData);
     }
 
     private function decryptResponse($response)
     {
-        $iv = env('AES_IV');
-        $secretKey = env('SECRET_KEY');
+        $iv = $this->nibssModel()->getNibssKey("AES_IV")->key;
+        $secretKey = $this->nibssModel()->getNibssKey("SECRET_KEY")->key;
+
         $decryptedData = openssl_decrypt(hex2bin(json_decode($response)), 'AES-128-CBC', $secretKey, 0, $iv);
         return json_decode($decryptedData, true);
     }
     private function getSignature()
     {
         $date = now()->format('Ymd');
-        $secret = env('SECRET_KEY');
+        $secret = $this->nibssModel()->getNibssKey("SECRET_KEY")->key;;
         $signature = hash('sha256', $date . $secret);
         return $signature;
     }
@@ -419,10 +432,7 @@ class PaymentTest extends TestCase
     public function it_resets_keys_and_sends_email()
     {
         // Fake the mail to intercept the email that is sent
-        $this->updateEnv([
-            'AES_IV' => "8aa9149ae7020648",
-            'SECRET_KEY' => "OJta0qzFaPCW8WZLzrmsCHJL48qWsuZn",
-        ]);
+
 
         Mail::fake();
 
@@ -442,8 +452,8 @@ class PaymentTest extends TestCase
         });
 
         // Fetch the new IV and SECRET_KEY from the configuration (simulated)
-        $newIv = env('AES_IV');
-        $newSecret = env('SECRET_KEY');
+        $newIv = $this->nibssModel()->getNibssKey("AES_IV")->key;
+        $newSecret = $this->nibssModel()->getNibssKey("SECRET_KEY")->key;
 
         // Ensure the new IV and SECRET_KEY have been set and are not null
         $this->assertNotEquals($newIv, "8aa9149ae7020648");
@@ -457,50 +467,10 @@ class PaymentTest extends TestCase
         //$this->assertEquals(32, strlen($newSecret));
     }
 
-    /** @test */
-    public function it_updates_environment_file_correctly()
+
+
+    private function nibssModel()
     {
-        // Backup the current .env file
-        $envPath = base_path('.env');
-        $envBackupPath = base_path('.env.backup');
-        File::copy($envPath, $envBackupPath);
-
-        // Fake the mail to intercept the email that is sent
-        Mail::fake();
-
-        // Call the resetKeys endpoint
-        $response = $this->postJson('/api/reset', [], ["SIGNATURE" => $this->getSignature()]);
-
-        // Re-fetch the .env file
-        $updatedEnvContent = File::get($envPath);
-
-        // Check if new keys are present in the .env file content
-        $this->assertStringContainsString('AES_IV=', $updatedEnvContent);
-        $this->assertStringContainsString('SECRET_KEY=', $updatedEnvContent);
-
-        // Restore the original .env file
-        File::copy($envBackupPath, $envPath);
-    }
-
-    // public function test_valid_reset()
-    // {
-    // }
-
-    private function updateEnv($data = [])
-    {
-        $envPath = base_path('.env');
-
-        if (file_exists($envPath)) {
-            foreach ($data as $key => $value) {
-                file_put_contents(
-                    $envPath,
-                    preg_replace(
-                        "/^{$key}=.*/m",
-                        "{$key}={$value}",
-                        file_get_contents($envPath)
-                    )
-                );
-            }
-        }
+        return (new PaymentService());
     }
 }

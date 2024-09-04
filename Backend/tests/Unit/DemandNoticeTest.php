@@ -162,6 +162,30 @@ class DemandNoticeTest extends TestCase
             'demand_notice_id' => $demandNotice->id,
         ]);
     }
+    public function test_to_see_if_color_status_is_correct_based_on_conditions()
+    {
+        $property = Property::factory()->create();
+        $demandNotice = DemandNotice::factory()->create([
+            'property_id' => $property->id,
+            'status' => 0,
+            'created_at' => Carbon::now()->subDays(10),
+        ]);
+        $colorStatus = (new DemandNoticeService())->colorStatus($demandNotice);
+        $this->assertEquals(0, $colorStatus); 
+        $demandNotice->status = 1;
+        $demandNotice->created_at = Carbon::now()->subDays(30);
+        $demandNotice->save();
+        
+        $reminder = $demandNotice->reminder()->create([
+            'demand_notice_id' => $demandNotice->id,
+            'created_at' => Carbon::now()->subDays(20), 
+        ]);
+    
+        $colorStatus = (new DemandNoticeService())->colorStatus($demandNotice);
+        $this->assertEquals(3, $colorStatus); 
+    }
+    
+
     
 //     public function test_to_see_if_a_response_includes_reminder_date_if_reminder_exists()
 // {

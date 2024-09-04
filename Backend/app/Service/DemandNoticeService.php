@@ -6,6 +6,7 @@ use App\Http\Resources\StoreUserResource;
 use App\Models\DemandNoticeReminder;
 use App\Models\DemandNotice;
 use App\Models\Property;
+use Illuminate\Support\Carbon;
 
 class DemandNoticeService
 {
@@ -95,9 +96,32 @@ class DemandNoticeService
     {
         return $this->model()->whereYear('created_at', $date)->count();
     }
-
-
-
+    public function colorStatus(DemandNotice $demandNotice)
+    {
+        $createdAt = Carbon::parse($demandNotice->created_at);
+        $now = Carbon::now();
+        $daysSinceCreation = $now->diffInDays($createdAt);
+        if ($demandNotice->status === 0) {
+            if ($daysSinceCreation <= 28) {
+                return 0; 
+            }
+            if ($demandNotice->reminder) {
+                $daysSinceReminder = $now->diffInDays($demandNotice->reminder->created_at);
+                if ($daysSinceCreation > 28 && $daysSinceReminder <= 28) {
+                    return 1; 
+                }
+                if ($daysSinceReminder > 28) {
+                    return 4; 
+                }
+            } else {
+                return 2; 
+            }
+        }
+        if ($demandNotice->status == 1) {
+            return 3; 
+        }
+        return -1; 
+    }
     public function model()
     {
         return new DemandNotice();
