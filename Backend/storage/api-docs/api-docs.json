@@ -6861,6 +6861,11 @@
                         "description": "The date when the demand notice was created",
                         "type": "string",
                         "format": "date-time"
+                    },
+                    "reminder_date": {
+                        "description": "The date when the reminder was created",
+                        "type": "string",
+                        "format": "date-time"
                     }
                 },
                 "type": "object"
