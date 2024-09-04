@@ -16,7 +16,7 @@
     "@headlessui/react": "^2.1.2",
     "@material/snackbar": "^14.0.0",
     "@mui/material": "^5.15.19",
-    "axios": "^1.7.2",
+    "axios": "^1.7.4",
     "dotenv": "^16.4.5",
     "html2canvas": "^1.4.1",
     "is-online": "^10.0.0",
