@@ -194,7 +194,7 @@ const DemandInvoiceTable = ({
       case 0:
         return { css: "bg-black text-white", reminder: false, text: "Pending" };
       case 1:
-        return { css: "bg-black-500 text-white", reminder: false, text: "Reminder Created" };
+        return { css: "bg-gray-500 text-white", reminder: false, text: "Reminder Created" };
       case 2:
         return { css: "bg-Amber-800 text-black", reminder: true, text: "Create Reminder" };
       case 3:
@@ -261,7 +261,7 @@ const DemandInvoiceTable = ({
               break;
           }
         }
-        setSnackbar({ open: true, message, severity: "error" });
+        setSnackbar({ open: true, message, serenderReminderButtonverity: "error" });
       }
     };
   
@@ -290,8 +290,8 @@ const DemandInvoiceTable = ({
 
   const recordField = (record: DemandNotice) => {
     const lastPaymentStatus = record?.property?.demand_notice_status;
-    const colorStatus = record?.color_status;
-    
+    const colorStatus = Number(record?.status); 
+  
     const classDynamicName = getStatusClass(colorStatus);
   
     return (
@@ -369,6 +369,7 @@ const DemandInvoiceTable = ({
                 >
                   View Property
                 </p>
+                {/* render create or view remainder notice here */}
                 {lastPaymentStatus === "Expired" ? (
                   <p
                     className="hover:cursor-pointer"
@@ -391,6 +392,8 @@ const DemandInvoiceTable = ({
                     View Reminder
                   </p>
                 ) : null}
+
+                {/* /end render create or view remainder notice here */}
               </span>
             )}
           </span>
