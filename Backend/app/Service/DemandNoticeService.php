@@ -3,6 +3,7 @@
 namespace App\Service;
 
 use App\Http\Resources\StoreUserResource;
+use App\Models\DemandNoticeReminder;
 use App\Models\DemandNotice;
 use App\Models\Property;
 
@@ -45,6 +46,16 @@ class DemandNoticeService
 
         //check the demand notice status if its paid and check that the demand notice year is not the current year 
 
+    }
+    public function createReminder(DemandNotice $demandNotice)
+    {
+        if ($demandNotice->status === DemandNotice::PENDING && !$demandNotice->reminder) {
+            $reminder = new DemandNoticeReminder();
+            $reminder->demand_notice_id = $demandNotice->id;
+            $reminder->save();
+            return $reminder;
+        }
+        return false;
     }
     public function updateDemandNotice($id, $data)
     {

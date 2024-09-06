@@ -85,7 +85,7 @@ export interface DemandNotice {
         prop_use: string;
         rating_dist: string;
         annual_value: number;
-        rate_payable: number;
+        rate_payable: string;
         grand_total: number;
         category: string;
         group: string;
