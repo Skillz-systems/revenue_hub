@@ -314,8 +314,6 @@ const DemandInvoiceTable = ({
   const recordField = (record: DemandNotice) => {
     const lastPaymentStatus = record?.property?.demand_notice_status;
     const colorStatus = record?.color_status;
-    console.log("record:", record);
-    const classDynamicName = getStatusClass(colorStatus);
 
     return (
       <div
@@ -352,13 +350,21 @@ const DemandInvoiceTable = ({
         </span>
         <div className="flex items-center justify-center w-[12%]">
           <span
-            className={`flex flex-wrap items-center justify-center px-2 p-1 font-light text-white rounded font-lexend ${classDynamicName["css"]} `}
+            className={`flex flex-wrap items-center justify-center px-2 p-1 font-light text-white rounded font-lexend
+          ${
+            lastPaymentStatus === "Expired"
+              ? "bg-color-bright-red"
+              : lastPaymentStatus === "Unpaid"
+              ? "bg-color-bright-orange"
+              : "bg-color-bright-green"
+          }
+          `}
           >
-            {classDynamicName?.text}
+            {lastPaymentStatus}
           </span>
         </div>
         <span className="flex flex-wrap items-center w-1/12 gap-1">
-          {renderReminderButton(colorStatus, record?.id)}
+          {/* {renderReminderButton(colorStatus, record?.id)} */}
           <span
             className="border-0.6 border-custom-grey-100 text-custom-grey-300 px-2 py-2.5 rounded text-base hover:cursor-pointer"
             title="Delete Invoice"
