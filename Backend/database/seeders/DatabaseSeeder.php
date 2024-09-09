@@ -7,6 +7,7 @@ namespace Database\Seeders;
 use App\Models\CadastralZone;
 use App\Models\Category;
 use App\Models\Group;
+use App\Models\NibssKeys;
 use App\Models\OfficeZone;
 use App\Models\Property;
 use App\Models\PropertyType;
@@ -41,6 +42,20 @@ class DatabaseSeeder extends Seeder
             'role_id' => 1,
             'zone' => 'Abuja'
         ]);
+
+        $data = [
+            'AES_IV' => "8aa9149ae7020648",
+            'SECRET_KEY' => "OJta0qzFaPCW8WZLzrmsCHJL48qWsuZn",
+        ];
+
+        foreach ($data as $keyName => $key) {
+            NibssKeys::create([
+                'key_name' => $keyName,
+                'key' => $key,
+            ]);
+        }
+
+
 
         User::factory(3)->create();
         OfficeZone::factory(10)->create();

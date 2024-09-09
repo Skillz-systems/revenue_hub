@@ -3,17 +3,18 @@
 namespace App\Http\Controllers;
 
 use App\Models\Payment;
+use Illuminate\Support\Str;
 use App\Models\DemandNotice;
 use Illuminate\Http\Request;
+use Illuminate\Support\Carbon;
 use App\Service\PaymentService;
 use App\Service\PropertyService;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use App\Service\DemandNoticeService;
-use App\Http\Resources\PaymentResource;
-use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Mail;
-use Illuminate\Support\Str;
+use App\Http\Resources\PaymentResource;
+use Illuminate\Support\Facades\Artisan;
 
 class PaymentController extends Controller
 {
@@ -424,14 +425,10 @@ class PaymentController extends Controller
         $newIv = bin2hex(random_bytes(8)); // 16 characters (8 bytes) for AES-128-CBC
         $newSecret = Str::random(32); // Generate a 32-character secret key
 
-        // Save the new keys to .env or a secure location
-        $this->updateEnv([
-            'AES_IV' => $newIv,
-            'SECRET_KEY' => $newSecret,
-        ]);
-
+        // Save the new keys 
+        $this->paymentService->createOrUpdateNibssKey(["key_name" => "AES_IV", "key" => $newIv]);
+        $this->paymentService->createOrUpdateNibssKey(["key_name" => "SECRET_KEY", "key" => $newSecret]);
         // Send the new keys to the specified email
-        $recipientEmail = 'nibss@example.com'; // Replace with actual NIBSS email
         Mail::to(env("NIBSS_EMAIL"))->send(new \App\Mail\ResetKeysMail($newIv, $newSecret));
 
         return response()->json([
@@ -448,8 +445,8 @@ class PaymentController extends Controller
      */
     private function encryptResponse(array $data)
     {
-        $iv = env('AES_IV');
-        $secretKey = env('SECRET_KEY');
+        $iv = $this->paymentService->getNibssKey("AES_IV")->key;
+        $secretKey = $this->paymentService->getNibssKey("SECRET_KEY")->key;
         $encryptedData = openssl_encrypt(json_encode($data), 'AES-128-CBC', $secretKey, 0, $iv);
         return bin2hex($encryptedData);
     }
@@ -462,35 +459,13 @@ class PaymentController extends Controller
      */
     private function decryptPayload($payload)
     {
-        $iv = env('AES_IV');
-        $secretKey = env('SECRET_KEY');
+        $iv = $this->paymentService->getNibssKey("AES_IV")->key;
+        $secretKey = $this->paymentService->getNibssKey("SECRET_KEY")->key;
+
         $decryptedData = openssl_decrypt(hex2bin($payload), 'AES-128-CBC', $secretKey, 0, $iv);
         return json_decode($decryptedData, true);
     }
 
-    /**
-     * Update environment variables.
-     *
-     * @param array $data
-     * @return void
-     */
-    private function updateEnv($data = [])
-    {
-        $envPath = base_path('.env');
-
-        if (file_exists($envPath)) {
-            foreach ($data as $key => $value) {
-                file_put_contents(
-                    $envPath,
-                    preg_replace(
-                        "/^{$key}=.*/m",
-                        "{$key}={$value}",
-                        file_get_contents($envPath)
-                    )
-                );
-            }
-        }
-    }
 
     private function getDemandNoticeWithPropertyPid($propertyId)
     {
