@@ -352,7 +352,20 @@ class PaymentController extends Controller
         // Retrieve and decrypt payload
         $encryptedPayload = $request->header("HASH");
         $decryptedPayload = $this->decryptPayload($encryptedPayload);
+
         $getDemandNotice = $this->getDemandNoticeWithPropertyPid($decryptedPayload["ProductID"]);
+
+        if (!$getDemandNotice) {
+            $response = [
+                "Message" => "provided product number is wrong",
+                "Amount"  => 0,
+                "HasError" => true,
+                "Params" => $decryptedPayload["Params"],
+                "ErrorMessages" => []
+            ];
+            return response()->json($this->encryptResponse($response), 200);
+        }
+
         if ((int) $getDemandNotice->amount <> (int) $decryptedPayload["Amount"]) {
 
             $response = [
@@ -387,6 +400,15 @@ class PaymentController extends Controller
         $encryptedPayload = $request->header("HASH");
         $decryptedPayload = $this->decryptPayload($encryptedPayload);
         $getDemandNotice = $this->getDemandNoticeWithPropertyPid($decryptedPayload["ProductID"]);
+        if (!$getDemandNotice) {
+            $response = [
+                "Message" => "could not save payment, wrong ProductID",
+                "HasError" => true,
+                "ErrorMessages" => []
+            ];
+
+            return response()->json($this->encryptResponse($response), 200);
+        }
         // create a new payment for the above demand notice 
         $paymentData = [
             "tx_ref" => $decryptedPayload["SessionId"],
@@ -422,8 +444,8 @@ class PaymentController extends Controller
     public function resetKeys(Request $request)
     {
         // Generate new IV and SECRET KEY
-        $newIv = bin2hex(random_bytes(8)); // 16 characters (8 bytes) for AES-128-CBC
-        $newSecret = Str::random(32); // Generate a 32-character secret key
+        $newIv = $this->generateKey(); // 16 characters (8 bytes) for AES-128-CBC
+        $newSecret = $this->generateKey(); // 16 characters (8 bytes) for AES-128-CBC
 
         // Save the new keys 
         $this->paymentService->createOrUpdateNibssKey(["key_name" => "AES_IV", "key" => $newIv]);
@@ -447,7 +469,7 @@ class PaymentController extends Controller
     {
         $iv = $this->paymentService->getNibssKey("AES_IV")->key;
         $secretKey = $this->paymentService->getNibssKey("SECRET_KEY")->key;
-        $encryptedData = openssl_encrypt(json_encode($data), 'AES-128-CBC', $secretKey, 0, $iv);
+        $encryptedData = openssl_encrypt(json_encode($data), 'AES-128-CBC', $secretKey, OPENSSL_RAW_DATA, $iv);
         return bin2hex($encryptedData);
     }
 
@@ -462,7 +484,7 @@ class PaymentController extends Controller
         $iv = $this->paymentService->getNibssKey("AES_IV")->key;
         $secretKey = $this->paymentService->getNibssKey("SECRET_KEY")->key;
 
-        $decryptedData = openssl_decrypt(hex2bin($payload), 'AES-128-CBC', $secretKey, 0, $iv);
+        $decryptedData = openssl_decrypt(hex2bin($payload), 'AES-128-CBC', $secretKey, OPENSSL_RAW_DATA, $iv);
         return json_decode($decryptedData, true);
     }
 
@@ -470,7 +492,16 @@ class PaymentController extends Controller
     private function getDemandNoticeWithPropertyPid($propertyId)
     {
         $getProperty = (new PropertyService())->getProperty($propertyId);
+        if (!$getProperty) {
+            return false;
+        }
         $getDemandNotice = $getProperty->demandNotices()->latest()->first();
         return $getDemandNotice;
+    }
+
+    public function generateKey()
+    {
+        return bin2hex(random_bytes(8));
+        //return bin2hex(openssl_random_pseudo_bytes(16));
     }
 }
