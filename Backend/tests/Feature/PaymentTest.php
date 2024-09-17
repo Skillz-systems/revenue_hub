@@ -58,8 +58,8 @@ class PaymentTest extends TestCase
 
         // create keys
         $data = [
-            'AES_IV' => "8aa9149ae7020648",
-            'SECRET_KEY' => "OJta0qzFaPCW8WZLzrmsCHJL48qWsuZn",
+            'AES_IV' => "1c69eabb257ef4cc",
+            'SECRET_KEY' => "e2d54a44e8d27955",
         ];
 
         foreach ($data as $keyName => $key) {
@@ -250,11 +250,10 @@ class PaymentTest extends TestCase
         ];
 
         $encryptedPayload = $this->encryptPayload($payload);
-
         $response = $this->postJson('api/validate', [], ["HASH" => $encryptedPayload, "SIGNATURE" => $this->getSignature()]);
-        //dd($response);
         $response->assertStatus(200);
         $decryptedResponse = $this->decryptResponse($response->getContent());
+
         $this->assertFalse($decryptedResponse['HasError']);
         $this->assertEquals('Transaction validated successfully.', $decryptedResponse['Message']);
     }
@@ -372,7 +371,7 @@ class PaymentTest extends TestCase
         $iv = $this->nibssModel()->getNibssKey("AES_IV")->key;
         $secretKey = $this->nibssModel()->getNibssKey("SECRET_KEY")->key;
 
-        $encryptedData = openssl_encrypt(json_encode($payload), 'AES-128-CBC', $secretKey, 0, $iv);
+        $encryptedData = openssl_encrypt(json_encode($payload), 'AES-128-CBC', $secretKey, OPENSSL_RAW_DATA, $iv);
         return bin2hex($encryptedData);
     }
 
@@ -381,7 +380,7 @@ class PaymentTest extends TestCase
         $iv = $this->nibssModel()->getNibssKey("AES_IV")->key;
         $secretKey = $this->nibssModel()->getNibssKey("SECRET_KEY")->key;
 
-        $decryptedData = openssl_decrypt(hex2bin(json_decode($response)), 'AES-128-CBC', $secretKey, 0, $iv);
+        $decryptedData = openssl_decrypt(hex2bin(json_decode($response)), 'AES-128-CBC', $secretKey, OPENSSL_RAW_DATA, $iv);
         return json_decode($decryptedData, true);
     }
     private function getSignature()
