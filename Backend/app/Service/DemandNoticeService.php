@@ -48,9 +48,9 @@ class DemandNoticeService
         //check the demand notice status if its paid and check that the demand notice year is not the current year 
 
     }
-    public function createReminder(DemandNotice $demandNotice)
+    public function createReminder($demandNotice)
     {
-        if ($demandNotice->status === DemandNotice::PENDING && !$demandNotice->reminder) {
+        if ($demandNotice->status == DemandNotice::PENDING && empty($demandNotice->reminder)) {
             $reminder = new DemandNoticeReminder();
             $reminder->demand_notice_id = $demandNotice->id;
             $reminder->save();
@@ -103,24 +103,24 @@ class DemandNoticeService
         $daysSinceCreation = $now->diffInDays($createdAt);
         if ($demandNotice->status === 0) {
             if ($daysSinceCreation <= 28) {
-                return 0; 
+                return 0;
             }
             if ($demandNotice->reminder) {
                 $daysSinceReminder = $now->diffInDays($demandNotice->reminder->created_at);
                 if ($daysSinceCreation > 28 && $daysSinceReminder <= 28) {
-                    return 1; 
+                    return 1;
                 }
                 if ($daysSinceReminder > 28) {
-                    return 4; 
+                    return 4;
                 }
             } else {
-                return 2; 
+                return 2;
             }
         }
         if ($demandNotice->status == 1) {
-            return 3; 
+            return 3;
         }
-        return -1; 
+        return -1;
     }
     public function model()
     {
