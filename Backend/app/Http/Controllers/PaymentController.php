@@ -361,7 +361,7 @@ class PaymentController extends Controller
                 "Amount"  => 0,
                 "HasError" => true,
                 "Params" => $decryptedPayload["Params"],
-                "ErrorMessages" => []
+                "ErrorMessages" => ["provided product number is wrong"]
             ];
             return response()->json($this->encryptResponse($response), 200);
         }
@@ -383,7 +383,7 @@ class PaymentController extends Controller
             "Amount"  => $getDemandNotice->amount,
             "HasError" => false,
             "Params" => $decryptedPayload["Params"],
-            "ErrorMessages" => []
+            "ErrorMessages" => ["Transaction validated successfully."]
         ];
         return response()->json($this->encryptResponse($response), 200);
     }
@@ -404,7 +404,7 @@ class PaymentController extends Controller
             $response = [
                 "Message" => "could not save payment, wrong ProductID",
                 "HasError" => true,
-                "ErrorMessages" => []
+                "ErrorMessages" => ["could not save payment, wrong ProductID"]
             ];
 
             return response()->json($this->encryptResponse($response), 200);
@@ -426,7 +426,7 @@ class PaymentController extends Controller
             $response = [
                 "Message" => "could not save payment",
                 "HasError" => true,
-                "ErrorMessages" => []
+                "ErrorMessages" => ["could not save payment"]
             ];
 
             return response()->json($this->encryptResponse($response), 200);
