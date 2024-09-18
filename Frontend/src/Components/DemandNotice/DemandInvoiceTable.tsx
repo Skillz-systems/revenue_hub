@@ -23,9 +23,9 @@ import {
   useTriggerError,
 } from "../../Utils/client";
 import axios from "axios";
+import DemandReminderDocument from "./DemandReminderDocument";
 
 const apiUrl = import.meta.env.VITE_API_URL as string;
-
 
 const DemandInvoiceTable = ({
   staticInformation,
@@ -58,6 +58,7 @@ const DemandInvoiceTable = ({
     undefined
   );
   const [demandInvoiceDocument, setDemandInvoiceDocument] = useState<any>(null);
+  const [reminderDocument, setReminderDocument] = useState<any>(null);
   const { token, userRoleId } = useTokens();
   const [statusMap, setStatusMap] = useState<{ [key: number]: number }>({});
   const [snackbar, setSnackbar] = useState({
@@ -151,6 +152,10 @@ const DemandInvoiceTable = ({
     setDemandInvoiceDocument(propertyData);
   };
 
+  const handleViewReminderModal = (propertyData: any) => {
+    setReminderDocument(propertyData);
+  };
+
   // PAGINATION LOGIC
   const offset = currentPage * propertiesPerPage;
 
@@ -170,7 +175,7 @@ const DemandInvoiceTable = ({
     if (!data) {
       return [];
     }
-    console.log("Demand Notice", data)
+    // console.log("Demand Notice", data);
     return data?.slice(offset, offset + propertiesPerPage);
   };
 
@@ -188,44 +193,63 @@ const DemandInvoiceTable = ({
   };
 
   const pageCount = Math.ceil(LengthByActiveMenu() / propertiesPerPage);
-  const getStatusClass=(status:number)=> {
-
+  const getStatusClass = (status: number) => {
     switch (status) {
       case 0:
         return { css: "bg-black text-white", reminder: false, text: "Pending" };
       case 1:
-        return { css: "bg-black-500 text-white", reminder: false, text: "Reminder Created" };
+        return {
+          css: "bg-black-500 text-white",
+          reminder: false,
+          text: "Reminder Created",
+        };
       case 2:
-        return { css: "bg-Amber-800 text-black", reminder: true, text: "Create Reminder" };
+        return {
+          css: "bg-Amber-800 text-black",
+          reminder: true,
+          text: "Create Reminder",
+        };
       case 3:
-        return { css: "bg-green-500 text-black", reminder: false, text: "Paid" };
+        return {
+          css: "bg-green-500 text-black",
+          reminder: false,
+          text: "Paid",
+        };
       case 4:
-        return { css: "bg-red-500 text-white", reminder: false, text: "View Reminder" };
+        return {
+          css: "bg-red-500 text-white",
+          reminder: false,
+          text: "View Reminder",
+        };
       default:
-        return { css: "bg-blue-600 text-black", reminder: false, text: "Unknown" };
+        return {
+          css: "bg-blue-600 text-black",
+          reminder: false,
+          text: "Unknown",
+        };
     }
-  }
-  const getRandomStatus=()=> {
+  };
+  const getRandomStatus = () => {
     return Math.floor(Math.random() * 5);
-  }
+  };
 
   useEffect(() => {
     setStatus(getRandomStatus());
-  }, []); 
-   
+  }, []);
+
   const renderReminderButton = (status: number, demandNoticeId: number) => {
     const createReminder = async (id: number) => {
       try {
         const response = await axios.post(
-          `${apiUrl}/api/demand-notice/{demandNoticeId}/reminder`, 
+          `${apiUrl}/api/demand-notice/{demandNoticeId}/reminder`,
           { demandNoticeId: id },
           {
             headers: {
-              Authorization: `Bearer ${token}`, 
+              Authorization: `Bearer ${token}`,
             },
           }
         );
-  
+
         if (response.status === 200) {
           setSnackbar({
             open: true,
@@ -264,19 +288,19 @@ const DemandInvoiceTable = ({
         setSnackbar({ open: true, message, severity: "error" });
       }
     };
-  
+
     switch (status) {
       case 1:
       case 4:
         return (
-          <button className="bg-blue-500 text-white px-2 py-1 rounded">
+          <button className="px-2 py-1 text-white bg-blue-500 rounded">
             View Reminder
           </button>
         );
       case 2:
         return (
           <button
-            className="bg-green-500 text-white px-2 py-1 rounded"
+            className="px-2 py-1 text-white bg-green-500 rounded"
             onClick={() => createReminder(demandNoticeId)}
           >
             Create Reminder
@@ -286,14 +310,11 @@ const DemandInvoiceTable = ({
         return null;
     }
   };
-  
 
   const recordField = (record: DemandNotice) => {
     const lastPaymentStatus = record?.property?.demand_notice_status;
     const colorStatus = record?.color_status;
-    
-    const classDynamicName = getStatusClass(colorStatus);
-  
+
     return (
       <div
         key={record?.id}
@@ -310,12 +331,13 @@ const DemandInvoiceTable = ({
         </span>
         <span
           className={`flex flex-wrap items-center px-4 py-1 justify-center rounded-xl w-[12%] font-light font-lexend text-color-text-black text-[10px] border-0.6 border-custom-grey-100
-          ${record?.property?.prop_use === "Commercial"
+          ${
+            record?.property?.prop_use === "Commercial"
               ? "bg-color-light-red"
               : record?.property?.prop_use === "Residential"
-                ? "bg-color-light-yellow"
-                : "bg-custom-blue-200"
-            }
+              ? "bg-color-light-yellow"
+              : "bg-custom-blue-200"
+          }
           `}
         >
           {record?.property?.prop_use.toUpperCase()}
@@ -328,13 +350,21 @@ const DemandInvoiceTable = ({
         </span>
         <div className="flex items-center justify-center w-[12%]">
           <span
-            className={`flex flex-wrap items-center justify-center px-2 p-1 font-light text-white rounded font-lexend ${classDynamicName['css']} `}
+            className={`flex flex-wrap items-center justify-center px-2 p-1 font-light text-white rounded font-lexend
+          ${
+            lastPaymentStatus === "Expired"
+              ? "bg-color-bright-red"
+              : lastPaymentStatus === "Unpaid"
+              ? "bg-color-bright-orange"
+              : "bg-color-bright-green"
+          }
+          `}
           >
-             {classDynamicName?.text}
+            {lastPaymentStatus}
           </span>
         </div>
         <span className="flex flex-wrap items-center w-1/12 gap-1">
-        {renderReminderButton(colorStatus, record?.id)}
+          {/* {renderReminderButton(colorStatus, record?.id)} */}
           <span
             className="border-0.6 border-custom-grey-100 text-custom-grey-300 px-2 py-2.5 rounded text-base hover:cursor-pointer"
             title="Delete Invoice"
@@ -387,7 +417,11 @@ const DemandInvoiceTable = ({
                     Generate Reminder
                   </p>
                 ) : lastPaymentStatus === "Unpaid" ? (
-                  <p className="hover:cursor-pointer" title="View Reminder">
+                  <p
+                    className="hover:cursor-pointer"
+                    title="View Reminder"
+                    onClick={() => handleViewReminderModal(record)}
+                  >
                     View Reminder
                   </p>
                 ) : null}
@@ -420,10 +454,11 @@ const DemandInvoiceTable = ({
               displayColumn === false && query !== "" && menu.id > 1 ? null : (
                 <div
                   key={menu.id}
-                  className={`flex items-start justify-between gap-2 px-2 py-1 text-xs font-lexend hover:cursor-pointer ${activeMenu === menu.id
+                  className={`flex items-start justify-between gap-2 px-2 py-1 text-xs font-lexend hover:cursor-pointer ${
+                    activeMenu === menu.id
                       ? "bg-primary-color rounded"
                       : "bg-inherit"
-                    }`}
+                  }`}
                   onClick={() => {
                     if (menu.id > 1) {
                       setSnackbar({
@@ -439,10 +474,11 @@ const DemandInvoiceTable = ({
                   }}
                 >
                   <span
-                    className={`${activeMenu === menu.id
+                    className={`${
+                      activeMenu === menu.id
                         ? "font-medium text-white"
                         : "text-color-text-two"
-                      }`}
+                    }`}
                   >
                     {menu.name}
                   </span>
@@ -457,8 +493,9 @@ const DemandInvoiceTable = ({
           </div>
           <TableSearchInput
             parentBoxStyle="flex items-center justify-between p-2 bg-custom-grey-100 rounded-3xl border border-custom-color-one"
-            inputBoxStyle={` ${displaySearchIcon ? "w-10/12" : "w-full"
-              } text-xs outline-none bg-inherit font-lexend text-color-text-two`}
+            inputBoxStyle={` ${
+              displaySearchIcon ? "w-10/12" : "w-full"
+            } text-xs outline-none bg-inherit font-lexend text-color-text-two`}
             iconBoxStyle={"text-base text-primary-color hover:cursor-pointer"}
             placeholder={"Search records"}
             searchIcon={<FiSearch />}
@@ -604,6 +641,24 @@ const DemandInvoiceTable = ({
             }}
             // propertyModalTransition={propertyModalTransition}
             demandInvoiceInfo={demandInvoiceDocument}
+          />
+        </DemandPropertyModal>
+      ) : null}
+      {reminderDocument ? (
+        <DemandPropertyModal
+          modalStyle={
+            "absolute top-0 left-0 z-[30] flex items-start justify-end w-full h-screen p-4 overflow-hidden bg-black bg-opacity-60"
+          }
+        >
+          <DemandReminderDocument
+            hideDemandInvoiceModal={() => {
+              setReminderDocument(false);
+              // setTimeout(() => {
+              //   setPropertyModalTransition(false);
+              // }, 300);
+            }}
+            // propertyModalTransition={propertyModalTransition}
+            demandInvoiceInfo={reminderDocument}
           />
         </DemandPropertyModal>
       ) : null}
