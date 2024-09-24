@@ -353,7 +353,7 @@ class PaymentController extends Controller
         $encryptedPayload = $request->header("HASH");
         $decryptedPayload = $this->decryptPayload($encryptedPayload);
 
-        $getDemandNotice = $this->getDemandNoticeWithPropertyPid($decryptedPayload["ProductID"]);
+        $getDemandNotice = $this->getDemandNoticeWithPropertyPid($decryptedPayload["Params"]["Occupier"]);
 
         if (!$getDemandNotice) {
             $response = [
@@ -363,7 +363,7 @@ class PaymentController extends Controller
                 "Params" => $decryptedPayload["Params"],
                 "ErrorMessages" => ["provided product number is wrong"]
             ];
-            return response()->json($this->encryptResponse($response), 200);
+            return response($this->encryptResponse($response), 200);
         }
 
         if ((int) $getDemandNotice->amount <> (int) $decryptedPayload["Amount"]) {
@@ -375,7 +375,7 @@ class PaymentController extends Controller
                 "Params" => $decryptedPayload["Params"],
                 "ErrorMessages" => []
             ];
-            return response()->json($this->encryptResponse($response), 200);
+            return response($this->encryptResponse($response), 200);
         }
 
         $response = [
@@ -385,7 +385,7 @@ class PaymentController extends Controller
             "Params" => $decryptedPayload["Params"],
             "ErrorMessages" => ["Transaction validated successfully."]
         ];
-        return response()->json($this->encryptResponse($response), 200);
+        return response($this->encryptResponse($response), 200);
     }
 
     /**
@@ -399,7 +399,7 @@ class PaymentController extends Controller
         // Retrieve and decrypt payload
         $encryptedPayload = $request->header("HASH");
         $decryptedPayload = $this->decryptPayload($encryptedPayload);
-        $getDemandNotice = $this->getDemandNoticeWithPropertyPid($decryptedPayload["ProductID"]);
+        $getDemandNotice = $this->getDemandNoticeWithPropertyPid($decryptedPayload["Params"]["Occupier"]);
         if (!$getDemandNotice) {
             $response = [
                 "Message" => "could not save payment, wrong ProductID",
@@ -407,7 +407,7 @@ class PaymentController extends Controller
                 "ErrorMessages" => ["could not save payment, wrong ProductID"]
             ];
 
-            return response()->json($this->encryptResponse($response), 200);
+            return response($this->encryptResponse($response), 200);
         }
         // create a new payment for the above demand notice 
         $paymentData = [
@@ -429,7 +429,7 @@ class PaymentController extends Controller
                 "ErrorMessages" => ["could not save payment"]
             ];
 
-            return response()->json($this->encryptResponse($response), 200);
+            return response($this->encryptResponse($response), 200);
         }
         $this->demandNoticeService->updateDemandNotice($getDemandNotice->id, ["status" => DemandNotice::PAID]);
         $response = [
@@ -438,7 +438,7 @@ class PaymentController extends Controller
             "ErrorMessages" => []
         ];
 
-        return response()->json($this->encryptResponse($response), 200);
+        return response($this->encryptResponse($response), 200);
     }
 
     public function resetKeys(Request $request)

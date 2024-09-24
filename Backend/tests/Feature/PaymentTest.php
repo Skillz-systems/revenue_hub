@@ -94,7 +94,8 @@ class PaymentTest extends TestCase
                     "tx_ref",
                     "pin",
                     "demand_notice" => [
-                        "id", "amount",
+                        "id",
+                        "amount",
                         "property" => ["pid"]
                     ],
                     "actual_amount",
@@ -132,7 +133,8 @@ class PaymentTest extends TestCase
                 "tx_ref",
                 "pin",
                 "demand_notice" => [
-                    "id", "amount",
+                    "id",
+                    "amount",
                     "property" => ["pid"]
                 ],
                 "actual_amount",
@@ -246,7 +248,9 @@ class PaymentTest extends TestCase
         $payload = [
             'ProductID' => '223321343',
             'Amount' => 1000,
-            'Params' => ['param1' => 'value1', 'param2' => 'value2']
+            "Params" => [
+                "Occupier" => "223321343",
+            ]
         ];
 
         $encryptedPayload = $this->encryptPayload($payload);
@@ -273,7 +277,9 @@ class PaymentTest extends TestCase
         $payload = [
             'ProductID' => '223321343',
             'Amount' => 500,
-            'Params' => ['param1' => 'value1', 'param2' => 'value2']
+            "Params" => [
+                "Occupier" => "223321343",
+            ]
         ];
 
         $encryptedPayload = $this->encryptPayload($payload);
@@ -365,31 +371,9 @@ class PaymentTest extends TestCase
     //     $this->assertContains('Payload cannot be empty', $decryptedResponse['Message']);
     // }
 
-    // Helper methods to encrypt and decrypt payloads
-    private function encryptPayload(array $payload)
-    {
-        $iv = $this->nibssModel()->getNibssKey("AES_IV")->key;
-        $secretKey = $this->nibssModel()->getNibssKey("SECRET_KEY")->key;
 
-        $encryptedData = openssl_encrypt(json_encode($payload), 'AES-128-CBC', $secretKey, OPENSSL_RAW_DATA, $iv);
-        return bin2hex($encryptedData);
-    }
 
-    private function decryptResponse($response)
-    {
-        $iv = $this->nibssModel()->getNibssKey("AES_IV")->key;
-        $secretKey = $this->nibssModel()->getNibssKey("SECRET_KEY")->key;
 
-        $decryptedData = openssl_decrypt(hex2bin(json_decode($response)), 'AES-128-CBC', $secretKey, OPENSSL_RAW_DATA, $iv);
-        return json_decode($decryptedData, true);
-    }
-    private function getSignature()
-    {
-        $date = now()->format('Ymd');
-        $secret = $this->nibssModel()->getNibssKey("SECRET_KEY")->key;;
-        $signature = hash('sha256', $date . $secret);
-        return $signature;
-    }
 
     public function test_valid_notification()
     {
@@ -412,15 +396,14 @@ class PaymentTest extends TestCase
             "ProductID" => "223321343",
             "DestinationInstitutionCode" => "999998",
             "Params" => [
-                "ReferenceNumber" => "192036198284",
-                "Phone" => "1234566"
+                "Occupier" => "223321343",
             ]
         ];
 
         $encryptedPayload = $this->encryptPayload($payload);
 
         $response = $this->postJson('api/notify', [], ["HASH" => $encryptedPayload, "SIGNATURE" => $this->getSignature()]);
-        //dd($response);
+
         $response->assertStatus(200);
         $decryptedResponse = $this->decryptResponse($response->getContent());
         $this->assertFalse($decryptedResponse['HasError']);
@@ -471,5 +454,33 @@ class PaymentTest extends TestCase
     private function nibssModel()
     {
         return (new PaymentService());
+    }
+
+    private function decryptResponse($response)
+    {
+        $iv = $this->nibssModel()->getNibssKey("AES_IV")->key;
+        $secretKey = $this->nibssModel()->getNibssKey("SECRET_KEY")->key;
+
+        $decryptedData = openssl_decrypt(hex2bin($response), 'AES-128-CBC', $secretKey, OPENSSL_RAW_DATA, $iv);
+        return json_decode($decryptedData, true);
+    }
+
+
+    private function getSignature()
+    {
+        $date = now()->format('Ymd');
+        $secret = $this->nibssModel()->getNibssKey("SECRET_KEY")->key;;
+        $signature = hash('sha256', $date . $secret);
+        return $signature;
+    }
+
+    // Helper methods to encrypt and decrypt payloads
+    private function encryptPayload(array $payload)
+    {
+        $iv = $this->nibssModel()->getNibssKey("AES_IV")->key;
+        $secretKey = $this->nibssModel()->getNibssKey("SECRET_KEY")->key;
+
+        $encryptedData = openssl_encrypt(json_encode($payload), 'AES-128-CBC', $secretKey, OPENSSL_RAW_DATA, $iv);
+        return bin2hex($encryptedData);
     }
 }
