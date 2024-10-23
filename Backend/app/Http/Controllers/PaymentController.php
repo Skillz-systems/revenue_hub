@@ -353,8 +353,18 @@ class PaymentController extends Controller
         $encryptedPayload = $request->header("HASH");
         $decryptedPayload = $this->decryptPayload($encryptedPayload);
 
-        $getDemandNotice = $this->getDemandNoticeWithPropertyPid($decryptedPayload["Params"]["Occupier"]);
+        $getProperty = $this->getDemandNoticeWithPropertyPid($decryptedPayload["Params"]["Occupier"]);
+        if (!$getProperty) {
+            $response = [
+                "Message" => "provided product number is wrong",
+                "Amount"  => 0,
+                "HasError" => true,
+                "Params" => $decryptedPayload["Params"],
+                "ErrorMessages" => ["provided product number is wrong"]
+            ];
+        }
 
+        $getDemandNotice = $getProperty->demandNotices()->latest()->first();
         if (!$getDemandNotice) {
             $response = [
                 "Message" => "provided product number is wrong",
@@ -362,6 +372,20 @@ class PaymentController extends Controller
                 "HasError" => true,
                 "Params" => $decryptedPayload["Params"],
                 "ErrorMessages" => ["provided product number is wrong"]
+            ];
+            return response($this->encryptResponse($response), 200);
+        }
+        $propertyDetails = [
+            "ProductID" => $getProperty->pid,
+            "Amount" => $getDemandNotice->amount
+        ];
+        if ($getDemandNotice->status == DemandNotice::PAID) {
+            $response = [
+                "Message" => "Sorry Payment has been  processed before.",
+                "Amount"  => 0,
+                "HasError" => true,
+                "Params" => $decryptedPayload["Params"],
+                "ErrorMessages" => ["Sorry Payment has been  processed before."]
             ];
             return response($this->encryptResponse($response), 200);
         }
@@ -378,13 +402,15 @@ class PaymentController extends Controller
             return response($this->encryptResponse($response), 200);
         }
 
+        $returnedParams = array_merge($decryptedPayload["Params"], $propertyDetails);
         $response = [
             "Message" => "Transaction validated successfully.",
             "Amount"  => $getDemandNotice->amount,
             "HasError" => false,
-            "Params" => $decryptedPayload["Params"],
+            "Params" => $returnedParams,
             "ErrorMessages" => ["Transaction validated successfully."]
         ];
+        //$getProperty
         return response($this->encryptResponse($response), 200);
     }
 
@@ -496,7 +522,7 @@ class PaymentController extends Controller
             return false;
         }
         $getDemandNotice = $getProperty->demandNotices()->latest()->first();
-        return $getDemandNotice;
+        return $getProperty;
     }
 
     public function generateKey()
