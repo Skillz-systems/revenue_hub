@@ -402,7 +402,7 @@ class PaymentController extends Controller
             return response($this->encryptResponse($response), 200);
         }
 
-        $returnedParams = array_merge($decryptedPayload["Params"], $propertyDetails);
+        $returnedParams = $propertyDetails; //array_merge($decryptedPayload["Params"], $propertyDetails);
         $response = [
             "Message" => "Transaction validated successfully.",
             "Amount"  => $getDemandNotice->amount,
