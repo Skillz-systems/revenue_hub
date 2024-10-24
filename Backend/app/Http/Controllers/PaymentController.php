@@ -377,7 +377,11 @@ class PaymentController extends Controller
         }
         $propertyDetails = [
             "ProductID" => $getProperty->pid,
-            "Amount" => $getDemandNotice->amount
+            "Amount" => $getDemandNotice->amount,
+            "Address" => $getDemandNotice->prop_addr,
+            "Street" => $getProperty->street ?? $getProperty->street->name,
+            "CadastralZone" => $getProperty->cadastralZone ?? $getProperty->cadastralZone->name,
+            "RatingDistrict" => $getProperty->ratingDistrict ?? $getProperty->ratingDistrict->name,
         ];
         if ($getDemandNotice->status == DemandNotice::PAID) {
             $response = [
