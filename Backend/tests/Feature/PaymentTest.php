@@ -240,7 +240,18 @@ class PaymentTest extends TestCase
     public function test_valid_transaction()
     {
 
-        $property = Property::factory()->create(["pid" => "223321343"]);
+        $rating = RatingDistrict::factory()->create();
+        $cadastral = CadastralZone::factory()->create();
+        $street = Street::factory()->create();
+        $property = Property::factory()->create(
+            [
+                "pid" => "223321343",
+                "rating_district_id" => $rating->id,
+                "cadastral_zone_id" => $cadastral->id,
+                "street_id" => $street->id
+            ]
+
+        );
         DemandNotice::factory()->create([
             "property_id" => $property->id,
             "amount" => 1000
@@ -269,7 +280,18 @@ class PaymentTest extends TestCase
      */
     public function test_invalid_transaction_amount_mismatch()
     {
-        $property = Property::factory()->create(["pid" => "223321343"]);
+        $rating = RatingDistrict::factory()->create();
+        $cadastral = CadastralZone::factory()->create();
+        $street = Street::factory()->create();
+        $property = Property::factory()->create(
+            [
+                "pid" => "223321343",
+                "rating_district_id" => $rating->id,
+                "cadastral_zone_id" => $cadastral->id,
+                "street_id" => $street->id
+            ]
+
+        );
         DemandNotice::factory()->create([
             "property_id" => $property->id,
             "amount" => 1000
