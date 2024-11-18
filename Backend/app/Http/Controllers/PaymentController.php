@@ -359,7 +359,7 @@ class PaymentController extends Controller
                 "Message" => "provided product number is wrong",
                 "Amount"  => 0,
                 "HasError" => true,
-                "Params" => $decryptedPayload["Params"],
+                "Params" => [],
                 "ErrorMessages" => ["provided product number is wrong"]
             ];
         }
@@ -370,7 +370,7 @@ class PaymentController extends Controller
                 "Message" => "provided product number is wrong",
                 "Amount"  => 0,
                 "HasError" => true,
-                "Params" => $decryptedPayload["Params"],
+                "Params" => [],
                 "ErrorMessages" => ["provided product number is wrong"]
             ];
             return response($this->encryptResponse($response), 200);
@@ -388,20 +388,20 @@ class PaymentController extends Controller
                 "Message" => "Sorry Payment has been  processed before.",
                 "Amount"  => 0,
                 "HasError" => true,
-                "Params" => $decryptedPayload["Params"],
+                "Params" => [],
                 "ErrorMessages" => ["Sorry Payment has been  processed before."]
             ];
             return response($this->encryptResponse($response), 200);
         }
 
-        if ((int) $getDemandNotice->amount <> (int) $decryptedPayload["Amount"]) {
+        if ($decryptedPayload["Amount"] != "0.0") {
 
             $response = [
-                "Message" => "provided amount is wrong",
+                "Message" => "amount should be 0.0",
                 "Amount"  => $getDemandNotice->amount,
                 "HasError" => true,
-                "Params" => $decryptedPayload["Params"],
-                "ErrorMessages" => []
+                "Params" => [],
+                "ErrorMessages" => ["amount should be 0.0"]
             ];
             return response($this->encryptResponse($response), 200);
         }
@@ -412,7 +412,7 @@ class PaymentController extends Controller
             "Amount"  => $getDemandNotice->amount,
             "HasError" => false,
             "Params" => $returnedParams,
-            "ErrorMessages" => ["Transaction validated successfully."]
+            "ErrorMessages" => []
         ];
         //$getProperty
         return response($this->encryptResponse($response), 200);
