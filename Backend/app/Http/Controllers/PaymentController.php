@@ -394,7 +394,7 @@ class PaymentController extends Controller
             return response($this->encryptResponse($response), 200);
         }
 
-        if ($decryptedPayload["Amount"] != "0.0") {
+        if ($decryptedPayload["Amount"] != 0.0) {
 
             $response = [
                 "Message" => "amount should be 0.0",
