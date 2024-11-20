@@ -258,7 +258,7 @@ class PaymentTest extends TestCase
         ]);
         $payload = [
             'ProductID' => '223321343',
-            'Amount' => 1000,
+            'Amount' => 0.0,
             "Params" => [
                 "Occupier" => "223321343",
             ]
@@ -268,7 +268,7 @@ class PaymentTest extends TestCase
         $response = $this->postJson('api/validate', [], ["HASH" => $encryptedPayload, "SIGNATURE" => $this->getSignature()]);
         $response->assertStatus(200);
         $decryptedResponse = $this->decryptResponse($response->getContent());
-
+        //dd($decryptedResponse);
         $this->assertFalse($decryptedResponse['HasError']);
         $this->assertEquals('Transaction validated successfully.', $decryptedResponse['Message']);
     }
@@ -312,7 +312,7 @@ class PaymentTest extends TestCase
         $decryptedResponse = $this->decryptResponse($response->getContent());
 
         $this->assertTrue($decryptedResponse['HasError']);
-        $this->assertEquals('provided amount is wrong', $decryptedResponse['Message']);
+        $this->assertEquals('amount should be 0.0', $decryptedResponse['Message']);
     }
 
     /**
@@ -471,7 +471,42 @@ class PaymentTest extends TestCase
         //$this->assertEquals(32, strlen($newSecret));
     }
 
+    public function test_check_if_payment_has_been_made_previously_too_avoid_duplicate_payments()
+    {
 
+        $rating = RatingDistrict::factory()->create();
+        $cadastral = CadastralZone::factory()->create();
+        $street = Street::factory()->create();
+        $property = Property::factory()->create(
+            [
+                "pid" => "223321343",
+                "rating_district_id" => $rating->id,
+                "cadastral_zone_id" => $cadastral->id,
+                "street_id" => $street->id
+            ]
+
+        );
+        DemandNotice::factory()->create([
+            "property_id" => $property->id,
+            "amount" => 1000,
+            "status" => 1,
+        ]);
+        $payload = [
+            'ProductID' => '223321343',
+            'Amount' => 0.0,
+            "Params" => [
+                "Occupier" => "223321343",
+            ]
+        ];
+
+        $encryptedPayload = $this->encryptPayload($payload);
+        $response = $this->postJson('api/validate', [], ["HASH" => $encryptedPayload, "SIGNATURE" => $this->getSignature()]);
+        $response->assertStatus(200);
+        $decryptedResponse = $this->decryptResponse($response->getContent());
+
+        $this->assertTrue($decryptedResponse['HasError']);
+        $this->assertEquals('Sorry Payment has been processed before.', $decryptedResponse['Message']);
+    }
 
     private function nibssModel()
     {
