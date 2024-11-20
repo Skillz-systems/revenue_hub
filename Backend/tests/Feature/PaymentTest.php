@@ -58,8 +58,8 @@ class PaymentTest extends TestCase
 
         // create keys
         $data = [
-            'AES_IV' => "8aa9149ae7020648",
-            'SECRET_KEY' => "OJta0qzFaPCW8WZLzrmsCHJL48qWsuZn",
+            'AES_IV' => "1c69eabb257ef4cc",
+            'SECRET_KEY' => "e2d54a44e8d27955",
         ];
 
         foreach ($data as $keyName => $key) {
@@ -94,7 +94,8 @@ class PaymentTest extends TestCase
                     "tx_ref",
                     "pin",
                     "demand_notice" => [
-                        "id", "amount",
+                        "id",
+                        "amount",
                         "property" => ["pid"]
                     ],
                     "actual_amount",
@@ -132,7 +133,8 @@ class PaymentTest extends TestCase
                 "tx_ref",
                 "pin",
                 "demand_notice" => [
-                    "id", "amount",
+                    "id",
+                    "amount",
                     "property" => ["pid"]
                 ],
                 "actual_amount",
@@ -238,23 +240,35 @@ class PaymentTest extends TestCase
     public function test_valid_transaction()
     {
 
-        $property = Property::factory()->create(["pid" => "223321343"]);
+        $rating = RatingDistrict::factory()->create();
+        $cadastral = CadastralZone::factory()->create();
+        $street = Street::factory()->create();
+        $property = Property::factory()->create(
+            [
+                "pid" => "223321343",
+                "rating_district_id" => $rating->id,
+                "cadastral_zone_id" => $cadastral->id,
+                "street_id" => $street->id
+            ]
+
+        );
         DemandNotice::factory()->create([
             "property_id" => $property->id,
             "amount" => 1000
         ]);
         $payload = [
             'ProductID' => '223321343',
-            'Amount' => 1000,
-            'Params' => ['param1' => 'value1', 'param2' => 'value2']
+            'Amount' => 0.0,
+            "Params" => [
+                "Occupier" => "223321343",
+            ]
         ];
 
         $encryptedPayload = $this->encryptPayload($payload);
-
         $response = $this->postJson('api/validate', [], ["HASH" => $encryptedPayload, "SIGNATURE" => $this->getSignature()]);
-        //dd($response);
         $response->assertStatus(200);
         $decryptedResponse = $this->decryptResponse($response->getContent());
+        //dd($decryptedResponse);
         $this->assertFalse($decryptedResponse['HasError']);
         $this->assertEquals('Transaction validated successfully.', $decryptedResponse['Message']);
     }
@@ -266,7 +280,18 @@ class PaymentTest extends TestCase
      */
     public function test_invalid_transaction_amount_mismatch()
     {
-        $property = Property::factory()->create(["pid" => "223321343"]);
+        $rating = RatingDistrict::factory()->create();
+        $cadastral = CadastralZone::factory()->create();
+        $street = Street::factory()->create();
+        $property = Property::factory()->create(
+            [
+                "pid" => "223321343",
+                "rating_district_id" => $rating->id,
+                "cadastral_zone_id" => $cadastral->id,
+                "street_id" => $street->id
+            ]
+
+        );
         DemandNotice::factory()->create([
             "property_id" => $property->id,
             "amount" => 1000
@@ -274,7 +299,9 @@ class PaymentTest extends TestCase
         $payload = [
             'ProductID' => '223321343',
             'Amount' => 500,
-            'Params' => ['param1' => 'value1', 'param2' => 'value2']
+            "Params" => [
+                "Occupier" => "223321343",
+            ]
         ];
 
         $encryptedPayload = $this->encryptPayload($payload);
@@ -285,7 +312,7 @@ class PaymentTest extends TestCase
         $decryptedResponse = $this->decryptResponse($response->getContent());
 
         $this->assertTrue($decryptedResponse['HasError']);
-        $this->assertEquals('provided amount is wrong', $decryptedResponse['Message']);
+        $this->assertEquals('amount should be 0.0', $decryptedResponse['Message']);
     }
 
     /**
@@ -366,31 +393,9 @@ class PaymentTest extends TestCase
     //     $this->assertContains('Payload cannot be empty', $decryptedResponse['Message']);
     // }
 
-    // Helper methods to encrypt and decrypt payloads
-    private function encryptPayload(array $payload)
-    {
-        $iv = $this->nibssModel()->getNibssKey("AES_IV")->key;
-        $secretKey = $this->nibssModel()->getNibssKey("SECRET_KEY")->key;
 
-        $encryptedData = openssl_encrypt(json_encode($payload), 'AES-128-CBC', $secretKey, 0, $iv);
-        return bin2hex($encryptedData);
-    }
 
-    private function decryptResponse($response)
-    {
-        $iv = $this->nibssModel()->getNibssKey("AES_IV")->key;
-        $secretKey = $this->nibssModel()->getNibssKey("SECRET_KEY")->key;
 
-        $decryptedData = openssl_decrypt(hex2bin(json_decode($response)), 'AES-128-CBC', $secretKey, 0, $iv);
-        return json_decode($decryptedData, true);
-    }
-    private function getSignature()
-    {
-        $date = now()->format('Ymd');
-        $secret = $this->nibssModel()->getNibssKey("SECRET_KEY")->key;;
-        $signature = hash('sha256', $date . $secret);
-        return $signature;
-    }
 
     public function test_valid_notification()
     {
@@ -413,15 +418,14 @@ class PaymentTest extends TestCase
             "ProductID" => "223321343",
             "DestinationInstitutionCode" => "999998",
             "Params" => [
-                "ReferenceNumber" => "192036198284",
-                "Phone" => "1234566"
+                "Occupier" => "223321343",
             ]
         ];
 
         $encryptedPayload = $this->encryptPayload($payload);
 
         $response = $this->postJson('api/notify', [], ["HASH" => $encryptedPayload, "SIGNATURE" => $this->getSignature()]);
-        //dd($response);
+
         $response->assertStatus(200);
         $decryptedResponse = $this->decryptResponse($response->getContent());
         $this->assertFalse($decryptedResponse['HasError']);
@@ -467,10 +471,73 @@ class PaymentTest extends TestCase
         //$this->assertEquals(32, strlen($newSecret));
     }
 
+    public function test_check_if_payment_has_been_made_previously_too_avoid_duplicate_payments()
+    {
 
+        $rating = RatingDistrict::factory()->create();
+        $cadastral = CadastralZone::factory()->create();
+        $street = Street::factory()->create();
+        $property = Property::factory()->create(
+            [
+                "pid" => "223321343",
+                "rating_district_id" => $rating->id,
+                "cadastral_zone_id" => $cadastral->id,
+                "street_id" => $street->id
+            ]
+
+        );
+        DemandNotice::factory()->create([
+            "property_id" => $property->id,
+            "amount" => 1000,
+            "status" => 1,
+        ]);
+        $payload = [
+            'ProductID' => '223321343',
+            'Amount' => 0.0,
+            "Params" => [
+                "Occupier" => "223321343",
+            ]
+        ];
+
+        $encryptedPayload = $this->encryptPayload($payload);
+        $response = $this->postJson('api/validate', [], ["HASH" => $encryptedPayload, "SIGNATURE" => $this->getSignature()]);
+        $response->assertStatus(200);
+        $decryptedResponse = $this->decryptResponse($response->getContent());
+
+        $this->assertTrue($decryptedResponse['HasError']);
+        $this->assertEquals('Sorry Payment has been processed before.', $decryptedResponse['Message']);
+    }
 
     private function nibssModel()
     {
         return (new PaymentService());
+    }
+
+    private function decryptResponse($response)
+    {
+        $iv = $this->nibssModel()->getNibssKey("AES_IV")->key;
+        $secretKey = $this->nibssModel()->getNibssKey("SECRET_KEY")->key;
+
+        $decryptedData = openssl_decrypt(hex2bin($response), 'AES-128-CBC', $secretKey, OPENSSL_RAW_DATA, $iv);
+        return json_decode($decryptedData, true);
+    }
+
+
+    private function getSignature()
+    {
+        $date = now()->format('Ymd');
+        $secret = $this->nibssModel()->getNibssKey("SECRET_KEY")->key;;
+        $signature = hash('sha256', $date . $secret);
+        return $signature;
+    }
+
+    // Helper methods to encrypt and decrypt payloads
+    private function encryptPayload(array $payload)
+    {
+        $iv = $this->nibssModel()->getNibssKey("AES_IV")->key;
+        $secretKey = $this->nibssModel()->getNibssKey("SECRET_KEY")->key;
+
+        $encryptedData = openssl_encrypt(json_encode($payload), 'AES-128-CBC', $secretKey, OPENSSL_RAW_DATA, $iv);
+        return bin2hex($encryptedData);
     }
 }

@@ -352,27 +352,106 @@ class PaymentController extends Controller
         // Retrieve and decrypt payload
         $encryptedPayload = $request->header("HASH");
         $decryptedPayload = $this->decryptPayload($encryptedPayload);
-        $getDemandNotice = $this->getDemandNoticeWithPropertyPid($decryptedPayload["ProductID"]);
-        if ((int) $getDemandNotice->amount <> (int) $decryptedPayload["Amount"]) {
-
+        // get property with decrypted property id
+        $getProperty = $this->getDemandNoticeWithPropertyPid($decryptedPayload["Params"]["Occupier"]);
+        // return error response if property not found
+        Log::error('test new one ', ['demand_notice' => !$getProperty]);
+        if (!$getProperty) {
             $response = [
-                "Message" => "provided amount is wrong",
-                "Amount"  => $getDemandNotice->amount,
+                "Message" => "provided Occupier number does not exist",
                 "HasError" => true,
-                "Params" => $decryptedPayload["Params"],
-                "ErrorMessages" => []
+                "Amount"  => 0,
+                "Params" => [
+                    "ProductID" => "",
+                    "Amount" => "",
+                    "Address" => "",
+                    "Street" => "",
+                    "CadastralZone" => "",
+                    "RatingDistrict" => "",
+                ],
+                "ErrorMessages" => ["provided Occupier number does not exist"]
             ];
-            return response()->json($this->encryptResponse($response), 200);
+            return response($this->encryptResponse($response), 200);
+        }
+        //get the most recent demand notice
+        $getDemandNotice = $getProperty->demandNotices()->latest()->first();
+        // return error if demand notice not found
+        if (!$getDemandNotice) {
+            $response = [
+                "Message" => "provided Occupier number does not exist",
+                "HasError" => true,
+                "Amount"  => 0,
+                "Params" => [
+                    "ProductID" => "",
+                    "Amount" => "",
+                    "Address" => "",
+                    "Street" => "",
+                    "CadastralZone" => "",
+                    "RatingDistrict" => "",
+                ],
+                "ErrorMessages" => ["provided Occupier number does not exist"]
+            ];
+            return response($this->encryptResponse($response), 200);
+        }
+        // return error if demand notice is already paid
+        Log::error('active demand notice status ', ['demand_notice' => $getDemandNotice->status]);
+        if ($getDemandNotice->status == DemandNotice::PAID) {
+            $response = [
+                "Message" => "Sorry Payment has been processed before.",
+                "HasError" => true,
+                "Amount"  => 0.0,
+                "Params" => [
+                    "ProductID" => "",
+                    "Amount" => "",
+                    "Address" => "",
+                    "Street" => "",
+                    "CadastralZone" => "",
+                    "RatingDistrict" => "",
+                ],
+                "ErrorMessages" => ["Sorry Payment has been processed before."]
+            ];
+            return response($this->encryptResponse($response), 200);
         }
 
+        $propertyDetails = [
+            "ProductID" => $getProperty->pid,
+            "Amount" => $getDemandNotice->amount,
+            "Address" => $getProperty->prop_addr ? $getProperty->prop_addr : "",
+            "Street" => $getProperty->street ? $getProperty->street->name : "",
+            "CadastralZone" => $getProperty->cadastralZone ? $getProperty->cadastralZone->name : "",
+            "RatingDistrict" => $getProperty->ratingDistrict ? $getProperty->ratingDistrict->name : "",
+        ];
+
+
+        if ($decryptedPayload["Amount"] != 0.0) {
+
+            $response = [
+                "Message" => "amount should be 0.0",
+                "HasError" => true,
+                "Amount"  => $getDemandNotice->amount,
+                "Params" => [
+                    "ProductID" => "",
+                    "Amount" => "",
+                    "Address" => "",
+                    "Street" => "",
+                    "CadastralZone" => "",
+                    "RatingDistrict" => "",
+                ],
+                "ErrorMessages" => ["amount should be 0.0"]
+            ];
+            return response($this->encryptResponse($response), 200);
+        }
+
+        $returnedParams = $propertyDetails; //array_merge($decryptedPayload["Params"], $propertyDetails);
         $response = [
             "Message" => "Transaction validated successfully.",
             "Amount"  => $getDemandNotice->amount,
             "HasError" => false,
-            "Params" => $decryptedPayload["Params"],
+            "Params" => $returnedParams,
             "ErrorMessages" => []
         ];
-        return response()->json($this->encryptResponse($response), 200);
+        //$getProperty
+        return response($this->encryptResponse($response), 200);
     }
 
     /**
@@ -386,7 +465,16 @@ class PaymentController extends Controller
         // Retrieve and decrypt payload
         $encryptedPayload = $request->header("HASH");
         $decryptedPayload = $this->decryptPayload($encryptedPayload);
-        $getDemandNotice = $this->getDemandNoticeWithPropertyPid($decryptedPayload["ProductID"]);
+        $getDemandNotice = $this->getDemandNoticeWithPropertyPid($decryptedPayload["Params"]["Occupier"]);
+        if (!$getDemandNotice) {
+            $response = [
+                "Message" => "could not save payment, wrong ProductID",
+                "HasError" => true,
+                "ErrorMessages" => ["could not save payment, wrong ProductID"]
+            ];
+
+            return response($this->encryptResponse($response), 200);
+        }
         // create a new payment for the above demand notice 
         $paymentData = [
             "tx_ref" => $decryptedPayload["SessionId"],
@@ -404,26 +492,27 @@ class PaymentController extends Controller
             $response = [
                 "Message" => "could not save payment",
                 "HasError" => true,
-                "ErrorMessages" => []
+                "ErrorMessages" => ["could not save payment"]
             ];
 
-            return response()->json($this->encryptResponse($response), 200);
+            return response($this->encryptResponse($response), 200);
         }
-        $this->demandNoticeService->updateDemandNotice($getDemandNotice->id, ["status" => DemandNotice::PAID]);
+        $demandNotice = $getDemandNotice->demandNotices()->latest()->first();
+        $this->demandNoticeService->updateDemandNotice($demandNotice->id, ["status" => DemandNotice::PAID]);
         $response = [
             "Message" => "Transaction Completed",
             "HasError" => false,
             "ErrorMessages" => []
         ];
 
-        return response()->json($this->encryptResponse($response), 200);
+        return response($this->encryptResponse($response), 200);
     }
 
     public function resetKeys(Request $request)
     {
         // Generate new IV and SECRET KEY
-        $newIv = bin2hex(random_bytes(8)); // 16 characters (8 bytes) for AES-128-CBC
-        $newSecret = Str::random(32); // Generate a 32-character secret key
+        $newIv = $this->generateKey(); // 16 characters (8 bytes) for AES-128-CBC
+        $newSecret = $this->generateKey(); // 16 characters (8 bytes) for AES-128-CBC
 
         // Save the new keys 
         $this->paymentService->createOrUpdateNibssKey(["key_name" => "AES_IV", "key" => $newIv]);
@@ -447,7 +536,7 @@ class PaymentController extends Controller
     {
         $iv = $this->paymentService->getNibssKey("AES_IV")->key;
         $secretKey = $this->paymentService->getNibssKey("SECRET_KEY")->key;
-        $encryptedData = openssl_encrypt(json_encode($data), 'AES-128-CBC', $secretKey, 0, $iv);
+        $encryptedData = openssl_encrypt(json_encode($data), 'AES-128-CBC', $secretKey, OPENSSL_RAW_DATA, $iv);
         return bin2hex($encryptedData);
     }
 
@@ -462,7 +551,7 @@ class PaymentController extends Controller
         $iv = $this->paymentService->getNibssKey("AES_IV")->key;
         $secretKey = $this->paymentService->getNibssKey("SECRET_KEY")->key;
 
-        $decryptedData = openssl_decrypt(hex2bin($payload), 'AES-128-CBC', $secretKey, 0, $iv);
+        $decryptedData = openssl_decrypt(hex2bin($payload), 'AES-128-CBC', $secretKey, OPENSSL_RAW_DATA, $iv);
         return json_decode($decryptedData, true);
     }
 
@@ -470,7 +559,16 @@ class PaymentController extends Controller
     private function getDemandNoticeWithPropertyPid($propertyId)
     {
         $getProperty = (new PropertyService())->getProperty($propertyId);
-        $getDemandNotice = $getProperty->demandNotices()->latest()->first();
-        return $getDemandNotice;
+        if (empty($getProperty)) {
+            return false;
+        }
+        //$getDemandNotice = $getProperty->demandNotices()->latest()->first();
+        return $getProperty;
+    }
+
+    public function generateKey()
+    {
+        return bin2hex(random_bytes(8));
+        //return bin2hex(openssl_random_pseudo_bytes(16));
     }
 }

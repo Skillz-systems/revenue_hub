@@ -159,14 +159,10 @@ const DemandInvoiceDocument = ({
   };
 
   const pdfRef = useRef<HTMLDivElement>(null);
-  const secondPdfRef = useRef<HTMLDivElement>(null);
 
   const downloadEmailPrintPDF = async (operation: string) => {
     const paddingSections = document.querySelectorAll(".printPaddingBottom");
     paddingSections.forEach((section) => section.classList.add("pb-4"));
-
-    const paddingSection2 = document.querySelectorAll(".printPaddingBottom2");
-    paddingSection2.forEach((section) => section.classList.add("pb-2"));
 
     const officalParentSection = document.querySelectorAll(
       ".officialStyleParent"
@@ -181,8 +177,7 @@ const DemandInvoiceDocument = ({
     officalChildSection.forEach((section) => section.classList.add("pb-6"));
 
     const firstInput = pdfRef.current;
-    const secondInput = secondPdfRef.current;
-    if (!firstInput || !secondInput) return;
+    if (!firstInput) return;
 
     try {
       const options = {
@@ -191,7 +186,6 @@ const DemandInvoiceDocument = ({
       };
 
       const firstCanvas = await html2canvas(firstInput, options);
-      const secondCanvas = await html2canvas(secondInput, options);
 
       const pdf = new jsPDF({
         orientation: "portrait",
@@ -208,16 +202,7 @@ const DemandInvoiceDocument = ({
 
       const imgDataFirst = firstCanvas.toDataURL("image/png", 1.0);
       pdf.addImage(imgDataFirst, "WEBP", 0, 0, imgWidth1, 835);
-
-      // Calculate the height of the second canvas dynamically
-      const secondInputHeight = secondInput.offsetHeight;
-      const imgWidth2 = 595;
-      const imgHeight2 =
-        (secondInputHeight / secondInput.offsetWidth) * imgWidth2;
-
       pdf.addPage();
-      const imgDataSecond = secondCanvas.toDataURL("image/webp", 1.0);
-      pdf.addImage(imgDataSecond, "WEBP", 0, 0, imgWidth2, imgHeight2);
 
       if (operation === "download") {
         pdf.save(
@@ -231,7 +216,6 @@ const DemandInvoiceDocument = ({
         window.open(pdf.output("bloburl"), "_blank");
         otherSections.forEach((section) => section.classList.remove("hidden"));
         paddingSections.forEach((section) => section.classList.remove("pb-4"));
-        paddingSection2.forEach((section) => section.classList.remove("pb-2"));
         officalParentSection.forEach((section) =>
           section.classList.remove("space-y-4")
         );
@@ -359,7 +343,7 @@ const DemandInvoiceDocument = ({
           <div className="flex flex-col w-full space-y-1 border rounded border-custom-color-one">
             <div className="flex items-center justify-between p-1 rounded-t bg-document-bg-grey printPaddingBottom">
               <p className="text-document-grey font-lexend text-[11px] font-bold leading-[13px] w-[50%]">
-                Demand Notice is hereby given to
+                Tenement Rate Reminder Notice is hereby given to
               </p>
               <p className="text-document-grey text-right font-lexend text-[11px] leading-[13px] w-[50%]">
                 {demandInvoiceData.Occupant}
@@ -393,64 +377,48 @@ const DemandInvoiceDocument = ({
               </div>
             </div>
           </div>
-          {/* 3RD SECTION */}
-          <div className="flex items-center justify-between w-full gap-2">
-            <div className="flex flex-col gap-y-2 w-[50%] align-center justify-center">
-              <p className="text-color-text-two text-left font-lexend text-[11px] leading-[13px] printPaddingBottom">
-                BILL INFORMATION
-              </p>
-              <div className="flex flex-col gap-0 border rounded border-custom-color-100 printPaddingBottom">
-                {demandInvoiceData.billInfoData.map((item, index) => (
-                  <div
-                    key={index}
-                    className="flex p-1 text-metal font-lexend text-[11px] leading-[13px]"
-                  >
-                    <p className="font-medium text-left w-[50%]">
-                      {item.label} :
-                    </p>
-                    <p className="font-bold text-primary-color">{item.value}</p>
-                  </div>
-                ))}
-              </div>
-            </div>
-            <div className="flex flex-col gap-0 border rounded border-custom-color-100 w-[50%]">
-              {demandInvoiceData.billDetailsData.map((item, index) => (
-                <div
-                  key={index}
-                  className={`flex items-center px-1 py-0.5 text-metal font-lexend text-[11px] leading-[13px] ${
-                    item.isTotal ? "py-1 bg-custom-blue-100 rounded-b" : ""
-                  }`}
-                >
-                  <p className="font-medium text-left w-[130px] printPaddingBottom2">
-                    {item.label} :
-                  </p>
-                  <p className="flex items-center justify-center font-bold text-primary-color printPaddingBottom2">
-                    <span className="mr-1 text-xs text-color-bright-green">
-                      ₦
-                    </span>
-                    <span>{`${formatNumberWithCommas(item.value)}`}</span>
-                  </p>
-                </div>
-              ))}
-            </div>
-          </div>
-          {/* 4TH SECTION */}
+          {/* 2ND SECTION */}
           <div className="flex flex-col w-full space-y-1 border rounded border-custom-color-one">
-            <p className="text-[11px] p-1 font-lexend font-light leading-[12.5px] text-document-grey border-b border-custom-color-one pb-2 printPaddingBottom">
-              In accordance with the provision of section 7 (4th Schedule) of
-              the 1999 constitution of the Federal Republic Of Nigeria; Federal
-              Capital Territory Act Cap 503, LPN 2004 (vol. 3) as amended: Taxes
-              and Levies (Approved list of Collection ) Act 2015 (as amended and
-              AMAC Tenement Rate bye-Laws of 2014. We forward herewith your bill
-              for the year 2024, totaling{" "}
-              <span className="font-normal text-color-dark-red">
+            <p className="text-[11px] p-1 font-lexend font-medium text-metal leading-[12.5px]">
+              THE OCCUPIER {demandInvoiceData.propertyData[2].value}.
+            </p>
+            <p className="text-[11px] p-1 font-lexend font-medium text-metal leading-[12.5px]">
+              The Management of Abuja Municipal Area Council; Tenement Rate &
+              Valuation Department wishes to remind you on the pending demand of
+              Tenement Rate & Valuation levy/fees dues to Abuja municipal Area
+              Council. This is inspite of having allowed you ample amount of
+              time to pay the fees/levy of the sum{" "}
+              <span className=" text-color-dark-red">
                 NGN
                 {formatNumberWithCommas(
                   demandInvoiceData.billDetailsData[4].value
                 )}
+                .
               </span>{" "}
-              in respect of the landed property (ies) you are occupying in Abuja
-              Municipal Area Council as per details above.
+            </p>
+            <p className="text-[11px] p-1 font-lexend font-medium text-metal leading-[12.5px]">
+              You are therefore required to settle the bill/levy within One Week
+              from the date of this notice, otherwise Abuja Municipal Area
+              Council Tenement Rate & Valuation Authority may have no choice
+              other than to enforce full payment of the bill/levy in accordance
+              with the provision of section 7 (4th schedule) of the 1999
+              constitution of the Federal Republic of Nigeria, Federal Capital
+              Territory Act cap 503, LFN 200 (Vol.3) as amended: Taxes and
+              levies (approved list of collection) Act 2015 (as amended) and
+              AMAC Tenement Rent bye-laws of 2012.
+            </p>
+            <p className="text-[11px] p-1 font-lexend font-medium text-metal leading-[12.5px] border-b border-custom-color-one pb-2 printPaddingBottom">
+              <span className="text-color-dark-red">NOTE:</span> We forwarded
+              your bill for the year 2024, totalling{" "}
+              <span className=" text-color-dark-red">
+                NGN
+                {formatNumberWithCommas(
+                  demandInvoiceData.billDetailsData[4].value
+                )}
+                .
+              </span>{" "}
+              in respect of the landed property(ies) you are occupying in Abuja
+              Municipal Area Council as per detail above
             </p>
             <div className="flex p-1 printPaddingBottom">
               <div className="flex flex-col items-start space-y-1 w-[80%]">
@@ -514,7 +482,7 @@ const DemandInvoiceDocument = ({
               </div>
             </div>
           </div>
-          {/* 5TH SECTION */}
+          {/* 3RD SECTION */}
           <div className="flex items-start w-full">
             <p className="text-left text-document-grey text-[9px] font-lexend">
               Your early compliance will be highly appreciated
@@ -523,14 +491,14 @@ const DemandInvoiceDocument = ({
           <div className="flex items-center justify-between w-full gap-6">
             <div className="flex flex-col w-[50%] items-start justify-between officialStyleParent">
               <ChairmanSection
-                title="HEAD OF TENEMENT RATE"
-                subtitle="For Honourable Chairman Abuja Municipal Area Council"
-                signature={images.signature1}
-              />
-              <ChairmanSection
                 title="DIRECTOR OF OPERATIONS"
                 subtitle="For Honourable Chairman Abuja Municipal Area Council"
                 signature={images.signature2}
+              />
+              <ChairmanSection
+                title="HEAD OF ENFORCEMENT AND REVENUE RECOVERY"
+                subtitle="For Honourable Chairman Abuja Municipal Area Council"
+                signature={images.signature1}
               />
             </div>
             <div className="flex flex-col border border-custom-color-one rounded w-[50%]">
@@ -544,7 +512,7 @@ const DemandInvoiceDocument = ({
               />
             </div>
           </div>
-          {/* 6TH SECTION */}
+          {/* 4TH SECTION */}
           <p className="font-medium text-[9px] leading-[11px] text-faint-grey text-center font-red-hat">
             <span className="font-bold text-color-dark-red">NOTE:</span> Ensure
             you collect Electronic and Treasury reciepts(s) at Annex Office:
@@ -554,115 +522,9 @@ const DemandInvoiceDocument = ({
         </div>
 
         <div className="page-break"></div>
-
-        <div
-          ref={secondPdfRef}
-          className="bg-white print-section flex flex-col px-4 py-2 space-y-4 w-[100%]"
-        >
-          {/* 7TH SECTION */}
-          <div className="flex flex-col w-full p-1 border rounded font-lexend border-custom-color-one printPaddingBottom">
-            <h3 className="text-center text-[12px] text-metal font-semibold">
-              Annex Offices:
-            </h3>
-            <div className="flex flex-col flex-wrap w-full h-auto">
-              <p className="flex items-start just gap-1 text-[11px] text-metal leading-[18px]">
-                <span>1.</span>
-                <span>
-                  Suite 301, 3rd floor, Kano House, Ralph Shodeinde Street,
-                  Central Business District, Abuja, FCT.
-                </span>
-              </p>
-              <p className="flex items-start just gap-1 text-[11px] text-metal leading-[18px]">
-                <span>2.</span>
-                <span>
-                  Suite 112, 1st Floor, MKK Plaza Gudu, Gudu District, Abuja,
-                  FCT.
-                </span>
-              </p>
-              <p className="flex items-start just gap-1 text-[11px] text-metal leading-[18px]">
-                <span>3.</span>
-                <span>
-                  Suite 24, First floor, Nyanya Plaza, along Karu Jikwoyi Road,
-                  Nyanya, Abuja, FCT.
-                </span>
-              </p>
-            </div>
-          </div>
-          {/* 8TH SECTION */}
-          <div className="flex flex-col w-full p-1 border rounded font-lexend border-custom-color-one printPaddingBottom">
-            <h3 className="text-center text-[12px] text-metal font-semibold">
-              Notes:
-            </h3>
-            <div className="flex flex-col flex-wrap w-full h-auto">
-              <p className="flex items-start just gap-1 text-[11px] text-metal leading-[18px]">
-                <span>1.</span>
-                <span>
-                  Primary Liability lies on the occupier, while owner/agent of
-                  such tenement(s) shall be secondarily liable.
-                </span>
-              </p>
-              <p className="flex items-start just gap-1 text-[11px] text-metal leading-[18px]">
-                <span>2.</span>
-                <span>
-                  Failure to pay Tenement Rate is a punishable offence and upon
-                  conviction be liable to a fine equivalent to the sum owed or
-                  imprisonment for six (6) months and "POSSIBLY SEAL-OFF" of the
-                  premises in accordance with the law.
-                </span>
-              </p>
-              <p className="flex items-start just gap-1 text-[11px] text-metal leading-[18px]">
-                <span>3.</span>
-                <span>Your prompt payment is hereby solicited.</span>
-              </p>
-            </div>
-          </div>
-          {/* 9TH SECTION */}
-          <div className="flex flex-col w-full p-1 font-lexend text-[11px] text-metal leading-[18px] printPaddingBottom">
-            <b>
-              It is illegal to pay cash to anyone EXCEPT through the payment
-              options as specified.
-            </b>
-            <p>
-              All payment(s) should be made in full using the specifed payment
-              options not <b className="underline">later than (21) days</b> from
-              the date this <b>DEMAND NOTICE</b> is served on you.
-            </p>
-          </div>
-          {/* 10TH SECTION */}
-          <div className="flex flex-col w-full p-1 border rounded font-lexend border-custom-color-one printPaddingBottom">
-            <h3 className="text-center text-[12px] text-metal font-semibold">
-              HOW TO ASSESS YOUR PROPERTY:
-            </h3>
-            <div className="flex flex-col flex-wrap w-full h-auto">
-              <p className="flex items-start gap-1 text-[11px] text-metal leading-[18px]">
-                <span>1.</span>
-                <span>
-                  Note that RATE NAIRAGE is 4 Kobo for every 100 Kobo;
-                  therefore, your <b>RATE PAYABLE</b> will be{" "}
-                  <b>ANNUAL VALUE * 0.04.</b>
-                </span>
-              </p>
-              <p className="flex items-start just gap-1 text-[11px] text-metal leading-[18px]">
-                <span>2.</span>
-                <span>
-                  <b>PENALTY ON ARREARS</b> is calculated at the rate of 10% of
-                  any outstanding arrears.
-                </span>
-              </p>
-            </div>
-          </div>
-          {/* 11TH SECTION */}
-          <div className="flex flex-col w-full p-1 border rounded font-lexend border-custom-color-one printPaddingBottom">
-            <b className="text-[11px] text-metal leading-[18px]">
-              Note: A change of the use of property from residential to
-              commericial without notifying the council in writing shall attract
-              a penalty of ₦5,000,000.000
-            </b>
-          </div>
-        </div>
       </div>
 
-      {/* 12TH SECTION */}
+      {/* 5TH SECTION */}
       <div className="flex flex-col items-center justify-end flex-1 w-full hide-on-print">
         <div className="flex items-end justify-center w-full gap-6 p-2">
           <span
