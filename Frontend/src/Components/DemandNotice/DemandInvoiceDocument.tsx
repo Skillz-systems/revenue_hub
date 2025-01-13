@@ -455,54 +455,35 @@ const DemandInvoiceDocument = ({
             <div className="flex p-1 printPaddingBottom">
               <div className="flex flex-col items-start space-y-1 w-[80%]">
                 <p className="font-lexend text-[11px] text-document-grey leading-[12.5px]">
-                  Payment Options:
+                  How to make payment:
                 </p>
                 <div className="flex items-start justify-center gap-1 font-lexend text-[11px] text-document-grey leading-[12.5px]">
                   <span>1.</span>
-                  <p>
-                    Internet Banking Transfer:{" "}
-                    <b>
-                      <a
-                        href={`/invoice/${
-                          customTableData?.pid ||
-                          customTableData?.property.pid ||
-                          demandInvoiceInfo?.property.pid
-                        }`}
-                        target="_blank"
-                        className="underline text-color-dark-red"
-                      >
-                        https://revenuehub.ng/invoice/
-                        {customTableData?.pid ||
-                          customTableData?.property.pid ||
-                          demandInvoiceInfo?.property.pid}
-                      </a>
-                    </b>
-                  </p>
+                 <span>Walk to any of your bank branch</span>
                 </div>
                 <p className="flex items-start justify-center gap-1 font-lexend text-[11px] text-document-grey leading-[12.5px]">
                   <span>2.</span>
                   <span>
-                    Pay by Scanning the QRCode on the right hand which will
-                    redirect you to the your unique payment page.
+                  Inform the banker at the teller point you want to make a NIBS ebill payment for AMAc zone A/B tenement
                   </span>
                 </p>
                 <p className="flex items-start justify-center gap-1 font-lexend text-[11px] text-document-grey leading-[12.5px]">
                   <span>3.</span>
-                  <span>AMAC Bank Draft.</span>
+                  <span>property number eg 1234567890 (this should be the actual property number )</span>
                 </p>
-                <p className="flex items-start justify-center gap-1 font-lexend text-[11px] leading-[12.5px]">
+                {/* <p className="flex items-start justify-center gap-1 font-lexend text-[11px] leading-[12.5px]">
                   <span className="text-document-grey">4.</span>
                   <span className="text-color-dark-red">
                     To avoid doubts, write your PID as Payment Reference for
                     bank branch and Transfers.
                   </span>
-                </p>
+                </p> */}
                 <p className="font-lexend text-[11px] text-document-grey leading-[12.5px]">
                   Payment(s) made to locations(s) other than as prescribed here
                   shall be treated as invalid.
                 </p>
               </div>
-              <div className="flex flex-col space-y-2 items-center w-[20%]">
+              {/* <div className="flex flex-col space-y-2 items-center w-[20%]">
                 <QRCode
                   size={256}
                   style={{ height: "auto", maxWidth: "64px", width: "100%" }}
@@ -511,7 +492,7 @@ const DemandInvoiceDocument = ({
                 <p className="text-color-text-one font-lexend font-bold text-[9px] leading-[11px]">
                   {demandInvoiceData.PropertyIdentificationNumber}
                 </p>
-              </div>
+              </div> */}
             </div>
           </div>
           {/* 5TH SECTION */}

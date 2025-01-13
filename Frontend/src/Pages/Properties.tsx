@@ -210,13 +210,7 @@ export default function Properties() {
               </p>
               <div
                 className="flex items-center justify-end gap-3"
-                onClick={() => {
-                  setSnackbar({
-                    open: true,
-                    message: "Disabled Feature. Coming soon.",
-                    severity: "warning",
-                  });
-                }}
+                
               >
                 <div
                   className="flex items-center justify-between gap-2 pr-1.5 border rounded border-divider-grey text-color-text-two"
@@ -432,7 +426,7 @@ export default function Properties() {
           ) : null}
         </div>
       ) : (
-        <LoadingSpinner title="Loading Properties" />
+        <LoadingSpinner  title="Loading Properties" variation={false} />
       )}
       <CustomAlert
         isOpen={snackbar.open}
