@@ -158,6 +158,7 @@ class CsvExtractorJobTest extends TestCase
         Street::factory()->create(['cadastral_zone_id' => 1, 'name' => 'street 1']);
         CadastralZone::factory(1)->create(['rating_district_id' => 1, 'name' => 'cadastral zone 1']);
         $data = ["for" => "property", "data" => [
+            '1',
             '74544',
             'THE OCCUPIER',
             'BLOCK 9C  DRIVE 4  PRINCE & PRINCESS ESTATEATE',
@@ -192,6 +193,7 @@ class CsvExtractorJobTest extends TestCase
         Street::factory()->create(['cadastral_zone_id' => 1, 'name' => 'street 1']);
         CadastralZone::factory(1)->create(['rating_district_id' => 1, 'name' => 'cadastral zone 1']);
         $data = ["for" => "property", "data" => [
+            '1',
             '74544',
             'THE OCCUPIER',
             'BLOCK 9C  DRIVE 4  PRINCE & PRINCESS ESTATEATE',
