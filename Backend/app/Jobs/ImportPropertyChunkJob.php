@@ -55,27 +55,27 @@ class ImportPropertyChunkJob implements ShouldQueue
             } else {
 
                 // Check if column C (index 2) exists and is not empty
-                if (isset($data[8]) && !empty($data[8])) {
-                    $uniqRatingDistrictData[] = ["rating_district" => $data[8]];
-                }
-                if (isset($data[6]) && !empty($data[6])) {
-                    $uniqPropertyTypeData[] = ["property_type" => $data[6]];
+                if (isset($data[9]) && !empty($data[9])) {
+                    $uniqRatingDistrictData[] = ["rating_district" => $data[9]];
                 }
                 if (isset($data[7]) && !empty($data[7])) {
-                    $uniqPropertyUseData[] = ["property_use" => $data[7]];
+                    $uniqPropertyTypeData[] = ["property_type" => $data[7]];
                 }
-                if (isset($data[14]) && !empty($data[14])) {
-                    $uniqCategoryData[] = ["category" => $data[14]];
+                if (isset($data[8]) && !empty($data[8])) {
+                    $uniqPropertyUseData[] = ["property_use" => $data[8]];
                 }
                 if (isset($data[15]) && !empty($data[15])) {
+                    $uniqCategoryData[] = ["category" => $data[15]];
+                }
+                if (isset($data[16]) && !empty($data[16])) {
                     $uniqGroupData[] = ["group" => $data[15]];
                 }
 
-                if (isset($data[8]) && !empty($data[8]) && isset($data[5]) && !empty($data[5])) {
-                    $uniqCadastralZoneData[] = ["rating_district" => $data[8], "cadastral_zone" => $data[5]];
+                if (isset($data[9]) && !empty($data[9]) && isset($data[6]) && !empty($data[6])) {
+                    $uniqCadastralZoneData[] = ["rating_district" => $data[9], "cadastral_zone" => $data[6]];
                 }
-                if (isset($data[3]) && !empty($data[3]) && isset($data[5]) && !empty($data[5])) {
-                    $uniqStreetData[] = ["street" => $data[3], "cadastral_zone" => $data[5]];
+                if (isset($data[4]) && !empty($data[4]) && isset($data[6]) && !empty($data[6])) {
+                    $uniqStreetData[] = ["street" => $data[4], "cadastral_zone" => $data[6]];
                 }
             }
         }
