@@ -31,29 +31,25 @@ const DemandInvoiceDocument = ({
 }) => {
   const [loading, setLoading] = useState<string>("");
   const demandInvoiceData = {
-    Occupant: `THE OCCUPIER/${
-      customTableData?.pid ||
+    Occupant: `THE OCCUPIER/${customTableData?.pid ||
       customTableData?.property.pid ||
       demandInvoiceInfo?.property.pid
-    }`,
-    PropertyIdentificationNumber: `PID-${
-      customTableData?.pid ||
+      }`,
+    PropertyIdentificationNumber: `PID-${customTableData?.pid ||
       customTableData?.property.pid ||
       demandInvoiceInfo?.property.pid
-    }`,
-    QrCodePayment: `{https://revenuehub.ng/invoice/${
-      customTableData?.pid ||
+      }`,
+    QrCodePayment: `{https://revenuehub.ng/invoice/${customTableData?.pid ||
       customTableData?.property.pid ||
       demandInvoiceInfo?.property.pid
-    }`,
+      }`,
     propertyData: [
       {
         label: "Name of Occupier",
-        value: `${
-          customTableData?.occupant ||
+        value: `${customTableData?.occupant ||
           customTableData?.property?.occupant ||
           demandInvoiceInfo?.property?.occupant
-        }`,
+          }`,
       },
       { label: "Assessment No", value: "AM/B12/TTR/2016/0400" },
       {
@@ -88,11 +84,11 @@ const DemandInvoiceDocument = ({
     billInfoData: [
       {
         label: "Bill Ref",
-        value: `2024/${customTableData?.id || demandInvoiceInfo?.id}`,
+        value: `2025/${customTableData?.id || demandInvoiceInfo?.id}`,
       },
       { label: "Agency Code", value: 2000300 },
       { label: "Revenue Code", value: 1002 },
-      { label: "Rate Year", value: 2024 },
+      { label: "Rate Year", value: 2025 },
     ],
     billDetailsData: [
       {
@@ -417,9 +413,8 @@ const DemandInvoiceDocument = ({
               {demandInvoiceData.billDetailsData.map((item, index) => (
                 <div
                   key={index}
-                  className={`flex items-center px-1 py-0.5 text-metal font-lexend text-[11px] leading-[13px] ${
-                    item.isTotal ? "py-1 bg-custom-blue-100 rounded-b" : ""
-                  }`}
+                  className={`flex items-center px-1 py-0.5 text-metal font-lexend text-[11px] leading-[13px] ${item.isTotal ? "py-1 bg-custom-blue-100 rounded-b" : ""
+                    }`}
                 >
                   <p className="font-medium text-left w-[130px] printPaddingBottom2">
                     {item.label} :
@@ -442,7 +437,7 @@ const DemandInvoiceDocument = ({
               Capital Territory Act Cap 503, LPN 2004 (vol. 3) as amended: Taxes
               and Levies (Approved list of Collection ) Act 2015 (as amended and
               AMAC Tenement Rate bye-Laws of 2014. We forward herewith your bill
-              for the year 2024, totaling{" "}
+              for the year 2025, totaling{" "}
               <span className="font-normal text-color-dark-red">
                 NGN
                 {formatNumberWithCommas(
@@ -459,12 +454,12 @@ const DemandInvoiceDocument = ({
                 </p>
                 <div className="flex items-start justify-center gap-1 font-lexend text-[11px] text-document-grey leading-[12.5px]">
                   <span>1.</span>
-                 <span>Walk to any of your bank branch</span>
+                  <span>Walk to any of your bank branch</span>
                 </div>
                 <p className="flex items-start justify-center gap-1 font-lexend text-[11px] text-document-grey leading-[12.5px]">
                   <span>2.</span>
                   <span>
-                  Inform the banker at the teller point you want to make a NIBS ebill payment for AMAc zone A/B tenement
+                    Inform the banker at the teller point you want to make a NIBS ebill payment for AMAc zone A/B tenement
                   </span>
                 </p>
                 <p className="flex items-start justify-center gap-1 font-lexend text-[11px] text-document-grey leading-[12.5px]">
