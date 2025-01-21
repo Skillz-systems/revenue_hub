@@ -31,7 +31,7 @@ const Month: string[] = [
 
 const Statistics: React.FC = () => {
   const [invoiceChartState, setInvoiceChartState] = useState<string>("Day");
-  const [selectedYear, setSelectedYear] = useState<number>(2024);
+  const [selectedYear, setSelectedYear] = useState<number>(2025);
   const [selectedMonth, setSelectedMonth] = useState<string>(Month[0]);
   const [valueChartState, setValueChartState] = useState<string>("Day");
   const [hoveredBar, setHoveredBar] = useState<string | null>(null);
@@ -170,31 +170,28 @@ const Statistics: React.FC = () => {
             </p>
             <div className="flex items-center gap-3 text-xs font-lexend">
               <span
-                className={`cursor-pointer ${
-                  invoiceChartState === "Day"
+                className={`cursor-pointer ${invoiceChartState === "Day"
                     ? "text-color-dark-red font-bold"
                     : "text-color-text-two"
-                }`}
+                  }`}
                 onClick={() => setInvoiceChartState("Day")}
               >
                 Day
               </span>
               <span
-                className={`cursor-pointer ${
-                  invoiceChartState === "Week"
+                className={`cursor-pointer ${invoiceChartState === "Week"
                     ? "text-color-dark-red font-bold"
                     : "text-color-text-two"
-                }`}
+                  }`}
                 onClick={() => setInvoiceChartState("Week")}
               >
                 Week
               </span>
               <span
-                className={`cursor-pointer ${
-                  invoiceChartState === "Month"
+                className={`cursor-pointer ${invoiceChartState === "Month"
                     ? "text-color-dark-red font-bold"
                     : "text-color-text-two"
-                }`}
+                  }`}
                 onClick={() => setInvoiceChartState("Month")}
               >
                 Month
@@ -292,31 +289,28 @@ const Statistics: React.FC = () => {
             </p>
             <div className="flex items-center gap-3 text-xs font-lexend">
               <span
-                className={`cursor-pointer ${
-                  valueChartState === "Day"
+                className={`cursor-pointer ${valueChartState === "Day"
                     ? "text-color-dark-red font-bold"
                     : "text-color-text-two"
-                }`}
+                  }`}
                 onClick={() => setValueChartState("Day")}
               >
                 Day
               </span>
               <span
-                className={`cursor-pointer ${
-                  valueChartState === "Week"
+                className={`cursor-pointer ${valueChartState === "Week"
                     ? "text-color-dark-red font-bold"
                     : "text-color-text-two"
-                }`}
+                  }`}
                 onClick={() => setValueChartState("Week")}
               >
                 Week
               </span>
               <span
-                className={`cursor-pointer ${
-                  valueChartState === "Month"
+                className={`cursor-pointer ${valueChartState === "Month"
                     ? "text-color-dark-red font-bold"
                     : "text-color-text-two"
-                }`}
+                  }`}
                 onClick={() => setValueChartState("Month")}
               >
                 Month
