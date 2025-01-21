@@ -31,29 +31,25 @@ const DemandInvoiceDocument = ({
 }) => {
   const [loading, setLoading] = useState<string>("");
   const demandInvoiceData = {
-    Occupant: `THE OCCUPIER/${
-      customTableData?.pid ||
+    Occupant: `THE OCCUPIER/${customTableData?.pid ||
       customTableData?.property.pid ||
       demandInvoiceInfo?.property.pid
-    }`,
-    PropertyIdentificationNumber: `PID-${
-      customTableData?.pid ||
+      }`,
+    PropertyIdentificationNumber: `PID-${customTableData?.pid ||
       customTableData?.property.pid ||
       demandInvoiceInfo?.property.pid
-    }`,
-    QrCodePayment: `{https://revenuehub.ng/invoice/${
-      customTableData?.pid ||
+      }`,
+    QrCodePayment: `{https://revenuehub.ng/invoice/${customTableData?.pid ||
       customTableData?.property.pid ||
       demandInvoiceInfo?.property.pid
-    }`,
+      }`,
     propertyData: [
       {
         label: "Name of Occupier",
-        value: `${
-          customTableData?.occupant ||
+        value: `${customTableData?.occupant ||
           customTableData?.property?.occupant ||
           demandInvoiceInfo?.property?.occupant
-        }`,
+          }`,
       },
       { label: "Assessment No", value: "AM/B12/TTR/2016/0400" },
       {
@@ -88,11 +84,11 @@ const DemandInvoiceDocument = ({
     billInfoData: [
       {
         label: "Bill Ref",
-        value: `2024/${customTableData?.id || demandInvoiceInfo?.id}`,
+        value: `2025/${customTableData?.id || demandInvoiceInfo?.id}`,
       },
       { label: "Agency Code", value: 2000300 },
       { label: "Revenue Code", value: 1002 },
-      { label: "Rate Year", value: 2024 },
+      { label: "Rate Year", value: 2025 },
     ],
     billDetailsData: [
       {
@@ -409,7 +405,7 @@ const DemandInvoiceDocument = ({
             </p>
             <p className="text-[11px] p-1 font-lexend font-medium text-metal leading-[12.5px] border-b border-custom-color-one pb-2 printPaddingBottom">
               <span className="text-color-dark-red">NOTE:</span> We forwarded
-              your bill for the year 2024, totalling{" "}
+              your bill for the year 2025, totalling{" "}
               <span className=" text-color-dark-red">
                 NGN
                 {formatNumberWithCommas(
@@ -423,16 +419,16 @@ const DemandInvoiceDocument = ({
             <div className="flex p-1 printPaddingBottom">
               <div className="flex flex-col items-start space-y-1 w-[80%]">
                 <p className="font-lexend text-[11px] text-document-grey leading-[12.5px]">
-                How to make payment:
+                  How to make payment:
                 </p>
                 <div className="flex items-start justify-center gap-1 font-lexend text-[11px] text-document-grey leading-[12.5px]">
                   <span>1.</span>
-                 <span>Walk to any of your bank branch</span>
+                  <span>Walk to any of your bank branch</span>
                 </div>
                 <p className="flex items-start justify-center gap-1 font-lexend text-[11px] text-document-grey leading-[12.5px]">
                   <span>2.</span>
                   <span>
-                  Inform the banker at the teller point you want to make a NIBS ebill payment for AMAc zone A/B tenement
+                    Inform the banker at the teller point you want to make a NIBS ebill payment for AMAc zone A/B tenement
                   </span>
                 </p>
                 <p className="flex items-start justify-center gap-1 font-lexend text-[11px] text-document-grey leading-[12.5px]">
