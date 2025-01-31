@@ -262,7 +262,7 @@ const PropertiesTable: React.FC<PropertiesTableProps> = observer(
             {occupationStatus}
           </span>
           <div className="flex items-center justify-between gap-2">
-            <span className="text-blueberry flex items-center justify-center rounded w-[30px] h-[30px] p-0.5 border-0.6 border-custom-grey-100">
+            {/* <span className="text-blueberry flex items-center justify-center rounded w-[30px] h-[30px] p-0.5 border-0.6 border-custom-grey-100">
               <span
                 title="Edit Property"
                 className="text-xl hover:cursor-pointer"
@@ -272,7 +272,7 @@ const PropertiesTable: React.FC<PropertiesTableProps> = observer(
               >
                 <BiSolidEditAlt />
               </span>
-            </span>
+            </span> */}
             <span className="relative text-blueberry flex items-center justify-center rounded w-[30px] h-[30px] p-0.5 border-0.6 border-custom-grey-100">
               <span
                 title="More Options"
