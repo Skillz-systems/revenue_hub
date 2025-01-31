@@ -21,7 +21,7 @@ const TopNavigation: React.FC<TopNavigationProps> = ({
   parentStyle,
   displayMobileNav,
 }) => {
-  const [selectedYear, setSelectedYear] = useState<number>(2024);
+  const [selectedYear, setSelectedYear] = useState<number>(2025);
   const [menuState, setMenuState] = useState<boolean>(false);
   const navigate = useNavigate();
   const [snackbar, setSnackbar] = useState({
