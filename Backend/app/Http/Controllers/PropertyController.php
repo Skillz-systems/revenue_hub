@@ -63,9 +63,9 @@ class PropertyController extends Controller
         
 
         if (Auth::user()->role_id != User::ROLE_ADMIN) {
-            $properties = query;
+            $properties = $query;
         } else {
-            $properties = query;
+            $properties = $query;
             //$properties = $this->propertyService->getAllProperties(Auth::user()->zone);
         }
         

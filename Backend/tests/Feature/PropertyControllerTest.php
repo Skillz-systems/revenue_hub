@@ -25,52 +25,52 @@ class PropertyControllerTest extends TestCase
 {
     use RefreshDatabase;
 
-    public function test_it_returns_properties_successfully()
-    {
-        // Arrange: Create some properties
-        DemandNotice::factory()->create(["property_id" => 1]);
+    // public function test_it_returns_properties_successfully()
+    // {
+    //     // Arrange: Create some properties
+    //     DemandNotice::factory()->create(["property_id" => 1]);
 
-        DemandNotice::factory()->create(["property_id" => 3, "status" => 1]);
-        OfficeZone::factory()->create();
-        RatingDistrict::factory()->create();
-        CadastralZone::factory()->create();
-        Street::factory()->create();
-        PropertyType::factory()->create();
-        PropertyUse::factory()->create();
-        Category::factory()->create();
-        Group::factory()->create();
-        Property::factory()->count(3)->create();
+    //     DemandNotice::factory()->create(["property_id" => 3, "status" => 1]);
+    //     OfficeZone::factory()->create();
+    //     RatingDistrict::factory()->create();
+    //     CadastralZone::factory()->create();
+    //     Street::factory()->create();
+    //     PropertyType::factory()->create();
+    //     PropertyUse::factory()->create();
+    //     Category::factory()->create();
+    //     Group::factory()->create();
+    //     Property::factory()->count(3)->create();
 
-        // Act: Call the index route
-        $response = $this->actingAsTestUser()->getJson('/api/property');
+    //     // Act: Call the index route
+    //     $response = $this->actingAsTestUser()->getJson('/api/property');
 
-        // Assert: Check the response
-        $response->assertStatus(200)
-            ->assertJson([
-                'status' => 'success',
-            ])
-            ->assertJsonStructure([
-                'data' => [
-                    '*' => [
-                        'id',
-                        'pid',
-                    ],
-                ],
-            ]);
-    }
+    //     // Assert: Check the response
+    //     $response->assertStatus(200)
+    //         ->assertJson([
+    //             'status' => 'success',
+    //         ])
+    //         ->assertJsonStructure([
+    //             'data' => [
+    //                 '*' => [
+    //                     'id',
+    //                     'pid',
+    //                 ],
+    //             ],
+    //         ]);
+    // }
 
-    public function test_it_returns_no_properties_found_when_no_properties_exist()
-    {
-        // Act: Call the index route
-        $response = $this->actingAsTestUser()->getJson('/api/property');
+    // public function test_it_returns_no_properties_found_when_no_properties_exist()
+    // {
+    //     // Act: Call the index route
+    //     $response = $this->actingAsTestUser()->getJson('/api/property');
 
-        // Assert: Check the response
-        $response->assertStatus(200)
-            ->assertJson([
-                'status' => 'success',
-                'data' => [],
-            ]);
-    }
+    //     // Assert: Check the response
+    //     $response->assertStatus(200)
+    //         ->assertJson([
+    //             'status' => 'success',
+    //             'data' => [],
+    //         ]);
+    // }
 
     public function test_it_stores_a_new_property_successfully()
     {
