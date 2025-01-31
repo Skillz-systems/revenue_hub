@@ -24,6 +24,7 @@ import {
 } from "../../Utils/client";
 import axios from "axios";
 import DemandReminderDocument from "./DemandReminderDocument";
+import AlertDialog from '../AlertDialog/AlertDialog';
 
 const apiUrl = import.meta.env.VITE_API_URL as string;
 
@@ -68,10 +69,9 @@ const DemandInvoiceTable = ({
   });
   const triggerError = useTriggerError();
   const propertiesPerPage = paginationMeta.perPage;
-
-  const handleSnackbarClose = () => {
-    setSnackbar({ ...snackbar, open: false });
-  };
+  const [showAlertDialog, setShowAlertDialog] = useState(false);
+  const [demandNoticeToDelete, setDemandNoticeToDelete] = useState<number>(0);  
+  const [isLoading, setIsLoading] = useState(false);
 
   const deleteDemandNotice = async (id: number) => {
     if (userRoleId > 1) {
@@ -82,63 +82,84 @@ const DemandInvoiceTable = ({
       });
       return;
     }
-
-    try {
-      const response = await axios.delete(
-        `${apiUrl}/api/demand-notice/delete/${id}`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`, // Headers
-          },
-        }
-      );
-      if (response.status === 200) {
-        setSnackbar({
-          open: true,
-          message: "Successfully removed demand notice",
-          severity: "success",
-        });
-        setTimeout(() => {
-          window.location.reload();
-        }, 3000);
-      } else {
-        setSnackbar({
-          open: true,
-          message: "Unexpected status code",
-          severity: "warning",
-        });
-      }
-    } catch (error: any) {
-      let message = "Internal Server Error";
-      if (error.response) {
-        switch (error.response.status) {
-          case 400:
-            message = "Bad request. Demand Notice Id is missing.";
-            break;
-          case 401:
-            message = "You are unauthorized";
-            break;
-          case 403:
-            message = "You are forbidden";
-            break;
-          case 404:
-            message = "Demand notice not found";
-            break;
-          case 429:
-            message = "Too many requests made. Refreshing in 3 seconds";
-            setTimeout(() => {
-              window.location.reload();
-            }, 3000);
-            break;
-          case 500:
-            triggerError(error);
-            break;
-          default:
-            break;
-        }
-      }
-      setSnackbar({ open: true, message, severity: "error" });
+  
+    const demandNotice = demandNoticeInformation.find((notice) => notice.id === id);
+    if (demandNotice && demandNotice.property.demand_notice_status === 'Paid') {
+      setSnackbar({
+        open: true,
+        message: "Cannot delete a paid demand notice",
+        severity: "error",
+      });
+      return;
     }
+  
+    setShowAlertDialog(true);
+    setDemandNoticeToDelete(id);
+  };
+  
+  const handleConfirmDelete = async () => {
+  setIsLoading(true);
+  try {
+    const response = await axios.delete(
+      `${apiUrl}/api/demand-notice/delete/${demandNoticeToDelete}`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    if (response.status === 200) {
+      setSnackbar({
+        open: true,
+        message: "Successfully removed demand notice",
+        severity: "success",
+      });
+    } else {
+      setSnackbar({
+        open: true,
+        message: "Unexpected status code",
+        severity: "warning",
+      });
+    }
+  } catch (error: any) {
+    let message = "Internal Server Error";
+    if (error.response) {
+      switch (error.response.status) {
+        case 400:
+          message = "Bad request. Demand Notice Id is missing.";
+          break;
+        case 401:
+          message = "You are unauthorized";
+          break;
+        case 403:
+          message = "You are forbidden";
+          break;
+        case 404:
+          message = "Demand notice not found";
+          break;
+        case 429:
+          message = "Too many requests made. Refreshing in 3 seconds";
+          setTimeout(() => {
+            window.location.reload();
+          }, 3000);
+          break;
+        case 500:
+          triggerError(error);
+          break;
+        default:
+          break;
+      }
+    }
+    setSnackbar({ open: true, message, severity: "error" });
+  } finally {
+    setIsLoading(false);
+    setShowAlertDialog(false);
+    setDemandNoticeToDelete(0);
+  }
+};
+  const handleCancelDelete = () => {
+    setShowAlertDialog(false);
+    setDemandNoticeToDelete(0);
   };
 
   const handleViewPropertyModal = (propertyData: any) => {
@@ -365,6 +386,9 @@ const DemandInvoiceTable = ({
         </div>
         <span className="flex flex-wrap items-center w-1/12 gap-1">
           {/* {renderReminderButton(colorStatus, record?.id)} */}
+        {lastPaymentStatus === 'Paid' ? (
+          <span className=""></span>
+        ) : (
           <span
             className="border-0.6 border-custom-grey-100 text-custom-grey-300 px-2 py-2.5 rounded text-base hover:cursor-pointer"
             title="Delete Invoice"
@@ -372,6 +396,7 @@ const DemandInvoiceTable = ({
           >
             <RiDeleteBin5Fill />
           </span>
+        )}
           <span className="border-0.6 relative border-custom-grey-100 text-custom-grey-300 px-2 py-2.5 rounded text-base">
             <span
               title="Edit Invoice"
@@ -662,12 +687,20 @@ const DemandInvoiceTable = ({
           />
         </DemandPropertyModal>
       ) : null}
-      <CustomAlert
+      {/* <CustomAlert
         isOpen={snackbar.open}
         message={snackbar.message}
         severity={snackbar.severity}
         handleClose={handleSnackbarClose}
-      />
+      /> */}
+       <AlertDialog
+      isOpen={showAlertDialog}
+      message="Are you sure you want to delete this demand notice? This action cant be reversed"
+      confirmMessage="Delete Demand Notice"
+      onConfirm={handleConfirmDelete}
+      onCancel={handleCancelDelete}
+      isLoading={isLoading}
+    />
     </div>
   );
 };

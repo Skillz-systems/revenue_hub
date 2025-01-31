@@ -26,30 +26,21 @@ const TableSearchInput: React.FC<TableSearchInputProps> = ({
   setSnackBar,
 }) => {
   return (
-    <>
-      <div
-        className={parentBoxStyle}
-        onClick={() => {
-          setSnackBar({
-            open: true,
-            message: "Disabled Feature. Coming soon.",
-            severity: "warning",
-          });
-        }}
-      >
-        <input
-          type="search"
-          value={query}
-          className={`${inputBoxStyle} pointer-events-none`}
-          placeholder={placeholder}
-          onInput={handleOnInput}
-          onChange={handleQueryChange}
-        />
-        {displaySearchIcon ? (
-          <span className={iconBoxStyle}>{searchIcon}</span>
-        ) : null}
-      </div>
-    </>
+    <div className={parentBoxStyle}>
+      <input
+        type="text"
+        className={inputBoxStyle}
+        placeholder={placeholder}
+        value={query}
+        onChange={handleQueryChange}
+        onInput={handleOnInput}
+      />
+      {displaySearchIcon && (
+        <div className={iconBoxStyle}>
+          {searchIcon}
+        </div>
+      )}
+    </div>
   );
 };
 

@@ -307,18 +307,10 @@ const staticInformation = {
       {
         id: 1,
         name: "All Staff",
-      },
-      {
-        id: 2,
-        name: "All Managers",
-      },
-      {
-        id: 3,
-        name: "All Officers",
-      },
+      }
     ],
     columns: [
-      { id: 1, name: "STAFF ID" },
+      { id: 1, name: "SN" },
       { id: 2, name: "FULL NAME" },
       { id: 3, name: "EMAIL" },
       { id: 4, name: "PHONE NUMBER" },

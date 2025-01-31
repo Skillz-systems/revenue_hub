@@ -12,6 +12,7 @@ use App\Jobs\CsvExtractorJob;
 use App\Jobs\ProcessCSVFileInBatchJob;
 use App\Models\User;
 use Illuminate\Support\Facades\Storage;
+use DB;
 
 class PropertyController extends Controller
 {
@@ -56,15 +57,19 @@ class PropertyController extends Controller
     public function index(Request $request)
     {
         $perPage = $request->input('per_page', 100);
+        $search = $request->input('search');
+    
+        $query = $this ->getAllWithFilters($request->all(), $perPage);
+        
+
         if (Auth::user()->role_id != User::ROLE_ADMIN) {
-            $properties = Property::paginate(100);
+            $properties = $query;
         } else {
-            $properties = Property::paginate(100);
+            $properties = $query;
             //$properties = $this->propertyService->getAllProperties(Auth::user()->zone);
         }
-
-
-        if ($properties) {
+        
+        if ($properties->isNotEmpty()) {
 
             $returnProperty = PropertyResource::collection($properties);
             $returnProperty->additional([
@@ -718,5 +723,55 @@ class PropertyController extends Controller
             'status' => 'success',
             'message' => 'File uploaded successfully',
         ], 200);
+    }
+
+    public function getAllWithFilters(array $filters = [], int $per_page = 50)
+    {
+        $query = Property::query()
+        ->leftJoin('demand_notices', function ($join) {
+            $join->on('demand_notices.property_id', '=', 'properties.id')
+                ->whereYear('demand_notices.created_at', date('Y'));
+        })
+        ->select('properties.*') // Ensure only property fields are selected
+        ->addSelect(\DB::raw('IF(demand_notices.id IS NULL, 0, 1) as has_demand_notice'))
+        ->orderBy('has_demand_notice', 'asc'); // Properties without demand notices first
+ 
+        // Apply dynamic filters
+        foreach ($filters as $key => $value) {
+         
+            switch ($key) {
+                case 'street_id':
+                    $query->where('street_id', '=', $value);
+                    break;
+                
+                case 'cadastral_zone_id':
+                    $query->where('cadastral_zone_id', '=', $value);
+                    break;
+                case 'property_type_id':
+                    $query->where('property_type_id', '=', $value);
+                    break;
+                
+                case 'property_use_id':
+                    $query->where('property_use_id', '=', $value);
+                    break;
+                case 'rating_district_id':
+                    $query->where('rating_district_id', '=', $value);
+                    break;
+                
+                case 'category_id':
+                    $query->where('category_id', '=', $value);
+                    break;
+                case 'group_id':
+                    $query->where('group_id', '=', $value);
+                    break;
+                default:
+                    // Apply other filters directly (e.g., status)
+                    $query->where($key, $value);
+                    break;
+            }
+        }
+ 
+        // Paginate the results
+        return $query->paginate($per_page);
     }
 }

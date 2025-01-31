@@ -1,10 +1,11 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   DemandPropertyButtons,
   MenuItem,
   MenuItemData,
   ProfileBox,
   userData,
+  CustomAlert,
 } from "../Index";
 import { FaChevronLeft } from "react-icons/fa";
 import { PiBuildingsFill, PiListBulletsFill } from "react-icons/pi";
@@ -36,9 +37,19 @@ const SibeBarMenuMobile: React.FC<SideBarMenuProps> = ({
   const menuItems = MenuItemData();
   const navigate = useNavigate();
 
+  const [snackbar, setSnackbar] = useState({
+    open: false,
+    message: "",
+    severity: "info", 
+  });
+
   const handleLogout = () => {
     Cookies.remove("userData");
     navigate("/login");
+  };
+
+  const handleSnackbarClose = () => {
+    setSnackbar({ ...snackbar, open: false });
   };
 
   const isMobile: boolean = true;
@@ -69,7 +80,12 @@ const SibeBarMenuMobile: React.FC<SideBarMenuProps> = ({
           }}
           openAddPropertyModal={() => {
             hideSideBar();
-            showAddPropertyModal();
+            // showAddPropertyModal();
+            setSnackbar({
+              open: true,
+              message: "Disabled Feature. Coming soon.",
+              severity: "warning",
+            });
           }}
         />
         <hr className="border-0.5 border-divider-grey my-4" />
@@ -118,6 +134,12 @@ const SibeBarMenuMobile: React.FC<SideBarMenuProps> = ({
           ))}
         </div>
       </div>
+      <CustomAlert
+        isOpen={snackbar.open}
+        message={snackbar.message}
+        severity={snackbar.severity}
+        handleClose={handleSnackbarClose}
+      />
     </div>
   );
 };
