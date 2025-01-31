@@ -57,8 +57,8 @@ const ProjectLayout: React.FC = observer(() => {
     useState<boolean>(false);
   const [propertyModalTransition, setPropertyModalTransition] =
     useState<boolean>(false);
-  const [accountsPasswordState, setAccountsPasswordState] =
-    useState<string>("");
+  const [accountsPasswordState, setAccountsPasswordState] = 
+    useState<string>("Accounts");
   const menuItems = MenuItemData();
   const { accountInformation, statistics } = userData();
   const cardData = CardData();
@@ -92,6 +92,13 @@ const ProjectLayout: React.FC = observer(() => {
     showSideBar();
     setSearchClicked(true);
   };
+
+  useEffect(() => {
+    if (activeMenuItem === "Settings Component") {
+      setAccountsPasswordState("Accounts");
+      setActiveComponent(null);
+    }
+  }, [activeMenuItem]);
 
   // const showSnackBar = () => {
   //   setSnackbar({
@@ -416,6 +423,18 @@ export const PasswordAccountButtons = ({
         }}
       >
         Change Password
+      </div>
+      <div
+        className={`lg:w-full p-2 text-xs rounded border-0.6 border-custom-color-two hover:bg-primary-color hover:text-white hover:cursor-pointer ${
+          accountsPasswordState === "AppSettings" && "bg-primary-color text-white"
+        }`}
+        title="Application settings"
+        onClick={() => {
+          setActiveComponent(<Settings />);
+          setAccountsPasswordState("AppSettings");
+        }}
+      >
+        App Settings
       </div>
       {accountsPasswordState ? (
         <p

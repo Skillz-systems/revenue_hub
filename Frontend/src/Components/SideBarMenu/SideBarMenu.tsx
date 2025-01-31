@@ -10,6 +10,7 @@ import {
   MenuItem,
   MenuItemData,
   userData,
+  CustomAlert,
 } from "../Index";
 
 interface SideBarMenuProps {
@@ -35,6 +36,11 @@ const SideBarMenu: React.FC<SideBarMenuProps> = ({
   const [borderState, setBorderState] = useState<boolean>(false);
   const menuItems = MenuItemData();
   const { accountInformation } = userData();
+  const [snackbar, setSnackbar] = useState({
+    open: false,
+    message: "",
+    severity: "info",
+  });
 
   useEffect(() => {
     let timeout: any;
@@ -52,6 +58,10 @@ const SideBarMenu: React.FC<SideBarMenuProps> = ({
     : "";
 
   const finalBorderStyle: string = borderState ? changeBoxStyle : "";
+
+  const handleSnackbarClose = () => {
+    setSnackbar({ ...snackbar, open: false });
+  };
 
   return (
     <div className="flex-col w-full pr-3">
@@ -93,7 +103,13 @@ const SideBarMenu: React.FC<SideBarMenuProps> = ({
             buttonTextOne={"New Demand Invoice"}
             buttonTextTwo={"Add Property"}
             openNewDemandInvoiceModal={showAddDemandModal}
-            openAddPropertyModal={showAddPropertyModal}
+            openAddPropertyModal={() => {
+              setSnackbar({
+                open: true,
+                message: "Disabled Feature. Coming soon.",
+                severity: "warning",
+              });
+            }}
           />
         </div>
       </div>
@@ -122,6 +138,12 @@ const SideBarMenu: React.FC<SideBarMenuProps> = ({
           </React.Fragment>
         ))}
       </div>
+      <CustomAlert
+        isOpen={snackbar.open}
+        message={snackbar.message}
+        severity={snackbar.severity}
+        handleClose={handleSnackbarClose}
+      />
     </div>
   );
 };

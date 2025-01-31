@@ -32,7 +32,7 @@ const ViewStaffModal = ({
         >
           <div className="flex items-center gap-2">
             <h3 className="text-base font-bold text-color-text-two">
-              STAFF ID
+              SN
             </h3>
             <p className="text-base font-bold text-color-text-one">
               {customTableData?.id}
@@ -80,7 +80,7 @@ const ViewStaffModal = ({
             </div>
             {[
               {
-                name: "Staff ID",
+                name: "SN",
                 value: customTableData?.id,
               },
               {
