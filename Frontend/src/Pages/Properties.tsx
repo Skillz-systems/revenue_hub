@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useCallback } from 'react';
 import {
   PropertyCard,
   Pagination,
@@ -8,6 +9,7 @@ import {
   LoadingSpinner,
   CustomAlert,
   paginationStyles,
+  TableSearchInput,
 } from "../Components/Index";
 import { BsCaretDownFill } from "react-icons/bs";
 import {
@@ -17,6 +19,8 @@ import {
   useTriggerError,
 } from "../Utils/client";
 import useSWR from "swr";
+import { FiSearch } from "react-icons/fi";
+import axios from "axios";
 
 type PropertyData = {
   active: string;
@@ -65,6 +69,15 @@ export default function Properties() {
   const { token } = useTokens();
   const [districtState, setDistrictState] = useState<string>("");
   const [propertyUseState, setPropertyUseState] = useState<string>("");
+  const [displaySearchIcon, setDisplaySearchIcon] = useState<boolean>(true);
+  const [query, setQuery] = useState<string>("");
+  const [searchQuery, setSearchQuery] = useState('');
+  const [searchResults, setSearchResults] = useState([]);
+  const [searchLoading, setSearchLoading] = useState(false);
+  const [staticInformation, setStaticInformation] = useState({
+    cadestralZones: [],
+    propertyUse: [],
+  });
   const [viewPropertyModal, setViewPropertyModal] = useState<any>(null);
   const [propertyModalTransition, setPropertyModalTransition] =
     useState<boolean>(false);
@@ -77,7 +90,6 @@ export default function Properties() {
     total: 0,
     perPage: 0,
   });
-  const { staticInformation } = userData();
   const [snackbar, setSnackbar] = useState({
     open: false,
     message: "",
@@ -90,10 +102,99 @@ export default function Properties() {
     setSnackbar({ ...snackbar, open: false });
   };
 
+  useEffect(() => {
+    const fetchCadestralZones = async () => {
+      try {
+        const response = await axios.get(`${apiUrl}/api/rating-district`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        setStaticInformation((prev) => ({
+          ...prev,
+          cadestralZones: response.data.data.map((zone: { name: any; }) => zone.name),
+        }));
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
+    const fetchPropertyUse = async () => {
+      try {
+        const response = await axios.get(`${apiUrl}/api/property-use`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        setStaticInformation((prev) => ({
+          ...prev,
+          propertyUse: response.data.data.map((use: { name: any; }) => use.name),
+        }));
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
+    fetchCadestralZones();
+    fetchPropertyUse();
+  }, [token]);
+
+  const fetchProperties = async () => {
+    try {
+      const response = await axios.get(`${apiUrl}/api/property`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+        params: {
+          search: searchQuery,
+          rating_dist: districtState,
+          prop_use: propertyUseState,
+        },
+      });
+      setPropertyInformation(response.data.data);
+      setPaginationMeta({
+        currentPage: response.data.meta.current_page,
+        lastPage: response.data.meta.last_page,
+        total: response.data.meta.total,
+        perPage: response.data.meta.per_page,
+      });
+    } catch (error) {
+      console.error(error);
+      setSnackbar({
+        open: true,
+        message: `Error fetching Property Data: ${error}`,
+        severity: "warning",
+      });
+    }
+  };
+
   const { data, error } = useSWR(
     token ? `${apiUrl}/api/property?page=${paginationMeta.currentPage}` : null,
     (url) => fetcher(url, token)
   );
+
+  const handleQueryChange = (event: any) => {
+    const query = event.target.value;
+    setSearchQuery(query);
+
+    if (query.length >= 3) {
+      fetchProperties();
+    } else {
+      setSearchResults([]);
+    }
+  };
+
+  const handleSelectDistrict = useCallback((event: React.ChangeEvent<HTMLSelectElement>) => {
+    const selectedDistrict = event.target.value;
+    setDistrictState(selectedDistrict);
+    fetchProperties();
+  }, [setDistrictState]);
+
+  const handleSelectPropertyUse = useCallback((event: React.ChangeEvent<HTMLSelectElement>) => {
+    const selectedPropertyUse = event.target.value;
+    setPropertyUseState(selectedPropertyUse);
+    fetchProperties();
+  }, [setPropertyUseState]);
 
   useEffect(() => {
     if (data) {
@@ -129,38 +230,11 @@ export default function Properties() {
     }, 250);
   };
 
-  const handleSelectDistrict = (
-    event: React.ChangeEvent<HTMLSelectElement>
-  ) => {
-    const selectedDistrict = event.target.value;
-    if (selectedDistrict === "All Districts") {
-      setDistrictState("");
-    } else {
-      setDistrictState(selectedDistrict);
-      setCurrentPage(0);
-      setCurrentStyle(0);
-    }
-  };
-
-  const handleSelectPropertyUse = (
-    event: React.ChangeEvent<HTMLSelectElement>
-  ) => {
-    const selectedPropertyUse = event.target.value;
-    if (selectedPropertyUse === "All Property Use") {
-      setPropertyUseState("");
-    } else {
-      setPropertyUseState(selectedPropertyUse);
-      setCurrentPage(0);
-      setCurrentStyle(0);
-    }
-  };
-
   const ResetFilters = () => {
     setDistrictState("");
     setPropertyUseState("");
   };
 
-  // PAGINATION LOGIC START
   const [currentPage, setCurrentPage] = useState<number>(0);
   const [currentStyle, setCurrentStyle] = useState<number | undefined>(
     undefined
@@ -171,7 +245,7 @@ export default function Properties() {
   const handlePageChange = ({ selected }: { selected: number }) => {
     setPaginationMeta((prev) => ({
       ...prev,
-      currentPage: selected + 1, // SWR uses 1-based index for pages
+      currentPage: selected + 1,
     }));
     ScrollToTop("top-container");
   };
@@ -186,8 +260,6 @@ export default function Properties() {
     offset,
     offset + propertiesPerPage
   );
-
-  // PAGINATION LOGIC END
 
   const LengthByFilterState = (): number => {
     return paginationMeta.total;
@@ -208,71 +280,71 @@ export default function Properties() {
               <p className="text-base font-bold text-color-text-two">
                 ALL PROPERTIES
               </p>
+
               <div
-                className="flex items-center justify-end gap-3"
-                onClick={() => {
-                  setSnackbar({
-                    open: true,
-                    message: "Disabled Feature. Coming soon.",
-                    severity: "warning",
-                  });
-                }}
+                className="flex items-center justify-between gap-2 pr-1.5 border rounded border-divider-grey text-color-text-two"
+                title="Filter by District"
               >
-                <div
-                  className="flex items-center justify-between gap-2 pr-1.5 border rounded border-divider-grey text-color-text-two"
-                  title="Filter by District"
+                <select
+                  className="hover:cursor-pointer p-2 py-1.5 overflow-y-auto text-xs font-medium rounded outline-none appearance-none font-lexend overscroll-contain scrollbar-thin scrollbar-thumb-color-text-two scrollbar-track-white"
+                  onChange={handleSelectDistrict}
+                  value={districtState}
                 >
-                  <select
-                    className="hover:cursor-pointer p-2 py-1.5 overflow-y-auto text-xs font-medium rounded outline-none appearance-none font-lexend overscroll-contain scrollbar-thin scrollbar-thumb-color-text-two scrollbar-track-white pointer-events-none"
-                    onChange={handleSelectDistrict}
-                    value={districtState}
-                  >
-                    <option value="All Districts"> All Districts</option>
-                    {staticInformation.cadestralZones.map((district, index) => (
-                      <option key={index} value={district}>
-                        {district}
-                      </option>
-                    ))}
-                  </select>
-                  <span className="text-xs">
-                    <BsCaretDownFill />
-                  </span>
-                </div>
-                <div
-                  className="flex items-center justify-between gap-2 pr-1.5 border rounded border-divider-grey text-color-text-two"
-                  title="Filter by Property Use"
-                >
-                  <select
-                    className="hover:cursor-pointer p-2 py-1.5 overflow-y-auto text-xs font-medium rounded outline-none appearance-none font-lexend overscroll-contain scrollbar-thin scrollbar-thumb-color-text-two scrollbar-track-white pointer-events-none"
-                    onChange={handleSelectPropertyUse}
-                    value={propertyUseState}
-                  >
-                    <option value="All Property Use">All Property Use</option>
-                    {staticInformation.propertyUse.map((type, index) => (
-                      <option key={index} value={type}>
-                        {type}
-                      </option>
-                    ))}
-                  </select>
-                  <span className="text-xs">
-                    <BsCaretDownFill />
-                  </span>
-                </div>
-                <p
-                  className="text-xs pointer-events-none font-semi-bold font-lexend text-color-bright-red hover:cursor-pointer"
-                  onClick={ResetFilters}
-                >
-                  Reset Filters
-                </p>
+                  <option value="All Districts"> All Districts</option>
+                  {staticInformation.cadestralZones.map((district, index) => (
+                    <option key={index} value={district}>
+                      {district}
+                    </option>
+                  ))}
+                </select>
+                <span className="text-xs">
+                  <BsCaretDownFill />
+                </span>
               </div>
+              <div
+                className="flex items-center justify-between gap-2 pr-1.5 border rounded border-divider-grey text-color-text-two"
+                title="Filter by Property Use"
+              >
+                <select
+                  className="hover:cursor-pointer p-2 py-1.5 overflow-y-auto text-xs font-medium rounded outline-none appearance-none font-lexend overscroll-contain scrollbar-thin scrollbar-thumb-color-text-two scrollbar-track-white"
+                  onChange={handleSelectPropertyUse}
+                  value={propertyUseState}
+                >
+                  <option value="All Property Use">All Property Use</option>
+                  {staticInformation.propertyUse.map((type, index) => (
+                    <option key={index} value={type}>
+                      {type}
+                    </option>
+                  ))}
+                </select>
+                <span className="text-xs">
+                  <BsCaretDownFill />
+                </span>
+              </div>
+              <p
+                className="text-xs pointer-events-none font-semi-bold font-lexend text-color-bright-red hover:cursor-pointer"
+                onClick={ResetFilters}
+              >
+                Reset Filters
+              </p>
+
+              <TableSearchInput
+                parentBoxStyle="flex items-center justify-between p-2 bg-custom-grey-100 rounded-3xl border border-custom-color-one"
+                inputBoxStyle={` ${displaySearchIcon ? "w-10/12" : "w-full"} text-xs outline-none bg-inherit font-lexend text-color-text-two`}
+                iconBoxStyle={"text-base text-primary-color hover:cursor-pointer"}
+                placeholder={"Search records"}
+                searchIcon={<FiSearch />}
+                handleOnInput={handleQueryChange}
+                displaySearchIcon={displaySearchIcon}
+                query={searchQuery}
+                setSnackBar={setSnackbar} 
+                handleQueryChange={handleQueryChange}              />
             </div>
 
-            {/* DATA AREA START */}
             <div className="flex flex-wrap items-center justify-start p-4 gap-y-4 gap-x-4">
-              {districtState && propertyUseState ? (
-                propertyInformation.length > 0 ? (
-                  propertyInformation.map((property: any) => (
-                    // SHOW ALL PROPERTIES
+              {searchQuery ? (
+                searchResults.length > 0 ? (
+                  searchResults.map((property: any) => (
                     <PropertyCard
                       id={property.id}
                       personalIdentificationNumber={property.pid}
@@ -283,9 +355,28 @@ export default function Properties() {
                       cadestralZone={property.cadastral_zone}
                       ratePaybale={property.rate_payable}
                       occupationStatus={"Occupied"}
-                      setViewPropertyModal={() =>
-                        handleViewPropertyModal(property)
-                      }
+                      setViewPropertyModal={() => handleViewPropertyModal(property)}
+                    />
+                  ))
+                ) : (
+                  <p className="text-sm font-medium font-lexend text-color-text-black">
+                    No results found.
+                  </p>
+                )
+              ) : districtState && propertyUseState ? (
+                propertyInformation.length > 0 ? (
+                  propertyInformation.map((property: any) => (
+                    <PropertyCard
+                      id={property.id}
+                      personalIdentificationNumber={property.pid}
+                      propertyUse={property.prop_use}
+                      paymentStatus={property.demand_notice_status}
+                      propertyAddress={property.prop_addr}
+                      group={property.group}
+                      cadestralZone={property.cadastral_zone}
+                      ratePaybale={property.rate_payable}
+                      occupationStatus={"Occupied"}
+                      setViewPropertyModal={() => handleViewPropertyModal(property)}
                     />
                   ))
                 ) : (
@@ -296,7 +387,6 @@ export default function Properties() {
               ) : districtState !== "" ? (
                 propertyInformation.length > 0 ? (
                   propertyInformation.map((property: any) => (
-                    // SHOW ALL DISTRICTS
                     <PropertyCard
                       id={property.id}
                       personalIdentificationNumber={property.pid}
@@ -307,9 +397,7 @@ export default function Properties() {
                       cadestralZone={property.cadastral_zone}
                       ratePaybale={property.rate_payable}
                       occupationStatus={"Occupied"}
-                      setViewPropertyModal={() =>
-                        handleViewPropertyModal(property)
-                      }
+                      setViewPropertyModal={() => handleViewPropertyModal(property)}
                     />
                   ))
                 ) : (
@@ -320,7 +408,6 @@ export default function Properties() {
               ) : propertyUseState !== "" ? (
                 propertyInformation.length > 0 ? (
                   propertyInformation.map((property: any) => (
-                    // SHOW ALL PROPERTY USE
                     <PropertyCard
                       id={property.id}
                       personalIdentificationNumber={property.pid}
@@ -331,9 +418,7 @@ export default function Properties() {
                       cadestralZone={property.cadastral_zone}
                       ratePaybale={property.rate_payable}
                       occupationStatus={"Occupied"}
-                      setViewPropertyModal={() =>
-                        handleViewPropertyModal(property)
-                      }
+                      setViewPropertyModal={() => handleViewPropertyModal(property)}
                     />
                   ))
                 ) : (
@@ -341,31 +426,29 @@ export default function Properties() {
                     No results found.
                   </p>
                 )
-              ) : currentProperties.length > 0 ? (
-                currentProperties.map((property: any) => (
-                  // SHOW CURRENT FILTER DATA
-                  <PropertyCard
-                    id={property.id}
-                    personalIdentificationNumber={property.pid}
-                    propertyUse={property.prop_use}
-                    paymentStatus={property.demand_notice_status}
-                    propertyAddress={property.prop_addr}
-                    group={property.group}
-                    cadestralZone={property.cadastral_zone}
-                    ratePaybale={property.rate_payable}
-                    occupationStatus={"Occupied"}
-                    setViewPropertyModal={() =>
-                      handleViewPropertyModal(property)
-                    }
-                  />
-                ))
               ) : (
-                <p className="text-sm font-medium font-lexend text-color-text-black">
-                  No results found.
-                </p>
+                currentProperties.length > 0 ? (
+                  currentProperties.map((property: any) => (
+                    <PropertyCard
+                      id={property.id}
+                      personalIdentificationNumber={property.pid}
+                      propertyUse={property.prop_use}
+                      paymentStatus={property.demand_notice_status}
+                      propertyAddress={property.prop_addr}
+                      group={property.group}
+                      cadestralZone={property.cadastral_zone}
+                      ratePaybale={property.rate_payable}
+                      occupationStatus={"Occupied"}
+                      setViewPropertyModal={() => handleViewPropertyModal(property)}
+                    />
+                  ))
+                ) : (
+                  <p className="text-sm font-medium font-lexend text-color-text-black">
+                    No results found.
+                  </p>
+                )
               )}
             </div>
-            {/* DATA AREA END */}
 
             <div className="flex justify-between p-4 item-center">
               <div className="flex flex-wrap w-[70%]">
@@ -375,7 +458,7 @@ export default function Properties() {
                   marginPagesDisplayed={0}
                   onPageChange={handlePageChange}
                   paginationStyles={paginationStyles}
-                  forcePage={paginationMeta.currentPage - 1} // Pagination component uses 0-based index for pages
+                  forcePage={paginationMeta.currentPage - 1}
                 />
               </div>
               <p className="flex items-center gap-2 justify-end w-[30%] text-xs text-color-text-two font-lexend">
