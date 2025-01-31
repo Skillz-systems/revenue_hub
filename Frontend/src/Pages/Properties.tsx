@@ -21,7 +21,7 @@ import {
 import useSWR from "swr";
 import { FiSearch } from "react-icons/fi";
 import axios from "axios";
-
+ 
 type PropertyData = {
   active: string;
   annual_value: string;
@@ -60,11 +60,11 @@ type PropertyData = {
   street_name: string;
   demand_notice_status: string;
 };
-
+ 
 type PropertyArray = PropertyData[];
-
+ 
 const apiUrl = import.meta.env.VITE_API_URL as string;
-
+ 
 export default function Properties() {
   const { token } = useTokens();
   const [districtState, setDistrictState] = useState<string>("");
@@ -74,10 +74,16 @@ export default function Properties() {
   const [searchQuery, setSearchQuery] = useState('');
   const [searchResults, setSearchResults] = useState([]);
   const [searchLoading, setSearchLoading] = useState(false);
-  const [staticInformation, setStaticInformation] = useState({
-    cadestralZones: [],
-    propertyUse: [],
-  });
+  const [cadestralZone, setCadestralZone] = useState([]);
+  const [ratingDistricts, setRatingDistricts] = useState([]);
+  const [propertyUses, setPropertyUses] = useState([]);
+  const [ratingDistrict, setRatingDistrict] = useState(0);
+  const [propertyUse, setPropertyUse] = useState(0);
+  // const [staticInformation, setStaticInformation] = useState({
+  //   cadestralZones: [],
+  //   ratingDistricts: [],
+  //   propertyUse: [],
+  // });
   const [viewPropertyModal, setViewPropertyModal] = useState<any>(null);
   const [propertyModalTransition, setPropertyModalTransition] =
     useState<boolean>(false);
@@ -97,28 +103,25 @@ export default function Properties() {
   });
   const triggerError = useTriggerError();
   const propertiesPerPage = paginationMeta.perPage;
-
+ 
   const handleSnackbarClose = () => {
     setSnackbar({ ...snackbar, open: false });
   };
-
+ 
   useEffect(() => {
-    const fetchCadestralZones = async () => {
+    const fetchRatingDistrict = async () => {
       try {
         const response = await axios.get(`${apiUrl}/api/rating-district`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
         });
-        setStaticInformation((prev) => ({
-          ...prev,
-          cadestralZones: response.data.data.map((zone: { name: any; }) => zone.name),
-        }));
+        setRatingDistricts(response.data.data)
       } catch (error) {
         console.error(error);
       }
     };
-
+ 
     const fetchPropertyUse = async () => {
       try {
         const response = await axios.get(`${apiUrl}/api/property-use`, {
@@ -126,30 +129,53 @@ export default function Properties() {
             Authorization: `Bearer ${token}`,
           },
         });
-        setStaticInformation((prev) => ({
-          ...prev,
-          propertyUse: response.data.data.map((use: { name: any; }) => use.name),
-        }));
+        setPropertyUses(response.data.data)
       } catch (error) {
         console.error(error);
       }
     };
-
-    fetchCadestralZones();
+ 
+    const fetchCadestralZone = async () => {
+      try {
+        const response = await axios.get(`${apiUrl}/api/cadastral-zone`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        setCadestralZone(response.data.data)
+      } catch (error) {
+        console.error(error);
+      }
+    };
+ 
+    fetchCadestralZone();
+    fetchRatingDistrict();
     fetchPropertyUse();
   }, [token]);
-
+ 
   const fetchProperties = async () => {
     try {
-      const response = await axios.get(`${apiUrl}/api/property`, {
+      let data:{
+        property_use_id ?: number
+        rating_district_id?: number
+        } = {};
+      if (ratingDistrict != 0) {
+        data["rating_district_id"] = ratingDistrict 
+      }
+      if (propertyUse != 0) {
+        data["property_use_id"] = propertyUse
+      }
+      console.log("data", propertyUse)
+      
+      if (propertyUse == 0 && ratingDistrict == 0) {
+        return
+      }
+      
+      const response = await axios.post(`${apiUrl}/api/property?page=${paginationMeta.currentPage}`, data, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
-        params: {
-          search: searchQuery,
-          rating_dist: districtState,
-          prop_use: propertyUseState,
-        },
+        
       });
       setPropertyInformation(response.data.data);
       setPaginationMeta({
@@ -168,34 +194,45 @@ export default function Properties() {
     }
   };
 
+  useEffect( () => {
+ fetchProperties();
+
+  },[ratingDistrict, propertyUse])
+ 
   const { data, error } = useSWR(
     token ? `${apiUrl}/api/property?page=${paginationMeta.currentPage}` : null,
-    (url) => fetcher(url, token)
+    (url) => fetcher(url, token, "post")
   );
-
+ 
   const handleQueryChange = (event: any) => {
     const query = event.target.value;
     setSearchQuery(query);
-
+ 
     if (query.length >= 3) {
       fetchProperties();
     } else {
       setSearchResults([]);
     }
   };
-
+ 
   const handleSelectDistrict = useCallback((event: React.ChangeEvent<HTMLSelectElement>) => {
     const selectedDistrict = event.target.value;
     setDistrictState(selectedDistrict);
     fetchProperties();
   }, [setDistrictState]);
-
+ 
   const handleSelectPropertyUse = useCallback((event: React.ChangeEvent<HTMLSelectElement>) => {
     const selectedPropertyUse = event.target.value;
     setPropertyUseState(selectedPropertyUse);
     fetchProperties();
   }, [setPropertyUseState]);
-
+ 
+  // const handleSelectCadestralZone = useCallback((event: React.ChangeEvent<HTMLSelectElement>) => {
+  //   const selectedCadestralZone = event.target.value;
+  //   setCadestralZone(selectedCadestralZone);
+  //   fetchProperties();
+  // }, [setCadestralZone]);
+ 
   useEffect(() => {
     if (data) {
       setPropertyInformation(data.data);
@@ -212,7 +249,7 @@ export default function Properties() {
       });
     }
   }, [data]);
-
+ 
   useEffect(() => {
     if (error) {
       setSnackbar({
@@ -222,26 +259,26 @@ export default function Properties() {
       });
     }
   }, [data]);
-
+ 
   const handleViewPropertyModal = (property: any) => {
     setViewPropertyModal(property);
     setTimeout(() => {
       setPropertyModalTransition(true);
     }, 250);
   };
-
+ 
   const ResetFilters = () => {
     setDistrictState("");
     setPropertyUseState("");
   };
-
+ 
   const [currentPage, setCurrentPage] = useState<number>(0);
   const [currentStyle, setCurrentStyle] = useState<number | undefined>(
     undefined
   );
-
+ 
   const offset = currentPage * propertiesPerPage;
-
+ 
   const handlePageChange = ({ selected }: { selected: number }) => {
     setPaginationMeta((prev) => ({
       ...prev,
@@ -249,24 +286,24 @@ export default function Properties() {
     }));
     ScrollToTop("top-container");
   };
-
+ 
   const handlePropertiesPerPageChange = (
     e: React.ChangeEvent<HTMLSelectElement>
   ) => {
     ScrollToTop("top-container");
   };
-
+ 
   const currentProperties = propertyInformation?.slice(
     offset,
     offset + propertiesPerPage
   );
-
+ 
   const LengthByFilterState = (): number => {
     return paginationMeta.total;
   };
-
+ 
   const pageCount = Math.ceil(LengthByFilterState() / propertiesPerPage);
-
+ 
   return (
     <div className="w-full overflow-auto scrollbar-thin scrollbar-thumb-color-text-two scrollbar-track-white">
       {propertyInformation ? (
@@ -280,20 +317,40 @@ export default function Properties() {
               <p className="text-base font-bold text-color-text-two">
                 ALL PROPERTIES
               </p>
-
+ 
+              {/* <div
+                className="flex items-center justify-between gap-2 pr-1.5 border rounded border-divider-grey text-color-text-two"
+                title="Filter by District"
+              >
+                <select
+                  className="hover:cursor-pointer p-2 py-1.5 overflow-y-auto text-xs font-medium rounded outline-none appearance-none font-lexend overscroll-contain scrollbar-thin scrollbar-thumb-color-text-two scrollbar-track-white"
+                // onChange={handleSelectCadestralZone}
+                // value={cadestralZone.id}
+                >
+                  <option value="">Cadestral Zone</option>
+                  {cadestralZone.map((cadestralZone: any, index) => (
+                    <option key={index} value={cadestralZone.id}>
+                      {cadestralZone.name}
+                    </option>
+                  ))}
+                </select>
+                <span className="text-xs">
+                  <BsCaretDownFill />
+                </span>
+              </div> */}
               <div
                 className="flex items-center justify-between gap-2 pr-1.5 border rounded border-divider-grey text-color-text-two"
                 title="Filter by District"
               >
                 <select
                   className="hover:cursor-pointer p-2 py-1.5 overflow-y-auto text-xs font-medium rounded outline-none appearance-none font-lexend overscroll-contain scrollbar-thin scrollbar-thumb-color-text-two scrollbar-track-white"
-                  onChange={handleSelectDistrict}
-                  value={districtState}
+                  onChange={(e: any)  => setRatingDistrict(e.target.value)}
+                  value={ratingDistrict}
                 >
-                  <option value="All Districts"> All Districts</option>
-                  {staticInformation.cadestralZones.map((district, index) => (
-                    <option key={index} value={district}>
-                      {district}
+                  <option value="0"> All Districts</option>
+                  {ratingDistricts.map((district: any, index) => (
+                    <option key={district.id} value={district.id}>
+                      {district.name}
                     </option>
                   ))}
                 </select>
@@ -307,13 +364,13 @@ export default function Properties() {
               >
                 <select
                   className="hover:cursor-pointer p-2 py-1.5 overflow-y-auto text-xs font-medium rounded outline-none appearance-none font-lexend overscroll-contain scrollbar-thin scrollbar-thumb-color-text-two scrollbar-track-white"
-                  onChange={handleSelectPropertyUse}
-                  value={propertyUseState}
+                  onChange={(e: any)  => setPropertyUse(e.target.value)}
+                  value={propertyUse}
                 >
-                  <option value="All Property Use">All Property Use</option>
-                  {staticInformation.propertyUse.map((type, index) => (
-                    <option key={index} value={type}>
-                      {type}
+                  <option value="0">All Property Use</option>
+                  {propertyUses.map((type: any, index) => (
+                    <option key={type.id} value={type.id}>
+                      {type.name}
                     </option>
                   ))}
                 </select>
@@ -327,7 +384,7 @@ export default function Properties() {
               >
                 Reset Filters
               </p>
-
+ 
               <TableSearchInput
                 parentBoxStyle="flex items-center justify-between p-2 bg-custom-grey-100 rounded-3xl border border-custom-color-one"
                 inputBoxStyle={` ${displaySearchIcon ? "w-10/12" : "w-full"} text-xs outline-none bg-inherit font-lexend text-color-text-two`}
@@ -337,10 +394,10 @@ export default function Properties() {
                 handleOnInput={handleQueryChange}
                 displaySearchIcon={displaySearchIcon}
                 query={searchQuery}
-                setSnackBar={setSnackbar} 
-                handleQueryChange={handleQueryChange}              />
+                setSnackBar={setSnackbar}
+                handleQueryChange={handleQueryChange} />
             </div>
-
+ 
             <div className="flex flex-wrap items-center justify-start p-4 gap-y-4 gap-x-4">
               {searchQuery ? (
                 searchResults.length > 0 ? (
@@ -449,7 +506,7 @@ export default function Properties() {
                 )
               )}
             </div>
-
+ 
             <div className="flex justify-between p-4 item-center">
               <div className="flex flex-wrap w-[70%]">
                 <Pagination
