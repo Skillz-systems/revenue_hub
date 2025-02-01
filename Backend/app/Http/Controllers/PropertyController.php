@@ -738,7 +738,9 @@ class PropertyController extends Controller
  
         // Apply dynamic filters
         foreach ($filters as $key => $value) {
-         
+          if ($key == 'page'){
+            continue;
+          }
             switch ($key) {
                 case 'street_id':
                     $query->where('street_id', '=', $value);
