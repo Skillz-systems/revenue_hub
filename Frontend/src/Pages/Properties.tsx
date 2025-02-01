@@ -155,16 +155,27 @@ export default function Properties() {
 
   const fetchProperties = async () => {
     try {
+      let data: {
+        property_use_id?: number
+        rating_district_id?: number
+      } = {};
+      if (ratingDistrict != 0) {
+        data["rating_district_id"] = ratingDistrict
+      }
+      if (propertyUse != 0) {
+        data["property_use_id"] = propertyUse
+      }
+      console.log("data", propertyUse)
 
-      const response = await axios.post(`${apiUrl}/api/property`, {
+      if (propertyUse == 0 && ratingDistrict == 0) {
+        return
+      }
+
+      const response = await axios.post(`${apiUrl}/api/property?page=${paginationMeta.currentPage}`, data, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
-        params: {
-          search: searchQuery,
-          rating_dist: districtState,
-          prop_use: propertyUseState,
-        },
+
       });
       setPropertyInformation(response.data.data);
       setPaginationMeta({
@@ -183,9 +194,14 @@ export default function Properties() {
     }
   };
 
+  useEffect(() => {
+    fetchProperties();
+
+  }, [ratingDistrict, propertyUse])
+
   const { data, error } = useSWR(
     token ? `${apiUrl}/api/property?page=${paginationMeta.currentPage}` : null,
-    (url) => fetcher(url, token)
+    (url) => fetcher(url, token, "post")
   );
 
   const handleQueryChange = (event: any) => {
@@ -328,10 +344,10 @@ export default function Properties() {
               >
                 <select
                   className="hover:cursor-pointer p-2 py-1.5 overflow-y-auto text-xs font-medium rounded outline-none appearance-none font-lexend overscroll-contain scrollbar-thin scrollbar-thumb-color-text-two scrollbar-track-white"
-                  onChange={handleSelectDistrict}
+                  onChange={(e: any) => setRatingDistrict(e.target.value)}
                   value={ratingDistrict}
                 >
-                  <option value=""> All Districts</option>
+                  <option value="0"> All Districts</option>
                   {ratingDistricts.map((district: any, index) => (
                     <option key={district.id} value={district.id}>
                       {district.name}
@@ -348,10 +364,10 @@ export default function Properties() {
               >
                 <select
                   className="hover:cursor-pointer p-2 py-1.5 overflow-y-auto text-xs font-medium rounded outline-none appearance-none font-lexend overscroll-contain scrollbar-thin scrollbar-thumb-color-text-two scrollbar-track-white"
-                  onChange={handleSelectPropertyUse}
-                  value={propertyUseState}
+                  onChange={(e: any) => setPropertyUse(e.target.value)}
+                  value={propertyUse}
                 >
-                  <option value="All Property Use">All Property Use</option>
+                  <option value="0">All Property Use</option>
                   {propertyUses.map((type: any, index) => (
                     <option key={type.id} value={type.id}>
                       {type.name}

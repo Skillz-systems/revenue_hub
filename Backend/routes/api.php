@@ -60,7 +60,10 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::apiResource('/staff', UserController::class);
     Route::post('/property', [PropertyController::class, "index"]);
     Route::post('/property/create', [PropertyController::class, "store"]);
-    Route::apiResource('/property', PropertyController::class);
+    Route::put('/property/{property}', [PropertyController::class, "update"]);
+    Route::get('/property/{property}', [PropertyController::class, "show"]);
+    Route::delete('/property/{property}', [PropertyController::class, "destroy"]);
+    //Route::apiResource('/property', PropertyController::class);
 
     Route::get('/street', [StreetController::class, "index"]);
     Route::post('/street/create', [StreetController::class, "store"]);
@@ -103,7 +106,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/rating-district/view/{ratingDistrict}', [RatingDistrictController::class, "show"]);
     Route::put('/rating-district/update/{ratingDistrict}', [RatingDistrictController::class, "update"]);
     Route::delete('/rating-district/delete/{ratingDistrict}', [RatingDistrictController::class, "destroy"]);
-    
+
     Route::get('/group', [GroupController::class, "index"]);
     Route::post('/group/create', [GroupController::class, "store"]);
     Route::get('/group/view/{group}', [GroupController::class, "show"]);
