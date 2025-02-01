@@ -63,9 +63,9 @@ class PropertyController extends Controller
         
 
         if (Auth::user()->role_id != User::ROLE_ADMIN) {
-            $properties = query;
+            $properties = $query;
         } else {
-            $properties = query;
+            $properties = $query;
             //$properties = $this->propertyService->getAllProperties(Auth::user()->zone);
         }
         
@@ -738,7 +738,9 @@ class PropertyController extends Controller
  
         // Apply dynamic filters
         foreach ($filters as $key => $value) {
-         
+          if ($key == 'page'){
+            continue;
+          }
             switch ($key) {
                 case 'street_id':
                     $query->where('street_id', '=', $value);
