@@ -89,7 +89,7 @@ export default function Properties() {
   const [preventLoading, setPreventLoading] = useState<boolean>(false);
   const [searchButton, setSearchButton] = useState<boolean>(false);
   const [order, setOrder] = useState<boolean>(true);
-  const [searchLoader, setSearchLoader] = useState<boolean>(true);
+  const [searchLoader, setSearchLoader] = useState<boolean>(false);
 
   // const [staticInformation, setStaticInformation] = useState({
   //   cadestralZones: [],
@@ -338,8 +338,11 @@ export default function Properties() {
     } else {
       setOrder(true);
     }
-    await fetchProperties();
   }
+
+  useEffect(() => {
+    fetchProperties();
+  }, [order])
 
 
   return (
@@ -445,7 +448,7 @@ export default function Properties() {
                 </div>
 
                 <div>
-                  {searchButton && (
+                  {searchLoader ? <LoadingSpinner title="" /> : searchButton && (
                     <button
                       type="button"
                       className="w-full  flex items-center justify-between button-gradient-one space-x-1 px-2 py-1 border border-custom-color-two rounded shadow-custom-100"
@@ -457,7 +460,7 @@ export default function Properties() {
                         className="font-medium text-left text-white ellipsis font-lexend w-[85%] lg:w-auto"
                         style={{ fontSize: "0.6875rem" }}
                       >
-                        {searchLoader ? <LoadingSpinner title="" /> : "Search"}
+                        Search
 
                       </span>
                     </button>
