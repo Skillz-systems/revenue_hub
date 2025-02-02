@@ -77,9 +77,8 @@ const SideBarMenu: React.FC<SideBarMenuProps> = ({
         <div className="flex-col space-y-3">
           <SearchInput
             parentBoxStyle={`flex items-center justify-between px-4 py-2.5 bg-custom-grey-100 rounded-3xl border border-custom-color-one ${finalBorderStyle}`}
-            inputBoxStyle={`${
-              displaySearchIcon ? "w-10/12" : "w-full"
-            } text-xs outline-none bg-inherit font-lexend text-color-text-two`}
+            inputBoxStyle={`${displaySearchIcon ? "w-10/12" : "w-full"
+              } text-xs outline-none bg-inherit font-lexend text-color-text-two`}
             iconBoxStyle={"text-base text-primary-color hover:cursor-pointer"}
             placeholder={"Search here"}
             searchIcon={<FiSearch />}
@@ -102,7 +101,16 @@ const SideBarMenu: React.FC<SideBarMenuProps> = ({
             iconTwo={<PiBuildingsFill />}
             buttonTextOne={"New Demand Invoice"}
             buttonTextTwo={"Add Property"}
-            openNewDemandInvoiceModal={showAddDemandModal}
+            openNewDemandInvoiceModal={() => {
+              //hideSideBar();
+              //showAddDemandModal();
+              setSnackbar({
+                open: true,
+                message: "Disabled Feature. Coming soon.",
+                severity: "warning",
+              });
+
+            }}
             openAddPropertyModal={() => {
               setSnackbar({
                 open: true,

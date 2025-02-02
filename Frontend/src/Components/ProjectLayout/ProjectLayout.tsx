@@ -57,7 +57,7 @@ const ProjectLayout: React.FC = observer(() => {
     useState<boolean>(false);
   const [propertyModalTransition, setPropertyModalTransition] =
     useState<boolean>(false);
-  const [accountsPasswordState, setAccountsPasswordState] = 
+  const [accountsPasswordState, setAccountsPasswordState] =
     useState<string>("Accounts");
   const menuItems = MenuItemData();
   const { accountInformation, statistics } = userData();
@@ -147,15 +147,13 @@ const ProjectLayout: React.FC = observer(() => {
             className={`flex relative justify-between h-screen bg-custom-blue-100 lg:p-4 lg:pb-0 `}
           >
             <div
-              className={`hidden lg:flex lg:flex-col pb-6 overflow-y-auto overscroll-contain scrollbar-thin scrollbar-thumb-color-text-two scrollbar-track-white ${
-                transitionSection ? "pt-1 w-14" : "w-[19%]"
-              } ${
-                activeMenuItem === "Settings Component" && !displaySideBarMenu
+              className={`hidden lg:flex lg:flex-col pb-6 overflow-y-auto overscroll-contain scrollbar-thin scrollbar-thumb-color-text-two scrollbar-track-white ${transitionSection ? "pt-1 w-14" : "w-[19%]"
+                } ${activeMenuItem === "Settings Component" && !displaySideBarMenu
                   ? "pt-1 w-14"
                   : activeMenuItem === "Settings Component"
-                  ? "w-[270px]"
-                  : ""
-              }`}
+                    ? "w-[270px]"
+                    : ""
+                }`}
             >
               {displaySideBarMenu ? (
                 <SideBarMenu
@@ -229,11 +227,10 @@ const ProjectLayout: React.FC = observer(() => {
               />
             ) : null}
             <div
-              className={`h-full flex-col items-center justify-center p-4 pt-[70px] lg:pt-1 space-y-8 bg-white border-0.6 border-b-0 rounded-b-none border-custom-border rounded overflow-auto scrollbar-thin scrollbar-thumb-color-text-two scrollbar-track-white ${
-                transitionSection
-                  ? "w-full transition-all ease-in-out duration-500"
-                  : "w-full lg:w-[81%]"
-              }`}
+              className={` h-full flex-col items-center justify-center p-4 pt-[70px] lg:pt-1 space-y-8 bg-white border-0.6 border-b-0 rounded-b-none border-custom-border rounded overflow-auto scrollbar-thin scrollbar-thumb-color-text-two scrollbar-track-white ${transitionSection
+                ? "w-full transition-all ease-in-out duration-500"
+                : "w-full lg:w-[81%]"
+                }`}
             >
               <TopNavigation
                 parentStyle={
@@ -260,15 +257,13 @@ const ProjectLayout: React.FC = observer(() => {
                       containerStyle={`flex flex-col items-start p-2 space-y-4 lg:p-4 lg:space-y-8 border-0.6 w-full border-custom-color-one shadow rounded
                 ${card.id === 1 && "bg-custom-grey-200"}`}
                       iconStyle={`flex items-center justify-center w-6 lg:w-10 h-6 lg:h-10 lg:p-2 text-base lg:text-2xl rounded 
-                ${
-                  [1, 2, 3].includes(card.id) &&
-                  "bg-custom-blue-200 text-primary-color"
-                }
+                ${[1, 2, 3].includes(card.id) &&
+                        "bg-custom-blue-200 text-primary-color"
+                        }
                 ${card.id === 4 && "bg-color-light-green text-color-dark-green"}
-                  ${
-                    [5, 6].includes(card.id) &&
-                    "bg-color-light-yellow text-color-bright-orange"
-                  }
+                  ${[5, 6].includes(card.id) &&
+                        "bg-color-light-yellow text-color-bright-orange"
+                        }
                   `}
                       descriptionStyle={
                         "text-[10px] lg:text-xs text-color-text-two font-lexend"
@@ -289,7 +284,10 @@ const ProjectLayout: React.FC = observer(() => {
                 activeMenuItem === "Statistic Component" ? (
                   <Statistics />
                 ) : (
-                  activeComponent
+                  <div className=" h-screen ">
+                    {activeComponent}
+                  </div>
+
                 )
               ) : accountsPasswordState === "Accounts" ? (
                 <div className="flex items-center justify-center">
@@ -322,12 +320,11 @@ const ProjectLayout: React.FC = observer(() => {
             </div>
 
             {displayAddPropertyModal ||
-            displayAddDemandModal ||
-            displayMobileSideBarMenu ? (
+              displayAddDemandModal ||
+              displayMobileSideBarMenu ? (
               <DemandPropertyModal
-                modalStyle={`absolute top-0 left-0 z-20 flex items-start justify-end w-full h-screen overflow-hidden bg-black bg-opacity-40 ${
-                  displayMobileSideBarMenu ? "p-0" : "p-4 "
-                }`}
+                modalStyle={`absolute top-0 left-0 z-20 flex items-start justify-end w-full h-screen overflow-hidden bg-black bg-opacity-40 ${displayMobileSideBarMenu ? "p-0" : "p-4 "
+                  }`}
               >
                 {displayAddPropertyModal && (
                   <AddProperty
@@ -401,9 +398,8 @@ export const PasswordAccountButtons = ({
   return (
     <div className="flex flex-row items-center justify-between gap-4 lg:gap-0 lg:items-start lg:justify-start lg:flex-col lg:px-4 lg:space-y-2 w-full lg:w-[200px] font-lexend lg:border-l-0.5 lg:border-divider-grey">
       <div
-        className={`lg:w-full p-2 text-xs rounded border-0.6 border-custom-color-two hover:bg-primary-color hover:text-white hover:cursor-pointer ${
-          accountsPasswordState === "Accounts" && "bg-primary-color text-white"
-        }`}
+        className={`lg:w-full p-2 text-xs rounded border-0.6 border-custom-color-two hover:bg-primary-color hover:text-white hover:cursor-pointer ${accountsPasswordState === "Accounts" && "bg-primary-color text-white"
+          }`}
         title="Your account information"
         onClick={() => {
           setActiveComponent(null);
@@ -413,9 +409,8 @@ export const PasswordAccountButtons = ({
         Your Account
       </div>
       <div
-        className={`lg:w-full p-2 text-xs rounded border-0.6 border-custom-color-two hover:bg-primary-color hover:text-white hover:cursor-pointer ${
-          accountsPasswordState === "Password" && "bg-primary-color text-white"
-        }`}
+        className={`lg:w-full p-2 text-xs rounded border-0.6 border-custom-color-two hover:bg-primary-color hover:text-white hover:cursor-pointer ${accountsPasswordState === "Password" && "bg-primary-color text-white"
+          }`}
         title="Change your password"
         onClick={() => {
           setActiveComponent(null);
@@ -425,9 +420,8 @@ export const PasswordAccountButtons = ({
         Change Password
       </div>
       <div
-        className={`lg:w-full p-2 text-xs rounded border-0.6 border-custom-color-two hover:bg-primary-color hover:text-white hover:cursor-pointer ${
-          accountsPasswordState === "AppSettings" && "bg-primary-color text-white"
-        }`}
+        className={`lg:w-full p-2 text-xs rounded border-0.6 border-custom-color-two hover:bg-primary-color hover:text-white hover:cursor-pointer ${accountsPasswordState === "AppSettings" && "bg-primary-color text-white"
+          }`}
         title="Application settings"
         onClick={() => {
           setActiveComponent(<Settings />);
