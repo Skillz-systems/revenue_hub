@@ -454,17 +454,17 @@ const DemandInvoiceDocument = ({
                 </p>
                 <div className="flex items-start justify-center gap-1 font-lexend text-[11px] text-document-grey leading-[12.5px]">
                   <span>1.</span>
-                  <span>Walk to any of your bank branch</span>
+                  <span>Walk into any of your bank branches</span>
                 </div>
                 <p className="flex items-start justify-center gap-1 font-lexend text-[11px] text-document-grey leading-[12.5px]">
                   <span>2.</span>
                   <span>
-                    Inform the banker at the teller point you want to make a NIBS ebill payment for AMAc zone A/B tenement
+                    Inform the teller that you want to make a NIBSS e-bills payment for AMAC Zone A & C tenement
                   </span>
                 </p>
                 <p className="flex items-start justify-center gap-1 font-lexend text-[11px] text-document-grey leading-[12.5px]">
                   <span>3.</span>
-                  <span>property number eg 1234567890 (this should be the actual property number )</span>
+                  <span>Use property number ({demandInvoiceData.PropertyIdentificationNumber})</span>
                 </p>
                 {/* <p className="flex items-start justify-center gap-1 font-lexend text-[11px] leading-[12.5px]">
                   <span className="text-document-grey">4.</span>
@@ -474,8 +474,7 @@ const DemandInvoiceDocument = ({
                   </span>
                 </p> */}
                 <p className="font-lexend text-[11px] text-document-grey leading-[12.5px]">
-                  Payment(s) made to locations(s) other than as prescribed here
-                  shall be treated as invalid.
+                  Payment(s) made to locations(s) other than as prescribed here shall be treated as invalid.
                 </p>
               </div>
               {/* <div className="flex flex-col space-y-2 items-center w-[20%]">

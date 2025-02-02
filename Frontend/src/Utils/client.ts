@@ -103,10 +103,10 @@ export const mapDesignationToRoleId = (designation: string): number | null => {
   }
 };
 
-export const fetcher = async (url: string, token: any,method:string="get") => {
+export const fetcher = async (url: string, token: any, method: string = "get", data: any = {}) => {
   try {
-    if (method == "post"){
-      const response = await axios.post(url,{}, {
+    if (method == "post") {
+      const response = await axios.post(url, data, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -118,7 +118,7 @@ export const fetcher = async (url: string, token: any,method:string="get") => {
         Authorization: `Bearer ${token}`,
       },
     });
- 
+
     return response.data;
   } catch (error: any) {
     if (error.isAxiosError) {
@@ -133,6 +133,8 @@ export const fetcher = async (url: string, token: any,method:string="get") => {
     }
   }
 };
+
+
 
 export const useTokens = () => {
   // Safely get and parse userData from cookies

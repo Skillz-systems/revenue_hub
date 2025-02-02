@@ -56,11 +56,11 @@ class PropertyController extends Controller
      */
     public function index(Request $request)
     {
-        $perPage = $request->input('per_page', 100);
-        $search = $request->input('search');
-    
-        $query = $this ->getAllWithFilters($request->all(), $perPage);
-        
+        $perPage = $request->input('per_page', 20);
+
+
+        $query = $this->getAllWithFilters($request->all(), $perPage);
+
 
         if (Auth::user()->role_id != User::ROLE_ADMIN) {
             $properties = $query;
@@ -68,7 +68,7 @@ class PropertyController extends Controller
             $properties = $query;
             //$properties = $this->propertyService->getAllProperties(Auth::user()->zone);
         }
-        
+
         if ($properties->isNotEmpty()) {
 
             $returnProperty = PropertyResource::collection($properties);
@@ -727,39 +727,58 @@ class PropertyController extends Controller
 
     public function getAllWithFilters(array $filters = [], int $per_page = 50)
     {
-        $query = Property::query()
-        ->leftJoin('demand_notices', function ($join) {
-            $join->on('demand_notices.property_id', '=', 'properties.id')
-                ->whereYear('demand_notices.created_at', date('Y'));
-        })
-        ->select('properties.*') // Ensure only property fields are selected
-        ->addSelect(\DB::raw('IF(demand_notices.id IS NULL, 0, 1) as has_demand_notice'))
-        ->orderBy('has_demand_notice', 'asc'); // Properties without demand notices first
- 
+        $query = Property::query();
+
+        if (array_key_exists('search', $filters)) {
+            $search = $filters['search'];
+            $query->where('pid', 'LIKE', "%{$search}%");
+        } else {
+            if ($filters["order"]) {
+                $query->leftJoin('demand_notices', function ($join) {
+                    $join->on('demand_notices.property_id', '=', 'properties.id')
+                        ->whereYear('demand_notices.created_at', date('Y'));
+                })
+                    ->select('properties.*') // Ensure only property fields are selected
+                    ->addSelect(\DB::raw('IF(demand_notices.id IS NULL, 0, 1) as has_demand_notice'))
+                    ->orderBy('has_demand_notice', 'asc'); // Properties without demand notices first
+
+            } else {
+                $query->leftJoin('demand_notices', function ($join) {
+                    $join->on('demand_notices.property_id', '=', 'properties.id')
+                        ->whereYear('demand_notices.created_at', date('Y'));
+                })
+                    ->select('properties.*') // Ensure only property fields are selected
+                    ->addSelect(\DB::raw('IF(demand_notices.id IS NULL, 0, 1) as has_demand_notice'))
+                    ->orderBy('has_demand_notice', 'DESC'); // Properties without demand notices first
+
+            }
+        }
+
+
         // Apply dynamic filters
         foreach ($filters as $key => $value) {
-          if ($key == 'page'){
-            continue;
-          }
+            if ($key == 'page' || $key == 'search' || $key == 'order') {
+                continue;
+            }
             switch ($key) {
                 case 'street_id':
                     $query->where('street_id', '=', $value);
                     break;
-                
+
                 case 'cadastral_zone_id':
                     $query->where('cadastral_zone_id', '=', $value);
                     break;
                 case 'property_type_id':
                     $query->where('property_type_id', '=', $value);
                     break;
-                
+
                 case 'property_use_id':
                     $query->where('property_use_id', '=', $value);
                     break;
                 case 'rating_district_id':
                     $query->where('rating_district_id', '=', $value);
                     break;
-                
+
                 case 'category_id':
                     $query->where('category_id', '=', $value);
                     break;
@@ -772,8 +791,8 @@ class PropertyController extends Controller
                     break;
             }
         }
- 
+
         // Paginate the results
-        return $query->paginate($per_page);
+        return $query->simplePaginate($per_page);
     }
 }

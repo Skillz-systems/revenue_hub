@@ -12,6 +12,7 @@ import {
   TableSearchInput,
 } from "../Components/Index";
 import { BsCaretDownFill } from "react-icons/bs";
+import { BsArrowDownUp } from "react-icons/bs";
 import {
   ScrollToTop,
   fetcher,
@@ -21,7 +22,7 @@ import {
 import useSWR from "swr";
 import { FiSearch } from "react-icons/fi";
 import axios from "axios";
- 
+import InfiniteScroll from 'react-infinite-scroller';
 type PropertyData = {
   active: string;
   annual_value: string;
@@ -60,11 +61,15 @@ type PropertyData = {
   street_name: string;
   demand_notice_status: string;
 };
- 
+
 type PropertyArray = PropertyData[];
- 
+
 const apiUrl = import.meta.env.VITE_API_URL as string;
- 
+
+interface SearchInterface {
+  property_use_id?: number
+  rating_district_id?: number
+}
 export default function Properties() {
   const { token } = useTokens();
   const [districtState, setDistrictState] = useState<string>("");
@@ -78,7 +83,14 @@ export default function Properties() {
   const [ratingDistricts, setRatingDistricts] = useState([]);
   const [propertyUses, setPropertyUses] = useState([]);
   const [ratingDistrict, setRatingDistrict] = useState(0);
+  const [search, setSearch] = useState<SearchInterface>({});
   const [propertyUse, setPropertyUse] = useState(0);
+  const [url, setUrl] = useState<string | null>("");
+  const [preventLoading, setPreventLoading] = useState<boolean>(false);
+  const [searchButton, setSearchButton] = useState<boolean>(false);
+  const [order, setOrder] = useState<boolean>(true);
+  const [searchLoader, setSearchLoader] = useState<boolean>(true);
+
   // const [staticInformation, setStaticInformation] = useState({
   //   cadestralZones: [],
   //   ratingDistricts: [],
@@ -91,10 +103,7 @@ export default function Properties() {
     PropertyArray | any
   >();
   const [paginationMeta, setPaginationMeta] = useState({
-    currentPage: 0,
-    lastPage: 0,
-    total: 0,
-    perPage: 0,
+    next: null,
   });
   const [snackbar, setSnackbar] = useState({
     open: false,
@@ -102,12 +111,12 @@ export default function Properties() {
     severity: "success",
   });
   const triggerError = useTriggerError();
-  const propertiesPerPage = paginationMeta.perPage;
- 
+  //const propertiesPerPage = paginationMeta.perPage;
+
   const handleSnackbarClose = () => {
     setSnackbar({ ...snackbar, open: false });
   };
- 
+
   useEffect(() => {
     const fetchRatingDistrict = async () => {
       try {
@@ -121,7 +130,7 @@ export default function Properties() {
         console.error(error);
       }
     };
- 
+
     const fetchPropertyUse = async () => {
       try {
         const response = await axios.get(`${apiUrl}/api/property-use`, {
@@ -134,7 +143,7 @@ export default function Properties() {
         console.error(error);
       }
     };
- 
+
     const fetchCadestralZone = async () => {
       try {
         const response = await axios.get(`${apiUrl}/api/cadastral-zone`, {
@@ -147,42 +156,56 @@ export default function Properties() {
         console.error(error);
       }
     };
- 
+
     fetchCadestralZone();
     fetchRatingDistrict();
     fetchPropertyUse();
   }, [token]);
- 
+
   const fetchProperties = async () => {
+
     try {
-      let data:{
-        property_use_id ?: number
+      let data: {
+        property_use_id?: number
         rating_district_id?: number
-        } = {};
+        order?: boolean
+        search?: string
+      } = {
+        order: order
+      };
       if (ratingDistrict != 0) {
-        data["rating_district_id"] = ratingDistrict 
+        data["rating_district_id"] = ratingDistrict
       }
       if (propertyUse != 0) {
         data["property_use_id"] = propertyUse
       }
-      console.log("data", propertyUse)
-      
-      if (propertyUse == 0 && ratingDistrict == 0) {
-        return
+      if (searchQuery.length > 0) {
+        data["search"] = searchQuery
       }
-      
-      const response = await axios.post(`${apiUrl}/api/property?page=${paginationMeta.currentPage}`, data, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-        
-      });
+
+      var response: any
+      if (propertyUse == 0 && ratingDistrict == 0) {
+        response = await axios.post(`${apiUrl}/api/property`, data, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+
+        });
+      } else {
+
+        response = await axios.post(`${apiUrl}/api/property`, data, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+
+        });
+      }
+      setSearch(data)
+      setUrl(response.data.links.next);
+
       setPropertyInformation(response.data.data);
       setPaginationMeta({
-        currentPage: response.data.meta.current_page,
-        lastPage: response.data.meta.last_page,
-        total: response.data.meta.total,
-        perPage: response.data.meta.per_page,
+        next: response.data.links.next,
       });
     } catch (error) {
       console.error(error);
@@ -194,130 +217,145 @@ export default function Properties() {
     }
   };
 
-  useEffect( () => {
- fetchProperties();
+  useEffect(() => {
+    fetchProperties();
 
-  },[ratingDistrict, propertyUse])
- 
-  const { data, error } = useSWR(
-    token ? `${apiUrl}/api/property?page=${paginationMeta.currentPage}` : null,
-    (url) => fetcher(url, token, "post")
-  );
- 
+  }, [ratingDistrict, propertyUse])
+
+  // const { data, error } = useSWR(
+  //   token ? paginationMeta.next ? paginationMeta.next : `${apiUrl}/api/property` : null,
+  //   (url) => fetcher(url, token, "post", search)
+  // );
+
   const handleQueryChange = (event: any) => {
     const query = event.target.value;
-    setSearchQuery(query);
- 
-    if (query.length >= 3) {
-      fetchProperties();
+    if (query.length >= 1) {
+      setSearchButton(true)
     } else {
-      setSearchResults([]);
+      setSearchButton(false)
     }
+    setSearchQuery(query);
   };
- 
-  const handleSelectDistrict = useCallback((event: React.ChangeEvent<HTMLSelectElement>) => {
-    const selectedDistrict = event.target.value;
-    setDistrictState(selectedDistrict);
-    fetchProperties();
-  }, [setDistrictState]);
- 
-  const handleSelectPropertyUse = useCallback((event: React.ChangeEvent<HTMLSelectElement>) => {
-    const selectedPropertyUse = event.target.value;
-    setPropertyUseState(selectedPropertyUse);
-    fetchProperties();
-  }, [setPropertyUseState]);
- 
+
   // const handleSelectCadestralZone = useCallback((event: React.ChangeEvent<HTMLSelectElement>) => {
   //   const selectedCadestralZone = event.target.value;
   //   setCadestralZone(selectedCadestralZone);
   //   fetchProperties();
   // }, [setCadestralZone]);
- 
+
   useEffect(() => {
-    if (data) {
-      setPropertyInformation(data.data);
-      setPaginationMeta({
-        currentPage: data.meta.current_page,
-        lastPage: data.meta.last_page,
-        total: data.meta.total,
-        perPage: data.meta.per_page,
-      });
-      setSnackbar({
-        open: true,
-        message: "Properties fetched successfully",
-        severity: "success",
-      });
-    }
-  }, [data]);
- 
-  useEffect(() => {
-    if (error) {
-      setSnackbar({
-        open: true,
-        message: `Error fetching Property Data: ${error}`,
-        severity: "warning",
-      });
-    }
-  }, [data]);
- 
+    fetchProperties()
+  }, []);
+
+  // useEffect(() => {
+  //   // if (error) {
+  //   //   setSnackbar({
+  //   //     open: true,
+  //   //     message: `Error fetching Property Data: ${error}`,
+  //   //     severity: "warning",
+  //   //   });
+  //   // }
+  // }, []);
+
   const handleViewPropertyModal = (property: any) => {
     setViewPropertyModal(property);
     setTimeout(() => {
       setPropertyModalTransition(true);
     }, 250);
   };
- 
+
   const ResetFilters = () => {
     setDistrictState("");
     setPropertyUseState("");
   };
- 
+
   const [currentPage, setCurrentPage] = useState<number>(0);
   const [currentStyle, setCurrentStyle] = useState<number | undefined>(
     undefined
   );
- 
-  const offset = currentPage * propertiesPerPage;
- 
+
+  //const offset = currentPage * propertiesPerPage;
+
   const handlePageChange = ({ selected }: { selected: number }) => {
-    setPaginationMeta((prev) => ({
-      ...prev,
-      currentPage: selected + 1,
-    }));
+    // setPaginationMeta((prev) => ({
+    //   ...prev,
+    //   currentPage: selected + 1,
+    // }));
     ScrollToTop("top-container");
   };
- 
-  const handlePropertiesPerPageChange = (
-    e: React.ChangeEvent<HTMLSelectElement>
-  ) => {
-    ScrollToTop("top-container");
+  const loadMore = async () => {
+    if (preventLoading) {
+      return;
+    }
+    try {
+      setPreventLoading(true)
+      let response = await axios.post(url ? url : "", search, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+
+      });
+      setUrl(response.data.links.next);
+
+      setPropertyInformation([...propertyInformation, ...response.data.data]);
+      console.log("should be done", response.data.data)
+      setPaginationMeta({
+        next: response.data.links.next,
+      });
+      setPreventLoading(false)
+    } catch (error) {
+      console.error(error);
+
+    }
   };
- 
-  const currentProperties = propertyInformation?.slice(
-    offset,
-    offset + propertiesPerPage
-  );
- 
-  const LengthByFilterState = (): number => {
-    return paginationMeta.total;
-  };
- 
-  const pageCount = Math.ceil(LengthByFilterState() / propertiesPerPage);
- 
+
+  const handleSearch = async () => {
+    //show search loader
+    setSearchLoader(true)
+    await fetchProperties();
+    setSearchLoader(false)
+    // remove search loader
+  }
+
+  // const handlePropertiesPerPageChange = (
+  //   e: React.ChangeEvent<HTMLSelectElement>
+  // ) => {
+  //   ScrollToTop("top-container");
+  // };
+
+  // const currentProperties = propertyInformation?.slice(
+  //   offset,
+  //   offset + propertiesPerPage
+  // );
+
+  // const LengthByFilterState = (): number => {
+  //   return paginationMeta.total;
+  // };
+
+  const switchOrder = async () => {
+    if (order) {
+      setOrder(false);
+    } else {
+      setOrder(true);
+    }
+    await fetchProperties();
+  }
+
+
   return (
     <div className="w-full overflow-auto scrollbar-thin scrollbar-thumb-color-text-two scrollbar-track-white">
       {propertyInformation ? (
-        <div className="w-[1000px] lg:w-full">
+        <div className="w-[1000px] lg:w-full ">
           <hr className="border-0.5 mb-8 border-custom-grey-100" />
           <div
             id="top-container"
-            className="border-0.6 border-custom-grey-100 rounded"
+            className="border-0.6 border-custom-grey-100 rounded "
           >
             <div className="flex items-center justify-between p-4 bg-very-light-grey">
               <p className="text-base font-bold text-color-text-two">
                 ALL PROPERTIES
               </p>
- 
+
               {/* <div
                 className="flex items-center justify-between gap-2 pr-1.5 border rounded border-divider-grey text-color-text-two"
                 title="Filter by District"
@@ -338,13 +376,16 @@ export default function Properties() {
                   <BsCaretDownFill />
                 </span>
               </div> */}
+              <div>
+                <BsArrowDownUp onClick={switchOrder} className={`${order ? "text-green-500" : "text-red-500"} text-[20px] hover:cursor-pointer`} />
+              </div>
               <div
                 className="flex items-center justify-between gap-2 pr-1.5 border rounded border-divider-grey text-color-text-two"
                 title="Filter by District"
               >
                 <select
                   className="hover:cursor-pointer p-2 py-1.5 overflow-y-auto text-xs font-medium rounded outline-none appearance-none font-lexend overscroll-contain scrollbar-thin scrollbar-thumb-color-text-two scrollbar-track-white"
-                  onChange={(e: any)  => setRatingDistrict(e.target.value)}
+                  onChange={(e: any) => setRatingDistrict(e.target.value)}
                   value={ratingDistrict}
                 >
                   <option value="0"> All Districts</option>
@@ -358,13 +399,14 @@ export default function Properties() {
                   <BsCaretDownFill />
                 </span>
               </div>
+
               <div
                 className="flex items-center justify-between gap-2 pr-1.5 border rounded border-divider-grey text-color-text-two"
                 title="Filter by Property Use"
               >
                 <select
                   className="hover:cursor-pointer p-2 py-1.5 overflow-y-auto text-xs font-medium rounded outline-none appearance-none font-lexend overscroll-contain scrollbar-thin scrollbar-thumb-color-text-two scrollbar-track-white"
-                  onChange={(e: any)  => setPropertyUse(e.target.value)}
+                  onChange={(e: any) => setPropertyUse(e.target.value)}
                   value={propertyUse}
                 >
                   <option value="0">All Property Use</option>
@@ -378,136 +420,199 @@ export default function Properties() {
                   <BsCaretDownFill />
                 </span>
               </div>
-              <p
+              {/* <p
                 className="text-xs pointer-events-none font-semi-bold font-lexend text-color-bright-red hover:cursor-pointer"
                 onClick={ResetFilters}
               >
                 Reset Filters
-              </p>
- 
-              <TableSearchInput
-                parentBoxStyle="flex items-center justify-between p-2 bg-custom-grey-100 rounded-3xl border border-custom-color-one"
-                inputBoxStyle={` ${displaySearchIcon ? "w-10/12" : "w-full"} text-xs outline-none bg-inherit font-lexend text-color-text-two`}
-                iconBoxStyle={"text-base text-primary-color hover:cursor-pointer"}
-                placeholder={"Search records"}
-                searchIcon={<FiSearch />}
-                handleOnInput={handleQueryChange}
-                displaySearchIcon={displaySearchIcon}
-                query={searchQuery}
-                setSnackBar={setSnackbar}
-                handleQueryChange={handleQueryChange} />
+              </p> */}
+              <div
+                className="flex items-center justify-between gap-2 pr-1.5  "
+                title="Filter by Property Use"
+              >
+                <div>
+                  <TableSearchInput
+                    parentBoxStyle="flex items-center justify-between p-2 bg-custom-grey-100 rounded-3xl border border-custom-color-one"
+                    inputBoxStyle={` ${displaySearchIcon ? "w-10/12" : "w-full"} text-xs outline-none bg-inherit font-lexend text-color-text-two`}
+                    iconBoxStyle={"text-base text-primary-color hover:cursor-pointer"}
+                    placeholder={"Search records"}
+                    searchIcon={<FiSearch />}
+                    handleOnInput={handleQueryChange}
+                    displaySearchIcon={displaySearchIcon}
+                    query={searchQuery}
+                    setSnackBar={setSnackbar}
+                    handleQueryChange={handleQueryChange} />
+                </div>
+
+                <div>
+                  {searchButton && (
+                    <button
+                      type="button"
+                      className="w-full  flex items-center justify-between button-gradient-one space-x-1 px-2 py-1 border border-custom-color-two rounded shadow-custom-100"
+                      title={"Search"}
+                      onClick={handleSearch}
+                    >
+                      {/* <span className="text-sm text-white">{iconOne}</span> */}
+                      <span
+                        className="font-medium text-left text-white ellipsis font-lexend w-[85%] lg:w-auto"
+                        style={{ fontSize: "0.6875rem" }}
+                      >
+                        {searchLoader ? <LoadingSpinner title="" /> : "Search"}
+
+                      </span>
+                    </button>
+                  )}
+
+                </div>
+              </div>
             </div>
- 
-            <div className="flex flex-wrap items-center justify-start p-4 gap-y-4 gap-x-4">
-              {searchQuery ? (
-                searchResults.length > 0 ? (
-                  searchResults.map((property: any) => (
-                    <PropertyCard
-                      id={property.id}
-                      personalIdentificationNumber={property.pid}
-                      propertyUse={property.prop_use}
-                      paymentStatus={property.demand_notice_status}
-                      propertyAddress={property.prop_addr}
-                      group={property.group}
-                      cadestralZone={property.cadastral_zone}
-                      ratePaybale={property.rate_payable}
-                      occupationStatus={"Occupied"}
-                      setViewPropertyModal={() => handleViewPropertyModal(property)}
-                    />
-                  ))
+
+            <div id="scrollableDiv"
+              className="h-[80vh] overflow-auto no-scrollbar  justify-start p-4 gap-y-4 gap-x-4">
+              <InfiniteScroll
+                className="flex flex-wrap  justify-start p-4 gap-y-4 gap-x-4"
+                pageStart={1}
+                loadMore={loadMore}
+                hasMore={preventLoading == false && url ? true : false}
+                loader={<LoadingSpinner title="Loading More Properties" />}
+                useWindow={false}
+              >
+                {/* {searchQuery ? (
+                  searchResults.length > 0 ? (
+                    searchResults.map((property: any) => (
+                      <PropertyCard
+                        id={property.id}
+                        personalIdentificationNumber={property.pid}
+                        propertyUse={property.prop_use}
+                        paymentStatus={property.demand_notice_status}
+                        propertyAddress={property.prop_addr}
+                        group={property.group}
+                        cadestralZone={property.cadastral_zone}
+                        ratePaybale={property.rate_payable}
+                        occupationStatus={"Occupied"}
+                        setViewPropertyModal={() => handleViewPropertyModal(property)}
+                      />
+                    ))
+                  ) : (
+                    <p className="text-sm font-medium font-lexend text-color-text-black">
+                      No results found.
+                    </p>
+                  )
+                ) : districtState && propertyUseState ? (
+                  propertyInformation.length > 0 ? (
+                    propertyInformation.map((property: any) => (
+                      <PropertyCard
+                        id={property.id}
+                        personalIdentificationNumber={property.pid}
+                        propertyUse={property.prop_use}
+                        paymentStatus={property.demand_notice_status}
+                        propertyAddress={property.prop_addr}
+                        group={property.group}
+                        cadestralZone={property.cadastral_zone}
+                        ratePaybale={property.rate_payable}
+                        occupationStatus={"Occupied"}
+                        setViewPropertyModal={() => handleViewPropertyModal(property)}
+                      />
+                    ))
+                  ) : (
+                    <p className="text-sm font-medium font-lexend text-color-text-black">
+                      No results found.
+                    </p>
+                  )
+                ) : districtState !== "" ? (
+                  propertyInformation.length > 0 ? (
+                    propertyInformation.map((property: any) => (
+                      <PropertyCard
+                        key={property.id}
+                        id={property.id}
+                        personalIdentificationNumber={property.pid}
+                        propertyUse={property.prop_use}
+                        paymentStatus={property.demand_notice_status}
+                        propertyAddress={property.prop_addr}
+                        group={property.group}
+                        cadestralZone={property.cadastral_zone}
+                        ratePaybale={property.rate_payable}
+                        occupationStatus={"Occupied"}
+                        setViewPropertyModal={() => handleViewPropertyModal(property)}
+                      />
+                    ))
+                  ) : (
+                    <p className="text-sm font-medium font-lexend text-color-text-black">
+                      No results found.
+                    </p>
+                  )
+                ) : propertyUseState !== "" ? (
+                  propertyInformation.length > 0 ? (
+                    propertyInformation.map((property: any) => (
+                      <PropertyCard
+                        id={property.id}
+                        personalIdentificationNumber={property.pid}
+                        propertyUse={property.prop_use}
+                        paymentStatus={property.demand_notice_status}
+                        propertyAddress={property.prop_addr}
+                        group={property.group}
+                        cadestralZone={property.cadastral_zone}
+                        ratePaybale={property.rate_payable}
+                        occupationStatus={"Occupied"}
+                        setViewPropertyModal={() => handleViewPropertyModal(property)}
+                      />
+                    ))
+                  ) : (
+                    <p className="text-sm font-medium font-lexend text-color-text-black">
+                      No results found.
+                    </p>
+                  )
                 ) : (
-                  <p className="text-sm font-medium font-lexend text-color-text-black">
-                    No results found.
-                  </p>
-                )
-              ) : districtState && propertyUseState ? (
-                propertyInformation.length > 0 ? (
-                  propertyInformation.map((property: any) => (
-                    <PropertyCard
-                      id={property.id}
-                      personalIdentificationNumber={property.pid}
-                      propertyUse={property.prop_use}
-                      paymentStatus={property.demand_notice_status}
-                      propertyAddress={property.prop_addr}
-                      group={property.group}
-                      cadestralZone={property.cadastral_zone}
-                      ratePaybale={property.rate_payable}
-                      occupationStatus={"Occupied"}
-                      setViewPropertyModal={() => handleViewPropertyModal(property)}
-                    />
-                  ))
-                ) : (
-                  <p className="text-sm font-medium font-lexend text-color-text-black">
-                    No results found.
-                  </p>
-                )
-              ) : districtState !== "" ? (
-                propertyInformation.length > 0 ? (
-                  propertyInformation.map((property: any) => (
-                    <PropertyCard
-                      id={property.id}
-                      personalIdentificationNumber={property.pid}
-                      propertyUse={property.prop_use}
-                      paymentStatus={property.demand_notice_status}
-                      propertyAddress={property.prop_addr}
-                      group={property.group}
-                      cadestralZone={property.cadastral_zone}
-                      ratePaybale={property.rate_payable}
-                      occupationStatus={"Occupied"}
-                      setViewPropertyModal={() => handleViewPropertyModal(property)}
-                    />
-                  ))
-                ) : (
-                  <p className="text-sm font-medium font-lexend text-color-text-black">
-                    No results found.
-                  </p>
-                )
-              ) : propertyUseState !== "" ? (
-                propertyInformation.length > 0 ? (
-                  propertyInformation.map((property: any) => (
-                    <PropertyCard
-                      id={property.id}
-                      personalIdentificationNumber={property.pid}
-                      propertyUse={property.prop_use}
-                      paymentStatus={property.demand_notice_status}
-                      propertyAddress={property.prop_addr}
-                      group={property.group}
-                      cadestralZone={property.cadastral_zone}
-                      ratePaybale={property.rate_payable}
-                      occupationStatus={"Occupied"}
-                      setViewPropertyModal={() => handleViewPropertyModal(property)}
-                    />
-                  ))
-                ) : (
-                  <p className="text-sm font-medium font-lexend text-color-text-black">
-                    No results found.
-                  </p>
-                )
-              ) : (
-                currentProperties.length > 0 ? (
-                  currentProperties.map((property: any) => (
-                    <PropertyCard
-                      id={property.id}
-                      personalIdentificationNumber={property.pid}
-                      propertyUse={property.prop_use}
-                      paymentStatus={property.demand_notice_status}
-                      propertyAddress={property.prop_addr}
-                      group={property.group}
-                      cadestralZone={property.cadastral_zone}
-                      ratePaybale={property.rate_payable}
-                      occupationStatus={"Occupied"}
-                      setViewPropertyModal={() => handleViewPropertyModal(property)}
-                    />
-                  ))
-                ) : (
-                  <p className="text-sm font-medium font-lexend text-color-text-black">
-                    No results found.
-                  </p>
-                )
-              )}
+                  propertyInformation.length > 0 ? (
+                    propertyInformation.map((property: any) => (
+                      <PropertyCard
+                        id={property.id}
+                        personalIdentificationNumber={property.pid}
+                        propertyUse={property.prop_use}
+                        paymentStatus={property.demand_notice_status}
+                        propertyAddress={property.prop_addr}
+                        group={property.group}
+                        cadestralZone={property.cadastral_zone}
+                        ratePaybale={property.rate_payable}
+                        occupationStatus={"Occupied"}
+                        setViewPropertyModal={() => handleViewPropertyModal(property)}
+                      />
+                    ))
+                  ) : (
+                    <p className="text-sm font-medium font-lexend text-color-text-black">
+                      No results found.
+                    </p>
+                  )
+                )} */}
+                {
+                  propertyInformation.length > 0 ? (
+                    propertyInformation.map((property: any) => (
+                      <PropertyCard
+                        id={property.id}
+                        personalIdentificationNumber={property.pid}
+                        propertyUse={property.prop_use}
+                        paymentStatus={property.demand_notice_status}
+                        propertyAddress={property.prop_addr}
+                        group={property.group}
+                        cadestralZone={property.cadastral_zone}
+                        ratePaybale={property.rate_payable}
+                        occupationStatus={"Occupied"}
+                        setViewPropertyModal={() => handleViewPropertyModal(property)}
+                      />
+                    ))
+                  ) : (
+                    <p className="text-sm font-medium font-lexend text-color-text-black">
+                      No results found.
+                    </p>
+                  )
+                }
+                {preventLoading ? <LoadingSpinner title="Loading More Properties" /> : null}
+              </InfiniteScroll>
+
+
             </div>
- 
-            <div className="flex justify-between p-4 item-center">
+
+            {/* <div className="flex justify-between p-4 item-center">
               <div className="flex flex-wrap w-[70%]">
                 <Pagination
                   pageCount={paginationMeta.lastPage}
@@ -550,7 +655,7 @@ export default function Properties() {
                 of <span>{LengthByFilterState()}</span>
                 entries
               </p>
-            </div>
+            </div> */}
           </div>
           {viewPropertyModal ? (
             <DemandPropertyModal
