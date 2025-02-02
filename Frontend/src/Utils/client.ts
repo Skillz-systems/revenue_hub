@@ -103,10 +103,10 @@ export const mapDesignationToRoleId = (designation: string): number | null => {
   }
 };
 
-export const fetcher = async (url: string, token: any, method: string = "get") => {
+export const fetcher = async (url: string, token: any, method: string = "get", data: any = {}) => {
   try {
     if (method == "post") {
-      const response = await axios.post(url, {}, {
+      const response = await axios.post(url, data, {
         headers: {
           Authorization: `Bearer ${token}`,
         },

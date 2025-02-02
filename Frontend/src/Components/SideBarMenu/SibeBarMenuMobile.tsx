@@ -40,7 +40,7 @@ const SibeBarMenuMobile: React.FC<SideBarMenuProps> = ({
   const [snackbar, setSnackbar] = useState({
     open: false,
     message: "",
-    severity: "info", 
+    severity: "info",
   });
 
   const handleLogout = () => {
@@ -76,7 +76,13 @@ const SibeBarMenuMobile: React.FC<SideBarMenuProps> = ({
           buttonTextTwo={"Add Property"}
           openNewDemandInvoiceModal={() => {
             hideSideBar();
-            showAddDemandModal();
+            //showAddDemandModal();
+            setSnackbar({
+              open: true,
+              message: "Disabled Feature. Coming soon.",
+              severity: "warning",
+            });
+
           }}
           openAddPropertyModal={() => {
             hideSideBar();
