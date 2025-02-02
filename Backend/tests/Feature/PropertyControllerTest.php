@@ -351,4 +351,9 @@ class PropertyControllerTest extends TestCase
     //     $response->assertStatus(200);
     //     $response->assertJson(['message' => 'File uploaded successfully and merged']);
     // }
+
+    public function test_that_true_is_true(): void
+    {
+        $this->assertTrue(true);
+    }
 }
