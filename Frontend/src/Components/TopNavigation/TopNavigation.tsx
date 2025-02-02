@@ -106,7 +106,7 @@ const TopNavigation: React.FC<TopNavigationProps> = ({
             onChange={handleYearChange}
             value={selectedYear}
           >
-            {Array.from({ length: 25 }, (_, index) => (
+            {Array.from({ length: 40 }, (_, index) => (
               <option key={index} value={2000 + index} className="text-sm">
                 {2000 + index}
               </option>
