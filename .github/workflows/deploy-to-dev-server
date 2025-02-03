@@ -1,0 +1,48 @@
+name: crypto-project-frontend-dev-deploy
+
+on:
+  push:
+  #   # branches:
+  #   #   - main
+  # pull_request:
+  #   branches:
+  #     - staging
+  #   types: [closed]
+
+jobs:
+  deploy-dev:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: '20'
+
+      - name: Install dependencies
+        run: cd Frontend && npm install
+
+      - name: Update apt repositories
+        run: sudo apt update
+
+      - name: rename env.example to .env
+        run: cd Frontend && mv .env.example .env
+
+      - name: find and replace in document
+        run: cd Frontend && sed -i -e 's|VITE_API_URL=url|VITE_API_URL=https://api.revenuehub.skillzserver.com|g' .env
+        
+      - name: Run build
+        run: cd Frontend && npm run build
+
+      - name: Install rsync
+        run: sudo apt-get install -y rsync
+
+      - name: SSH login and deploy
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{secrets.SSH_PRIVATE_KEY}}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          rsync --delete -va -e 'ssh -p 7822 -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no' \
+            Frontend/dist/ Frontend/.htaccess  skillz@103.72.76.68:revenuehub/frontend
