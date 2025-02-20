@@ -200,7 +200,7 @@ class DemandNoticeController extends Controller
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'property_id' => ['required', 'integer', 'max:255'],
+            'property_id' => ['required', 'integer'],
         ]);
 
         if ($validator->fails()) {
