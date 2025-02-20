@@ -121,7 +121,7 @@ const PropertiesTable: React.FC<PropertiesTableProps> = observer(
       }
     };
     const generateDemandNotice = async (pid: number) => {
-      if (userRoleId > 1) {
+      if (userRoleId > 2) {
         setSnackbar({
           open: true,
           message: "You don't have permission",
@@ -185,9 +185,8 @@ const PropertiesTable: React.FC<PropertiesTableProps> = observer(
 
     return (
       <div
-        className={`flex-col border border-divider-grey ${
-          isDesktop ? "w-[32%]" : "w-[31%]"
-        } rounded`}
+        className={`flex-col border border-divider-grey ${isDesktop ? "w-[32%]" : "w-[31%]"
+          } rounded`}
       >
         <div className="flex items-center justify-between px-2.5 py-3 gap-1 border-b border-divider-grey">
           <div className="flex items-center justify-between gap-2">
@@ -196,13 +195,12 @@ const PropertiesTable: React.FC<PropertiesTableProps> = observer(
             </span>
             <span
               className={`rounded-md px-2 py-0.5 font-light font-lexend text-color-text-black text-[10px] border-0.6 border-custom-grey-100
-            ${
-              propertyUse === "COMMERCIAL"
-                ? "bg-color-light-red"
-                : propertyUse === "RESIDENTIAL"
-                ? "bg-color-light-yellow"
-                : "bg-custom-blue-200"
-            }
+            ${propertyUse === "COMMERCIAL"
+                  ? "bg-color-light-red"
+                  : propertyUse === "RESIDENTIAL"
+                    ? "bg-color-light-yellow"
+                    : "bg-custom-blue-200"
+                }
             `}
             >
               {propertyUse.toUpperCase()}
@@ -210,15 +208,14 @@ const PropertiesTable: React.FC<PropertiesTableProps> = observer(
           </div>
           <span
             className={`rounded-md px-2 py-0.5 font-light text-[10px] text-white font-lexend
-          ${
-            paymentStatus === "Ungenerated"
-              ? "bg-primary-color"
-              : paymentStatus === "Unpaid"
-              ? "bg-color-bright-orange"
-              : paymentStatus === "Expired"
-              ? "bg-color-bright-red"
-              : "bg-color-bright-green"
-          }
+          ${paymentStatus === "Ungenerated"
+                ? "bg-primary-color"
+                : paymentStatus === "Unpaid"
+                  ? "bg-color-bright-orange"
+                  : paymentStatus === "Expired"
+                    ? "bg-color-bright-red"
+                    : "bg-color-bright-green"
+              }
           `}
           >
             {paymentStatus}
