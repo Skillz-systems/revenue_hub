@@ -13,6 +13,8 @@ import {
   DemandInvoiceDocument,
   CustomAlert,
   paginationStyles,
+  userData,
+  LoadingSpinner,
 } from "../Index";
 import { DemandNotice } from "../../Data/types";
 import {
@@ -22,13 +24,15 @@ import {
   useTokens,
   useTriggerError,
 } from "../../Utils/client";
-import axios from "axios";
 import DemandReminderDocument from "./DemandReminderDocument";
 import AlertDialog from '../AlertDialog/AlertDialog';
-
+import { rootStore } from "../../Stores/rootstore";
+import axios, { AxiosError } from "axios";
+import InfiniteScroll from 'react-infinite-scroller';
 const apiUrl = import.meta.env.VITE_API_URL as string;
 
 const DemandInvoiceTable = () => {
+  const { staticInformation } = userData();
   const [status, setStatus] = useState<number>(0);
   const isDesktop = useMediaQuery({ query: "(min-width: 1024px)" });
   const [displaySearchIcon, setDisplaySearchIcon] = useState<boolean>(true);
@@ -57,8 +61,76 @@ const DemandInvoiceTable = () => {
   const [showAlertDialog, setShowAlertDialog] = useState(false);
   const [demandNoticeToDelete, setDemandNoticeToDelete] = useState<number>(0);
   const [isLoading, setIsLoading] = useState(false);
-  const [staticInformation, setStaticInformation] = useState<any>();
   const [demandNoticeInformation, setDemandNoticeInformation] = useState<DemandNotice[]>([]);
+  const [preventLoading, setPreventLoading] = useState<boolean>(false);
+  const [url, setUrl] = useState<string | null>("");
+
+  useEffect(() => {
+    fetchDemandNotices();
+    if (rootStore.refreshDemandNotice) {
+      fetchDemandNotices();
+    }
+  }, [rootStore.refreshDemandNotice]);
+
+  const fetchDemandNotices = async (dateFilter = "") => {
+    try {
+      const response = await axios.post(
+        `${apiUrl}/api/demand-notice`,
+        { date_filter: dateFilter },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      if (response.status === 200) {
+        setDemandNoticeInformation(response.data.data);
+        setUrl(response.data.links.next);
+      } else {
+        setSnackbar({
+          open: true,
+          message: "Unexpected status code",
+          severity: "warning",
+        });
+      }
+    } catch (error: any) {
+      let message = "Internal Server Error";
+      if (error.isAxiosError) {
+        const axiosError = error as AxiosError;
+        if (axiosError.code === "ERR_NETWORK") {
+          message =
+            "Network error. Please check your internet connection and try again.";
+        } else if (axiosError.response) {
+          switch (axiosError.response.status) {
+            case 400:
+              message = "Bad request";
+              break;
+            case 401:
+              message = "You are unauthorized";
+              break;
+            case 403:
+              message = "You are forbidden";
+              break;
+            case 429:
+              message = "Too many requests made. Refreshing in 3 seconds";
+              setTimeout(() => {
+                window.location.reload();
+              }, 3000);
+              break;
+            case 500:
+              triggerError(error);
+              break;
+            default:
+              break;
+          }
+        }
+      }
+      setSnackbar({ open: true, message, severity: "error" });
+    } finally {
+      rootStore.refreshDemandNotice && rootStore.updateDemandList(false);
+    }
+  };
+
 
   const deleteDemandNotice = async (id: number) => {
     if (userRoleId > 1) {
@@ -164,24 +236,11 @@ const DemandInvoiceTable = () => {
     setReminderDocument(propertyData);
   };
 
-  // PAGINATION LOGIC
-  const offset = "currentPage * propertiesPerPage";
-
-  const handlePageChange = ({ selected }: { selected: number }) => {
-
-    ScrollToTop("top-container");
-  };
-
-  const handlePropertiesPerPageChange = (e: ChangeEvent<HTMLSelectElement>) => {
-    ScrollToTop("top-container");
-  };
-
   const currentProperties = (data: any) => {
     if (!data) {
       return [];
     }
-    // console.log("Demand Notice", data);
-    return data?.slice(offset, offset + propertiesPerPage);
+    return data;
   };
 
   const handleEditModal = (recordId: number) => {
@@ -197,7 +256,6 @@ const DemandInvoiceTable = () => {
     setQuery(event.target.value);
   };
 
-  const pageCount = "Math.ceil(LengthByActiveMenu() / propertiesPerPage)";
   const getStatusClass = (status: number) => {
     switch (status) {
       case 0:
@@ -440,9 +498,26 @@ const DemandInvoiceTable = () => {
     );
   };
 
-  function LengthByActiveMenu() {
-    return "paginationMeta.total";
-  }
+  const loadMore = async () => {
+    if (preventLoading) {
+      return;
+    }
+    try {
+      setPreventLoading(true)
+      let response = await axios.post(url ? url : "", query, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+
+      });
+      setUrl(response.data.links.next);
+      setDemandNoticeInformation([...demandNoticeInformation, ...response.data.data]);
+      setPreventLoading(false)
+    } catch (error) {
+      console.error(error);
+
+    }
+  };
 
   return (
     <div className="w-[1000px] lg:w-full">
@@ -457,7 +532,7 @@ const DemandInvoiceTable = () => {
         ) : null}
         <div className="flex items-start justify-between">
           <div className="flex items-center justify-between border-0.6 border-custom-grey-100 rounded p-1">
-            {/* {staticInformation.demandNotice.menu.map((menu: any) =>
+            {staticInformation.demandNotice.menu.map((menu: any) =>
               displayColumn === false && query !== "" && menu.id > 1 ? null : (
                 <div
                   key={menu.id}
@@ -494,7 +569,7 @@ const DemandInvoiceTable = () => {
                   ) : null}
                 </div>
               )
-            )} */}
+            )}
           </div>
           <TableSearchInput
             parentBoxStyle="flex items-center justify-between p-2 bg-custom-grey-100 rounded-3xl border border-custom-color-one"
@@ -520,7 +595,7 @@ const DemandInvoiceTable = () => {
 
         <div className="flex-col space-y-6 ">
           <div className="flex items-center justify-between gap-1">
-            {/* {staticInformation.demandNotice.columns.map((column: any) => (
+            {staticInformation.demandNotice.columns.map((column: any) => (
               <div
                 key={column.id}
                 className={`flex items-center gap-1 w-1/12 text-color-text-two text-[10px] font-lexend
@@ -541,76 +616,45 @@ const DemandInvoiceTable = () => {
                   ) : null}
                 </span>
               </div>
-            ))} */}
+            ))}
           </div>
-          <div className="flex-col space-y-4">
-            {query === "" ? (
-              // FILTER BY QUERY
-              demandNoticeInformation.length > 0 ? (
-                currentProperties(demandNoticeInformation).map(
-                  (record: DemandNotice) => recordField(record)
-                )
-              ) : (
-                <p className="text-sm font-medium font-lexend text-color-text-black">
-                  No results found.
-                </p>
-              )
-            ) : demandNoticeInformation.length > 0 ? (
-              // FILTER EVERYTHING ELSE
-              currentProperties(demandNoticeInformation).map((record: any) =>
-                recordField(record)
-              )
-            ) : (
-              <p className="text-sm font-medium font-lexend text-color-text-black">
-                No results found.
-              </p>
-            )}
-          </div>
-        </div>
-        <div className="flex justify-between p-4 item-center">
-          <div className="flex flex-wrap w-[70%]">
-            {/* <Pagination
-              pageCount={paginationMeta.lastPage}
-              pageRangeDisplayed={2}
-              marginPagesDisplayed={0}
-              onPageChange={handlePageChange}
-              paginationStyles={paginationStyles}
-              forcePage={paginationMeta.currentPage - 1}
-            /> */}
-          </div>
-          {/* <p className="flex items-center gap-2 justify-end w-[30%] text-xs text-color-text-two font-lexend">
-            Showing
-            <select
-              className="flex items-center outline-none justify-center w-[45px] h-[32px] px-2.5 border border-divider-grey rounded text-color-text-one appearance-none bg-transparent"
-              onChange={handlePropertiesPerPageChange}
-              value={
-                paginationMeta.perPage > paginationMeta.total
-                  ? paginationMeta.total
-                  : paginationMeta.perPage
-              }
-              disabled
-              style={{
-                WebkitAppearance: "none",
-                MozAppearance: "none",
-                appearance: "none",
-              }}
-            >
-              <option
-                value={
-                  paginationMeta.perPage > paginationMeta.total
-                    ? paginationMeta.total
-                    : paginationMeta.perPage
-                }
+          {demandNoticeInformation.length > 0 ? (
+            <div id="scrollableDiv"
+              className="h-[80vh] overflow-auto no-scrollbar  justify-start p-4 gap-y-4 gap-x-4">
+              <InfiniteScroll
+                className="flex flex-col gap-y-4 gap-x-4"
+                pageStart={1}
+                loadMore={loadMore}
+                hasMore={preventLoading == false && url ? true : false}
+                loader={<LoadingSpinner title="Loading More Demand Notices" />}
+                useWindow={false}
               >
-                {paginationMeta.perPage > paginationMeta.total
-                  ? paginationMeta.total
-                  : paginationMeta.perPage}
-              </option>
-            </select>
-            of <span>{LengthByActiveMenu()}</span>
-            entries
-          </p> */}
+                {query === "" ? (
+                  // FILTER BY QUERY
+                  demandNoticeInformation.length > 0 ? (
+                    currentProperties(demandNoticeInformation).map(
+                      (record: DemandNotice) => recordField(record)
+                    )
+                  ) : (
+                    <p className="text-sm font-medium font-lexend text-color-text-black">
+                      No results found.
+                    </p>
+                  )
+                ) : demandNoticeInformation.length > 0 ? (
+                  // FILTER EVERYTHING ELSE
+                  currentProperties(demandNoticeInformation).map((record: any) =>
+                    recordField(record)
+                  )
+                ) : (
+                  <p className="text-sm font-medium font-lexend text-color-text-black">
+                    No results found.
+                  </p>
+                )}
+              </InfiniteScroll>
+            </div>
+          ) : <LoadingSpinner title="Loading Demand Notice" />}
         </div>
+
       </div>
       {viewPropertyModal ? (
         <DemandPropertyModal
@@ -666,12 +710,7 @@ const DemandInvoiceTable = () => {
           />
         </DemandPropertyModal>
       ) : null}
-      {/* <CustomAlert
-        isOpen={snackbar.open}
-        message={snackbar.message}
-        severity={snackbar.severity}
-        handleClose={handleSnackbarClose}
-      /> */}
+
       <AlertDialog
         isOpen={showAlertDialog}
         message="Are you sure you want to delete this demand notice? This action cant be reversed"
