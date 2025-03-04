@@ -620,7 +620,7 @@ const DemandInvoiceTable = () => {
           </div>
           {demandNoticeInformation.length > 0 ? (
             <div id="scrollableDiv"
-              className="h-[80vh] overflow-auto no-scrollbar  justify-start p-4 gap-y-4 gap-x-4">
+              className="h-[80vh] overflow-auto no-scrollbar  ">
               <InfiniteScroll
                 className="flex flex-col gap-y-4 gap-x-4"
                 pageStart={1}
@@ -629,27 +629,19 @@ const DemandInvoiceTable = () => {
                 loader={<LoadingSpinner title="Loading More Demand Notices" />}
                 useWindow={false}
               >
-                {query === "" ? (
-                  // FILTER BY QUERY
+                {
                   demandNoticeInformation.length > 0 ? (
-                    currentProperties(demandNoticeInformation).map(
-                      (record: DemandNotice) => recordField(record)
+                    // FILTER EVERYTHING ELSE
+                    currentProperties(demandNoticeInformation).map((record: any) =>
+                      recordField(record)
                     )
                   ) : (
                     <p className="text-sm font-medium font-lexend text-color-text-black">
                       No results found.
                     </p>
-                  )
-                ) : demandNoticeInformation.length > 0 ? (
-                  // FILTER EVERYTHING ELSE
-                  currentProperties(demandNoticeInformation).map((record: any) =>
-                    recordField(record)
-                  )
-                ) : (
-                  <p className="text-sm font-medium font-lexend text-color-text-black">
-                    No results found.
-                  </p>
-                )}
+                  )}
+                {preventLoading ? <LoadingSpinner title="Loading More Demand Notice" /> : null}
+
               </InfiniteScroll>
             </div>
           ) : <LoadingSpinner title="Loading Demand Notice" />}
