@@ -12,7 +12,7 @@ class DemandNoticeService
 {
     public function allDemandNotice($date)
     {
-        return $this->model()->whereYear('created_at', $date)->paginate(100);
+        return $this->model()->whereYear('created_at', $date)->simplePaginate(10);
     }
     public function viewDemandNotice($id)
     {
