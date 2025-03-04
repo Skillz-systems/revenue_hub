@@ -13,6 +13,8 @@ import {
   DemandInvoiceDocument,
   CustomAlert,
   paginationStyles,
+  userData,
+  LoadingSpinner,
 } from "../Index";
 import { DemandNotice } from "../../Data/types";
 import {
@@ -22,28 +24,15 @@ import {
   useTokens,
   useTriggerError,
 } from "../../Utils/client";
-import axios from "axios";
 import DemandReminderDocument from "./DemandReminderDocument";
 import AlertDialog from '../AlertDialog/AlertDialog';
-
+import { rootStore } from "../../Stores/rootstore";
+import axios, { AxiosError } from "axios";
+import InfiniteScroll from 'react-infinite-scroller';
 const apiUrl = import.meta.env.VITE_API_URL as string;
 
-const DemandInvoiceTable = ({
-  staticInformation,
-  demandNoticeInformation,
-  paginationMeta,
-  setPaginationMeta,
-}: {
-  staticInformation: any;
-  demandNoticeInformation: DemandNotice[];
-  paginationMeta: {
-    currentPage: number;
-    lastPage: number;
-    total: number;
-    perPage: number;
-  };
-  setPaginationMeta: React.SetStateAction<any>;
-}) => {
+const DemandInvoiceTable = () => {
+  const { staticInformation } = userData();
   const [status, setStatus] = useState<number>(0);
   const isDesktop = useMediaQuery({ query: "(min-width: 1024px)" });
   const [displaySearchIcon, setDisplaySearchIcon] = useState<boolean>(true);
@@ -68,10 +57,80 @@ const DemandInvoiceTable = ({
     severity: "success",
   });
   const triggerError = useTriggerError();
-  const propertiesPerPage = paginationMeta.perPage;
+  const propertiesPerPage = "paginationMeta.perPage";
   const [showAlertDialog, setShowAlertDialog] = useState(false);
-  const [demandNoticeToDelete, setDemandNoticeToDelete] = useState<number>(0);  
+  const [demandNoticeToDelete, setDemandNoticeToDelete] = useState<number>(0);
   const [isLoading, setIsLoading] = useState(false);
+  const [demandNoticeInformation, setDemandNoticeInformation] = useState<DemandNotice[]>([]);
+  const [preventLoading, setPreventLoading] = useState<boolean>(false);
+  const [url, setUrl] = useState<string | null>("");
+
+  useEffect(() => {
+    fetchDemandNotices();
+    if (rootStore.refreshDemandNotice) {
+      fetchDemandNotices();
+    }
+  }, [rootStore.refreshDemandNotice]);
+
+  const fetchDemandNotices = async (dateFilter = "") => {
+    try {
+      const response = await axios.post(
+        `${apiUrl}/api/demand-notice`,
+        { date_filter: dateFilter },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      if (response.status === 200) {
+        setDemandNoticeInformation(response.data.data);
+        setUrl(response.data.links.next);
+      } else {
+        setSnackbar({
+          open: true,
+          message: "Unexpected status code",
+          severity: "warning",
+        });
+      }
+    } catch (error: any) {
+      let message = "Internal Server Error";
+      if (error.isAxiosError) {
+        const axiosError = error as AxiosError;
+        if (axiosError.code === "ERR_NETWORK") {
+          message =
+            "Network error. Please check your internet connection and try again.";
+        } else if (axiosError.response) {
+          switch (axiosError.response.status) {
+            case 400:
+              message = "Bad request";
+              break;
+            case 401:
+              message = "You are unauthorized";
+              break;
+            case 403:
+              message = "You are forbidden";
+              break;
+            case 429:
+              message = "Too many requests made. Refreshing in 3 seconds";
+              setTimeout(() => {
+                window.location.reload();
+              }, 3000);
+              break;
+            case 500:
+              triggerError(error);
+              break;
+            default:
+              break;
+          }
+        }
+      }
+      setSnackbar({ open: true, message, severity: "error" });
+    } finally {
+      rootStore.refreshDemandNotice && rootStore.updateDemandList(false);
+    }
+  };
+
 
   const deleteDemandNotice = async (id: number) => {
     if (userRoleId > 1) {
@@ -82,7 +141,7 @@ const DemandInvoiceTable = ({
       });
       return;
     }
-  
+
     const demandNotice = demandNoticeInformation.find((notice) => notice.id === id);
     if (demandNotice && demandNotice.property.demand_notice_status === 'Paid') {
       setSnackbar({
@@ -92,71 +151,71 @@ const DemandInvoiceTable = ({
       });
       return;
     }
-  
+
     setShowAlertDialog(true);
     setDemandNoticeToDelete(id);
   };
-  
+
   const handleConfirmDelete = async () => {
-  setIsLoading(true);
-  try {
-    const response = await axios.delete(
-      `${apiUrl}/api/demand-notice/delete/${demandNoticeToDelete}`,
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
+    setIsLoading(true);
+    try {
+      const response = await axios.delete(
+        `${apiUrl}/api/demand-notice/delete/${demandNoticeToDelete}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      if (response.status === 200) {
+        setSnackbar({
+          open: true,
+          message: "Successfully removed demand notice",
+          severity: "success",
+        });
+      } else {
+        setSnackbar({
+          open: true,
+          message: "Unexpected status code",
+          severity: "warning",
+        });
       }
-    );
-    if (response.status === 200) {
-      setSnackbar({
-        open: true,
-        message: "Successfully removed demand notice",
-        severity: "success",
-      });
-    } else {
-      setSnackbar({
-        open: true,
-        message: "Unexpected status code",
-        severity: "warning",
-      });
-    }
-  } catch (error: any) {
-    let message = "Internal Server Error";
-    if (error.response) {
-      switch (error.response.status) {
-        case 400:
-          message = "Bad request. Demand Notice Id is missing.";
-          break;
-        case 401:
-          message = "You are unauthorized";
-          break;
-        case 403:
-          message = "You are forbidden";
-          break;
-        case 404:
-          message = "Demand notice not found";
-          break;
-        case 429:
-          message = "Too many requests made. Refreshing in 3 seconds";
-          setTimeout(() => {
-            window.location.reload();
-          }, 3000);
-          break;
-        case 500:
-          triggerError(error);
-          break;
-        default:
-          break;
+    } catch (error: any) {
+      let message = "Internal Server Error";
+      if (error.response) {
+        switch (error.response.status) {
+          case 400:
+            message = "Bad request. Demand Notice Id is missing.";
+            break;
+          case 401:
+            message = "You are unauthorized";
+            break;
+          case 403:
+            message = "You are forbidden";
+            break;
+          case 404:
+            message = "Demand notice not found";
+            break;
+          case 429:
+            message = "Too many requests made. Refreshing in 3 seconds";
+            setTimeout(() => {
+              window.location.reload();
+            }, 3000);
+            break;
+          case 500:
+            triggerError(error);
+            break;
+          default:
+            break;
+        }
       }
+      setSnackbar({ open: true, message, severity: "error" });
+    } finally {
+      setIsLoading(false);
+      setShowAlertDialog(false);
+      setDemandNoticeToDelete(0);
     }
-    setSnackbar({ open: true, message, severity: "error" });
-  } finally {
-    setIsLoading(false);
-    setShowAlertDialog(false);
-    setDemandNoticeToDelete(0);
-  }
-};
+  };
   const handleCancelDelete = () => {
     setShowAlertDialog(false);
     setDemandNoticeToDelete(0);
@@ -177,27 +236,11 @@ const DemandInvoiceTable = ({
     setReminderDocument(propertyData);
   };
 
-  // PAGINATION LOGIC
-  const offset = currentPage * propertiesPerPage;
-
-  const handlePageChange = ({ selected }: { selected: number }) => {
-    setPaginationMeta((prev: any) => ({
-      ...prev,
-      currentPage: selected + 1, // SWR uses 1-based index for pages
-    }));
-    ScrollToTop("top-container");
-  };
-
-  const handlePropertiesPerPageChange = (e: ChangeEvent<HTMLSelectElement>) => {
-    ScrollToTop("top-container");
-  };
-
   const currentProperties = (data: any) => {
     if (!data) {
       return [];
     }
-    // console.log("Demand Notice", data);
-    return data?.slice(offset, offset + propertiesPerPage);
+    return data;
   };
 
   const handleEditModal = (recordId: number) => {
@@ -213,7 +256,6 @@ const DemandInvoiceTable = ({
     setQuery(event.target.value);
   };
 
-  const pageCount = Math.ceil(LengthByActiveMenu() / propertiesPerPage);
   const getStatusClass = (status: number) => {
     switch (status) {
       case 0:
@@ -352,13 +394,12 @@ const DemandInvoiceTable = ({
         </span>
         <span
           className={`flex flex-wrap items-center px-4 py-1 justify-center rounded-xl w-[12%] font-light font-lexend text-color-text-black text-[10px] border-0.6 border-custom-grey-100
-          ${
-            record?.property?.prop_use === "Commercial"
+          ${record?.property?.prop_use === "Commercial"
               ? "bg-color-light-red"
               : record?.property?.prop_use === "Residential"
-              ? "bg-color-light-yellow"
-              : "bg-custom-blue-200"
-          }
+                ? "bg-color-light-yellow"
+                : "bg-custom-blue-200"
+            }
           `}
         >
           {record?.property?.prop_use.toUpperCase()}
@@ -372,13 +413,12 @@ const DemandInvoiceTable = ({
         <div className="flex items-center justify-center w-[12%]">
           <span
             className={`flex flex-wrap items-center justify-center px-2 p-1 font-light text-white rounded font-lexend
-          ${
-            lastPaymentStatus === "Expired"
-              ? "bg-color-bright-red"
-              : lastPaymentStatus === "Unpaid"
-              ? "bg-color-bright-orange"
-              : "bg-color-bright-green"
-          }
+          ${lastPaymentStatus === "Expired"
+                ? "bg-color-bright-red"
+                : lastPaymentStatus === "Unpaid"
+                  ? "bg-color-bright-orange"
+                  : "bg-color-bright-green"
+              }
           `}
           >
             {lastPaymentStatus}
@@ -386,17 +426,17 @@ const DemandInvoiceTable = ({
         </div>
         <span className="flex flex-wrap items-center w-1/12 gap-1">
           {/* {renderReminderButton(colorStatus, record?.id)} */}
-        {lastPaymentStatus === 'Paid' ? (
-          <span className=""></span>
-        ) : (
-          <span
-            className="border-0.6 border-custom-grey-100 text-custom-grey-300 px-2 py-2.5 rounded text-base hover:cursor-pointer"
-            title="Delete Invoice"
-            onClick={() => deleteDemandNotice(record?.id)}
-          >
-            <RiDeleteBin5Fill />
-          </span>
-        )}
+          {lastPaymentStatus === 'Paid' ? (
+            <span className=""></span>
+          ) : (
+            <span
+              className="border-0.6 border-custom-grey-100 text-custom-grey-300 px-2 py-2.5 rounded text-base hover:cursor-pointer"
+              title="Delete Invoice"
+              onClick={() => deleteDemandNotice(record?.id)}
+            >
+              <RiDeleteBin5Fill />
+            </span>
+          )}
           <span className="border-0.6 relative border-custom-grey-100 text-custom-grey-300 px-2 py-2.5 rounded text-base">
             <span
               title="Edit Invoice"
@@ -458,9 +498,26 @@ const DemandInvoiceTable = ({
     );
   };
 
-  function LengthByActiveMenu() {
-    return paginationMeta.total;
-  }
+  const loadMore = async () => {
+    if (preventLoading) {
+      return;
+    }
+    try {
+      setPreventLoading(true)
+      let response = await axios.post(url ? url : "", query, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+
+      });
+      setUrl(response.data.links.next);
+      setDemandNoticeInformation([...demandNoticeInformation, ...response.data.data]);
+      setPreventLoading(false)
+    } catch (error) {
+      console.error(error);
+
+    }
+  };
 
   return (
     <div className="w-[1000px] lg:w-full">
@@ -479,11 +536,10 @@ const DemandInvoiceTable = ({
               displayColumn === false && query !== "" && menu.id > 1 ? null : (
                 <div
                   key={menu.id}
-                  className={`flex items-start justify-between gap-2 px-2 py-1 text-xs font-lexend hover:cursor-pointer ${
-                    activeMenu === menu.id
-                      ? "bg-primary-color rounded"
-                      : "bg-inherit"
-                  }`}
+                  className={`flex items-start justify-between gap-2 px-2 py-1 text-xs font-lexend hover:cursor-pointer ${activeMenu === menu.id
+                    ? "bg-primary-color rounded"
+                    : "bg-inherit"
+                    }`}
                   onClick={() => {
                     if (menu.id > 1) {
                       setSnackbar({
@@ -499,11 +555,10 @@ const DemandInvoiceTable = ({
                   }}
                 >
                   <span
-                    className={`${
-                      activeMenu === menu.id
-                        ? "font-medium text-white"
-                        : "text-color-text-two"
-                    }`}
+                    className={`${activeMenu === menu.id
+                      ? "font-medium text-white"
+                      : "text-color-text-two"
+                      }`}
                   >
                     {menu.name}
                   </span>
@@ -518,9 +573,8 @@ const DemandInvoiceTable = ({
           </div>
           <TableSearchInput
             parentBoxStyle="flex items-center justify-between p-2 bg-custom-grey-100 rounded-3xl border border-custom-color-one"
-            inputBoxStyle={` ${
-              displaySearchIcon ? "w-10/12" : "w-full"
-            } text-xs outline-none bg-inherit font-lexend text-color-text-two`}
+            inputBoxStyle={` ${displaySearchIcon ? "w-10/12" : "w-full"
+              } text-xs outline-none bg-inherit font-lexend text-color-text-two`}
             iconBoxStyle={"text-base text-primary-color hover:cursor-pointer"}
             placeholder={"Search records"}
             searchIcon={<FiSearch />}
@@ -564,74 +618,43 @@ const DemandInvoiceTable = ({
               </div>
             ))}
           </div>
-          <div className="flex-col space-y-4">
-            {query === "" ? (
-              // FILTER BY QUERY
-              demandNoticeInformation.length > 0 ? (
-                currentProperties(demandNoticeInformation).map(
-                  (record: DemandNotice) => recordField(record)
-                )
-              ) : (
-                <p className="text-sm font-medium font-lexend text-color-text-black">
-                  No results found.
-                </p>
-              )
-            ) : demandNoticeInformation.length > 0 ? (
-              // FILTER EVERYTHING ELSE
-              currentProperties(demandNoticeInformation).map((record: any) =>
-                recordField(record)
-              )
-            ) : (
-              <p className="text-sm font-medium font-lexend text-color-text-black">
-                No results found.
-              </p>
-            )}
-          </div>
-        </div>
-        <div className="flex justify-between p-4 item-center">
-          <div className="flex flex-wrap w-[70%]">
-            <Pagination
-              pageCount={paginationMeta.lastPage}
-              pageRangeDisplayed={2}
-              marginPagesDisplayed={0}
-              onPageChange={handlePageChange}
-              paginationStyles={paginationStyles}
-              forcePage={paginationMeta.currentPage - 1}
-            />
-          </div>
-          <p className="flex items-center gap-2 justify-end w-[30%] text-xs text-color-text-two font-lexend">
-            Showing
-            <select
-              className="flex items-center outline-none justify-center w-[45px] h-[32px] px-2.5 border border-divider-grey rounded text-color-text-one appearance-none bg-transparent"
-              onChange={handlePropertiesPerPageChange}
-              value={
-                paginationMeta.perPage > paginationMeta.total
-                  ? paginationMeta.total
-                  : paginationMeta.perPage
-              }
-              disabled
-              style={{
-                WebkitAppearance: "none",
-                MozAppearance: "none",
-                appearance: "none",
-              }}
-            >
-              <option
-                value={
-                  paginationMeta.perPage > paginationMeta.total
-                    ? paginationMeta.total
-                    : paginationMeta.perPage
-                }
+          {demandNoticeInformation.length > 0 ? (
+            <div id="scrollableDiv"
+              className="h-[80vh] overflow-auto no-scrollbar  justify-start p-4 gap-y-4 gap-x-4">
+              <InfiniteScroll
+                className="flex flex-col gap-y-4 gap-x-4"
+                pageStart={1}
+                loadMore={loadMore}
+                hasMore={preventLoading == false && url ? true : false}
+                loader={<LoadingSpinner title="Loading More Demand Notices" />}
+                useWindow={false}
               >
-                {paginationMeta.perPage > paginationMeta.total
-                  ? paginationMeta.total
-                  : paginationMeta.perPage}
-              </option>
-            </select>
-            of <span>{LengthByActiveMenu()}</span>
-            entries
-          </p>
+                {query === "" ? (
+                  // FILTER BY QUERY
+                  demandNoticeInformation.length > 0 ? (
+                    currentProperties(demandNoticeInformation).map(
+                      (record: DemandNotice) => recordField(record)
+                    )
+                  ) : (
+                    <p className="text-sm font-medium font-lexend text-color-text-black">
+                      No results found.
+                    </p>
+                  )
+                ) : demandNoticeInformation.length > 0 ? (
+                  // FILTER EVERYTHING ELSE
+                  currentProperties(demandNoticeInformation).map((record: any) =>
+                    recordField(record)
+                  )
+                ) : (
+                  <p className="text-sm font-medium font-lexend text-color-text-black">
+                    No results found.
+                  </p>
+                )}
+              </InfiniteScroll>
+            </div>
+          ) : <LoadingSpinner title="Loading Demand Notice" />}
         </div>
+
       </div>
       {viewPropertyModal ? (
         <DemandPropertyModal
@@ -687,20 +710,15 @@ const DemandInvoiceTable = ({
           />
         </DemandPropertyModal>
       ) : null}
-      {/* <CustomAlert
-        isOpen={snackbar.open}
-        message={snackbar.message}
-        severity={snackbar.severity}
-        handleClose={handleSnackbarClose}
-      /> */}
-       <AlertDialog
-      isOpen={showAlertDialog}
-      message="Are you sure you want to delete this demand notice? This action cant be reversed"
-      confirmMessage="Delete Demand Notice"
-      onConfirm={handleConfirmDelete}
-      onCancel={handleCancelDelete}
-      isLoading={isLoading}
-    />
+
+      <AlertDialog
+        isOpen={showAlertDialog}
+        message="Are you sure you want to delete this demand notice? This action cant be reversed"
+        confirmMessage="Delete Demand Notice"
+        onConfirm={handleConfirmDelete}
+        onCancel={handleCancelDelete}
+        isLoading={isLoading}
+      />
     </div>
   );
 };
