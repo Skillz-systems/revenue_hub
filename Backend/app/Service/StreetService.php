@@ -110,4 +110,9 @@ class StreetService
 
         return false;
     }
+
+    public function getStreetByCadastralZoneId($id)
+    {
+        return Street::where('cadastral_zone_id', $id)->get();
+    }
 }
