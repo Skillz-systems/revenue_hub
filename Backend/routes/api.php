@@ -66,12 +66,14 @@ Route::middleware('auth:sanctum')->group(function () {
     //Route::apiResource('/property', PropertyController::class);
 
     Route::get('/street', [StreetController::class, "index"]);
+    Route::get('/street/by-cadastral-zone/{id}', [StreetController::class, "getStreetByCadastralZoneId"]);
     Route::post('/street/create', [StreetController::class, "store"]);
     Route::get('/street/view/{street}', [StreetController::class, "show"]);
     Route::put('/street/update/{street}', [StreetController::class, "update"]);
     Route::delete('/street/delete/{street}', [StreetController::class, "destroy"]);
 
     Route::get('/cadastral-zone', [CadastralZoneController::class, "index"]);
+    Route::get('/cadastral-zone/by-rating-district/{id}', [CadastralZoneController::class, "getCadastralZoneByRatingDistrictId"]);
     Route::post('/cadastral-zone/create', [CadastralZoneController::class, "store"]);
     Route::get('/cadastral-zone/view/{cadastralZone}', [CadastralZoneController::class, "show"]);
     Route::put('/cadastral-zone/update/{cadastralZone}', [CadastralZoneController::class, "update"]);

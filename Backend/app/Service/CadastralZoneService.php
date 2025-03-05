@@ -106,4 +106,9 @@ class CadastralZoneService
 
         return false;
     }
+
+    public function getCadastralZoneByRatingDistrictId($id)
+    {
+        return CadastralZone::where('rating_district_id', $id)->get();
+    }
 }
