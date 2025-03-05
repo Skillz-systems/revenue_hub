@@ -503,4 +503,21 @@ class StreetController extends Controller
             "message" => "You dont Have Permission",
         ], 403);
     }
+
+    public function getStreetByCadastralZoneId($id)
+    {
+        $cadastralZone = $this->streetService->getStreetByCadastralZoneId($id);
+        if ($cadastralZone) {
+            return response()->json([
+                "status" => "success",
+                "message" => "Cadastral Zone found successfully",
+                "data" => $cadastralZone,
+            ], 200);
+        }
+
+        return response()->json([
+            "status" => "error",
+            "message" => "An error occured",
+        ], 400);
+    }
 }
