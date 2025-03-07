@@ -23,6 +23,7 @@ import useSWR from "swr";
 import { FiSearch } from "react-icons/fi";
 import axios from "axios";
 import InfiniteScroll from 'react-infinite-scroller';
+import { set } from "mobx";
 type PropertyData = {
   active: string;
   annual_value: string;
@@ -75,14 +76,17 @@ export default function Properties() {
   const [districtState, setDistrictState] = useState<string>("");
   const [propertyUseState, setPropertyUseState] = useState<string>("");
   const [displaySearchIcon, setDisplaySearchIcon] = useState<boolean>(true);
-  const [query, setQuery] = useState<string>("");
   const [searchQuery, setSearchQuery] = useState('');
-  const [searchResults, setSearchResults] = useState([]);
-  const [searchLoading, setSearchLoading] = useState(false);
-  const [cadestralZone, setCadestralZone] = useState([]);
+  const [loadingCadastralZone, setLoadingCadastralZone] = useState(false);
+  const [propertyLoader, setPropertyLoader] = useState(false);
+  const [loadingStreet, setLoadingStreet] = useState(false);
   const [ratingDistricts, setRatingDistricts] = useState([]);
   const [propertyUses, setPropertyUses] = useState([]);
   const [ratingDistrict, setRatingDistrict] = useState(0);
+  const [cadastralZone, setCadastralZone] = useState(0);
+  const [street, setStreet] = useState(0);
+  const [cadastralZones, setCadastralZones] = useState([]);
+  const [streets, setStreets] = useState([]);
   const [search, setSearch] = useState<SearchInterface>({});
   const [propertyUse, setPropertyUse] = useState(0);
   const [url, setUrl] = useState<string | null>("");
@@ -91,11 +95,6 @@ export default function Properties() {
   const [order, setOrder] = useState<boolean>(true);
   const [searchLoader, setSearchLoader] = useState<boolean>(false);
 
-  // const [staticInformation, setStaticInformation] = useState({
-  //   cadestralZones: [],
-  //   ratingDistricts: [],
-  //   propertyUse: [],
-  // });
   const [viewPropertyModal, setViewPropertyModal] = useState<any>(null);
   const [propertyModalTransition, setPropertyModalTransition] =
     useState<boolean>(false);
@@ -111,7 +110,7 @@ export default function Properties() {
     severity: "success",
   });
   const triggerError = useTriggerError();
-  //const propertiesPerPage = paginationMeta.perPage;
+
 
   const handleSnackbarClose = () => {
     setSnackbar({ ...snackbar, open: false });
@@ -119,6 +118,11 @@ export default function Properties() {
 
   useEffect(() => {
     const fetchRatingDistrict = async () => {
+      setCadastralZones([])
+      setCadastralZone(0)
+      setStreets([])
+      setStreet(0)
+
       try {
         const response = await axios.get(`${apiUrl}/api/rating-district`, {
           headers: {
@@ -126,6 +130,9 @@ export default function Properties() {
           },
         });
         setRatingDistricts(response.data.data)
+        if (ratingDistrict > 0) {
+          fetchProperties()
+        }
       } catch (error) {
         console.error(error);
       }
@@ -144,88 +151,134 @@ export default function Properties() {
       }
     };
 
-    const fetchCadestralZone = async () => {
-      try {
-        const response = await axios.get(`${apiUrl}/api/cadastral-zone`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-        setCadestralZone(response.data.data)
-      } catch (error) {
-        console.error(error);
-      }
-    };
+    // const fetchCadestralZone = async () => {
+    //   try {
+    //     const response = await axios.get(`${apiUrl}/api/cadastral-zone`, {
+    //       headers: {
+    //         Authorization: `Bearer ${token}`,
+    //       },
+    //     });
+    //     setCadestralZone(response.data.data)
+    //   } catch (error) {
+    //     console.error(error);
+    //   }
+    // };
 
-    fetchCadestralZone();
+    // fetchCadestralZone();
     fetchRatingDistrict();
     fetchPropertyUse();
   }, [token]);
 
-  const fetchProperties = async () => {
+  // const fetchProperties = async () => {
 
-    try {
-      let data: {
-        property_use_id?: number
-        rating_district_id?: number
-        order?: boolean
-        search?: string
-      } = {
-        order: order
-      };
-      if (ratingDistrict != 0) {
-        data["rating_district_id"] = ratingDistrict
-      }
-      if (propertyUse != 0) {
-        data["property_use_id"] = propertyUse
-      }
-      if (searchQuery.length > 0) {
-        data["search"] = searchQuery
-      }
+  //   try {
+  //     let data: {
+  //       property_use_id?: number
+  //       rating_district_id?: number
+  //       cadastral_zone_id?: number
+  //       street_id?: number
+  //       order?: boolean
+  //       search?: string
+  //     } = {
+  //       order: order
+  //     };
+  //     if (ratingDistrict != 0) {
+  //       data["rating_district_id"] = ratingDistrict
+  //     }
+  //     if (propertyUse != 0) {
+  //       data["property_use_id"] = propertyUse;
+  //     }
+  //     if (cadastralZone != 0) {
+  //       data["cadastral_zone_id"] = cadastralZone;
+  //     }
+  //     if (street != 0) {
+  //       data["street_id"] = street
+  //     }
+  //     if (searchQuery.length > 0) {
+  //       data["search"] = searchQuery
+  //     }
 
-      var response: any
-      if (propertyUse == 0 && ratingDistrict == 0) {
-        response = await axios.post(`${apiUrl}/api/property`, data, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
+  //     var response: any
+  //     if (propertyUse == 0 && ratingDistrict == 0) {
+  //       response = await axios.post(`${apiUrl}/api/property`, data, {
+  //         headers: {
+  //           Authorization: `Bearer ${token}`,
+  //         },
 
-        });
-      } else {
+  //       });
+  //     } else {
 
-        response = await axios.post(`${apiUrl}/api/property`, data, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
+  //       response = await axios.post(`${apiUrl}/api/property`, data, {
+  //         headers: {
+  //           Authorization: `Bearer ${token}`,
+  //         },
 
-        });
-      }
-      setSearch(data)
-      setUrl(response.data.links.next);
+  //       });
+  //     }
+  //     setSearch(data)
+  //     setUrl(response.data.links.next);
 
-      setPropertyInformation(response.data.data);
-      setPaginationMeta({
-        next: response.data.links.next,
-      });
-    } catch (error) {
-      console.error(error);
-      setSnackbar({
-        open: true,
-        message: `Error fetching Property Data: ${error}`,
-        severity: "warning",
-      });
-    }
-  };
+  //     setPropertyInformation(response.data.data);
+  //     setPaginationMeta({
+  //       next: response.data.links.next,
+  //     });
+  //   } catch (error) {
+  //     console.error(error);
+  //     setSnackbar({
+  //       open: true,
+  //       message: `Error fetching Property Data: ${error}`,
+  //       severity: "warning",
+  //     });
+  //   }
+  // };
+  // const fetchCadastralZone = async () => {
+  //   //setStreets([])
+  //   setStreet(0)
+  //   try {
+  //     const response = await axios.get(`${apiUrl}/api/cadastral-zone/by-rating-district/${ratingDistrict}`, {
+  //       headers: {
+  //         Authorization: `Bearer ${token}`,
+  //       },
+  //     });
+  //     if (response) {
+  //       setCadastralZones(response.data.data)
+  //       fetchProperties();
+  //     }
 
-  useEffect(() => {
-    fetchProperties();
+  //   } catch (error) {
 
-  }, [ratingDistrict, propertyUse])
+  //   }
+  // }
+  // const fetchStreet = async () => {
+  //   try {
+  //     const response = await axios.get(`${apiUrl}/api/street/by-cadastral-zone/${cadastralZone}`, {
+  //       headers: {
+  //         Authorization: `Bearer ${token}`,
+  //       },
+  //     });
+  //     if (response) {
+  //       setStreets(response.data.data)
+  //       fetchProperties();
+  //     }
 
-  // const { data, error } = useSWR(
-  //   token ? paginationMeta.next ? paginationMeta.next : `${apiUrl}/api/property` : null,
-  //   (url) => fetcher(url, token, "post", search)
-  // );
+  //   } catch (error) {
+
+  //   }
+  // }
+
+
+  // useEffect(() => {
+  //   if (ratingDistrict > 0 && cadastralZone == 0 && street == 0) {
+  //     fetchCadastralZone()
+  //   }
+  //   if (cadastralZone > 0 && street == 0 && ratingDistrict > 0) {
+  //     fetchStreet()
+  //   }
+  //   //fetchProperties()
+
+  // }, [ratingDistrict, propertyUse, cadastralZone, street])
+
+
 
   const handleQueryChange = (event: any) => {
     const query = event.target.value;
@@ -237,25 +290,11 @@ export default function Properties() {
     setSearchQuery(query);
   };
 
-  // const handleSelectCadestralZone = useCallback((event: React.ChangeEvent<HTMLSelectElement>) => {
-  //   const selectedCadestralZone = event.target.value;
-  //   setCadestralZone(selectedCadestralZone);
-  //   fetchProperties();
-  // }, [setCadestralZone]);
 
   useEffect(() => {
     fetchProperties()
   }, []);
 
-  // useEffect(() => {
-  //   // if (error) {
-  //   //   setSnackbar({
-  //   //     open: true,
-  //   //     message: `Error fetching Property Data: ${error}`,
-  //   //     severity: "warning",
-  //   //   });
-  //   // }
-  // }, []);
 
   const handleViewPropertyModal = (property: any) => {
     setViewPropertyModal(property);
@@ -268,13 +307,6 @@ export default function Properties() {
     setDistrictState("");
     setPropertyUseState("");
   };
-
-  const [currentPage, setCurrentPage] = useState<number>(0);
-  const [currentStyle, setCurrentStyle] = useState<number | undefined>(
-    undefined
-  );
-
-  //const offset = currentPage * propertiesPerPage;
 
   const handlePageChange = ({ selected }: { selected: number }) => {
     // setPaginationMeta((prev) => ({
@@ -317,21 +349,6 @@ export default function Properties() {
     // remove search loader
   }
 
-  // const handlePropertiesPerPageChange = (
-  //   e: React.ChangeEvent<HTMLSelectElement>
-  // ) => {
-  //   ScrollToTop("top-container");
-  // };
-
-  // const currentProperties = propertyInformation?.slice(
-  //   offset,
-  //   offset + propertiesPerPage
-  // );
-
-  // const LengthByFilterState = (): number => {
-  //   return paginationMeta.total;
-  // };
-
   const switchOrder = async () => {
     if (order) {
       setOrder(false);
@@ -343,6 +360,103 @@ export default function Properties() {
   useEffect(() => {
     fetchProperties();
   }, [order])
+
+  useEffect(() => {
+    // When ratingDistrict changes, reset both cadastralZone and street
+    if (ratingDistrict > 0) {
+      setCadastralZone(0); // Reset cadastral zone
+      setStreet(0); // Reset street
+      setCadastralZones([]); // Reset cadastral zone
+      setStreets([]); // Reset street
+      fetchCadastralZone();
+    }
+  }, [ratingDistrict]);
+
+  useEffect(() => {
+    // When cadastralZone changes, reset the street
+    if (cadastralZone > 0) {
+      setStreet(0); // Reset street
+      setStreets([]); // Reset street
+      fetchStreet();
+    }
+  }, [cadastralZone]);
+
+  useEffect(() => {
+    // Fetch properties when any of the main dependencies change
+    fetchProperties();
+  }, [ratingDistrict, propertyUse, cadastralZone, street]);
+
+  const fetchProperties = async () => {
+    setPropertyLoader(true)
+    setPropertyInformation([])
+    try {
+      let data = {
+        order: order,
+        search: searchQuery.length > 0 ? searchQuery : undefined,
+        property_use_id: propertyUse !== 0 ? propertyUse : undefined,
+        rating_district_id: ratingDistrict !== 0 ? ratingDistrict : undefined,
+        cadastral_zone_id: cadastralZone !== 0 ? cadastralZone : undefined,
+        street_id: street !== 0 ? street : undefined,
+      };
+
+      const response = await axios.post(`${apiUrl}/api/property`, data, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      setSearch(data);
+      setUrl(response.data.links.next);
+      setPropertyInformation(response.data.data);
+      setPaginationMeta({ next: response.data.links.next });
+      setPropertyLoader(false)
+    } catch (error) {
+      console.error(error);
+      setPropertyLoader(false)
+    }
+  };
+
+  const fetchCadastralZone = async () => {
+    setLoadingCadastralZone(true)
+    try {
+      const response = await axios.get(
+        `${apiUrl}/api/cadastral-zone/by-rating-district/${ratingDistrict}`,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+
+      if (response) {
+        setCadastralZones(response.data.data);
+        setLoadingCadastralZone(false)
+      }
+
+    } catch (error) {
+      console.error(error);
+      setLoadingCadastralZone(false)
+    }
+  };
+
+  const fetchStreet = async () => {
+    setLoadingStreet(true)
+    try {
+      const response = await axios.get(
+        `${apiUrl}/api/street/by-cadastral-zone/${cadastralZone}`,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+      if (response) {
+        setStreets(response.data.data);
+        setLoadingStreet(false)
+      }
+
+    } catch (error) {
+      console.error(error);
+      setLoadingStreet(false)
+    }
+  };
+
 
 
   return (
@@ -359,35 +473,16 @@ export default function Properties() {
                 ALL PROPERTIES
               </p>
 
-              {/* <div
-                className="flex items-center justify-between gap-2 pr-1.5 border rounded border-divider-grey text-color-text-two"
-                title="Filter by District"
-              >
-                <select
-                  className="hover:cursor-pointer p-2 py-1.5 overflow-y-auto text-xs font-medium rounded outline-none appearance-none font-lexend overscroll-contain scrollbar-thin scrollbar-thumb-color-text-two scrollbar-track-white"
-                // onChange={handleSelectCadestralZone}
-                // value={cadestralZone.id}
-                >
-                  <option value="">Cadestral Zone</option>
-                  {cadestralZone.map((cadestralZone: any, index) => (
-                    <option key={index} value={cadestralZone.id}>
-                      {cadestralZone.name}
-                    </option>
-                  ))}
-                </select>
-                <span className="text-xs">
-                  <BsCaretDownFill />
-                </span>
-              </div> */}
               <div>
                 <BsArrowDownUp onClick={switchOrder} className={`${order ? "text-green-500" : "text-red-500"} text-[20px] hover:cursor-pointer`} />
               </div>
+
               <div
-                className="flex items-center justify-between gap-2 pr-1.5 border rounded border-divider-grey text-color-text-two"
+                className="w-[100px] flex items-center justify-between gap-2 pr-1.5 border rounded border-divider-grey text-color-text-two"
                 title="Filter by District"
               >
                 <select
-                  className="hover:cursor-pointer p-2 py-1.5 overflow-y-auto text-xs font-medium rounded outline-none appearance-none font-lexend overscroll-contain scrollbar-thin scrollbar-thumb-color-text-two scrollbar-track-white"
+                  className="w-[100%] hover:cursor-pointer p-2 py-1.5 overflow-y-auto text-xs font-medium rounded outline-none appearance-none font-lexend overscroll-contain scrollbar-thin scrollbar-thumb-color-text-two scrollbar-track-white"
                   onChange={(e: any) => setRatingDistrict(e.target.value)}
                   value={ratingDistrict}
                 >
@@ -402,13 +497,77 @@ export default function Properties() {
                   <BsCaretDownFill />
                 </span>
               </div>
+              {
+                loadingCadastralZone && ratingDistrict > 0 ?
+                  <LoadingSpinner title="" />
+                  :
+                  <div className="flex items-center justify-between gap-2 pr-1.5 ">
 
-              <div
-                className="flex items-center justify-between gap-2 pr-1.5 border rounded border-divider-grey text-color-text-two"
+                    <div >
+                      {cadastralZones.length > 0 ? (
+                        <div
+                          className="w-[100px] flex items-center justify-between gap-2 pr-1.5 border rounded border-divider-grey text-color-text-two"
+                          title="Filter by District"
+                        >
+                          <select
+                            className="w-[100%] hover:cursor-pointer p-2 py-1.5 overflow-y-auto text-xs font-medium rounded outline-none appearance-none font-lexend overscroll-contain scrollbar-thin scrollbar-thumb-color-text-two scrollbar-track-white"
+                            onChange={(e: any) => setCadastralZone(e.target.value)}
+                            value={cadastralZone}
+                          >
+                            <option value="0"> Cadastral Zone</option>
+                            {cadastralZones.map((cadastralZone: any, index) => (
+                              <option key={cadastralZone.id} value={cadastralZone.id}>
+                                {cadastralZone.name}
+                              </option>
+                            ))}
+                          </select>
+                          <span className="text-xs">
+                            <BsCaretDownFill />
+                          </span>
+                        </div>
+                      ) : null
+                      }
+                    </div>
+                    {
+                      loadingStreet && cadastralZone > 0 ?
+                        <LoadingSpinner title="" />
+                        :
+                        <div >
+                          {streets.length > 0 ? (
+                            <div
+                              className="w-[100px] flex items-center justify-between gap-2 pr-1.5 border rounded border-divider-grey text-color-text-two"
+                              title="Filter by District"
+                            >
+                              <select
+                                className="w-[100%] hover:cursor-pointer p-2 py-1.5 overflow-y-auto text-xs font-medium rounded outline-none appearance-none font-lexend overscroll-contain scrollbar-thin scrollbar-thumb-color-text-two scrollbar-track-white"
+                                onChange={(e: any) => setStreet(e.target.value)}
+                                value={street}
+                              >
+                                <option value="0"> Streets</option>
+                                {streets.map((street: any, index) => (
+                                  <option key={street.id} value={street.id}>
+                                    {street.name}
+                                  </option>
+                                ))}
+                              </select>
+                              <span className="text-xs">
+                                <BsCaretDownFill />
+                              </span>
+                            </div>
+                          ) : null
+                          }
+                        </div>
+                    }
+                  </div>
+
+              }
+
+              {/* <div
+                className="w-[100px] flex items-center justify-between gap-2 pr-1.5 border rounded border-divider-grey text-color-text-two"
                 title="Filter by Property Use"
               >
                 <select
-                  className="hover:cursor-pointer p-2 py-1.5 overflow-y-auto text-xs font-medium rounded outline-none appearance-none font-lexend overscroll-contain scrollbar-thin scrollbar-thumb-color-text-two scrollbar-track-white"
+                  className="w-[100%] hover:cursor-pointer p-2 py-1.5 overflow-y-auto text-xs font-medium rounded outline-none appearance-none font-lexend overscroll-contain scrollbar-thin scrollbar-thumb-color-text-two scrollbar-track-white"
                   onChange={(e: any) => setPropertyUse(e.target.value)}
                   value={propertyUse}
                 >
@@ -422,7 +581,8 @@ export default function Properties() {
                 <span className="text-xs">
                   <BsCaretDownFill />
                 </span>
-              </div>
+              </div> */}
+
               {/* <p
                 className="text-xs pointer-events-none font-semi-bold font-lexend text-color-bright-red hover:cursor-pointer"
                 onClick={ResetFilters}
@@ -603,13 +763,14 @@ export default function Properties() {
                         setViewPropertyModal={() => handleViewPropertyModal(property)}
                       />
                     ))
-                  ) : (
+                  ) : !propertyLoader ? (
                     <p className="text-sm font-medium font-lexend text-color-text-black">
                       No results found.
                     </p>
                   )
+                    : <LoadingSpinner title="Loading Properties" />
                 }
-                {preventLoading ? <LoadingSpinner title="Loading More Properties" /> : null}
+                {preventLoading && propertyInformation.length > 0 && url ? <LoadingSpinner title="Loading More Properties" /> : null}
               </InfiniteScroll>
 
 
