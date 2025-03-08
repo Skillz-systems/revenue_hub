@@ -629,4 +629,33 @@ class DemandNoticeController extends Controller
             "error" => $getDemandNotice
         ]);
     }
+    public function createBulkDemandNotice(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'rating_district_id' => ['required', "integer"],
+            'cadastral_zone_id' => ['required', "integer"],
+            "street_id" => ['required', "integer"],
+
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'status' => 'error',
+                'message' => "Something went wrong",
+                "data" => $validator->errors()
+            ], 400);
+        }
+
+        $createBulkDemandNotice = $this->demandNoticeService->createBulkDemandNotice($request);
+        if ($createBulkDemandNotice) {
+            return response()->json([
+                'status' => 'success',
+                'message' => 'Bulk Demand Notice created successfully',
+            ], 200);
+        }
+        return response()->json([
+            'status' => 'error',
+            'message' => 'Issue creating bulk Demand Notice .',
+        ], 400);
+    }
 }
