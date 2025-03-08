@@ -99,16 +99,11 @@ const SideBarMenu: React.FC<SideBarMenuProps> = ({
           <DemandPropertyButtons
             iconOne={<PiListBulletsFill />}
             iconTwo={<PiBuildingsFill />}
-            buttonTextOne={"New Demand Invoice"}
+            buttonTextOne={"Batch Demand Notice"}
             buttonTextTwo={"Add Property"}
             openNewDemandInvoiceModal={() => {
               //hideSideBar();
-              //showAddDemandModal();
-              setSnackbar({
-                open: true,
-                message: "Disabled Feature. Coming soon.",
-                severity: "warning",
-              });
+              showAddDemandModal();
 
             }}
             openAddPropertyModal={() => {
