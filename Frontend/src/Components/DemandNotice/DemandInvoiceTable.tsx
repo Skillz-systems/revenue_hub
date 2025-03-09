@@ -666,6 +666,7 @@ const DemandInvoiceTable = () => {
           />
         </DemandPropertyModal>
       ) : null}
+
       {demandInvoiceDocument ? (
         <DemandPropertyModal
           modalStyle={
