@@ -138,7 +138,7 @@ class DemandNoticeService
             'rating_district_id' => $data['rating_district_id'],
         ])->whereYear('created_at', $currentYear)->first();
 
-        if (empty($getBatchDemandNotice)) {
+        if (!empty($getBatchDemandNotice)) {
             return false;
         }
 
@@ -211,10 +211,48 @@ class DemandNoticeService
                 'rating_district_id' => $filters['rating_district_id'],
             ]);
 
-        return $query->get(); // Fetch all without pagination
+        return $query; // Fetch all without pagination
     }
 
 
+
+
+    public function getCurrentYearDemandNotices($ratingDistrict, $cadastralZone, $street)
+    {
+        $currentYear = Carbon::now()->year;
+
+        $demandNotices = DemandNotice::whereYear('created_at', $currentYear)
+            ->whereHas('property', function ($query) use ($ratingDistrict, $cadastralZone, $street) {
+                $query->where('rating_district_id', $ratingDistrict)
+                    ->where('cadastral_zone_id', $cadastralZone)
+                    ->where('street_id', $street);
+            })
+            ->get();
+
+        return $demandNotices;
+    }
+
+    public function getBatchDemandNoticesById($id)
+    {
+        return BatchDemandNotice::findOrFail($id);
+    }
+
+    public function getAllBatchDemandNoticesCurrentYear()
+    {
+        return BatchDemandNotice::whereYear('created_at', date('Y'))->get();
+    }
+
+    public function fetchBatchForPrinting($id)
+    {
+        $batchDemandNotice = $this->getBatchDemandNoticesById($id);
+        if ($batchDemandNotice) {
+            $getDemandNotice = $this->getCurrentYearDemandNotices($batchDemandNotice->rating_district_id, $batchDemandNotice->cadastral_zone_id, $batchDemandNotice->street_id);
+            if ($getDemandNotice) {
+                return $getDemandNotice;
+            }
+        }
+        return false;
+    }
     public function model()
     {
         return new DemandNotice();

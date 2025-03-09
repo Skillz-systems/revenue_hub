@@ -54,6 +54,9 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::delete('/demand-notice/delete/{demandNotice}', [DemandNoticeController::class, 'destroy']);
     Route::post('/demand-notice/{demandNotice}/create-reminder', [DemandNoticeController::class, 'createReminder']);
     Route::post('/demand-notice/create-bulk-demand-notice', [DemandNoticeController::class, 'createBulkDemandNotice']);
+    Route::get('/demand-notice/get-batch-demand-notice', [DemandNoticeController::class, 'getBatchDemandNotice']);
+    Route::get('/demand-notice/print-batch-demand-notice/{id}', [DemandNoticeController::class, 'getBatchDemandNoticeForPrinting']);
+
 
     Route::post('/statistic/all-yearly-data', [StatisticController::class, 'allYearlyData']);
     Route::post('/payment', [PaymentController::class, 'index']);

@@ -646,7 +646,7 @@ class DemandNoticeController extends Controller
             ], 400);
         }
 
-        $createBulkDemandNotice = $this->demandNoticeService->createBulkDemandNotice($request);
+        $createBulkDemandNotice = $this->demandNoticeService->createBulkDemandNotice($request->all());
         if ($createBulkDemandNotice) {
             return response()->json([
                 'status' => 'success',
@@ -656,6 +656,38 @@ class DemandNoticeController extends Controller
         return response()->json([
             'status' => 'error',
             'message' => 'Issue creating bulk Demand Notice .',
+        ], 400);
+    }
+
+    public function getBatchDemandNotice()
+    {
+        $getBulkDemandNotice = $this->demandNoticeService->getAllBatchDemandNoticesCurrentYear();
+        if ($getBulkDemandNotice) {
+            return response()->json([
+                'status' => 'success',
+                'message' => 'Bulk Demand Notice fetched successfully',
+                "data" => $getBulkDemandNotice
+            ], 200);
+        }
+        return response()->json([
+            'status' => 'error',
+            'message' => 'Issue fetching bulk Demand Notice .',
+        ], 400);
+    }
+
+    public function getBatchDemandNoticeForPrinting($id)
+    {
+        $getBulkDemandNotice = $this->demandNoticeService->fetchBatchForPrinting($id);
+        if ($getBulkDemandNotice) {
+            return response()->json([
+                'status' => 'success',
+                'message' => 'Bulk Demand Notice fetched successfully',
+                "data" => $getBulkDemandNotice
+            ], 200);
+        }
+        return response()->json([
+            'status' => 'error',
+            'message' => 'Issue fetching bulk Demand Notice .',
         ], 400);
     }
 }
