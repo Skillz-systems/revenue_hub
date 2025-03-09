@@ -679,11 +679,11 @@ class DemandNoticeController extends Controller
     {
         $getBulkDemandNotice = $this->demandNoticeService->fetchBatchForPrinting($id);
         if ($getBulkDemandNotice) {
-            return response()->json([
-                'status' => 'success',
-                'message' => 'Bulk Demand Notice fetched successfully',
-                "data" => $getBulkDemandNotice
-            ], 200);
+            $demandNotice = DemandNoticeResource::collection($getBulkDemandNotice);
+            $demandNotice->additional([
+                'status' => 'success' // or any other status you want to append
+            ]);
+            return $demandNotice;
         }
         return response()->json([
             'status' => 'error',
