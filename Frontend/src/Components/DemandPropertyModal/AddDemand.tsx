@@ -10,6 +10,9 @@ import html2canvas from "html2canvas";
 import images from "../../assets/index";
 import QRCode from "react-qr-code";
 import { formatNumberWithCommas } from "../../Utils/client";
+import { renderToStaticMarkup } from "react-dom/server";
+import { LoadingSpinner } from "../Index";
+import { LiaDownloadSolid } from "react-icons/lia";
 const apiUrl = import.meta.env.VITE_API_URL as string;
 interface AddPropertyProps {
   hideAddDemandModal: () => void;
@@ -26,12 +29,7 @@ const AddProperty: React.FC<AddPropertyProps> = ({
 }) => {
 
   const { token } = useTokens();
-  const [districtState, setDistrictState] = useState<string>("");
-  const [propertyUseState, setPropertyUseState] = useState<string>("");
-  const [displaySearchIcon, setDisplaySearchIcon] = useState<boolean>(true);
-  const [searchQuery, setSearchQuery] = useState('');
   const [loadingCadastralZone, setLoadingCadastralZone] = useState(false);
-  const [propertyLoader, setPropertyLoader] = useState(false);
   const [loadingStreet, setLoadingStreet] = useState(false);
   const [ratingDistricts, setRatingDistricts] = useState([]);
   const [ratingDistrict, setRatingDistrict] = useState(0);
@@ -40,9 +38,9 @@ const AddProperty: React.FC<AddPropertyProps> = ({
   const [cadastralZones, setCadastralZones] = useState([]);
   const [batch, setBatch] = useState([]);
   const [streets, setStreets] = useState([]);
-  const [order, setOrder] = useState<boolean>(true);
   const [loadingBatch, setLoadingBatch] = useState<boolean>(false);
   const [downloadLoader, setDownloadLoader] = useState<boolean>(false);
+  const [generateDemandNoticeLoader, setGenerateDemandNoticeLoader] = useState<boolean>(false);
 
 
   useEffect(() => {
@@ -153,6 +151,7 @@ const AddProperty: React.FC<AddPropertyProps> = ({
   };
 
   const generateBulkDemandNotice = async () => {
+    setGenerateDemandNoticeLoader(true)
     const data = {
       rating_district_id: ratingDistrict,
       cadastral_zone_id: cadastralZone,
@@ -166,10 +165,15 @@ const AddProperty: React.FC<AddPropertyProps> = ({
             Authorization: `Bearer ${token}`,
           },
         });
+      if (response) {
+        setGenerateDemandNoticeLoader(false)
+        fetchCurrentYearBatch()
+      }
 
 
     } catch (error) {
       console.error(error);
+      setGenerateDemandNoticeLoader(false)
     }
   }
 
@@ -193,73 +197,178 @@ const AddProperty: React.FC<AddPropertyProps> = ({
     }
   };
 
-  const downloadEmailPrintPDF = async (BatchedDemandNotice: any) => {
+  // const downloadEmailPrintPDF = async (BatchedDemandNotice: any) => {
+  //   try {
+  //     const options = {
+  //       scale: 2, // Increase the scale for better quality
+  //       useCORS: true, // Allow cross-origin images
+  //     };
 
+  //     const pdf = new jsPDF({
+  //       orientation: "portrait",
+  //       unit: "px",
+  //       format: [595, 840], // A4 size
+  //       compress: true,
+  //     });
+
+  //     for (const [index, demandNotice] of BatchedDemandNotice.entries()) {
+  //       // Create the first section
+  //       const tempDiv1 = document.createElement("div");
+  //       tempDiv1.innerHTML = firstSectionTemplate(demandNotice);
+  //       tempDiv1.classList.add(
+  //         "w-[50%]",
+  //         "overflow-auto",
+  //         "overscroll-contain",
+  //         "scrollbar-thin",
+  //         "scrollbar-thumb-color-text-two",
+  //         "scrollbar-track-white"
+  //       );
+  //       tempDiv1.style.position = "absolute";
+  //       tempDiv1.style.left = "-9999px";
+  //       document.body.appendChild(tempDiv1);
+  //       const firstCanvas = await html2canvas(tempDiv1, options);
+
+  //       // Create the second section
+  //       const tempDiv2 = document.createElement("div");
+  //       tempDiv2.innerHTML = secondSectionTemplate();
+  //       tempDiv2.style.position = "absolute";
+  //       tempDiv2.style.left = "-9999px";
+  //       tempDiv2.classList.add(
+  //         "w-[50%]",
+  //         "overflow-auto",
+  //         "overscroll-contain",
+  //         "scrollbar-thin",
+  //         "scrollbar-thumb-color-text-two",
+  //         "scrollbar-track-white"
+  //       );
+  //       document.body.appendChild(tempDiv2);
+
+  //       const secondCanvas = await html2canvas(tempDiv2, options);
+
+  //       if (index > 0) {
+  //         pdf.addPage();
+  //       }
+
+  //       // Add the first section to the PDF
+  //       const imgDataFirst = firstCanvas.toDataURL("image/webp", 1.0);
+  //       if (imgDataFirst) {
+  //         pdf.addImage(imgDataFirst, "WEBP", 0, 0, 595, 835);
+  //       } else {
+  //         console.error("Failed to create first canvas image");
+  //       }
+
+  //       // Add the second section to the PDF
+  //       pdf.addPage();
+  //       const imgDataSecond = secondCanvas.toDataURL("image/webp", 1.0);
+  //       if (imgDataSecond) {
+  //         pdf.addImage(imgDataSecond, "WEBP", 0, 0, 595, 400);
+  //       } else {
+  //         console.error("Failed to create second canvas image");
+  //       }
+
+  //       // Cleanup
+  //       document.body.removeChild(tempDiv1);
+  //       document.body.removeChild(tempDiv2);
+  //     }
+
+  //     pdf.save(`demand_invoice.pdf`);
+  //     console.log("PDF generated", pdf);
+  //   } catch (error) {
+  //     console.error("Error generating PDF:", error);
+  //   }
+  // };
+
+  const downloadEmailPrintPDF = async (BatchedDemandNotice: any) => {
     try {
       const options = {
-        scale: 2, // Increase the scale for better quality
-        useCORS: true, // Allow cross-origin images
+        scale: 2,
+        useCORS: true,
       };
 
       const pdf = new jsPDF({
         orientation: "portrait",
         unit: "px",
-        format: [595, 840], // A4 size
+        format: [595, 840],
         compress: true,
       });
 
-      BatchedDemandNotice.map(async (demandNotice: any, index: number) => {
-        const tempDiv = document.createElement('div');
-        tempDiv.innerHTML = firstSectionTemplate(demandNotice);
+      const chunkSize = 50; // Process in chunks
+      let pageIndex = 0;
 
-        // Append the element to the DOM (but keep it hidden)
-        tempDiv.style.position = 'absolute';
-        tempDiv.style.left = '-9999px';
-        document.body.appendChild(tempDiv);
+      const processChunk = async (chunk: any) => {
+        for (const demandNotice of chunk) {
+          // Create the first section
+          const tempDiv1 = document.createElement("div");
+          tempDiv1.innerHTML = firstSectionTemplate(demandNotice);
+          tempDiv1.classList.add(
+            "w-[50%]",
+            "overflow-auto",
+            "overscroll-contain",
+            "scrollbar-thin",
+            "scrollbar-thumb-color-text-two",
+            "scrollbar-track-white"
+          );
+          tempDiv1.style.position = "absolute";
+          tempDiv1.style.left = "-9999px";
+          document.body.appendChild(tempDiv1);
+          const firstCanvas = await html2canvas(tempDiv1, options);
 
-        // Generate the canvas using the actual DOM element
-        const firstCanvas = await html2canvas(tempDiv, options);
+          // Create the second section
+          const tempDiv2 = document.createElement("div");
+          tempDiv2.innerHTML = secondSectionTemplate();
+          tempDiv2.classList.add(
+            "w-[50%]",
+            "overflow-auto",
+            "overscroll-contain",
+            "scrollbar-thin",
+            "scrollbar-thumb-color-text-two",
+            "scrollbar-track-white"
+          );
+          tempDiv2.style.position = "absolute";
+          tempDiv2.style.left = "-9999px";
+          document.body.appendChild(tempDiv2);
+          const secondCanvas = await html2canvas(tempDiv2, options);
 
-        const tempDiv2 = document.createElement('div');
-        tempDiv2.innerHTML = secondSectionTemplate();
+          if (pageIndex > 0) {
+            pdf.addPage();
+          }
 
-        // Append the element to the DOM (but keep it hidden)
-        tempDiv2.style.position = 'absolute';
-        tempDiv2.style.left = '-9999px';
-        document.body.appendChild(tempDiv2);
+          // Add the first section to the PDF
+          const imgDataFirst = firstCanvas.toDataURL("image/jpeg", 0.7);
+          pdf.addImage(imgDataFirst, "JPEG", 0, 0, 595, 835);
 
-        // Generate the canvas using the actual DOM element
-        const secondCanvas = await html2canvas(tempDiv2, options);
+          // Add the second section to the PDF
+          pdf.addPage();
+          const imgDataSecond = secondCanvas.toDataURL("image/jpeg", 0.7);
+          pdf.addImage(imgDataSecond, "JPEG", 0, 0, 595, 400);
 
-        if (index > 0) {
-          pdf.addPage()
+          // Cleanup
+          document.body.removeChild(tempDiv1);
+          document.body.removeChild(tempDiv2);
+          pageIndex++;
+
+          // Free canvas memory
+          firstCanvas.width = 0;
+          firstCanvas.height = 0;
+          secondCanvas.width = 0;
+          secondCanvas.height = 0;
         }
+      };
 
-        const imgWidth1 = 595;
-        const imgDataFirst = firstCanvas.toDataURL("image/png", 1.0);
-        pdf.addImage(imgDataFirst, "WEBP", 0, 0, imgWidth1, 835);
+      // Batch processing with a delay to avoid freezing
+      for (let i = 0; i < BatchedDemandNotice.length; i += chunkSize) {
+        const chunk = BatchedDemandNotice.slice(i, i + chunkSize);
+        await processChunk(chunk);
+        await new Promise((resolve) => setTimeout(resolve, 100)); // Small delay
+      }
 
-        // Calculate the height of the second canvas dynamically
-        const imgWidth2 = 595;
-
-        pdf.addPage();
-        const imgDataSecond = secondCanvas.toDataURL("image/webp", 1.0);
-        pdf.addImage(imgDataSecond, "WEBP", 0, 0, imgWidth2, 835);
-        document.body.removeChild(tempDiv);
-        document.body.removeChild(tempDiv2);
-      })
-
-
-
-      pdf.save(
-        `demand_invoice_${street}.pdf`
-      );
-      console.log("i am pdf", pdf)
+      pdf.save(`demand_invoice.pdf`);
+      console.log("PDF generated", pdf);
     } catch (error) {
-      console.error(error);
+      console.error("Error generating PDF:", error);
     }
-
   };
+
 
   const firstSectionTemplate = (demandInvoiceInfo: any) => {
     const demandInvoiceData = {
@@ -338,7 +447,7 @@ const AddProperty: React.FC<AddPropertyProps> = ({
         },
       ],
     };
-    return JSON.stringify(<div
+    return renderToStaticMarkup(<div
       className="bg-white print-section flex flex-col items-center justify-center px-4 py-4 space-y-4 w-[100%]"
     >
       {/* 1ST SECTION */}
@@ -378,7 +487,7 @@ const AddProperty: React.FC<AddPropertyProps> = ({
       </div>
       {/* 2ND SECTION */}
       <div className="flex flex-col w-full space-y-1 border rounded border-custom-color-one">
-        <div className="flex items-center justify-between p-1 rounded-t bg-document-bg-grey printPaddingBottom">
+        <div className="flex items-center justify-between p-1 rounded-t bg-document-bg-grey printPaddingBottom pb-4">
           <p className="text-document-grey font-lexend text-[11px] font-bold leading-[13px] w-[50%]">
             Demand Notice is hereby given to
           </p>
@@ -386,7 +495,7 @@ const AddProperty: React.FC<AddPropertyProps> = ({
             {demandInvoiceData.Occupant}
           </p>
         </div>
-        <div className="flex items-center justify-center gap-1 p-1 printPaddingBottom">
+        <div className="flex items-center justify-center gap-1 p-1 printPaddingBottom pb-4">
           <div className="flex flex-col items-start space-y-1 font-lexend w-[70%]">
             <p className="text-document-grey text-right font-lexend text-[11px] leading-[13px]">
               In respect of the property below:
@@ -417,10 +526,10 @@ const AddProperty: React.FC<AddPropertyProps> = ({
       {/* 3RD SECTION */}
       <div className="flex items-center justify-between w-full gap-2">
         <div className="flex flex-col gap-y-2 w-[50%] align-center justify-center">
-          <p className="text-color-text-two text-left font-lexend text-[11px] leading-[13px] printPaddingBottom">
+          <p className="text-color-text-two text-left font-lexend text-[11px] leading-[13px] printPaddingBottom pb-4">
             BILL INFORMATION
           </p>
-          <div className="flex flex-col gap-0 border rounded border-custom-color-100 printPaddingBottom">
+          <div className="flex flex-col gap-0 border rounded border-custom-color-100 printPaddingBottom pb-4">
             {demandInvoiceData.billInfoData.map((item: any, index: any) => (
               <div
                 key={index}
@@ -441,10 +550,10 @@ const AddProperty: React.FC<AddPropertyProps> = ({
               className={`flex items-center px-1 py-0.5 text-metal font-lexend text-[11px] leading-[13px] ${item.isTotal ? "py-1 bg-custom-blue-100 rounded-b" : ""
                 }`}
             >
-              <p className="font-medium text-left w-[130px] printPaddingBottom2">
+              <p className="font-medium text-left w-[130px] printPaddingBottom2 pb-2">
                 {item.label} :
               </p>
-              <p className="flex items-center justify-center font-bold text-primary-color printPaddingBottom2">
+              <p className="flex items-center justify-center font-bold text-primary-color printPaddingBottom2 pb-2">
                 <span className="mr-1 text-xs text-color-bright-green">
                   ₦
                 </span>
@@ -456,7 +565,7 @@ const AddProperty: React.FC<AddPropertyProps> = ({
       </div>
       {/* 4TH SECTION */}
       <div className="flex flex-col w-full space-y-1 border rounded border-custom-color-one">
-        <p className="text-[11px] p-1 font-lexend font-light leading-[12.5px] text-document-grey border-b border-custom-color-one pb-2 printPaddingBottom">
+        <p className="text-[11px] p-1 font-lexend font-light leading-[12.5px] text-document-grey border-b border-custom-color-one pb-2 printPaddingBottom pb-4">
           In accordance with the provision of section 7 (4th Schedule) of
           the 1999 constitution of the Federal Republic Of Nigeria; Federal
           Capital Territory Act Cap 503, LPN 2004 (vol. 3) as amended: Taxes
@@ -472,7 +581,7 @@ const AddProperty: React.FC<AddPropertyProps> = ({
           in respect of the landed property (ies) you are occupying in Abuja
           Municipal Area Council as per details above.
         </p>
-        <div className="flex p-1 printPaddingBottom">
+        <div className="flex p-1 printPaddingBottom pb-4">
           <div className="flex flex-col items-start space-y-1 w-[80%]">
             <p className="font-lexend text-[11px] text-document-grey leading-[12.5px]">
               How to make payment:
@@ -505,7 +614,7 @@ const AddProperty: React.FC<AddPropertyProps> = ({
         </p>
       </div>
       <div className="flex items-center justify-between w-full gap-6">
-        <div className="flex flex-col w-[50%] items-start justify-between officialStyleParent">
+        <div className="flex flex-col w-[50%] items-start justify-between officialStyleParent space-y-3 pb-6">
           <ChairmanSection
             title="HEAD OF TENEMENT RATE"
             subtitle="For Honourable Chairman Abuja Municipal Area Council"
@@ -540,12 +649,12 @@ const AddProperty: React.FC<AddPropertyProps> = ({
 
   }
   const secondSectionTemplate = () => {
-    return JSON.stringify(
+    return renderToStaticMarkup(
       <div
         className="bg-white print-section flex flex-col px-4 py-2 space-y-4 w-[100%]"
       >
         {/* 7TH SECTION */}
-        <div className="flex flex-col w-full p-1 border rounded font-lexend border-custom-color-one printPaddingBottom">
+        <div className="flex flex-col w-full p-1 border rounded font-lexend border-custom-color-one printPaddingBottom pb-4">
           <h3 className="text-center text-[12px] text-metal font-semibold">
             Annex Offices:
           </h3>
@@ -574,7 +683,7 @@ const AddProperty: React.FC<AddPropertyProps> = ({
           </div>
         </div>
         {/* 8TH SECTION */}
-        <div className="flex flex-col w-full p-1 border rounded font-lexend border-custom-color-one printPaddingBottom">
+        <div className="flex flex-col w-full p-1 border rounded font-lexend border-custom-color-one printPaddingBottom pb-4">
           <h3 className="text-center text-[12px] text-metal font-semibold">
             Notes:
           </h3>
@@ -602,7 +711,7 @@ const AddProperty: React.FC<AddPropertyProps> = ({
           </div>
         </div>
         {/* 9TH SECTION */}
-        <div className="flex flex-col w-full p-1 font-lexend text-[11px] text-metal leading-[18px] printPaddingBottom">
+        <div className="flex flex-col w-full p-1 font-lexend text-[11px] text-metal leading-[18px] printPaddingBottom pb-4">
           <b>
             It is illegal to pay cash to anyone EXCEPT through the payment
             options as specified.
@@ -614,7 +723,7 @@ const AddProperty: React.FC<AddPropertyProps> = ({
           </p>
         </div>
         {/* 10TH SECTION */}
-        <div className="flex flex-col w-full p-1 border rounded font-lexend border-custom-color-one printPaddingBottom">
+        <div className="flex flex-col w-full p-1 border rounded font-lexend border-custom-color-one printPaddingBottom pb-4">
           <h3 className="text-center text-[12px] text-metal font-semibold">
             HOW TO ASSESS YOUR PROPERTY:
           </h3>
@@ -637,7 +746,7 @@ const AddProperty: React.FC<AddPropertyProps> = ({
           </div>
         </div>
         {/* 11TH SECTION */}
-        <div className="flex flex-col w-full p-1 border rounded font-lexend border-custom-color-one printPaddingBottom">
+        <div className="flex flex-col w-full p-1 border rounded font-lexend border-custom-color-one printPaddingBottom pb-4">
           <b className="text-[11px] text-metal leading-[18px]">
             Note: A change of the use of property from residential to
             commericial without notifying the council in writing shall attract
@@ -663,7 +772,7 @@ const AddProperty: React.FC<AddPropertyProps> = ({
 
   const SectionDetails: React.FC<SectionProps> = ({ title, data }) => {
     return (
-      <div className="flex flex-col py-1 space-y-0.5 officialStyleParent border-b border-custom-color-one printPaddingBottom">
+      <div className="flex flex-col py-1  officialStyleParent border-b border-custom-color-one printPaddingBottom space-y-3 pb-6">
         <p className="text-color-text-two text-[11px] text-center font-lexend leading-[13px]">
           {title}
         </p>
@@ -687,7 +796,7 @@ const AddProperty: React.FC<AddPropertyProps> = ({
     signature: string;
   }> = ({ title, subtitle, signature }) => {
     return (
-      <div className="flex flex-col items-center w-full printPaddingBottom2">
+      <div className="flex flex-col items-center w-full printPaddingBottom2 pb-2">
         <img
           src={signature}
           className="w-[90px] h-[40px] object-contain"
@@ -747,7 +856,7 @@ const AddProperty: React.FC<AddPropertyProps> = ({
                 <h3 className="text-sm font-bold text-color-text-two">
                   Rating District
                 </h3><div
-                  className="w-[100px] flex items-center justify-between gap-2 pr-1.5 border rounded border-divider-grey text-color-text-two"
+                  className="w-[100%] flex items-center justify-between gap-2 pr-1.5 border rounded border-divider-grey text-color-text-two"
                   title="Filter by District"
                 >
                   <select
@@ -768,80 +877,101 @@ const AddProperty: React.FC<AddPropertyProps> = ({
                 </div>
 
               </div>
+              {ratingDistrict > 0 && !loadingCadastralZone ? (
+                <div>
+                  <h3 className="text-sm font-bold text-color-text-two">
+                    Cadastral Zone
+                  </h3>
 
-              <div>
-                <h3 className="text-sm font-bold text-color-text-two">
-                  Cadastral Zone
-                </h3>
-
-                <div
-                  className="w-[100px] flex items-center justify-between gap-2 pr-1.5 border rounded border-divider-grey text-color-text-two"
-                  title="Filter by District"
-                >
-                  <select
-                    className="w-[100%] hover:cursor-pointer p-2 py-1.5 overflow-y-auto text-xs font-medium rounded outline-none appearance-none font-lexend overscroll-contain scrollbar-thin scrollbar-thumb-color-text-two scrollbar-track-white"
-                    onChange={(e: any) => setCadastralZone(e.target.value)}
-                    value={cadastralZone}
+                  <div
+                    className="w-[100%] flex items-center justify-between gap-2 pr-1.5 border rounded border-divider-grey text-color-text-two"
+                    title="Filter by District"
                   >
-                    <option value="0"> Cadastral Zone</option>
-                    {cadastralZones.map((cadastralZone: any, index) => (
-                      <option key={cadastralZone.id} value={cadastralZone.id}>
-                        {cadastralZone.name}
-                      </option>
-                    ))}
-                  </select>
-                  <span className="text-xs">
-                    <BsCaretDownFill />
-                  </span>
+                    <select
+                      className="w-[100%] hover:cursor-pointer p-2 py-1.5 overflow-y-auto text-xs font-medium rounded outline-none appearance-none font-lexend overscroll-contain scrollbar-thin scrollbar-thumb-color-text-two scrollbar-track-white"
+                      onChange={(e: any) => setCadastralZone(e.target.value)}
+                      value={cadastralZone}
+                    >
+                      <option value="0"> Cadastral Zone</option>
+                      {cadastralZones.map((cadastralZone: any, index) => (
+                        <option key={cadastralZone.id} value={cadastralZone.id}>
+                          {cadastralZone.name}
+                        </option>
+                      ))}
+                    </select>
+                    <span className="text-xs">
+                      <BsCaretDownFill />
+                    </span>
+                  </div>
                 </div>
-              </div>
+              ) : loadingCadastralZone ? <LoadingSpinner title="" /> : null
+              }
 
-              <div>
-                <h3 className="text-sm font-bold text-color-text-two">
-                  Street
-                </h3>
+              {cadastralZone > 0 && !loadingStreet ?
+                <div>
+                  <h3 className="text-sm font-bold text-color-text-two">
+                    Street
+                  </h3>
 
-                <div
-                  className="w-[100px] flex items-center justify-between gap-2 pr-1.5 border rounded border-divider-grey text-color-text-two"
-                  title="Filter by District"
-                >
-                  <select
-                    className="w-[100%] hover:cursor-pointer p-2 py-1.5 overflow-y-auto text-xs font-medium rounded outline-none appearance-none font-lexend overscroll-contain scrollbar-thin scrollbar-thumb-color-text-two scrollbar-track-white"
-                    onChange={(e: any) => setStreet(e.target.value)}
-                    value={street}
+                  <div
+                    className="w-[100%] flex items-center justify-between gap-2 pr-1.5 border rounded border-divider-grey text-color-text-two"
+                    title="Filter by District"
                   >
-                    <option value="0"> Select Street</option>
-                    {streets.map((street: any, index) => (
-                      <option key={street.id} value={street.id}>
-                        {street.name}
-                      </option>
-                    ))}
-                  </select>
-                  <span className="text-xs">
-                    <BsCaretDownFill />
-                  </span>
-                </div>
-              </div>
+                    <select
+                      className="w-[100%] hover:cursor-pointer p-2 py-1.5 overflow-y-auto text-xs font-medium rounded outline-none appearance-none font-lexend overscroll-contain scrollbar-thin scrollbar-thumb-color-text-two scrollbar-track-white"
+                      onChange={(e: any) => setStreet(e.target.value)}
+                      value={street}
+                    >
+                      <option value="0"> Select Street</option>
+                      {streets.map((street: any, index) => (
+                        <option key={street.id} value={street.id}>
+                          {street.name}
+                        </option>
+                      ))}
+                    </select>
+                    <span className="text-xs">
+                      <BsCaretDownFill />
+                    </span>
+                  </div>
+                </div> : loadingStreet ? <LoadingSpinner title="" /> : null
+              }
 
+              {street > 0 ?
+                <div className="flex items-center">
+                  {generateDemandNoticeLoader ? <LoadingSpinner title="" /> :
 
-              <div className="flex">
-                <button
-                  className="w-full text-sm text-white font-lexend font-medium px-6 py-3 border-0.6 bg-primary-color rounded"
-                  onClick={() => generateBulkDemandNotice()}
-                  type="button"
-                  title="Close Add New Property Modal"
-                >
-                  Generate Demand Notice
-                </button>
-              </div>
+                    <button
+                      className="w-full text-sm text-white font-lexend font-medium px-6 py-3 border-0.6 bg-primary-color rounded"
+                      onClick={() => generateBulkDemandNotice()}
+                      type="button"
+                      title="Close Add New Property Modal"
+                    >
+                      Generate Demand Notice
+                    </button>
+                  }
+                </div> : null}
             </div>
           </TabPanel>
           <TabPanel>
             {batch.length > 0 && (
               batch.map((batch: any, index: number) => (
-                <div className="flex">
-                  <div>{batch.street_id}</div>
-                  <div onClick={() => downloadDemandNotice(batch.id)}>Download</div>
+                <div className="flex border rounded p-2 mb-2">
+                  <div className="w-[90%]">{batch.street.name}</div>
+                  <div >
+                    <span
+                      className="flex items-center px-1 justify-center gap-1 font-lexend max-w-max text-primary-color text-xl bg-white border border-custom-color-one rounded h-[32px] hover:cursor-pointer"
+                      title="Download"
+                      onClick={() => {
+
+                        downloadDemandNotice(batch.id)
+                      }}
+                    >
+
+                      {downloadLoader ? (
+                        <LoadingSpinner title="" />
+                      ) : <LiaDownloadSolid />}
+                    </span>
+                  </div>
                 </div>
               ))
 

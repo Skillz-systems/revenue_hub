@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\BatchDemandNoticeResource;
 use App\Models\User;
 use App\Models\DemandNotice;
 use Illuminate\Http\Request;
@@ -663,12 +664,13 @@ class DemandNoticeController extends Controller
     {
         $getBulkDemandNotice = $this->demandNoticeService->getAllBatchDemandNoticesCurrentYear();
         if ($getBulkDemandNotice) {
-            return response()->json([
-                'status' => 'success',
-                'message' => 'Bulk Demand Notice fetched successfully',
-                "data" => $getBulkDemandNotice
-            ], 200);
+            $bulkDemandNotice = BatchDemandNoticeResource::collection($getBulkDemandNotice);
+            $bulkDemandNotice->additional([
+                'status' => 'success' // or any other status you want to append
+            ]);
+            return $bulkDemandNotice;
         }
+
         return response()->json([
             'status' => 'error',
             'message' => 'Issue fetching bulk Demand Notice .',
