@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\BatchDemandNoticeResource;
 use App\Models\User;
 use App\Models\DemandNotice;
 use Illuminate\Http\Request;
@@ -628,5 +629,67 @@ class DemandNoticeController extends Controller
             'message' => 'Reminder could not be created',
             "error" => $getDemandNotice
         ]);
+    }
+    public function createBulkDemandNotice(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'rating_district_id' => ['required', "integer"],
+            'cadastral_zone_id' => ['required', "integer"],
+            "street_id" => ['required', "integer"],
+
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'status' => 'error',
+                'message' => "Something went wrong",
+                "data" => $validator->errors()
+            ], 400);
+        }
+
+        $createBulkDemandNotice = $this->demandNoticeService->createBulkDemandNotice($request->all());
+        if ($createBulkDemandNotice) {
+            return response()->json([
+                'status' => 'success',
+                'message' => 'Bulk Demand Notice created successfully',
+            ], 200);
+        }
+        return response()->json([
+            'status' => 'error',
+            'message' => 'Issue creating bulk Demand Notice .',
+        ], 400);
+    }
+
+    public function getBatchDemandNotice()
+    {
+        $getBulkDemandNotice = $this->demandNoticeService->getAllBatchDemandNoticesCurrentYear();
+        if ($getBulkDemandNotice) {
+            $bulkDemandNotice = BatchDemandNoticeResource::collection($getBulkDemandNotice);
+            $bulkDemandNotice->additional([
+                'status' => 'success' // or any other status you want to append
+            ]);
+            return $bulkDemandNotice;
+        }
+
+        return response()->json([
+            'status' => 'error',
+            'message' => 'Issue fetching bulk Demand Notice .',
+        ], 400);
+    }
+
+    public function getBatchDemandNoticeForPrinting($id)
+    {
+        $getBulkDemandNotice = $this->demandNoticeService->fetchBatchForPrinting($id);
+        if ($getBulkDemandNotice) {
+            $demandNotice = DemandNoticeResource::collection($getBulkDemandNotice);
+            $demandNotice->additional([
+                'status' => 'success' // or any other status you want to append
+            ]);
+            return $demandNotice;
+        }
+        return response()->json([
+            'status' => 'error',
+            'message' => 'Issue fetching bulk Demand Notice .',
+        ], 400);
     }
 }
