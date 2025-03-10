@@ -14,4 +14,9 @@ class BatchDemandNotice extends Model
         "cadastral_zone_id",
         "street_id",
     ];
+
+    public function street()
+    {
+        return $this->belongsTo(Street::class);
+    }
 }
