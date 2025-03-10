@@ -41,6 +41,7 @@ const AddProperty: React.FC<AddPropertyProps> = ({
   const [loadingBatch, setLoadingBatch] = useState<boolean>(false);
   const [downloadLoader, setDownloadLoader] = useState<boolean>(false);
   const [generateDemandNoticeLoader, setGenerateDemandNoticeLoader] = useState<boolean>(false);
+  const [downloadLoaderId, setDownloadLoaderId] = useState<number>(0);
 
 
   useEffect(() => {
@@ -955,19 +956,19 @@ const AddProperty: React.FC<AddPropertyProps> = ({
           <TabPanel>
             {batch.length > 0 && (
               batch.map((batch: any, index: number) => (
-                <div className="flex border rounded p-2 mb-2">
+                <div key={batch.id} className="flex border rounded p-2 mb-2">
                   <div className="w-[90%]">{batch.street.name}</div>
                   <div >
                     <span
                       className="flex items-center px-1 justify-center gap-1 font-lexend max-w-max text-primary-color text-xl bg-white border border-custom-color-one rounded h-[32px] hover:cursor-pointer"
                       title="Download"
                       onClick={() => {
-
+                        setDownloadLoaderId(batch.id)
                         downloadDemandNotice(batch.id)
                       }}
                     >
 
-                      {downloadLoader ? (
+                      {downloadLoader && downloadLoaderId == batch.id ? (
                         <LoadingSpinner title="" />
                       ) : <LiaDownloadSolid />}
                     </span>
