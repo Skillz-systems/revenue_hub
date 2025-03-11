@@ -84,6 +84,7 @@ class DemandNoticeResource extends JsonResource
             "status" => $this->status,
             "color_status" => $colorStatus,
             "property" => $property,
+            "office_zone" => $property->ratingDistrict->officeZone,
             "payments" => DemandNoticePaymentResource::collection($this->payments),
             "date_created" => $this->created_at,
             "reminder_date" => $this->reminder ? $this->reminder->created_at : null,
@@ -119,5 +120,5 @@ class DemandNoticeResource extends JsonResource
             }
         }
         return -1;
-   }
+    }
 }
