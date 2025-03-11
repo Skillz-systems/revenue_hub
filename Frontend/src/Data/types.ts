@@ -95,6 +95,7 @@ export interface DemandNotice {
         updated_at: string;
     };
     date_created: string;
+    office_zone: any;
 }
 
 export interface TransactionsType {

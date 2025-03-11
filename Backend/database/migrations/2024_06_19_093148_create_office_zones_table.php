@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('name')->comment('Office Zone Name');
             $table->string('address')->comment('Office Zone Address');
+            $table->string('contact')->comment('Office Zone Directors Contact')->nullable();
             $table->timestamps();
         });
     }
