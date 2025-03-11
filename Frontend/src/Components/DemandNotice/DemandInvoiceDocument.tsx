@@ -311,10 +311,10 @@ const DemandInvoiceDocument = ({
       </div>
       {/* PDF START*/}
 
-      <div className="w-full overflow-auto sm:w-auto overscroll-contain scrollbar-thin scrollbar-thumb-color-text-two scrollbar-track-white">
+      <div className=" w-full overflow-auto sm:w-auto overscroll-contain scrollbar-thin scrollbar-thumb-color-text-two scrollbar-track-white">
         <div
           ref={pdfRef}
-          className="bg-white print-section flex flex-col items-center justify-center px-4 py-4 space-y-4 w-[100%]"
+          className="background print-section flex flex-col items-center justify-center px-4 py-4 space-y-4 w-[100%]"
         >
           {/* 1ST SECTION */}
           <div className="flex items-center justify-center w-full">
@@ -335,13 +335,14 @@ const DemandInvoiceDocument = ({
               <p className="text-document-grey font-lexend text-[11px] leading-[13px]">
                 Secreteriat: No 1 Olusegun Obasanjo Way, Area 10 Garki - Abuja.
               </p>
+
               <p className="text-document-grey font-lexend text-[11px] leading-[13px]">
-                Annex Office: Suite 301, 3rd floor Kano House, Ralph Shodeinde
-                street, CBD, Abuja
+                Annex Office: {demandInvoiceInfo?.office_zone?.address}
               </p>
               <p className="text-color-dark-red font-lexend text-[11px] leading-[13px]">
-                TEL: +2348037809941, +2348057912241
+                TEL: +2348037809941, {demandInvoiceInfo?.office_zone?.contact}
               </p>
+
             </div>
             <div className="flex items-start justify-end w-[18%] ">
               <img
