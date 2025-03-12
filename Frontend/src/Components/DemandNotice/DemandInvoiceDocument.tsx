@@ -258,8 +258,8 @@ const DemandInvoiceDocument = ({
 
   const SectionDetails: React.FC<SectionProps> = ({ title, data }) => {
     return (
-      <div className="flex flex-col py-1 space-y-0.5 officialStyleParent border-b border-custom-color-one printPaddingBottom">
-        <p className="text-color-text-two text-[11px] text-center font-lexend leading-[13px]">
+      <div className="flex z-50 flex-col py-1 space-y-0.5 officialStyleParent border-b border-custom-color-one printPaddingBottom">
+        <p className="font-bold text-color-text-two text-[11px] text-center font-lexend leading-[13px]">
           {title}
         </p>
         {data.map((item, index) => (
@@ -290,7 +290,7 @@ const DemandInvoiceDocument = ({
         />
         <div className="flex flex-col items-center w-full p-2 font-bold border-t font-mulish text-dark-green border-t-dark-green">
           <p className="text-[11px] leading-[13px] text-center">{title}</p>
-          <p className="text-[9px] text-document-grey pt-1 italic text-center leading-[11px] w-[80%]">
+          <p className="text-[9px] text-black pt-1 italic text-center leading-[11px] w-[80%]">
             {subtitle}
           </p>
         </div>
@@ -393,19 +393,19 @@ const DemandInvoiceDocument = ({
           {/* 3RD SECTION */}
           <div className="flex items-center justify-between w-full gap-2">
             <div className="flex flex-col gap-y-2 w-[50%] align-center justify-center">
-              <p className="text-color-text-two text-left font-lexend text-[11px] leading-[13px] printPaddingBottom">
+              <p className="font-medium text-color-black text-left font-lexend text-[11px] leading-[13px] printPaddingBottom">
                 BILL INFORMATION
               </p>
               <div className="flex flex-col gap-0 border rounded border-custom-color-100 printPaddingBottom">
                 {demandInvoiceData.billInfoData.map((item, index) => (
                   <div
                     key={index}
-                    className="flex p-1 text-metal font-lexend text-[11px] leading-[13px]"
+                    className="flex p-1 text-black font-bold font-lexend text-[11px] leading-[13px]"
                   >
-                    <p className="font-medium text-left w-[50%]">
+                    <p className="font-medium text-black text-left w-[50%]">
                       {item.label} :
                     </p>
-                    <p className="font-bold text-primary-color">{item.value}</p>
+                    <p className="font-black text-primary-color z-50">{item.value}</p>
                   </div>
                 ))}
               </div>
@@ -417,10 +417,10 @@ const DemandInvoiceDocument = ({
                   className={`flex items-center px-1 py-0.5 text-metal font-lexend text-[11px] leading-[13px] ${item.isTotal ? "py-1 bg-custom-blue-100 rounded-b" : ""
                     }`}
                 >
-                  <p className="font-medium text-left w-[130px] printPaddingBottom2">
+                  <p className="font-medium text-black text-left w-[130px] printPaddingBottom2">
                     {item.label} :
                   </p>
-                  <p className="flex items-center justify-center font-bold text-primary-color printPaddingBottom2">
+                  <p className="flex items-center justify-center  text-primary-color printPaddingBottom2 z-50 font-black">
                     <span className="mr-1 text-xs text-color-bright-green">
                       ₦
                     </span>
@@ -431,8 +431,8 @@ const DemandInvoiceDocument = ({
             </div>
           </div>
           {/* 4TH SECTION */}
-          <div className="flex flex-col w-full space-y-1 border rounded border-custom-color-one">
-            <p className="text-[11px] p-1 font-lexend font-light leading-[12.5px] text-document-grey border-b border-custom-color-one pb-2 printPaddingBottom">
+          <div className="flex flex-col w-full space-y-1 border rounded border-custom-color-one font-medium">
+            <p className="text-[11px] p-1 font-lexend  leading-[12.5px] text-black border-b border-custom-color-one pb-2 printPaddingBottom ">
               In accordance with the provision of section 7 (4th Schedule) of
               the 1999 constitution of the Federal Republic Of Nigeria; Federal
               Capital Territory Act Cap 503, LPN 2004 (vol. 3) as amended: Taxes
@@ -448,22 +448,22 @@ const DemandInvoiceDocument = ({
               in respect of the landed property (ies) you are occupying in Abuja
               Municipal Area Council as per details above.
             </p>
-            <div className="flex p-1 printPaddingBottom">
+            <div className="flex p-1 printPaddingBottom font-medium">
               <div className="flex flex-col items-start space-y-1 w-[80%]">
-                <p className="font-lexend text-[11px] text-document-grey leading-[12.5px]">
+                <p className="font-lexend text-[11px] text-black leading-[12.5px]">
                   How to make payment:
                 </p>
-                <div className="flex items-start justify-center gap-1 font-lexend text-[11px] text-document-grey leading-[12.5px]">
+                <div className="flex items-start justify-center gap-1 font-lexend text-[11px] text-black leading-[12.5px]">
                   <span>1.</span>
                   <span>Walk into any of your bank branches</span>
                 </div>
-                <p className="flex items-start justify-center gap-1 font-lexend text-[11px] text-document-grey leading-[12.5px]">
+                <p className="flex items-start justify-center gap-1 font-lexend text-[11px] text-black leading-[12.5px]">
                   <span>2.</span>
                   <span>
                     Inform the teller that you want to make a NIBSS e-bills payment for AMAC Zone A & C tenement
                   </span>
                 </p>
-                <p className="flex items-start justify-center gap-1 font-lexend text-[11px] text-document-grey leading-[12.5px]">
+                <p className="flex items-start justify-center gap-1 font-lexend text-[11px] text-black leading-[12.5px]">
                   <span>3.</span>
                   <span>Use property number ({demandInvoiceData.PropertyIdentificationNumber})</span>
                 </p>
@@ -474,7 +474,7 @@ const DemandInvoiceDocument = ({
                     bank branch and Transfers.
                   </span>
                 </p> */}
-                <p className="font-lexend text-[11px] text-document-grey leading-[12.5px]">
+                <p className="font-lexend text-[11px] text-black leading-[12.5px]">
                   Payment(s) made to locations(s) other than as prescribed here shall be treated as invalid.
                 </p>
               </div>
@@ -492,12 +492,12 @@ const DemandInvoiceDocument = ({
           </div>
           {/* 5TH SECTION */}
           <div className="flex items-start w-full">
-            <p className="text-left text-document-grey text-[9px] font-lexend">
+            <p className="text-left text-black text-[9px] font-lexend">
               Your early compliance will be highly appreciated
             </p>
           </div>
           <div className="flex items-center justify-between w-full gap-6">
-            <div className="flex flex-col w-[50%] items-start justify-between officialStyleParent">
+            <div className="flex  flex-col w-[50%] items-start justify-between officialStyleParent">
               <ChairmanSection
                 title="HEAD OF TENEMENT RATE"
                 subtitle="For Honourable Chairman Abuja Municipal Area Council"
@@ -521,8 +521,8 @@ const DemandInvoiceDocument = ({
             </div>
           </div>
           {/* 6TH SECTION */}
-          <p className="font-medium text-[9px] leading-[11px] text-faint-grey text-center font-red-hat">
-            <span className="font-bold text-color-dark-red">NOTE:</span> Ensure
+          <p className="text-[9px] leading-[11px] text-black font-bold text-center font-red-hat">
+            <span className="font-extrabold text-color-dark-red">NOTE:</span> Ensure
             you collect Electronic and Treasury reciepts(s) at Annex Office:
             Suite 301, 3rd floor, Kano House, Ralph Shodeinde Street, Central
             Business District, Abuja, FCT.
